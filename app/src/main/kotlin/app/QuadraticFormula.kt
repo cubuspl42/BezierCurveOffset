@@ -2,33 +2,42 @@ package app
 
 import kotlin.math.sqrt
 
-data class QuadraticFormula(
+class QuadraticFormula(
     val a: Double,
     val b: Double,
     val c: Double,
-) {
-    val discriminant: Double
-        get() = b * b - 4 * a * c
+) : PolynomialFormula() {
+    companion object {
+        fun of(
+            a: Double,
+            b: Double,
+            c: Double,
+        ): PolynomialFormula = when {
+            a == 0.0 -> LinearFormula.of(a = b, b = c)
+            else -> QuadraticFormula(a = a, b = b, c = c)
+        }
+    }
 
-    val hasRealRoots: Boolean
-        get() = discriminant >= 0
+    init {
+        assert(a != 0.0)
+    }
 
-    /**
-     * Find a root with the given sign (-1 or 1), assuming that the discriminant is non-negative
-     */
-    private fun findRoot(
-        sign: Double,
-    ): Double = (sign * b + sqrt(discriminant)) / (2 * a)
+    override fun findRoots(): Set<Double> {
+        val discriminant: Double = b * b - 4 * a * c
 
-    /**
-     * Find the roots of the quadratic equation, if they exist
-     */
-    fun findRoots(): Pair<Double, Double>? = when {
-        hasRealRoots -> Pair(
-            findRoot(sign = -1.0),
-            findRoot(sign = 1.0),
-        )
+        val hasRealRoots: Boolean = discriminant >= 0
 
-        else -> null
+        fun findRoot(
+            sign: Double,
+        ): Double = (sign * b + sqrt(discriminant)) / (2 * a)
+
+        return when {
+            hasRealRoots -> setOf(
+                findRoot(sign = -1.0),
+                findRoot(sign = 1.0),
+            )
+
+            else -> emptySet()
+        }
     }
 }

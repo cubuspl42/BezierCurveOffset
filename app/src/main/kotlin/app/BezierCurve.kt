@@ -1,46 +1,13 @@
 package app
 
 import java.awt.geom.Path2D
+import java.nio.file.Path
 
-interface BezierCurve {
-    /**
-     * Time function in range [0, 1].
-     */
-    abstract class TimeFunction<T> {
-        companion object {
-            fun <A, B, R> map2(
-                functionA: TimeFunction<A>,
-                functionB: TimeFunction<B>,
-                transform: (A, B) -> R,
-            ): TimeFunction<R> = object : TimeFunction<R>() {
-                override fun evaluateDirectly(
-                    t: Double,
-                ): R = transform(functionA.evaluate(t), functionB.evaluate(t))
-            }
-        }
-
-        fun evaluate(t: Double): T {
-            if (t < 0.0 || t > 1.0) {
-                throw IllegalArgumentException("t must be in range [0, 1], but was $t")
-            }
-
-            return evaluateDirectly(t)
-        }
-
-        val startValue: T
-            get() = evaluateDirectly(0.0)
-
-        val endValue: T
-            get() = evaluateDirectly(1.0)
-
-        abstract fun evaluateDirectly(t: Double): T
-
-        fun <R> map(
-            transform: (T) -> R,
-        ): TimeFunction<R> = object : TimeFunction<R>() {
-            override fun evaluateDirectly(t: Double): R = transform(this@TimeFunction.evaluate(t))
-        }
-    }
+abstract class BezierCurve {
+    data class LocalExtremitySet(
+        val localExtremitiesX: Set<Double>,
+        val localExtremitiesY: Set<Double>,
+    )
 
     companion object {
         fun bind(
@@ -54,10 +21,52 @@ interface BezierCurve {
         }
     }
 
-    val start: Point
-    val end: Point
+    val pathFunction: TimeFunction<Point> by lazy {
+        TimeFunction.wrap(basisFormula).map { it.toPoint() }
+    }
 
-    val pathFunction: TimeFunction<Point>
+    val tangentFunction: TimeFunction<Vector> by lazy {
+        TimeFunction.wrap(basisFormula.findDerivative())
+    }
 
-    fun toPath2D(): Path2D.Double
+    val boundTangentFunction by lazy {
+        BezierCurve.bind(
+            pointFunction = pathFunction,
+            vectorFunction = tangentFunction,
+        )
+    }
+
+    val normalFunction: TimeFunction<Vector> by lazy {
+        tangentFunction.map { it.perpendicular }
+    }
+
+    val boundNormalFunction by lazy {
+        BezierCurve.bind(
+            pointFunction = pathFunction,
+            vectorFunction = normalFunction,
+        )
+    }
+
+    abstract val start: Point
+    abstract val end: Point
+
+    abstract val basisFormula: BezierFormula<Vector>
+
+    fun findLocalExtremities(): LocalExtremitySet {
+        fun findConsideredComponentLocalExtremities(
+            componentFormula: BezierFormula<Double>,
+        ): Set<Double> = componentFormula.findLocalExtremities().filter {
+            it in (0.0..1.0)
+        }.toSet()
+
+        return LocalExtremitySet(
+            localExtremitiesX = findConsideredComponentLocalExtremities(
+                componentFormula = basisFormula.componentX,
+            ), localExtremitiesY = findConsideredComponentLocalExtremities(
+                componentFormula = basisFormula.componentY,
+            )
+        )
+    }
+
+    abstract fun toPath2D(): Path2D
 }

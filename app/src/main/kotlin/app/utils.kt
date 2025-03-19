@@ -18,3 +18,5 @@ fun <A> Pair<A, A>.takeIf(
     first = first.takeIf(predicate),
     second = second.takeIf(predicate),
 )
+
+fun <A> Pair<A, A>?.toListOrEmpty(): List<A> = this?.toList() ?: emptyList()

@@ -9,6 +9,28 @@ data class Vector(
     val x: Double,
     val y: Double,
 ) {
+    /**
+     * A vectors space of two-dimensional vectors
+     */
+    object VectorVectorSpace : VectorSpace<Vector>() {
+        override val zero: Vector = Vector.zero
+
+        override fun add(
+            u: Vector,
+            v: Vector,
+        ): Vector = u + v
+
+        override fun subtract(
+            u: Vector,
+            v: Vector,
+        ): Vector = u - v
+
+        override fun scale(
+            a: Double,
+            v: Vector,
+        ): Vector = v.scale(a)
+    }
+
     companion object {
         val zero = Vector(0.0, 0.0)
     }
