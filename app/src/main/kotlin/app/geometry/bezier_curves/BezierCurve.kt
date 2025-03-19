@@ -57,18 +57,18 @@ abstract class BezierCurve {
 
     abstract val basisFormula: BezierFormula<Vector>
 
-    fun findLocalExtremities(): LocalExtremitySet {
-        fun findConsideredComponentLocalExtremities(
+    fun findInnerLocalExtremities(): LocalExtremitySet {
+        fun findInnerComponentLocalExtremities(
             componentFormula: BezierFormula<Double>,
         ): Set<Double> = componentFormula.findLocalExtremities().filter {
-            it in (0.0..1.0)
+            it > 0.0 && it < 1.0
         }.toSet()
 
         return LocalExtremitySet(
-            localExtremitiesX = findConsideredComponentLocalExtremities(
+            localExtremitiesX = findInnerComponentLocalExtremities(
                 componentFormula = basisFormula.componentX,
             ),
-            localExtremitiesY = findConsideredComponentLocalExtremities(
+            localExtremitiesY = findInnerComponentLocalExtremities(
                 componentFormula = basisFormula.componentY,
             ),
         )

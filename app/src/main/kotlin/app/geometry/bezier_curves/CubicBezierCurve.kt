@@ -31,7 +31,6 @@ data class CubicBezierCurve(
         end = transform(end),
     )
 
-
     fun moveAwayPointWise(
         origin: Point,
         distance: Double,
