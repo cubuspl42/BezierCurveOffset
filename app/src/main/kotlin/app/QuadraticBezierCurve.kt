@@ -7,7 +7,7 @@ data class QuadraticBezierCurve(
     val control: Point,
     override val end: Point,
 ) : BezierCurve {
-    override val path: BezierCurve.TimeFunction<Point> = object : BezierCurve.TimeFunction<Point>() {
+    override val pathFunction: BezierCurve.TimeFunction<Point> = object : BezierCurve.TimeFunction<Point>() {
         override fun evaluateDirectly(t: Double): Point {
             val u = 1.0 - t
             val a = start.toVector().scale(u * u)

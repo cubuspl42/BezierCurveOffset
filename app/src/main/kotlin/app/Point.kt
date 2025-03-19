@@ -21,16 +21,28 @@ data class Point(
     )
 
     /**
+     * @param other - point to find the direction to, must be a different point
+     */
+    fun directionTo(
+        other: Point
+    ): Direction {
+        if (this == other) throw IllegalArgumentException("Points must be different")
+        return Direction(
+            representativeVector = other - this,
+        )
+    }
+
+    /**
      * @param direction - direction to move in, must not be a zero vector
      * @param distance - distance to move in the direction
      */
     fun moveInDirection(
-        direction: Vector,
+        direction: Direction,
         distance: Double,
     ): Point {
-        val d = direction.length
-        if (d == 0.0) throw IllegalArgumentException("Direction vector must not be a zero vector")
-        return this + direction.scale(distance / d)
+        val v = direction.representativeVector
+        val d = v.length
+        return this + v.scale(distance / d)
     }
 
     /**
@@ -44,7 +56,7 @@ data class Point(
         if (origin == this) throw IllegalArgumentException("Origin point must be different from this point")
 
         return moveInDirection(
-            direction = this - origin,
+            direction = directionTo(origin),
             distance = distance,
         )
     }

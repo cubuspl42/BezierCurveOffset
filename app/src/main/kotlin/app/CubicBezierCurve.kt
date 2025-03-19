@@ -8,7 +8,7 @@ data class CubicBezierCurve(
     val control1: Point,
     override val end: Point,
 ) : BezierCurve {
-    override val path = object : BezierCurve.TimeFunction<Point>() {
+    override val pathFunction = object : BezierCurve.TimeFunction<Point>() {
         override fun evaluateDirectly(t: Double): Point {
             val u = 1.0 - t
             val a = start.toVector().scale(u * u * u)
@@ -38,13 +38,23 @@ data class CubicBezierCurve(
         end = transform(end),
     )
 
-    val tangent: BezierCurve.TimeFunction<Vector> by lazy {
-        derivative.path.map { it.toVector() }
+    val tangentFunction: BezierCurve.TimeFunction<Vector> by lazy {
+        derivative.pathFunction.map { it.toVector() }
     }
 
-    val normal: BezierCurve.TimeFunction<Vector> by lazy {
-        tangent.map { it.perpendicular }
+    val boundTangentFunction = BezierCurve.bind(
+        pointFunction = pathFunction,
+        vectorFunction = tangentFunction,
+    )
+
+    val normalFunction: BezierCurve.TimeFunction<Vector> by lazy {
+        tangentFunction.map { it.perpendicular }
     }
+
+    val boundNormalFunction = BezierCurve.bind(
+        pointFunction = pathFunction,
+        vectorFunction = normalFunction,
+    )
 
     fun moveAwayPointWise(
         origin: Point,
@@ -57,7 +67,7 @@ data class CubicBezierCurve(
     }
 
     fun moveInDirectionPointWise(
-        direction: Vector,
+        direction: Direction,
         distance: Double,
     ): CubicBezierCurve = mapPointWise {
         it.moveInDirection(
@@ -69,19 +79,20 @@ data class CubicBezierCurve(
     fun moveByOffset(
         offset: Double,
     ): CubicBezierCurve {
-        val startNormal = normal.startValue
-        val startNormalLine = Line(point = start, direction = startNormal)
+        val startNormal = boundNormalFunction.startValue
+        val startNormalLine = startNormal.containingLine
 
-        val endNormal = normal.endValue
-        val endNormalLine = Line(point = end, direction = endNormal)
+        val endNormal = boundNormalFunction.endValue
+        val endNormalLine = endNormal.containingLine
 
-        val origin = startNormalLine.intersection(endNormalLine) ?: return moveInDirectionPointWise(
-            direction = startNormal,
+        val normalIntersectionPoint = startNormalLine.intersect(endNormalLine) ?: return moveInDirectionPointWise(
+            // If there's no intersection point, the start and end vectors are parallel. We could choose either.
+            direction = startNormal.direction,
             distance = offset,
         )
 
         return moveAwayPointWise(
-            origin = origin,
+            origin = normalIntersectionPoint,
             distance = offset,
         )
     }
