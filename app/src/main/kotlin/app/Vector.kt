@@ -14,7 +14,7 @@ data class Vector(
     }
 
     operator fun minus(
-        other: Point,
+        other: Vector,
     ): Vector = Vector(
         x = x - other.x,
         y = y - other.y,

@@ -17,8 +17,41 @@ data class QuadraticBezierCurve(
         }
     }
 
+    private val vector0: Vector
+        get() = start.toVector()
+
+    private val vector1: Vector
+        get() = control.toVector()
+
+    private val vector2: Vector
+        get() = end.toVector()
+
+    private val vectorA: Vector
+        get() = vector0 - vector1.scale(2.0) + vector2
+
+    private val vectorB: Vector
+        get() = (vector1 - vector0).scale(2.0)
+
+    private val vectorC: Vector
+        get() = vector0
+
+    private val quadraticFormulaX: QuadraticFormula
+        get() = QuadraticFormula(
+            a = vectorA.x,
+            b = vectorB.x,
+            c = vectorC.x,
+        )
+
+    private val quadraticFormulaY: QuadraticFormula
+        get() = QuadraticFormula(
+            a = vectorA.y,
+            b = vectorB.y,
+            c = vectorC.y,
+        )
+
     override fun toPath2D(): Path2D.Double = Path2D.Double().apply {
         moveTo(start)
         quadTo(control, end)
     }
 }
+
