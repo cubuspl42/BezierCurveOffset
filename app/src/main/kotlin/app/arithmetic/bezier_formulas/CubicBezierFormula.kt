@@ -1,4 +1,8 @@
-package app
+package app.arithmetic.bezier_formulas
+
+import app.arithmetic.polynomial_formulas.PolynomialFormula
+import app.Vector
+import app.VectorSpace
 
 data class CubicBezierFormula<V>(
     private val vectorSpace: VectorSpace<V>,

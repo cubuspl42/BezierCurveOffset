@@ -1,5 +1,6 @@
-package app
+package app.geometry
 
+import app.Vector
 import java.awt.geom.Path2D
 
 data class Point(

@@ -1,5 +1,11 @@
-package app
+package app.geometry.bezier_curves
 
+import app.*
+import app.arithmetic.bezier_formulas.CubicBezierFormula
+import app.geometry.Direction
+import app.geometry.Point
+import app.geometry.cubicTo
+import app.geometry.moveTo
 import java.awt.geom.Path2D
 
 data class CubicBezierCurve(

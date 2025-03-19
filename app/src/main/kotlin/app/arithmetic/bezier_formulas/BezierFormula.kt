@@ -1,4 +1,7 @@
-package app
+package app.arithmetic.bezier_formulas
+
+import app.arithmetic.polynomial_formulas.PolynomialFormula
+import app.Vector
 
 /**
  * @param V - the type of the weights and the result

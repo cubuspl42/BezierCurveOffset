@@ -1,4 +1,6 @@
-package app
+package app.geometry
+
+import app.Vector
 
 /**
  * A direction in 2D Euclidean space, i.e. an infinite set of vectors with cross product equal to zero

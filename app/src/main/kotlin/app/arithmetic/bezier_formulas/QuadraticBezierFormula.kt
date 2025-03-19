@@ -1,4 +1,9 @@
-package app
+package app.arithmetic.bezier_formulas
+
+import app.arithmetic.polynomial_formulas.PolynomialFormula
+import app.arithmetic.polynomial_formulas.QuadraticFormula
+import app.Vector
+import app.VectorSpace
 
 class QuadraticBezierFormula<V>(
     private val vectorSpace: VectorSpace<V>,

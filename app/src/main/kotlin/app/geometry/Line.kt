@@ -1,4 +1,6 @@
-package app
+package app.geometry
+
+import app.Vector
 
 /**
  * A line in 2D Euclidean space

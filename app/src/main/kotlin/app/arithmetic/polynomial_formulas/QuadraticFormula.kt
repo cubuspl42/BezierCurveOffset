@@ -1,4 +1,4 @@
-package app
+package app.arithmetic.polynomial_formulas
 
 import kotlin.math.sqrt
 

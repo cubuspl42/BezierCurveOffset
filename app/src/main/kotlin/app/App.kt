@@ -1,5 +1,7 @@
 package app
 
+import app.geometry.Point
+import app.geometry.bezier_curves.CubicBezierCurve
 import org.jfree.svg.SVGGraphics2D
 import org.jfree.svg.SVGUtils
 import java.awt.Color

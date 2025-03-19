@@ -1,7 +1,12 @@
-package app
+package app.geometry.bezier_curves
 
+import app.*
+import app.arithmetic.bezier_formulas.BezierFormula
+import app.arithmetic.bezier_formulas.componentX
+import app.arithmetic.bezier_formulas.componentY
+import app.arithmetic.bezier_formulas.findLocalExtremities
+import app.geometry.Point
 import java.awt.geom.Path2D
-import java.nio.file.Path
 
 abstract class BezierCurve {
     data class LocalExtremitySet(
@@ -30,7 +35,7 @@ abstract class BezierCurve {
     }
 
     val boundTangentFunction by lazy {
-        BezierCurve.bind(
+        bind(
             pointFunction = pathFunction,
             vectorFunction = tangentFunction,
         )
@@ -41,7 +46,7 @@ abstract class BezierCurve {
     }
 
     val boundNormalFunction by lazy {
-        BezierCurve.bind(
+        bind(
             pointFunction = pathFunction,
             vectorFunction = normalFunction,
         )
