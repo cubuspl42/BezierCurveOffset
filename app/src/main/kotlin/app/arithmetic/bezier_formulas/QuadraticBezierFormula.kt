@@ -30,7 +30,7 @@ class QuadraticBezierFormula<V>(
     }
 }
 
-fun QuadraticBezierFormula<Double>.toPolynomialFormulaQuadratic(): PolynomialFormula = QuadraticFormula(
+fun QuadraticBezierFormula<Double>.toPolynomialFormulaQuadratic(): PolynomialFormula = QuadraticFormula.of(
     a = weight0 - 2.0 * weight1,
     b = 2.0 * weight1 - weight0,
     c = weight0,

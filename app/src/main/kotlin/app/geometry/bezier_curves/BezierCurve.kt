@@ -67,9 +67,10 @@ abstract class BezierCurve {
         return LocalExtremitySet(
             localExtremitiesX = findConsideredComponentLocalExtremities(
                 componentFormula = basisFormula.componentX,
-            ), localExtremitiesY = findConsideredComponentLocalExtremities(
+            ),
+            localExtremitiesY = findConsideredComponentLocalExtremities(
                 componentFormula = basisFormula.componentY,
-            )
+            ),
         )
     }
 

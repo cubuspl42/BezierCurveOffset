@@ -20,7 +20,7 @@ data class LinearBezierFormula<V>(
     }
 }
 
-fun LinearBezierFormula<Double>.toPolynomialFormulaLinear(): PolynomialFormula = LinearFormula(
+fun LinearBezierFormula<Double>.toPolynomialFormulaLinear(): PolynomialFormula = LinearFormula.of(
     a = weight1 - weight0,
     b = weight0,
 )

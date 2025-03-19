@@ -2,7 +2,7 @@ package app.arithmetic.polynomial_formulas
 
 import kotlin.math.sqrt
 
-class QuadraticFormula(
+class QuadraticFormula private constructor(
     val a: Double,
     val b: Double,
     val c: Double,

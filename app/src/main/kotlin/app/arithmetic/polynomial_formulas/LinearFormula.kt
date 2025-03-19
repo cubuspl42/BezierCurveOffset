@@ -1,6 +1,6 @@
 package app.arithmetic.polynomial_formulas
 
-class LinearFormula(
+class LinearFormula private constructor(
     val a: Double,
     val b: Double,
 ) : PolynomialFormula() {
@@ -9,7 +9,7 @@ class LinearFormula(
             a: Double,
             b: Double,
         ): PolynomialFormula = when {
-            a == 0.0 -> ConstantFormula(a = b)
+            a == 0.0 -> ConstantFormula.of(a = b)
             else -> LinearFormula(a = a, b = b)
         }
     }
