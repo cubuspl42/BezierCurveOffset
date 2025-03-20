@@ -3,21 +3,25 @@ package app.geometry
 import app.algebra.Vector
 
 /**
- * A line in 2D Euclidean space, given by the equation p = p0 + tv
+ * A line in 2D Euclidean space, described by the equation p = s + td
  */
 data class Line(
     /**
      * One of the infinitely many points lying on the line
      */
-    val p0: Vector,
+    val s: Vector,
     /**
      * One of the infinitely many vectors this line is parallel to
      */
-    val v: Vector,
+    val d: Vector,
 ) {
     init {
-        assert(v != Vector.zero)
+        assert(d != Vector.zero)
     }
+
+    private fun evaluate(
+        t: Double,
+    ): Vector = s + d.scale(t)
 
     companion object {
         fun inDirection(
@@ -32,12 +36,14 @@ data class Line(
     fun intersect(
         other: Line,
     ): Point? {
-        val d = v.cross(other.v)
-        if (d == 0.0) return null
+        val det = d.cross(other.d)
+        if (det == 0.0) return null // The lines are parallel
 
-        val s = (other.p0 - p0).cross(other.v) / d
+        val d = other.s - s
+        val u = d.cross(other.d) / det
+
         return Point(
-            p = v + v.scale(s),
+            p = evaluate(u)
         )
     }
 }

@@ -3,20 +3,30 @@ package app.geometry
 import app.algebra.Vector
 
 /**
- * A line in 2D Euclidean space, given by the equation p = p0 + tv
+ * A ray in 2D Euclidean space, described by the equation p = s + td for t >= 0
  */
 data class Ray(
     /**
      * The initial point of the ray
      */
-    val p0: Vector,
+    val s: Vector,
     /**
      * One of the infinitely many vectors that give this ray a direction
      */
-    val v: Vector,
+    val d: Vector,
 ) {
     init {
-        assert(v != Vector.zero)
+        assert(d != Vector.zero)
+    }
+
+    private fun evaluate(
+        t: Double,
+    ): Vector {
+        if (t < 0) {
+            throw IllegalArgumentException("t must be non-negative")
+        }
+
+        return s + d.scale(t)
     }
 
     companion object {
@@ -24,19 +34,39 @@ data class Ray(
             point: Point,
             direction: Direction,
         ): Ray = Ray(
-            p0 = point.p,
-            v = direction.d,
+            s = point.p,
+            d = direction.d,
         )
     }
 
     val containingLine: Line
         get() = Line(
-            p0 = p0,
-            v = v,
+            s = s,
+            d = d,
         )
 
     val direction: Direction
         get() = Direction(
-            d = v,
+            d = d,
         )
+
+    fun intersect(
+        other: Ray,
+    ): Point? {
+        val det = d.cross(other.d)
+        if (det == 0.0) return null // The rays are parallel
+
+        val d = other.s - s
+        val u = d.cross(other.d) / det
+        val v = d.cross(this.d) / det
+
+        return when {
+            u > 0.0 && v > 0.0 -> Point(
+                p = evaluate(t = u),
+            )
+
+            // The intersection point would lye outside the ray
+            else -> null
+        }
+    }
 }
