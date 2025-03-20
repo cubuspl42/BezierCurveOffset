@@ -1,9 +1,9 @@
-package app.arithmetic.bezier_formulas
+package app.algebra.bezier_formulas
 
-import app.arithmetic.polynomial_formulas.PolynomialFormula
-import app.Vector
+import app.algebra.polynomial_formulas.PolynomialFormula
+import app.algebra.Vector
 import app.VectorSpace
-import app.arithmetic.polynomial_formulas.LinearFormula
+import app.algebra.polynomial_formulas.LinearFormula
 
 data class LinearBezierFormula<V>(
     private val vectorSpace: VectorSpace<V>,

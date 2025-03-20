@@ -1,6 +1,6 @@
 package app.geometry.bezier_curves
 
-import app.arithmetic.bezier_formulas.BezierFormula
+import app.algebra.bezier_formulas.BezierFormula
 
 /**
  * Time function in range [0, 1].

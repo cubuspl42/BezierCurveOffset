@@ -1,6 +1,6 @@
-package app.arithmetic.bezier_formulas
+package app.algebra.bezier_formulas
 
-import app.arithmetic.bezier_formulas.RealFunction.SamplingStrategy
+import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.step
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection

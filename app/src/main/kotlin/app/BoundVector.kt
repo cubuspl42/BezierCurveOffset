@@ -1,5 +1,6 @@
 package app
 
+import app.algebra.Vector
 import app.geometry.Direction
 import app.geometry.Line
 import app.geometry.Point

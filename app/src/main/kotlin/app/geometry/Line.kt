@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.Vector
+import app.algebra.Vector
 
 /**
  * A line in 2D Euclidean space, given by the equation p = p0 + tv

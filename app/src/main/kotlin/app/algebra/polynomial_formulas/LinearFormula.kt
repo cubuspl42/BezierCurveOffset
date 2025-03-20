@@ -1,4 +1,4 @@
-package app.arithmetic.polynomial_formulas
+package app.algebra.polynomial_formulas
 
 class LinearFormula private constructor(
     val a: Double,

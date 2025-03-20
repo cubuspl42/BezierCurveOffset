@@ -1,7 +1,6 @@
-package app.arithmetic.bezier_formulas
+package app.algebra.bezier_formulas
 
-import app.arithmetic.polynomial_formulas.PolynomialFormula
-import app.Vector
+import app.algebra.Vector
 import app.VectorSpace
 
 data class CubicBezierFormula<V>(

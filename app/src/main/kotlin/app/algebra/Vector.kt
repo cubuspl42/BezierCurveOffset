@@ -1,5 +1,7 @@
-package app
+package app.algebra
 
+import app.BoundVector
+import app.VectorSpace
 import app.geometry.Direction
 import app.geometry.Point
 import kotlin.math.sqrt
@@ -15,7 +17,7 @@ data class Vector(
      * A vectors space of two-dimensional vectors
      */
     object VectorVectorSpace : VectorSpace<Vector>() {
-        override val zero: Vector = Vector.zero
+        override val zero: Vector = Companion.zero
 
         override fun add(
             u: Vector,

@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.Vector
+import app.algebra.Vector
 
 data class Translation(
     val t: Vector,

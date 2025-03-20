@@ -1,7 +1,7 @@
 package app.geometry.bezier_curves
 
-import app.*
-import app.arithmetic.bezier_formulas.CubicBezierFormula
+import app.algebra.Vector
+import app.algebra.bezier_formulas.CubicBezierFormula
 import app.geometry.*
 import java.awt.geom.Path2D
 

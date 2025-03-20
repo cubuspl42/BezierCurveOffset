@@ -1,4 +1,4 @@
-package app.arithmetic.polynomial_formulas
+package app.algebra.polynomial_formulas
 
 class ConstantFormula private constructor(
     val a: Double,

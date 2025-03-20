@@ -1,8 +1,8 @@
-package app.arithmetic.bezier_formulas
+package app.algebra.bezier_formulas
 
-import app.arithmetic.polynomial_formulas.PolynomialFormula
-import app.arithmetic.polynomial_formulas.QuadraticFormula
-import app.Vector
+import app.algebra.polynomial_formulas.PolynomialFormula
+import app.algebra.polynomial_formulas.QuadraticFormula
+import app.algebra.Vector
 import app.VectorSpace
 
 class QuadraticBezierFormula<V>(

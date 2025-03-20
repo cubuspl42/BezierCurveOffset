@@ -1,8 +1,8 @@
-package app.arithmetic.bezier_formulas
+package app.algebra.bezier_formulas
 
-import app.Vector
-import app.arithmetic.bezier_formulas.RealFunction.SamplingStrategy
-import app.arithmetic.polynomial_formulas.PolynomialFormula
+import app.algebra.Vector
+import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
+import app.algebra.polynomial_formulas.PolynomialFormula
 import app.geometry.lineTo
 import app.geometry.moveTo
 import org.jfree.data.xy.XYSeries
