@@ -16,7 +16,16 @@ sealed class BezierFormula<V> : RealFunction<V>() {
     data class CriticalPointSet(
         val criticalPointsX: Set<Double>,
         val criticalPointsY: Set<Double>,
-    )
+    ) {
+        companion object {
+            val range = 0.0 .. 1.0
+        }
+
+        fun inRange(): CriticalPointSet = CriticalPointSet(
+            criticalPointsX = criticalPointsX.filter { it in range }.toSet(),
+            criticalPointsY = criticalPointsY.filter { it in range }.toSet(),
+        )
+    }
 
     abstract fun findDerivative(): BezierFormula<V>
 

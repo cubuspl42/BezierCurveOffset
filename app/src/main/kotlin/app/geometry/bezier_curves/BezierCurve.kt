@@ -5,6 +5,7 @@ import app.algebra.bezier_formulas.BezierFormula
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.algebra.bezier_formulas.findCriticalPoints
 import app.algebra.bezier_formulas.toPath2D
+import app.geometry.BoundingBox
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
@@ -16,6 +17,15 @@ import kotlin.math.roundToInt
 
 abstract class BezierCurve {
     companion object {
+        private val dashedStroke: BasicStroke = BasicStroke(
+            1.5f,
+            BasicStroke.CAP_ROUND,
+            BasicStroke.JOIN_MITER,
+            1.5f,
+            floatArrayOf(5.0f, 5.0f),
+            0f,
+        )
+
         fun bindRay(
             pointFunction: TimeFunction<Point>,
             vectorFunction: TimeFunction<Direction>,
@@ -57,6 +67,30 @@ abstract class BezierCurve {
         bindRay(
             pointFunction = pathFunction,
             vectorFunction = normalFunction,
+        )
+    }
+
+    fun findBoundingBox(): BoundingBox {
+        val startPoint = pathFunction.startValue
+        val endPoint = pathFunction.endValue
+
+        val inRangeCriticalPointSet = basisFormula.findCriticalPoints().inRange()
+
+        val criticalXValues = inRangeCriticalPointSet.criticalPointsX.map { t -> pathFunction.evaluate(t).x }
+        val potentialXExtrema = criticalXValues + startPoint.x + endPoint.x
+        val xMin = potentialXExtrema.min()
+        val xMax = potentialXExtrema.max()
+
+        val criticalYValues = inRangeCriticalPointSet.criticalPointsY.map { t -> pathFunction.evaluate(t).y }
+        val potentialYExtrema = criticalYValues + startPoint.y + endPoint.y
+        val yMin = potentialYExtrema.min()
+        val yMax = potentialYExtrema.max()
+
+        return BoundingBox.fromExtrema(
+            xMin = xMin,
+            xMax = xMax,
+            yMin = yMin,
+            yMax = yMax,
         )
     }
 
@@ -122,6 +156,13 @@ abstract class BezierCurve {
             criticalPoints = criticalPointSet.criticalPointsY,
             color = Color.GREEN,
         )
+
+        val boundingBox = findBoundingBox()
+
+        graphics2D.paint = null
+        graphics2D.color = Color.BLUE
+        graphics2D.stroke = dashedStroke
+        graphics2D.draw(boundingBox.toRect2D())
     }
 
     abstract fun toPath2D(): Path2D
