@@ -18,11 +18,10 @@ class BezierFitTests {
             ),
         )
 
-        val c0 = controlPoints[0]!!
-        val c1 = controlPoints[1]!!
-        val c2 = controlPoints[2]!!
-        val c3 = controlPoints[3]!!
-
+        val c0 = controlPoints.start
+        val c1 = controlPoints.control0
+        val c2 = controlPoints.control1
+        val c3 = controlPoints.end
 
         assertEquals(
             expected = c0.x,
