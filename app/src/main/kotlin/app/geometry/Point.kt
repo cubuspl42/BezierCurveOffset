@@ -16,6 +16,14 @@ data class Point(
         ),
     )
 
+    constructor(
+        px: Int,
+        py: Int,
+    ) : this(
+        px = px.toDouble(),
+        py = py.toDouble(),
+    )
+
     val x: Double
         get() = p.x
 

@@ -30,6 +30,7 @@ dependencies {
     // This dependency is used by the application.
     implementation(libs.jfree.svg)
     implementation(libs.jfree.chart)
+    implementation(libs.ujmp)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

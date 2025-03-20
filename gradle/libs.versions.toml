@@ -4,6 +4,7 @@
 [libraries]
 jfree-svg = { module = "org.jfree:org.jfree.svg", version = "5.0.6" }
 jfree-chart = { module = "org.jfree:jfreechart", version = "1.5.3" }
+ujmp = { module = "org.ujmp:ujmp-core", version = "0.3.0" }
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version = "5.11.3" }
 
 [plugins]
