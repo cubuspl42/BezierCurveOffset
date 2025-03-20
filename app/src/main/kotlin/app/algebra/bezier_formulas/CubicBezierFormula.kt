@@ -1,7 +1,7 @@
 package app.algebra.bezier_formulas
 
 import app.algebra.Vector
-import app.VectorSpace
+import app.algebra.VectorSpace
 
 data class CubicBezierFormula<V>(
     private val vectorSpace: VectorSpace<V>,

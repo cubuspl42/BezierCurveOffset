@@ -1,10 +1,13 @@
 package app.geometry.bezier_curves
 
-import app.*
 import app.algebra.Vector
-import app.algebra.bezier_formulas.*
+import app.algebra.bezier_formulas.BezierFormula
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
+import app.algebra.bezier_formulas.findCriticalPoints
+import app.algebra.bezier_formulas.toPath2D
+import app.geometry.Direction
 import app.geometry.Point
+import app.geometry.Ray
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
@@ -13,14 +16,17 @@ import kotlin.math.roundToInt
 
 abstract class BezierCurve {
     companion object {
-        fun bind(
+        fun bindRay(
             pointFunction: TimeFunction<Point>,
-            vectorFunction: TimeFunction<Vector>,
-        ): TimeFunction<BoundVector> = TimeFunction.map2(
+            vectorFunction: TimeFunction<Direction>,
+        ): TimeFunction<Ray> = TimeFunction.map2(
             functionA = pointFunction,
             functionB = vectorFunction,
-        ) { point, vector ->
-            vector.bind(point)
+        ) { point, direction ->
+            Ray.inDirection(
+                point = point,
+                direction = direction,
+            )
         }
     }
 
@@ -28,23 +34,27 @@ abstract class BezierCurve {
         TimeFunction.wrap(basisFormula).map { it.toPoint() }
     }
 
-    val tangentFunction: TimeFunction<Vector> by lazy {
-        TimeFunction.wrap(basisFormula.findDerivative())
+
+    val tangentFunction: TimeFunction<Direction> by lazy {
+        TimeFunction.wrap(basisFormula.findDerivative()).map {
+            // TODO: This might actually be zero
+            Direction(d = it)
+        }
     }
 
-    val boundTangentFunction by lazy {
-        bind(
+    val tangentRayFunction: TimeFunction<Ray> by lazy {
+        bindRay(
             pointFunction = pathFunction,
             vectorFunction = tangentFunction,
         )
     }
 
-    val normalFunction: TimeFunction<Vector> by lazy {
+    val normalFunction: TimeFunction<Direction> by lazy {
         tangentFunction.map { it.perpendicular }
     }
 
-    val boundNormalFunction by lazy {
-        bind(
+    val normalRayFunction by lazy {
+        bindRay(
             pointFunction = pathFunction,
             vectorFunction = normalFunction,
         )

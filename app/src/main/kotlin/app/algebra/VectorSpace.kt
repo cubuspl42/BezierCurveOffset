@@ -1,4 +1,4 @@
-package app
+package app.algebra
 
 abstract class VectorSpace<V> {
     object DoubleVectorSpace : VectorSpace<Double>() {

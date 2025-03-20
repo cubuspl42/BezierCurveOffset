@@ -2,7 +2,7 @@ package app.algebra.bezier_formulas
 
 import app.algebra.polynomial_formulas.PolynomialFormula
 import app.algebra.Vector
-import app.VectorSpace
+import app.algebra.VectorSpace
 import app.algebra.polynomial_formulas.LinearFormula
 
 data class LinearBezierFormula<V>(

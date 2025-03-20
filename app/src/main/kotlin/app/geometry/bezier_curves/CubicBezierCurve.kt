@@ -49,23 +49,23 @@ data class CubicBezierCurve(
     }
 
     fun translate(
-        translationVector: Translation,
+        translation: Translation,
     ): CubicBezierCurve = mapPointWise {
-        it.moveByTranslation(translationVector)
+        it.translate(translation = translation)
     }
 
     fun moveByOffset(
         offset: Double,
     ): CubicBezierCurve {
-        val startNormal = boundNormalFunction.startValue
-        val startNormalLine = startNormal.containingLine
+        val startNormalRay = normalRayFunction.startValue
+        val startNormalLine = startNormalRay.containingLine
 
-        val endNormal = boundNormalFunction.endValue
-        val endNormalLine = endNormal.containingLine
+        val endNormalRay = normalRayFunction.endValue
+        val endNormalLine = endNormalRay.containingLine
 
         val normalIntersectionPoint = startNormalLine.intersect(endNormalLine) ?: return moveInDirectionPointWise(
             // If there's no intersection point, the start and end vectors are parallel. We could choose either.
-            direction = startNormal.direction,
+            direction = startNormalRay.direction,
             distance = offset,
         )
 

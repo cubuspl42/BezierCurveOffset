@@ -14,4 +14,7 @@ data class Direction(
     init {
         assert(d != Vector.zero)
     }
+
+    val perpendicular: Direction
+        get() = Direction(d = d.perpendicular)
 }

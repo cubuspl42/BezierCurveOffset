@@ -15,14 +15,18 @@ data class Line(
      */
     val v: Vector,
 ) {
+    init {
+        assert(v != Vector.zero)
+    }
+
     companion object {
         fun inDirection(
             point: Point,
             direction: Direction,
-        ): Line = Line(
-            p0 = point.p,
-            v = direction.d,
-        )
+        ): Line = Ray.inDirection(
+            point = point,
+            direction = direction,
+        ).containingLine
     }
 
     fun intersect(

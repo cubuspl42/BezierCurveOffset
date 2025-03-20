@@ -1,7 +1,5 @@
 package app.algebra
 
-import app.BoundVector
-import app.VectorSpace
 import app.geometry.Direction
 import app.geometry.Point
 import kotlin.math.sqrt
@@ -51,13 +49,6 @@ data class Vector(
     ): Vector = Vector(
         x = x + other.x,
         y = y + other.y,
-    )
-
-    fun bind(
-        point: Point
-    ): BoundVector = BoundVector(
-        vector = this,
-        point = point,
     )
 
     fun dot(

@@ -56,7 +56,7 @@ fun main(args: Array<String>) {
         control1 = Point(70.0, 259.0),
         end = Point(8.0, 181.0),
     ).translate(
-        translationVector = Translation(
+        translation = Translation(
             tx = 200.0,
             ty = 200.0,
         ),
@@ -73,7 +73,7 @@ fun main(args: Array<String>) {
         control1 = Point(100.0, 100.0),
         end = Point(200.0, 0.0),
     ).translate(
-        translationVector = Translation(
+        translation = Translation(
             tx = 200.0,
             ty = 200.0,
         ),

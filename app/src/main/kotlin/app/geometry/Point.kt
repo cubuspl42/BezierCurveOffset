@@ -34,7 +34,7 @@ data class Point(
         )
     }
 
-    fun moveByTranslation(
+    fun translate(
         translation: Translation,
     ): Point = Point(
         p = p + translation.t,
