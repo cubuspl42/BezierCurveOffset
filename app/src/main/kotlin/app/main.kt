@@ -3,6 +3,7 @@ package app
 import app.arithmetic.bezier_formulas.*
 import app.arithmetic.bezier_formulas.RealFunction.SamplingStrategy
 import app.geometry.Point
+import app.geometry.Translation
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
 import org.jfree.svg.SVGGraphics2D
@@ -55,9 +56,9 @@ fun main(args: Array<String>) {
         control1 = Point(70.0, 259.0),
         end = Point(8.0, 181.0),
     ).translate(
-        translationVector = Vector(
-            x = 200.0,
-            y = 200.0,
+        translationVector = Translation(
+            tx = 200.0,
+            ty = 200.0,
         ),
     )
 
@@ -72,9 +73,9 @@ fun main(args: Array<String>) {
         control1 = Point(100.0, 100.0),
         end = Point(200.0, 0.0),
     ).translate(
-        translationVector = Vector(
-            x = 200.0,
-            y = 200.0,
+        translationVector = Translation(
+            tx = 200.0,
+            ty = 200.0,
         ),
     )
 

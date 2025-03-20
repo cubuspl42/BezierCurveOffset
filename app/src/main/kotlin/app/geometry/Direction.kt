@@ -7,11 +7,11 @@ import app.Vector
  */
 data class Direction(
     /**
-     * One of the vectors pointing in this direction, must not be a zero vector
+     * One of the infinitely many vectors pointing in this direction, must not be a zero vector
      */
-    val representativeVector: Vector,
+    val d: Vector,
 ) {
     init {
-        assert(representativeVector != Vector.zero)
+        assert(d != Vector.zero)
     }
 }

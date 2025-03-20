@@ -3,32 +3,37 @@ package app.geometry
 import app.Vector
 
 /**
- * A line in 2D Euclidean space
+ * A line in 2D Euclidean space, given by the equation p = p0 + tv
  */
 data class Line(
     /**
      * One of the infinitely many points lying on the line
      */
-    val representativePoint: Point,
+    val p0: Vector,
     /**
-     * One of two directions of this line,
+     * One of the infinitely many vectors this line is parallel to
      */
-    val representativeDirection: Direction,
+    val v: Vector,
 ) {
-    /**
-     * One of the infinitely many vectors that gives the line a direction
-     */
-    val representativeVector: Vector
-        get() = representativeDirection.representativeVector
+    companion object {
+        fun inDirection(
+            point: Point,
+            direction: Direction,
+        ): Line = Line(
+            p0 = point.p,
+            v = direction.d,
+        )
+    }
 
     fun intersect(
         other: Line,
     ): Point? {
-        val d = representativeVector.cross(other.representativeVector)
+        val d = v.cross(other.v)
         if (d == 0.0) return null
 
-        val v = other.representativePoint - representativePoint
-        val t = v.cross(other.representativeVector) / d
-        return representativePoint + representativeVector.scale(t)
+        val s = (other.p0 - p0).cross(other.v) / d
+        return Point(
+            p = v + v.scale(s),
+        )
     }
 }

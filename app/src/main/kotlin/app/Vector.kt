@@ -79,7 +79,7 @@ data class Vector(
     val directionOrNull: Direction?
         get() = when {
             this == zero -> null
-            else -> Direction(representativeVector = this)
+            else -> Direction(d = this)
         }
 
     /**
@@ -102,5 +102,5 @@ data class Vector(
     val length: Double
         get() = sqrt(x * x + y * y)
 
-    fun toPoint(): Point = Point(x, y)
+    fun toPoint(): Point = Point(p = this)
 }

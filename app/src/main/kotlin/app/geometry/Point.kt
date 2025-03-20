@@ -4,22 +4,23 @@ import app.Vector
 import java.awt.geom.Path2D
 
 data class Point(
-    val x: Double,
-    val y: Double,
+    val p: Vector,
 ) {
-    operator fun minus(
-        other: Point,
-    ): Vector = Vector(
-        x = x - other.x,
-        y = y - other.y,
+    constructor(
+        px: Double,
+        py: Double,
+    ) : this(
+        p = Vector(
+            x = px,
+            y = py,
+        ),
     )
 
-    operator fun plus(
-        vector: Vector,
-    ): Point = Point(
-        x = x + vector.x,
-        y = y + vector.y,
-    )
+    val x: Double
+        get() = p.x
+
+    val y: Double
+        get() = p.y
 
     /**
      * @param other - point to find the direction to, must be a different point
@@ -29,9 +30,15 @@ data class Point(
     ): Direction {
         if (this == other) throw IllegalArgumentException("Points must be different")
         return Direction(
-            representativeVector = other - this,
+            d = other.p - this.p,
         )
     }
+
+    fun moveByTranslation(
+        translation: Translation,
+    ): Point = Point(
+        p = p + translation.t,
+    )
 
     /**
      * @param direction - direction to move in, must not be a zero vector
@@ -41,9 +48,11 @@ data class Point(
         direction: Direction,
         distance: Double,
     ): Point {
-        val v = direction.representativeVector
+        val v = direction.d
         val d = v.length
-        return this + v.scale(distance / d)
+        return Point(
+            p = p + v.scale(distance / d),
+        )
     }
 
     /**

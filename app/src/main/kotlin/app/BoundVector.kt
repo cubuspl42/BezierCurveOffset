@@ -26,9 +26,9 @@ data class BoundVector(
      */
     val containingLineOrNull: Line?
         get() = vector.directionOrNull?.let {
-            Line(
-                representativePoint = point,
-                representativeDirection = it,
+            Line.inDirection(
+                point = point,
+                direction = it,
             )
         }
 
