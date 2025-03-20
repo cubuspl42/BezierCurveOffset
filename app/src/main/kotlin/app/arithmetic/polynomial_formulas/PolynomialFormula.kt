@@ -1,5 +1,7 @@
 package app.arithmetic.polynomial_formulas
 
-sealed class PolynomialFormula {
+import app.arithmetic.bezier_formulas.RealFunction
+
+sealed class PolynomialFormula : RealFunction<Double>() {
     abstract fun findRoots(): Set<Double>
 }

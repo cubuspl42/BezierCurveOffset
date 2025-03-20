@@ -32,8 +32,6 @@ data class CubicBezierFormula<V>(
     }
 }
 
-fun CubicBezierFormula<Double>.toPolynomialFormulaCubic(): PolynomialFormula = throw NotImplementedError()
-
 val CubicBezierFormula<Vector>.componentXCubic
     get() = CubicBezierFormula(
         vectorSpace = VectorSpace.DoubleVectorSpace,

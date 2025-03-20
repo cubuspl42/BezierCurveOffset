@@ -18,6 +18,8 @@ class LinearFormula private constructor(
         assert(a != 0.0)
     }
 
+    override fun apply(x: Double): Double = a * x + b
+
     override fun findRoots(): Set<Double> = setOf(findRoot())
 
     fun findRoot(): Double = -b / a

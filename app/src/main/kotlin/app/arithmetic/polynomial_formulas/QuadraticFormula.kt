@@ -22,19 +22,19 @@ class QuadraticFormula private constructor(
         assert(a != 0.0)
     }
 
+    override fun apply(x: Double): Double = a * x * x + b * x + c
+
     override fun findRoots(): Set<Double> {
         val discriminant: Double = b * b - 4 * a * c
 
-        val hasRealRoots: Boolean = discriminant >= 0
-
-        fun findRoot(
+        fun buildRoot(
             sign: Double,
-        ): Double = (sign * b + sqrt(discriminant)) / (2 * a)
+        ): Double = (-b + sign * sqrt(discriminant)) / (2 * a)
 
         return when {
-            hasRealRoots -> setOf(
-                findRoot(sign = -1.0),
-                findRoot(sign = 1.0),
+            discriminant >= 0 -> setOf(
+                buildRoot(sign = -1.0),
+                buildRoot(sign = 1.0),
             )
 
             else -> emptySet()

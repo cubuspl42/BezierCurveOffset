@@ -11,5 +11,7 @@ class ConstantFormula private constructor(
         )
     }
 
+    override fun apply(x: Double): Double = a
+
     override fun findRoots(): Set<Double> = emptySet()
 }

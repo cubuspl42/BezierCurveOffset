@@ -51,6 +51,12 @@ data class CubicBezierCurve(
         )
     }
 
+    fun translate(
+        translationVector: Vector,
+    ): CubicBezierCurve = mapPointWise {
+        it + translationVector
+    }
+
     fun moveByOffset(
         offset: Double,
     ): CubicBezierCurve {
