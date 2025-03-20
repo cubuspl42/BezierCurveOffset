@@ -1,6 +1,8 @@
 package app
 
+import app.algebra.bezier_formulas.RealFunction
 import app.geometry.Point
+import app.geometry.bezier_curves.CubicBezierCurve
 import org.ujmp.core.Matrix
 import kotlin.math.pow
 import kotlin.math.sqrt
@@ -54,82 +56,52 @@ object BezierFit {
     private fun U(points: ArrayList<Point>): Matrix {
         val npls = normalizedPathLengths(points)
 
-        val U: Matrix = Matrix.Factory.fill(0.0, npls.size.toLong(), 4)
-        for (i in npls.indices) {
-            U.setAsDouble(npls[i].pow(3.0), i.toLong(), 0)
-            U.setAsDouble(npls[i].pow(2.0), i.toLong(), 1)
-            U.setAsDouble(npls[i].pow(1.0), i.toLong(), 2)
-            U.setAsDouble(npls[i].pow(0.0), i.toLong(), 3)
+        return Matrix.Factory.fill(0.0, npls.size.toLong(), 4).apply {
+            npls.forEachIndexed { i, nplI ->
+                setAsDouble(nplI.pow(3.0), i.toLong(), 0)
+                setAsDouble(nplI.pow(2.0), i.toLong(), 1)
+                setAsDouble(nplI.pow(1.0), i.toLong(), 2)
+                setAsDouble(nplI.pow(0.0), i.toLong(), 3)
+            }
         }
-
-        return U
     }
 
-    private fun M(): Matrix {
-        val M: Matrix = Matrix.Factory.fill(0.0, 4, 4)
-        M.setAsDouble(-1.0, 0, 0)
-        M.setAsDouble(3.0, 0, 1)
-        M.setAsDouble(-3.0, 0, 2)
-        M.setAsDouble(1.0, 0, 3)
-        M.setAsDouble(3.0, 1, 0)
-        M.setAsDouble(-6.0, 1, 1)
-        M.setAsDouble(3.0, 1, 2)
-        M.setAsDouble(0.0, 1, 3)
-        M.setAsDouble(-3.0, 2, 0)
-        M.setAsDouble(3.0, 2, 1)
-        M.setAsDouble(0.0, 2, 2)
-        M.setAsDouble(0.0, 2, 3)
-        M.setAsDouble(1.0, 3, 0)
-        M.setAsDouble(0.0, 3, 1)
-        M.setAsDouble(0.0, 3, 2)
-        M.setAsDouble(0.0, 3, 3)
-        return M
-    }
-
-    /**
-     * Computes b(t).
-     */
-    private fun pointOnCurve(t: Double, v1: Point, v2: Point, v3: Point, v4: Point): Point {
-        val p: Point
-
-        val x1: Double = v1.x
-        val x2: Double = v2.x
-        val x3: Double = v3.x
-        val x4: Double = v4.x
-
-        val y1: Double = v1.y
-        val y2: Double = v2.y
-        val y3: Double = v3.y
-        val y4: Double = v4.y
-
-        val xt =
-            (x1 * (1 - t).pow(3.0) + 3 * x2 * t * (1 - t).pow(2.0) + 3 * x3 * t.pow(2.0) * (1 - t) + x4 * t.pow(3.0))
-
-        val yt =
-            (y1 * (1 - t).pow(3.0) + 3 * y2 * t * (1 - t).pow(2.0) + 3 * y3 * t.pow(2.0) * (1 - t) + y4 * t.pow(3.0))
-
-        p = Point(xt, yt)
-
-        return p
+    private fun M(): Matrix = Matrix.Factory.fill(0.0, 4, 4).apply {
+        setAsDouble(-1.0, 0, 0)
+        setAsDouble(3.0, 0, 1)
+        setAsDouble(-3.0, 0, 2)
+        setAsDouble(1.0, 0, 3)
+        setAsDouble(3.0, 1, 0)
+        setAsDouble(-6.0, 1, 1)
+        setAsDouble(3.0, 1, 2)
+        setAsDouble(0.0, 1, 3)
+        setAsDouble(-3.0, 2, 0)
+        setAsDouble(3.0, 2, 1)
+        setAsDouble(0.0, 2, 2)
+        setAsDouble(0.0, 2, 3)
+        setAsDouble(1.0, 3, 0)
+        setAsDouble(0.0, 3, 1)
+        setAsDouble(0.0, 3, 2)
+        setAsDouble(0.0, 3, 3)
     }
 
     /** Computes the percentage of path length at each point. Can directly be used as t-indices into the bezier curve.  */
     private fun normalizedPathLengths(points: ArrayList<Point>): DoubleArray {
-        val pathLength = DoubleArray(points.size)
+        val initialDistance = 0.0
 
-        pathLength[0] = 0.0
+        val pathLength = points.zipWithNext().scan(
+            initial = initialDistance,
+        ) { accDistance, pointPair ->
+            val (point, nextPoint) = pointPair
 
-        for (i in 1..<points.size) {
-            val p1: Point = points[i]
-            val p2: Point = points[i - 1]
-            val distance = sqrt((p1.x - p2.x).pow(2.0) + (p1.y - p2.y).pow(2.0))
-            pathLength[i] += pathLength[i - 1] + distance
+            accDistance + point.distanceTo(nextPoint)
         }
 
-        val zpl = DoubleArray(pathLength.size)
-        for (i in zpl.indices) zpl[i] = pathLength[i] / pathLength[pathLength.size - 1]
+        val totalLength = pathLength.last()
 
-        return zpl
+        val relativePathLength = pathLength.map { it / totalLength }
+
+        return relativePathLength.toDoubleArray()
     }
 
     @JvmStatic
@@ -147,6 +119,13 @@ object BezierFit {
     private fun bestFitTest(points: ArrayList<Point>) {
         val controlPoints = BezierFit.bestFit(points)
 
+        val bezierCurve = CubicBezierCurve(
+            start = controlPoints[0]!!,
+            control0 = controlPoints[1]!!,
+            control1 = controlPoints[2]!!,
+            end = controlPoints[3]!!,
+        )
+
         print("X:")
         for (p in points) print(p.x.toString() + ",")
         println()
@@ -155,38 +134,22 @@ object BezierFit {
         for (p in points) print(p.y.toString() + ",")
         println()
 
+        val samples = bezierCurve.basisFormula.sample(
+            strategy = RealFunction.SamplingStrategy(
+                x0 = 0.0,
+                x1 = 1.0,
+                xInterval = 0.01,
+            ),
+        )
+
         print("Bx:")
-        run {
-            var ti = 0.0
-            while (ti <= 1) {
-                print(
-                    pointOnCurve(
-                        ti,
-                        controlPoints[0]!!,
-                        controlPoints[1]!!,
-                        controlPoints[2]!!,
-                        controlPoints[3]!!,
-                    ).x.toString() + ","
-                )
-                ti += 0.01
-            }
-        }
+        samples.forEach { print("${it.value.x},") }
+
         println()
 
         print("By:")
-        var ti = 0.0
-        while (ti <= 1) {
-            print(
-                pointOnCurve(
-                    ti,
-                    controlPoints[0]!!,
-                    controlPoints[1]!!,
-                    controlPoints[2]!!,
-                    controlPoints[3]!!,
-                ).y.toString() + ","
-            )
-            ti += 0.01
-        }
+
+        samples.forEach { print("${it.value.y},") }
         println()
 
         print("Cx:")

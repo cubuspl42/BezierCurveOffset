@@ -90,10 +90,16 @@ data class Vector(
         get() = Vector(-y, x)
 
     /**
+     * The length^2 of this vector
+     */
+    val lengthSquared: Double
+        get() = x * x + y * y
+
+    /**
      * The length of this vector
      */
     val length: Double
-        get() = sqrt(x * x + y * y)
+        get() = sqrt(lengthSquared)
 
     fun toPoint(): Point = Point(p = this)
 }

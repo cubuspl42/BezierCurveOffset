@@ -30,6 +30,10 @@ data class Point(
     val y: Double
         get() = p.y
 
+    fun distanceTo(
+        other: Point,
+    ): Double = (other.p - this.p).length
+
     /**
      * @param other - point to find the direction to, must be a different point
      */
