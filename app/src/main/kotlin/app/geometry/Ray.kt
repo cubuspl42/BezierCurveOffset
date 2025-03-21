@@ -39,14 +39,17 @@ data class Ray(
         )
     }
 
-    val containingLine: Line
-        get() = Line(
-            s = s,
-            d = d,
-        )
+    val startingPoint: Point
+        get() = s.toPoint()
 
     val direction: Direction
         get() = Direction(
+            d = d,
+        )
+
+    val containingLine: Line
+        get() = Line(
+            s = s,
             d = d,
         )
 

@@ -5,41 +5,11 @@ import app.geometry.Point
 import app.geometry.bezier_curves.CubicBezierCurve
 import org.ujmp.core.Matrix
 import org.ujmp.core.matrix.factory.DefaultDenseMatrixFactory
-import kotlin.math.pow
-
-fun Matrix.invSafe(): Matrix = when {
-    det() == 0.0 -> invSPD()
-    else -> inv()
-}
-
-fun <T> DefaultDenseMatrixFactory.fillFrom(
-    collection: Collection<T>,
-    rowWidth: Int,
-    buildRow: (T) -> DoubleArray,
-): Matrix = this.fill(0.0, collection.size.toLong(), rowWidth.toLong()).apply {
-    collection.forEachIndexed { i, v ->
-        val row = buildRow(v)
-
-        if (row.size != rowWidth) {
-            throw IllegalArgumentException("Row width must be $rowWidth, but was ${row.size}")
-        }
-
-        row.forEachIndexed { j, value ->
-            setAsDouble(value, i.toLong(), j.toLong())
-        }
-    }
-}
-
-fun <T> DefaultDenseMatrixFactory.fillColumnFrom(
-    collection: Collection<T>,
-    buildValue: (T) -> Double,
-): Matrix = fillFrom(
-    collection = collection,
-    rowWidth = 1,
-    buildRow = { v -> doubleArrayOf(buildValue(v)) },
-)
 
 object BezierFit {
+    /**
+     * The characteristic matrix of the cubic Bézier curve.
+     */
     private val mMatrix: Matrix = Matrix.Factory.fill(0.0, 4, 4).apply {
         setAsDouble(-1.0, 0, 0)
         setAsDouble(3.0, 0, 1)
@@ -67,32 +37,84 @@ object BezierFit {
     fun bestFit(
         points: List<Point>,
     ): CubicBezierCurve {
-        val uVector = buildUVector(points = points)
-        val uTVector = uVector.transpose()
+        // T
+        val tVector = buildTVector(points = points)
 
+        // T^t
+        val tTVector = tVector.transpose()
+
+        // X (H.x)
         val xVector = buildXVector(points = points)
+
+        // X (H.y)
         val yVector = buildYVector(points = points)
 
-        val aMatrix = uTVector.mtimes(uVector)
+        // T^t * T
+        val aMatrix = tTVector.mtimes(tVector)
+
+        // (T^t * T)^-1
         val bMatrix = aMatrix.invSafe()
 
+        // (M^-1) * (T^t * T)^-1
         val cMatrix = mInvMatrix.mtimes(bMatrix)
-        val dMatrix = cMatrix.mtimes(uTVector)
-        val eMatrix = dMatrix.mtimes(xVector)
-        val fMatrix = dMatrix.mtimes(yVector)
 
-        fun getControlPoint(i: Long): Point {
-            val x = eMatrix.getAsDouble(i, 0)
-            val y = fMatrix.getAsDouble(i, 0)
+        // (M^-1) * (T^t * T)^-1 * T^t
+        val dMatrix = cMatrix.mtimes(tTVector)
+
+        // P_x (weight X)
+        val weightXVector = dMatrix.mtimes(xVector)
+        // P_y (weight Y)
+        val weightYVector = dMatrix.mtimes(yVector)
+
+        // T * M
+        val eMatrix = tVector.mtimes(mMatrix)
+
+        fun calculateFitError(
+            /**
+             * H component vector (X or Y)
+             */
+            hcVector: Matrix,
+            /**
+             * Weight vector for the given axis (P_x or P_y respectively)
+             */
+            weightVector: Matrix,
+        ): Double {
+            // T * M * P_x|y
+            val fMatrix = eMatrix.mtimes(weightVector)
+
+            // x|y - T * M * P_x|y
+            val gMatrix = hcVector.minus(fMatrix)
+
+            // (x|y - T * M * P_x|y)^t
+            val hMatrix = gMatrix.transpose()
+
+            val errorMatrix = hMatrix.mtimes(gMatrix)
+
+            return errorMatrix.single()
+        }
+
+        val errorX = calculateFitError(
+            hcVector = xVector,
+            weightVector = weightXVector,
+        )
+
+        val errorY = calculateFitError(
+            hcVector = yVector,
+            weightVector = weightYVector,
+        )
+
+        fun getWeight(i: Long): Point {
+            val x = weightXVector.getAsDouble(i, 0)
+            val y = weightYVector.getAsDouble(i, 0)
 
             return Point(x, y)
         }
 
         return CubicBezierCurve(
-            start = getControlPoint(0),
-            control0 = getControlPoint(1),
-            control1 = getControlPoint(2),
-            end = getControlPoint(3),
+            start = getWeight(0),
+            control0 = getWeight(1),
+            control1 = getWeight(2),
+            end = getWeight(3),
         )
     }
 
@@ -108,16 +130,16 @@ object BezierFit {
         collection = points,
     ) { it.x }
 
-    private fun buildUVector(
+    private fun buildTVector(
         points: List<Point>,
     ): Matrix = Matrix.Factory.fillFrom(
         collection = buildNormalizedPathLengthsVector(points = points),
         rowWidth = 4,
-    ) { n ->
+    ) { t ->
         doubleArrayOf(
-            n * n * n,
-            n * n,
-            n,
+            t * t * t,
+            t * t,
+            t,
             1.0,
         )
     }
@@ -182,4 +204,44 @@ object BezierFit {
 
         println(bezierCurve)
     }
+}
+
+private fun Matrix.invSafe(): Matrix = when {
+    det() == 0.0 -> invSPD()
+    else -> inv()
+}
+
+private fun <T> DefaultDenseMatrixFactory.fillFrom(
+    collection: Collection<T>,
+    rowWidth: Int,
+    buildRow: (T) -> DoubleArray,
+): Matrix = this.fill(0.0, collection.size.toLong(), rowWidth.toLong()).apply {
+    collection.forEachIndexed { i, v ->
+        val row = buildRow(v)
+
+        if (row.size != rowWidth) {
+            throw IllegalArgumentException("Row width must be $rowWidth, but was ${row.size}")
+        }
+
+        row.forEachIndexed { j, value ->
+            setAsDouble(value, i.toLong(), j.toLong())
+        }
+    }
+}
+
+private fun <T> DefaultDenseMatrixFactory.fillColumnFrom(
+    collection: Collection<T>,
+    buildValue: (T) -> Double,
+): Matrix = fillFrom(
+    collection = collection,
+    rowWidth = 1,
+    buildRow = { v -> doubleArrayOf(buildValue(v)) },
+)
+
+private fun Matrix.single(): Double {
+    if (rowCount != 1L || columnCount != 1L) {
+        throw IllegalArgumentException("Matrix must be 1x1, but was ${rowCount}x${columnCount}")
+    }
+
+    return getAsDouble(0, 0)
 }

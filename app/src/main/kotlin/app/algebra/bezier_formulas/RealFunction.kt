@@ -11,6 +11,16 @@ abstract class RealFunction<V> {
         val x1: Double,
         val xInterval: Double,
     ) {
+        companion object {
+            fun withSampleCount(
+                sampleCount: Int,
+            ): SamplingStrategy = SamplingStrategy(
+                x0 = 0.0,
+                x1 = 1.0,
+                xInterval = 1.0 / sampleCount,
+            )
+        }
+
         init {
             assert(x1 >= x0)
         }

@@ -1,14 +1,12 @@
 package app.geometry.bezier_curves
 
+import app.BezierFit
 import app.algebra.Vector
 import app.algebra.bezier_formulas.BezierFormula
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.algebra.bezier_formulas.findCriticalPoints
 import app.algebra.bezier_formulas.toPath2D
-import app.geometry.BoundingBox
-import app.geometry.Direction
-import app.geometry.Point
-import app.geometry.Ray
+import app.geometry.*
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
@@ -94,6 +92,31 @@ abstract class BezierCurve {
         )
     }
 
+    fun findOffsetPolyline(
+        offset: Double,
+    ): Polyline {
+        val sampleCount = 6
+
+        val points = normalRayFunction.sampleValues(
+            strategy = SamplingStrategy.withSampleCount(sampleCount = sampleCount),
+        ).map { normalRay ->
+            normalRay.startingPoint.moveInDirection(
+                direction = normalRay.direction,
+                distance = offset,
+            )
+        }
+
+        return Polyline(
+            points = points,
+        )
+    }
+
+    fun findOffsetCurve(offset: Double): CubicBezierCurve {
+        val offsetPolyline = findOffsetPolyline(offset = offset)
+        val offsetCurve = BezierFit.bestFit(points = offsetPolyline.points)
+        return offsetCurve
+    }
+
     abstract val start: Point
     abstract val end: Point
 
@@ -101,8 +124,8 @@ abstract class BezierCurve {
 
     fun draw(
         graphics2D: Graphics2D,
-        innerColor: Color,
-        outerColor: Color,
+        innerColor: Color = Color.BLACK,
+        outerColor: Color = Color.LIGHT_GRAY,
         outerSamplingStrategy: SamplingStrategy,
     ) {
         val outerPath = basisFormula.toPath2D(
@@ -157,12 +180,12 @@ abstract class BezierCurve {
             color = Color.GREEN,
         )
 
-        val boundingBox = findBoundingBox()
-
-        graphics2D.paint = null
-        graphics2D.color = Color.BLUE
-        graphics2D.stroke = dashedStroke
-        graphics2D.draw(boundingBox.toRect2D())
+//        val boundingBox = findBoundingBox()
+//
+//        graphics2D.paint = null
+//        graphics2D.color = Color.BLUE
+//        graphics2D.stroke = dashedStroke
+//        graphics2D.draw(boundingBox.toRect2D())
     }
 
     abstract fun toPath2D(): Path2D

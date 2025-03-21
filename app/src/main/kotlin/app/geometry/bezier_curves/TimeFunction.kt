@@ -1,13 +1,14 @@
 package app.geometry.bezier_curves
 
 import app.algebra.bezier_formulas.BezierFormula
+import app.algebra.bezier_formulas.RealFunction
 
 /**
  * Time function in range [0, 1].
  *
  * @param R - type of the result
  */
-abstract class TimeFunction<R> {
+abstract class TimeFunction<R> : RealFunction<R>() {
     companion object {
         fun <R> wrap(
             bezierFormula: BezierFormula<R>,
@@ -25,6 +26,8 @@ abstract class TimeFunction<R> {
             ): R = transform(functionA.evaluate(t), functionB.evaluate(t))
         }
     }
+
+    final override fun apply(x: Double): R = evaluate(t = x)
 
     fun evaluate(t: Double): R {
         if (t < 0.0 || t > 1.0) {
