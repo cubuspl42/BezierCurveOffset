@@ -28,7 +28,7 @@ data class CubicBezierCurve(
         end = transform(end),
     )
 
-    fun moveAwayPointWise(
+    override fun moveAwayPointWise(
         origin: Point,
         distance: Double,
     ): CubicBezierCurve = mapPointWise {
@@ -38,7 +38,7 @@ data class CubicBezierCurve(
         )
     }
 
-    fun moveInDirectionPointWise(
+    override fun moveInDirectionPointWise(
         direction: Direction,
         distance: Double,
     ): CubicBezierCurve = mapPointWise {
@@ -52,27 +52,6 @@ data class CubicBezierCurve(
         translation: Translation,
     ): CubicBezierCurve = mapPointWise {
         it.translate(translation = translation)
-    }
-
-    fun moveByOffset(
-        offset: Double,
-    ): CubicBezierCurve {
-        val startNormalRay = normalRayFunction.startValue
-        val startNormalLine = startNormalRay.containingLine
-
-        val endNormalRay = normalRayFunction.endValue
-        val endNormalLine = endNormalRay.containingLine
-
-        val normalIntersectionPoint = startNormalLine.intersect(endNormalLine) ?: return moveInDirectionPointWise(
-            // If there's no intersection point, the start and end vectors are parallel. We could choose either.
-            direction = startNormalRay.direction,
-            distance = offset,
-        )
-
-        return moveAwayPointWise(
-            origin = normalIntersectionPoint,
-            distance = offset,
-        )
     }
 
     override fun toPath2D(): Path2D.Double = Path2D.Double().apply {

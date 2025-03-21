@@ -37,10 +37,18 @@ abstract class BezierCurve {
         }
     }
 
-    val pathFunction: TimeFunction<Point> by lazy {
+    val curveFunction: TimeFunction<Point> by lazy {
         TimeFunction.wrap(basisFormula).map { it.toPoint() }
     }
 
+    fun findOffsetCurveFunction(
+        offset: Double,
+    ): TimeFunction<Point> = normalRayFunction.map { normalRay ->
+        normalRay.startingPoint.moveInDirection(
+            direction = normalRay.direction,
+            distance = offset,
+        )
+    }
 
     val tangentFunction: TimeFunction<Direction> by lazy {
         TimeFunction.wrap(basisFormula.findDerivative()).map {
@@ -51,7 +59,7 @@ abstract class BezierCurve {
 
     val tangentRayFunction: TimeFunction<Ray> by lazy {
         bindRay(
-            pointFunction = pathFunction,
+            pointFunction = curveFunction,
             vectorFunction = tangentFunction,
         )
     }
@@ -62,23 +70,23 @@ abstract class BezierCurve {
 
     val normalRayFunction by lazy {
         bindRay(
-            pointFunction = pathFunction,
+            pointFunction = curveFunction,
             vectorFunction = normalFunction,
         )
     }
 
     fun findBoundingBox(): BoundingBox {
-        val startPoint = pathFunction.startValue
-        val endPoint = pathFunction.endValue
+        val startPoint = curveFunction.startValue
+        val endPoint = curveFunction.endValue
 
         val inRangeCriticalPointSet = basisFormula.findCriticalPoints().inRange()
 
-        val criticalXValues = inRangeCriticalPointSet.criticalPointsX.map { t -> pathFunction.evaluate(t).x }
+        val criticalXValues = inRangeCriticalPointSet.criticalPointsX.map { t -> curveFunction.evaluate(t).x }
         val potentialXExtrema = criticalXValues + startPoint.x + endPoint.x
         val xMin = potentialXExtrema.min()
         val xMax = potentialXExtrema.max()
 
-        val criticalYValues = inRangeCriticalPointSet.criticalPointsY.map { t -> pathFunction.evaluate(t).y }
+        val criticalYValues = inRangeCriticalPointSet.criticalPointsY.map { t -> curveFunction.evaluate(t).y }
         val potentialYExtrema = criticalYValues + startPoint.y + endPoint.y
         val yMin = potentialYExtrema.min()
         val yMax = potentialYExtrema.max()
@@ -93,32 +101,42 @@ abstract class BezierCurve {
 
     fun findOffsetPolyline(
         offset: Double,
-    ): Polyline {
-        val sampleCount = 6
+    ): TimedPolyline {
+        val offsetCurveFunction = findOffsetCurveFunction(offset = offset)
 
-        val points = normalRayFunction.sampleValues(
-            strategy = SamplingStrategy.withSampleCount(sampleCount = sampleCount),
-        ).map { normalRay ->
-            normalRay.startingPoint.moveInDirection(
-                direction = normalRay.direction,
-                distance = offset,
-            )
-        }
-
-        return Polyline(
-            points = points,
+        return TimedPolyline.sample(
+            curveFunction = offsetCurveFunction,
+            sampleCount = 12,
         )
     }
 
-    fun findOffsetCurve(offset: Double): CubicBezierCurve {
-        val offsetPolyline = findOffsetPolyline(offset = offset)
-        return offsetPolyline.timeNaively().bestFitCurve()
+    fun findOffsetCurveNormal(
+        offset: Double,
+    ): BezierCurve {
+        val startNormalRay = normalRayFunction.startValue
+        val startNormalLine = startNormalRay.containingLine
+
+        val endNormalRay = normalRayFunction.endValue
+        val endNormalLine = endNormalRay.containingLine
+
+        val normalIntersectionPoint = startNormalLine.intersect(endNormalLine) ?: return moveInDirectionPointWise(
+            // If there's no intersection point, the start and end vectors are parallel. We could choose either.
+            direction = startNormalRay.direction,
+            distance = offset,
+        )
+
+        return moveAwayPointWise(
+            origin = normalIntersectionPoint,
+            distance = offset,
+        )
     }
 
-    abstract val start: Point
-    abstract val end: Point
-
-    abstract val basisFormula: BezierFormula<Vector>
+    fun findOffsetCurveBestFit(
+        offset: Double,
+    ): CubicBezierCurve {
+        val offsetPolyline = findOffsetPolyline(offset = offset)
+        return offsetPolyline.bestFitCurve()
+    }
 
     fun draw(
         graphics2D: Graphics2D,
@@ -177,14 +195,22 @@ abstract class BezierCurve {
             criticalPoints = criticalPointSet.criticalPointsY,
             color = Color.GREEN,
         )
-
-//        val boundingBox = findBoundingBox()
-//
-//        graphics2D.paint = null
-//        graphics2D.color = Color.BLUE
-//        graphics2D.stroke = dashedStroke
-//        graphics2D.draw(boundingBox.toRect2D())
     }
+
+    abstract val start: Point
+    abstract val end: Point
+
+    abstract val basisFormula: BezierFormula<Vector>
+
+    abstract fun moveAwayPointWise(
+        origin: Point,
+        distance: Double,
+    ): BezierCurve
+
+    abstract fun moveInDirectionPointWise(
+        direction: Direction,
+        distance: Double,
+    ): BezierCurve
 
     abstract fun toPath2D(): Path2D
 }

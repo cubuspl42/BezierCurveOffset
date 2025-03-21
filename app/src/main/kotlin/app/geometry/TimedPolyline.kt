@@ -1,15 +1,40 @@
 package app.geometry
 
 import app.algebra.bezier_formulas.CubicBezierFormula
+import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.fillColumnFrom
 import app.fillFrom
 import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.TimeFunction
 import app.invSafe
 import org.ujmp.core.Matrix
 
 data class TimedPolyline(
     val timedPoints: List<TimedPoint>,
 ) {
+    companion object {
+        fun sample(
+            curveFunction: TimeFunction<Point>,
+            sampleCount: Int,
+        ): TimedPolyline {
+            val timedPoints = curveFunction.sample(
+                strategy = SamplingStrategy.withSampleCount(sampleCount = sampleCount),
+            ).map { pointSample ->
+                val t = pointSample.x
+                val point = pointSample.value
+
+                TimedPolyline.TimedPoint(
+                    t = t,
+                    point = point,
+                )
+            }
+
+            return TimedPolyline(
+                timedPoints = timedPoints,
+            )
+        }
+    }
+
     data class TimedPoint(
         val t: Double,
         val point: Point,
@@ -73,7 +98,7 @@ data class TimedPolyline(
     ): Double = timedPoints.sumOf { timedPoint ->
         val t = timedPoint.t
         val point = timedPoint.point
-        val curvePoint = bezierCurve.pathFunction.evaluate(t = t)
+        val curvePoint = bezierCurve.curveFunction.evaluate(t = t)
 
         curvePoint.distanceSquaredTo(point)
     }

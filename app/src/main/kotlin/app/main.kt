@@ -29,10 +29,11 @@ fun main(args: Array<String>) {
         ),
     )
 
-    val offset = 10.0
+    val offset = 20.0
     val offsetPolyline = baseCurve.findOffsetPolyline(offset = offset)
 
-    val offsetCurve = baseCurve.findOffsetCurve(offset = offset)
+    val offsetCurveNormal = baseCurve.findOffsetCurveNormal(offset = offset)
+    val offsetCurveBestFit = baseCurve.findOffsetCurveBestFit(offset = offset)
 
     val width = 1024
     val height = 768
@@ -50,13 +51,20 @@ fun main(args: Array<String>) {
 
     svgGraphics2D.color = Color.RED
     svgGraphics2D.draw(
-        offsetPolyline.toPath2D(),
+        offsetPolyline.toPolyline().toPath2D(),
     )
 
-    offsetCurve.draw(
+    offsetCurveBestFit.draw(
         graphics2D = svgGraphics2D,
+        innerColor = Color.RED,
         outerSamplingStrategy = outerSamplingStrategy,
     )
+
+//    offsetCurveNormal.draw(
+//        graphics2D = svgGraphics2D,
+//        innerColor = Color.BLUE,
+//        outerSamplingStrategy = outerSamplingStrategy,
+//    )
 
     val file = File("Bezier.svg")
     SVGUtils.writeToSVG(file, svgGraphics2D.svgElement)
