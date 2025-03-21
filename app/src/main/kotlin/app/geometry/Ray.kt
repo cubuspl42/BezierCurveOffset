@@ -16,7 +16,7 @@ data class Ray(
     val d: Vector,
 ) {
     init {
-        assert(d != Vector.zero)
+        require(d != Vector.zero)
     }
 
     private fun evaluate(

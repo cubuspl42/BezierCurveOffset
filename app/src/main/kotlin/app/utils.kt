@@ -1,4 +1,8 @@
+@file:OptIn(ExperimentalContracts::class)
+
 package app
+
+import kotlin.contracts.ExperimentalContracts
 
 fun <T> assertEqual(a: T, b: T): T {
     assert(a == b)
@@ -31,4 +35,46 @@ infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
         if (next > endInclusive) null else next
     }
     return sequence.asIterable()
+}
+
+fun <T> requireEqual(a: T, b: T): T {
+    if (a != b) {
+        throw IllegalArgumentException("Values were supposed to be equal: $a, $b")
+    }
+    return a
+}
+
+data class PartitioningResult<T>(
+    val leftPart: List<T>,
+    val medianValue: T,
+    val rightPart: List<T>,
+)
+
+fun <T : Comparable<T>> Iterable<T>.isSorted(): Boolean = zipWithNext { a, b -> a <= b }.all { it }
+
+fun <T : Comparable<T>> List<T>.partitionSorted(): PartitioningResult<T>? {
+    assert(isSorted())
+
+    if (isEmpty()) return null
+
+    val medianIndex = size / 2
+    val medianValue = this[medianIndex]
+
+    return PartitioningResult(
+        leftPart = subList(0, medianIndex),
+        medianValue = medianValue,
+        rightPart = subList(medianIndex + 1, size),
+    )
+}
+
+data class Uncons<T>(
+    val head: T,
+    val tail: List<T>,
+)
+
+fun <T> List<T>.uncons(): Uncons<T>? = firstOrNull()?.let { head ->
+    Uncons(
+        head = head,
+        tail = drop(1),
+    )
 }

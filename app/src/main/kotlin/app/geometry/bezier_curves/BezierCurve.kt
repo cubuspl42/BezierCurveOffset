@@ -11,6 +11,12 @@ import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
 abstract class BezierCurve {
+    abstract class OffsetCurveBestFitResult(
+        val offsetCurve: CubicBezierCurve,
+    ) {
+        abstract fun calculateError(): Double
+    }
+
     companion object {
         private val dashedStroke: BasicStroke = BasicStroke(
             1.5f,
@@ -97,7 +103,7 @@ abstract class BezierCurve {
         )
     }
 
-    fun findOffsetPolyline(
+    fun findOffsetTimedSeries(
         offset: Double,
     ): TimedPointSeries {
         val offsetCurveFunction = findOffsetCurveFunction(offset = offset)
@@ -131,9 +137,17 @@ abstract class BezierCurve {
 
     fun findOffsetCurveBestFit(
         offset: Double,
-    ): CubicBezierCurve {
-        val offsetPolyline = findOffsetPolyline(offset = offset)
-        return offsetPolyline.bestFitCurve()
+    ): OffsetCurveBestFitResult {
+        val offsetTimedSeries = findOffsetTimedSeries(offset = offset)
+        val offsetCurve = offsetTimedSeries.bestFitCurve()
+
+        return object : OffsetCurveBestFitResult(
+            offsetCurve = offsetCurve,
+        ) {
+            override fun calculateError(): Double {
+                return offsetTimedSeries.calculateFitError(offsetCurve)
+            }
+        }
     }
 
     fun draw(
@@ -210,6 +224,8 @@ abstract class BezierCurve {
     abstract val start: Point
     abstract val end: Point
 
+    abstract fun isSingularity(): Boolean
+
     abstract val basisFormula: BezierFormula<Vector>
 
     abstract fun moveAwayPointWise(
@@ -224,7 +240,7 @@ abstract class BezierCurve {
 
     abstract fun split(
         t: Double,
-    ): Pair<BezierCurve, BezierCurve>
+    ): Pair<BezierCurve, BezierCurve?>
 
     abstract fun toPath2D(): Path2D
 }

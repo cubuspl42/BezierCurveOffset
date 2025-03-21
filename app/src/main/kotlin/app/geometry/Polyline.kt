@@ -7,7 +7,7 @@ data class Polyline(
     val points: List<Point>,
 ) {
     init {
-        assert(points.size >= 2)
+        require(points.size >= 2)
     }
 
     fun toPath2D(): Path2D = Path2D.Double().apply {

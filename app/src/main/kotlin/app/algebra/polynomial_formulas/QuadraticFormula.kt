@@ -19,7 +19,7 @@ class QuadraticFormula private constructor(
     }
 
     init {
-        assert(a != 0.0)
+        require(a != 0.0)
     }
 
     override fun apply(x: Double): Double = a * x * x + b * x + c

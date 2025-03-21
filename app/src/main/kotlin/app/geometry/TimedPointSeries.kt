@@ -44,7 +44,7 @@ data class TimedPointSeries(
     )
 
     init {
-        assert(timedPoints.size >= 2)
+        require(timedPoints.size >= 2)
     }
 
     fun draw(

@@ -1,9 +1,11 @@
 package app
 
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
+import app.algebra.bezier_formulas.findAllCriticalPoints
 import app.geometry.Point
 import app.geometry.Translation
 import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.drawSpline
 import org.jfree.svg.SVGGraphics2D
 import org.jfree.svg.SVGUtils
 import java.awt.BasicStroke
@@ -30,12 +32,21 @@ fun main(args: Array<String>) {
     )
 
     val offset = 20.0
-    val offsetPointSeries = baseCurve.findOffsetPolyline(offset = offset)
+    val offsetPointSeries = baseCurve.findOffsetTimedSeries(offset = offset)
 
     val offsetCurveNormal = baseCurve.findOffsetCurveNormal(offset = offset)
-    val offsetCurveBestFit = baseCurve.findOffsetCurveBestFit(offset = offset)
+    val offsetCurveBestFit = baseCurve.findOffsetCurveBestFit(offset = offset).offsetCurve
+    val offsetSplineBestFit = baseCurve.findOffsetSplineBestFit(offset = offset)
 
-    val (splitCurveA, splitCurveB) = baseCurve.split(t = 0.4)
+//    val criticalPoints = baseCurve.basisFormula.findAllCriticalPoints().criticalPoints
+    val criticalPoints = setOf(
+        0.3734586167618398,
+        0.854097765727581,
+//        0.10750490539094985,
+    )
+    println(criticalPoints)
+
+//    val splitSpline = baseCurve.splitAtCriticalPoints()
 
     val width = 1024
     val height = 768
@@ -49,32 +60,26 @@ fun main(args: Array<String>) {
         outerSamplingStrategy = outerSamplingStrategy,
     )
 
-    splitCurveA.draw(
-        graphics2D = svgGraphics2D,
-        innerColor = Color.MAGENTA,
-        outerColor = Color.LIGHT_GRAY,
-        outerSamplingStrategy = outerSamplingStrategy,
-    )
-
-    splitCurveB.draw(
-        graphics2D = svgGraphics2D,
-        innerColor = Color.CYAN,
-        outerColor = Color.LIGHT_GRAY,
-        outerSamplingStrategy = outerSamplingStrategy,
-    )
+//    splitSpline.drawSpline(
+//        graphics2D = svgGraphics2D,
+//    )
 
     svgGraphics2D.stroke = BasicStroke(1.0f)
 
-    offsetPointSeries.draw(
+//    offsetPointSeries.draw(
+//        graphics2D = svgGraphics2D,
+//        color = Color.ORANGE,
+//    )
+
+    offsetSplineBestFit.drawSpline(
         graphics2D = svgGraphics2D,
-        color = Color.ORANGE,
     )
 
-    offsetCurveBestFit.draw(
-        graphics2D = svgGraphics2D,
-        innerColor = Color.RED,
-        outerSamplingStrategy = outerSamplingStrategy,
-    )
+//    offsetCurveBestFit.draw(
+//        graphics2D = svgGraphics2D,
+//        innerColor = Color.RED,
+//        outerSamplingStrategy = outerSamplingStrategy,
+//    )
 
 //    offsetCurveNormal.draw(
 //        graphics2D = svgGraphics2D,

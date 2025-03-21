@@ -17,8 +17,8 @@ data class BoundingBox(
             yMin: Double,
             yMax: Double,
         ): BoundingBox {
-            assert(xMin <= xMax)
-            assert(yMin <= yMax)
+            require(xMin <= xMax)
+            require(yMin <= yMax)
 
             return BoundingBox(
                 topLeft = Point(px = xMin, py = yMin),
@@ -29,8 +29,8 @@ data class BoundingBox(
     }
 
     init {
-        assert(width >= 0)
-        assert(height >= 0)
+        require(width >= 0)
+        require(height >= 0)
     }
 
     fun toRect2D(): Rectangle2D.Double = Rectangle2D.Double(

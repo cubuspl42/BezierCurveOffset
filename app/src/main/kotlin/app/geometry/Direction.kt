@@ -12,7 +12,7 @@ data class Direction(
     val d: Vector,
 ) {
     init {
-        assert(d != Vector.zero)
+        require(d != Vector.zero)
     }
 
     val perpendicular: Direction

@@ -37,6 +37,11 @@ data class Vector(
         val zero = Vector(0.0, 0.0)
     }
 
+    init {
+        require (!x.isNaN())
+        require (!y.isNaN())
+    }
+
     operator fun minus(
         other: Vector,
     ): Vector = Vector(

@@ -2,6 +2,7 @@ package app.geometry
 
 import app.fillCircle
 import java.awt.Graphics2D
+import java.awt.geom.Line2D
 import kotlin.math.roundToInt
 
 data class Segment(
@@ -9,7 +10,7 @@ data class Segment(
     val end: Point,
 ) {
     fun linearlyInterpolate(t: Double): Point {
-        if (t < 0 || t > 1) throw IllegalArgumentException("t must be in [0, 1]")
+        if (t < 0 || t > 1) throw IllegalArgumentException("t must be in [0, 1], was: $t")
 
         return start.translate(
             translation = Translation(
@@ -38,4 +39,11 @@ data class Segment(
             radius = 2.0,
         )
     }
+
+    fun toLine2D(): Line2D = Line2D.Double(
+        start.x,
+        start.y,
+        end.x,
+        end.y,
+    )
 }

@@ -26,7 +26,7 @@ abstract class RealFunction<V> {
         }
 
         init {
-            assert(x1 >= x0)
+            require(x1 >= x0)
         }
 
         fun <V> sample(
