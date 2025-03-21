@@ -4,9 +4,11 @@ import app.algebra.polynomial_formulas.PolynomialFormula
 import app.algebra.polynomial_formulas.QuadraticFormula
 import app.algebra.Vector
 import app.algebra.VectorSpace
+import app.geometry.Point
+import app.geometry.Segment
 
 class QuadraticBezierFormula<V>(
-    private val vectorSpace: VectorSpace<V>,
+    internal val vectorSpace: VectorSpace<V>,
     val weight0: V,
     val weight1: V,
     val weight2: V,
@@ -29,6 +31,41 @@ class QuadraticBezierFormula<V>(
         return vectorSpace.add(vectorSpace.add(c1, c2), c3)
     }
 }
+
+val QuadraticBezierFormula<Vector>.point0: Point
+    get() = this.weight0.toPoint()
+
+val QuadraticBezierFormula<Vector>.point1: Point
+    get() = this.weight1.toPoint()
+
+val QuadraticBezierFormula<Vector>.point2: Point
+    get() = this.weight2.toPoint()
+
+val QuadraticBezierFormula<Vector>.segmentsQuadratic: List<Segment>
+    get() = listOf(segment0, segment1)
+
+val QuadraticBezierFormula<Vector>.segment0: Segment
+    get() = Segment(start = point0, end = point1)
+
+val QuadraticBezierFormula<Vector>.segment1: Segment
+    get() = Segment(start = point1, end = point2)
+
+fun QuadraticBezierFormula<Vector>.findSkeletonQuadratic(
+    t: Double,
+): LinearBezierFormula<Vector> {
+    val subPoint0 = segment0.linearlyInterpolate(t = t)
+    val subPoint1 = segment1.linearlyInterpolate(t = t)
+
+    return LinearBezierFormula(
+        vectorSpace = vectorSpace,
+        weight0 = subPoint0.p,
+        weight1 = subPoint1.p,
+    )
+}
+
+fun QuadraticBezierFormula<Vector>.evaluateFastQuadratic(
+    t: Double,
+): Vector = findSkeletonQuadratic(t = t).evaluateLinear(t = t)
 
 fun QuadraticBezierFormula<Double>.toPolynomialFormulaQuadratic(): PolynomialFormula = QuadraticFormula.of(
     a = weight0 - 2.0 * weight1 + weight2,

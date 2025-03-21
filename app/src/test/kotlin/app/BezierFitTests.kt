@@ -19,9 +19,9 @@ class BezierFitTests {
             ),
         )
 
-        val timedPolyline = polyline.timeNaively()
-        val bezierCurve = timedPolyline.bestFitCurve()
-        val error = timedPolyline.calculateFitError(bezierCurve)
+        val timedPointSeries = polyline.timeNaively()
+        val bezierCurve = timedPointSeries.bestFitCurve()
+        val error = timedPointSeries.calculateFitError(bezierCurve)
 
         val c0 = bezierCurve.start
         val c1 = bezierCurve.control0

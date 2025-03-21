@@ -53,7 +53,7 @@ data class Point(
     fun translate(
         translation: Translation,
     ): Point = Point(
-        p = p + translation.t,
+        p = p + translation.tv,
     )
 
     /**

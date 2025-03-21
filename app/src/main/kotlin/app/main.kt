@@ -24,16 +24,18 @@ fun main(args: Array<String>) {
         end = Point(8.0, 181.0),
     ).translate(
         translation = Translation(
-            tx = 200.0,
+            tx = 400.0,
             ty = 200.0,
         ),
     )
 
     val offset = 20.0
-    val offsetPolyline = baseCurve.findOffsetPolyline(offset = offset)
+    val offsetPointSeries = baseCurve.findOffsetPolyline(offset = offset)
 
     val offsetCurveNormal = baseCurve.findOffsetCurveNormal(offset = offset)
     val offsetCurveBestFit = baseCurve.findOffsetCurveBestFit(offset = offset)
+
+    val (splitCurveA, splitCurveB) = baseCurve.split(t = 0.4)
 
     val width = 1024
     val height = 768
@@ -47,11 +49,25 @@ fun main(args: Array<String>) {
         outerSamplingStrategy = outerSamplingStrategy,
     )
 
+    splitCurveA.draw(
+        graphics2D = svgGraphics2D,
+        innerColor = Color.MAGENTA,
+        outerColor = Color.LIGHT_GRAY,
+        outerSamplingStrategy = outerSamplingStrategy,
+    )
+
+    splitCurveB.draw(
+        graphics2D = svgGraphics2D,
+        innerColor = Color.CYAN,
+        outerColor = Color.LIGHT_GRAY,
+        outerSamplingStrategy = outerSamplingStrategy,
+    )
+
     svgGraphics2D.stroke = BasicStroke(1.0f)
 
-    svgGraphics2D.color = Color.RED
-    svgGraphics2D.draw(
-        offsetPolyline.toPolyline().toPath2D(),
+    offsetPointSeries.draw(
+        graphics2D = svgGraphics2D,
+        color = Color.ORANGE,
     )
 
     offsetCurveBestFit.draw(

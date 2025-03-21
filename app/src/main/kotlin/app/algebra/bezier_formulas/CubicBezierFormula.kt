@@ -2,11 +2,13 @@ package app.algebra.bezier_formulas
 
 import app.algebra.Vector
 import app.algebra.VectorSpace
+import app.geometry.Point
+import app.geometry.Segment
 import app.invSafe
 import org.ujmp.core.Matrix
 
 data class CubicBezierFormula<V>(
-    private val vectorSpace: VectorSpace<V>,
+    internal val vectorSpace: VectorSpace<V>,
     val weight0: V,
     val weight1: V,
     val weight2: V,
@@ -62,6 +64,30 @@ data class CubicBezierFormula<V>(
     }
 }
 
+val CubicBezierFormula<Vector>.point0: Point
+    get() = this.weight0.toPoint()
+
+val CubicBezierFormula<Vector>.point1: Point
+    get() = this.weight1.toPoint()
+
+val CubicBezierFormula<Vector>.point2: Point
+    get() = this.weight2.toPoint()
+
+val CubicBezierFormula<Vector>.point3: Point
+    get() = this.weight3.toPoint()
+
+val CubicBezierFormula<Vector>.segmentsCubic: List<Segment>
+    get() = listOf(segment0, segment1, segment2)
+
+val CubicBezierFormula<Vector>.segment0: Segment
+    get() = Segment(start = point0, end = point1)
+
+val CubicBezierFormula<Vector>.segment1: Segment
+    get() = Segment(start = point1, end = point2)
+
+val CubicBezierFormula<Vector>.segment2: Segment
+    get() = Segment(start = point2, end = point3)
+
 val CubicBezierFormula<Vector>.componentXCubic
     get() = CubicBezierFormula(
         vectorSpace = VectorSpace.DoubleVectorSpace,
@@ -79,3 +105,22 @@ val CubicBezierFormula<Vector>.componentYCubic
         weight2 = weight2.y,
         weight3 = weight3.y,
     )
+
+fun CubicBezierFormula<Vector>.findSkeletonCubic(
+    t: Double,
+): QuadraticBezierFormula<Vector> {
+    val subPoint0 = segment0.linearlyInterpolate(t = t)
+    val subPoint1 = segment1.linearlyInterpolate(t = t)
+    val subPoint2 = segment2.linearlyInterpolate(t = t)
+
+    return QuadraticBezierFormula(
+        vectorSpace = vectorSpace,
+        weight0 = subPoint0.p,
+        weight1 = subPoint1.p,
+        weight2 = subPoint2.p,
+    )
+}
+
+fun CubicBezierFormula<Vector>.evaluateFastCubic(
+    t: Double,
+): Vector = findSkeletonCubic(t = t).evaluateFastQuadratic(t = t)

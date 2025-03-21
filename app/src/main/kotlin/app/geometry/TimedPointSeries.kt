@@ -6,30 +6,33 @@ import app.fillColumnFrom
 import app.fillFrom
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.TimeFunction
+import app.fillCircle
 import app.invSafe
 import org.ujmp.core.Matrix
+import java.awt.Color
+import java.awt.Graphics2D
 
-data class TimedPolyline(
+data class TimedPointSeries(
     val timedPoints: List<TimedPoint>,
 ) {
     companion object {
         fun sample(
             curveFunction: TimeFunction<Point>,
             sampleCount: Int,
-        ): TimedPolyline {
+        ): TimedPointSeries {
             val timedPoints = curveFunction.sample(
                 strategy = SamplingStrategy.withSampleCount(sampleCount = sampleCount),
             ).map { pointSample ->
                 val t = pointSample.x
                 val point = pointSample.value
 
-                TimedPolyline.TimedPoint(
+                TimedPointSeries.TimedPoint(
                     t = t,
                     point = point,
                 )
             }
 
-            return TimedPolyline(
+            return TimedPointSeries(
                 timedPoints = timedPoints,
             )
         }
@@ -44,9 +47,19 @@ data class TimedPolyline(
         assert(timedPoints.size >= 2)
     }
 
-    fun toPolyline(): Polyline = Polyline(
-        points = timedPoints.map { it.point },
-    )
+    fun draw(
+        graphics2D: Graphics2D,
+        color: Color,
+    ) {
+        graphics2D.color = color
+
+        timedPoints.forEach { timedPoint ->
+            graphics2D.fillCircle(
+                center = timedPoint.point,
+                radius = 1.5,
+            )
+        }
+    }
 
     fun bestFitCurve(): CubicBezierCurve {
         // T

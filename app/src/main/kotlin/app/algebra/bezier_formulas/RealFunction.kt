@@ -1,9 +1,13 @@
 package app.algebra.bezier_formulas
 
+import app.algebra.Vector
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
+import app.geometry.lineTo
+import app.geometry.moveTo
 import app.step
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
+import java.awt.geom.Path2D
 
 abstract class RealFunction<V> {
     data class SamplingStrategy(
@@ -65,5 +69,20 @@ fun RealFunction<Double>.toDataset(
 
     return XYSeriesCollection().apply {
         addSeries(series)
+    }
+}
+
+fun RealFunction<Vector>.toPath2D(
+    samplingStrategy: SamplingStrategy,
+): Path2D {
+    val points = sampleValues(strategy = samplingStrategy).map {
+        it.toPoint()
+    }
+
+    return Path2D.Double().apply {
+        moveTo(points.first())
+        points.drop(1).forEach { point ->
+            lineTo(point)
+        }
     }
 }

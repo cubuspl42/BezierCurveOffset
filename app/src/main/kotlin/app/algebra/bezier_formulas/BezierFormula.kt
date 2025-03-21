@@ -3,6 +3,8 @@ package app.algebra.bezier_formulas
 import app.algebra.Vector
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.algebra.polynomial_formulas.PolynomialFormula
+import app.geometry.Segment
+import app.geometry.bezier_curves.TimeFunction
 import app.geometry.lineTo
 import app.geometry.moveTo
 import org.jfree.data.xy.XYSeries
@@ -34,19 +36,19 @@ sealed class BezierFormula<V> : RealFunction<V>() {
     abstract fun evaluate(t: Double): V
 }
 
-fun BezierFormula<Vector>.toPath2D(
-    samplingStrategy: SamplingStrategy,
-): Path2D {
-    val points = sampleValues(strategy = samplingStrategy).map {
-        it.toPoint()
+val BezierFormula<Vector>.segments: List<Segment>
+    get() = when (this) {
+        is LinearBezierFormula<Vector> -> this.segmentsLinear
+        is QuadraticBezierFormula<Vector> -> this.segmentsQuadratic
+        is CubicBezierFormula<Vector> -> this.segmentsCubic
     }
 
-    return Path2D.Double().apply {
-        moveTo(points.first())
-        points.drop(1).forEach { point ->
-            lineTo(point)
-        }
-    }
+fun BezierFormula<Vector>.findSkeleton(
+    t: Double,
+): BezierFormula<Vector> = when (this) {
+    is LinearBezierFormula<Vector> -> throw NotImplementedError()
+    is QuadraticBezierFormula<Vector> -> this.findSkeletonQuadratic(t = t)
+    is CubicBezierFormula<Vector> -> this.findSkeletonCubic(t = t)
 }
 
 fun BezierFormula<Vector>.toDataset(
@@ -74,6 +76,20 @@ fun BezierFormula<Double>.toPolynomialFormula(): PolynomialFormula = when (this)
     is QuadraticBezierFormula<Double> -> this.toPolynomialFormulaQuadratic()
     // We shouldn't need cubic polynomials
     is CubicBezierFormula<Double> -> throw NotImplementedError()
+}
+
+fun BezierFormula<Vector>.findFaster(): TimeFunction<Vector> {
+    return object : TimeFunction<Vector>() {
+        override fun evaluateDirectly(t: Double): Vector = evaluateFast(t = t)
+    }
+}
+
+fun BezierFormula<Vector>.evaluateFast(
+    t: Double,
+): Vector = when (this) {
+    is LinearBezierFormula<Vector> -> this.evaluateLinear(t = t)
+    is QuadraticBezierFormula<Vector> -> this.evaluateFastQuadratic(t = t)
+    is CubicBezierFormula<Vector> -> this.evaluateFastCubic(t = t)
 }
 
 val BezierFormula<Vector>.componentX: BezierFormula<Double>

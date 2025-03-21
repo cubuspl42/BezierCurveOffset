@@ -1,7 +1,7 @@
 package app.geometry.bezier_curves
 
 import app.algebra.Vector
-import app.algebra.bezier_formulas.CubicBezierFormula
+import app.algebra.bezier_formulas.*
 import app.geometry.*
 import java.awt.geom.Path2D
 
@@ -48,14 +48,38 @@ data class CubicBezierCurve(
         )
     }
 
-    fun translate(
-        translation: Translation,
-    ): CubicBezierCurve = mapPointWise {
-        it.translate(translation = translation)
+    override fun split(
+        t: Double,
+    ): Pair<BezierCurve, BezierCurve> {
+        val skeleton0 = basisFormula.findSkeletonCubic(t = t)
+        val skeleton1 = skeleton0.findSkeletonQuadratic(t = t)
+        val midPoint = skeleton1.evaluateLinear(t = t).toPoint()
+
+        val firstCurve = CubicBezierCurve(
+            start = start,
+            control0 = skeleton0.point0,
+            control1 = skeleton1.point0,
+            end = midPoint,
+        )
+
+        val secondCurve = CubicBezierCurve(
+            start = midPoint,
+            control0 = skeleton1.point1,
+            control1 = skeleton0.point2,
+            end = end,
+        )
+
+        return Pair(firstCurve, secondCurve)
     }
 
     override fun toPath2D(): Path2D.Double = Path2D.Double().apply {
         moveTo(start)
         cubicTo(control0, control1, end)
+    }
+
+    fun translate(
+        translation: Translation,
+    ): CubicBezierCurve = mapPointWise {
+        it.translate(translation = translation)
     }
 }

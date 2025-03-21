@@ -1,17 +1,14 @@
 package app.geometry.bezier_curves
 
 import app.algebra.Vector
-import app.algebra.bezier_formulas.BezierFormula
+import app.algebra.bezier_formulas.*
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
-import app.algebra.bezier_formulas.findAllCriticalPoints
-import app.algebra.bezier_formulas.findInterestingCriticalPoints
-import app.algebra.bezier_formulas.toPath2D
+import app.fillCircle
 import app.geometry.*
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
-import kotlin.math.roundToInt
 
 abstract class BezierCurve {
     companion object {
@@ -102,10 +99,10 @@ abstract class BezierCurve {
 
     fun findOffsetPolyline(
         offset: Double,
-    ): TimedPolyline {
+    ): TimedPointSeries {
         val offsetCurveFunction = findOffsetCurveFunction(offset = offset)
 
-        return TimedPolyline.sample(
+        return TimedPointSeries.sample(
             curveFunction = offsetCurveFunction,
             sampleCount = 12,
         )
@@ -153,11 +150,23 @@ abstract class BezierCurve {
         graphics2D.color = outerColor
         graphics2D.draw(outerPath)
 
-        val innerPath = toPath2D()
+        val innerPath = basisFormula.findFaster().toPath2D(
+            samplingStrategy = outerSamplingStrategy.copy(
+                x0 = 0.0,
+                x1 = 1.0,
+            ),
+        )
 
         graphics2D.stroke = BasicStroke(2.0f)
         graphics2D.color = innerColor
         graphics2D.draw(innerPath)
+
+        graphics2D.stroke = BasicStroke(0.5f)
+        graphics2D.color = Color.LIGHT_GRAY
+
+        basisFormula.segments.forEach { segment ->
+            segment.draw(graphics2D = graphics2D)
+        }
 
         graphics2D.color = Color.PINK
 
@@ -213,25 +222,9 @@ abstract class BezierCurve {
         distance: Double,
     ): BezierCurve
 
+    abstract fun split(
+        t: Double,
+    ): Pair<BezierCurve, BezierCurve>
+
     abstract fun toPath2D(): Path2D
-}
-
-fun Graphics2D.drawCircle(
-    center: Point,
-    radius: Double,
-) {
-    val diameter = (2 * radius).roundToInt()
-    val x = center.x - radius
-    val y = center.y - radius
-    drawOval(x.roundToInt(), y.roundToInt(), diameter, diameter)
-}
-
-fun Graphics2D.fillCircle(
-    center: Point,
-    radius: Double,
-) {
-    val diameter = (2 * radius).roundToInt()
-    val x = center.x - radius
-    val y = center.y - radius
-    fillOval(x.roundToInt(), y.roundToInt(), diameter, diameter)
 }

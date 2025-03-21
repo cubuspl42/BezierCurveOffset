@@ -3,13 +3,13 @@ package app.geometry
 import app.algebra.Vector
 
 data class Translation(
-    val t: Vector,
+    val tv: Vector,
 ) {
     constructor(
         tx: Double,
         ty: Double,
     ) : this(
-        t = Vector(
+        tv = Vector(
             x = tx,
             y = ty,
         ),
