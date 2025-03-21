@@ -2,6 +2,8 @@ package app.algebra.bezier_formulas
 
 import app.algebra.Vector
 import app.algebra.VectorSpace
+import app.invSafe
+import org.ujmp.core.Matrix
 
 data class CubicBezierFormula<V>(
     private val vectorSpace: VectorSpace<V>,
@@ -10,6 +12,35 @@ data class CubicBezierFormula<V>(
     val weight2: V,
     val weight3: V,
 ) : BezierFormula<V>() {
+    companion object {
+        /**
+         * The characteristic matrix of the cubic Bézier curve.
+         */
+        val characteristicMatrix: Matrix = Matrix.Factory.fill(0.0, 4, 4).apply {
+            setAsDouble(-1.0, 0, 0)
+            setAsDouble(3.0, 0, 1)
+            setAsDouble(-3.0, 0, 2)
+            setAsDouble(1.0, 0, 3)
+
+            setAsDouble(3.0, 1, 0)
+            setAsDouble(-6.0, 1, 1)
+            setAsDouble(3.0, 1, 2)
+            setAsDouble(0.0, 1, 3)
+
+            setAsDouble(-3.0, 2, 0)
+            setAsDouble(3.0, 2, 1)
+            setAsDouble(0.0, 2, 2)
+            setAsDouble(0.0, 2, 3)
+
+            setAsDouble(1.0, 3, 0)
+            setAsDouble(0.0, 3, 1)
+            setAsDouble(0.0, 3, 2)
+            setAsDouble(0.0, 3, 3)
+        }
+
+        val characteristicInvertedMatrix = characteristicMatrix.invSafe()
+    }
+
     override fun findDerivative(): QuadraticBezierFormula<V> {
         fun scale3(v: V) = vectorSpace.scale(3.0, v)
 

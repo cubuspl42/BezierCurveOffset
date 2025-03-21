@@ -1,6 +1,5 @@
 package app.geometry.bezier_curves
 
-import app.BezierFit
 import app.algebra.Vector
 import app.algebra.bezier_formulas.BezierFormula
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
@@ -113,8 +112,7 @@ abstract class BezierCurve {
 
     fun findOffsetCurve(offset: Double): CubicBezierCurve {
         val offsetPolyline = findOffsetPolyline(offset = offset)
-        val offsetCurve = BezierFit.bestFit(points = offsetPolyline.points)
-        return offsetCurve
+        return offsetPolyline.timeNaively().bestFitCurve()
     }
 
     abstract val start: Point

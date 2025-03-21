@@ -15,4 +15,25 @@ data class Polyline(
             lineTo(point)
         }
     }
+
+    fun timeNaively(): TimedPolyline {
+        val pathLengthByPointIndex = points.zipWithNext().scan(
+            initial = 0.0,
+        ) { accDistance, pointPair ->
+            val (point, nextPoint) = pointPair
+
+            accDistance + point.distanceTo(nextPoint)
+        }
+
+        val totalPathLength = pathLengthByPointIndex.last()
+
+        return TimedPolyline(
+            timedPoints = points.zip(pathLengthByPointIndex) { point, pathLength ->
+                TimedPolyline.TimedPoint(
+                    t = pathLength / totalPathLength,
+                    point = point,
+                )
+            },
+        )
+    }
 }

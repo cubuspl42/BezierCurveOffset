@@ -1,6 +1,7 @@
 package app
 
 import app.geometry.Point
+import app.geometry.Polyline
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -9,8 +10,8 @@ class BezierFitTests {
 
     @Test
     fun testBasic() {
-        val controlPoints = BezierFit.bestFit(
-            points = arrayListOf(
+        val polyline = Polyline(
+            points = listOf(
                 Point(0.0, 0.0),
                 Point(1.0, 1.0),
                 Point(2.0, 0.0),
@@ -18,56 +19,66 @@ class BezierFitTests {
             ),
         )
 
-        val c0 = controlPoints.start
-        val c1 = controlPoints.control0
-        val c2 = controlPoints.control1
-        val c3 = controlPoints.end
+        val timedPolyline = polyline.timeNaively()
+        val bezierCurve = timedPolyline.bestFitCurve()
+        val error = timedPolyline.calculateFitError(bezierCurve)
+
+        val c0 = bezierCurve.start
+        val c1 = bezierCurve.control0
+        val c2 = bezierCurve.control1
+        val c3 = bezierCurve.end
 
         assertEquals(
-            expected = c0.x,
-            actual = 0.0,
+            actual = c0.x,
+            expected = 0.0,
             absoluteTolerance = eps,
         )
 
         assertEquals(
-            expected = c0.y,
-            actual = 0.0,
+            actual = c0.y,
+            expected = 0.0,
             absoluteTolerance = eps,
         )
 
         assertEquals(
-            expected = c1.x,
-            actual = 1.09878,
+            actual = c1.x,
+            expected = 1.09878,
             absoluteTolerance = eps,
         )
 
         assertEquals(
-            expected = c1.y,
-            actual = 3.63908,
+            actual = c1.y,
+            expected = 3.63908,
             absoluteTolerance = eps,
         )
 
         assertEquals(
-            expected = c2.x,
-            actual = 2.70750,
+            actual = c2.x,
+            expected = 2.70750,
             absoluteTolerance = eps,
         )
 
         assertEquals(
-            expected = c2.y,
-            actual = -3.72022,
+            actual = c2.y,
+            expected = -3.72022,
             absoluteTolerance = eps,
         )
 
         assertEquals(
-            expected = c3.x,
-            actual = 2.99999,
+            actual = c3.x,
+            expected = 2.99999,
             absoluteTolerance = eps,
         )
 
         assertEquals(
-            expected = c3.y,
-            actual = 1.99999,
+            actual = c3.y,
+            expected = 1.99999,
+            absoluteTolerance = eps,
+        )
+
+        assertEquals(
+            actual = error,
+            expected = 0.0,
             absoluteTolerance = eps,
         )
     }
