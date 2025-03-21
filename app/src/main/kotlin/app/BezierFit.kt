@@ -37,11 +37,14 @@ object BezierFit {
     fun bestFit(
         points: List<Point>,
     ): CubicBezierCurve {
+        // t (normalized path lengths)
+        val smallTVector = buildNormalizedPathLengthsVector(points = points)
+
         // T
-        val tVector = buildTVector(points = points)
+        val bigTMatrix = buildBigTMatrix(smallTVector = smallTVector)
 
         // T^t
-        val tTVector = tVector.transpose()
+        val bigTTransposedMatrix = bigTMatrix.transpose()
 
         // X (H.x)
         val xVector = buildXVector(points = points)
@@ -50,7 +53,7 @@ object BezierFit {
         val yVector = buildYVector(points = points)
 
         // T^t * T
-        val aMatrix = tTVector.mtimes(tVector)
+        val aMatrix = bigTTransposedMatrix.mtimes(bigTMatrix)
 
         // (T^t * T)^-1
         val bMatrix = aMatrix.invSafe()
@@ -59,7 +62,7 @@ object BezierFit {
         val cMatrix = mInvMatrix.mtimes(bMatrix)
 
         // (M^-1) * (T^t * T)^-1 * T^t
-        val dMatrix = cMatrix.mtimes(tTVector)
+        val dMatrix = cMatrix.mtimes(bigTTransposedMatrix)
 
         // P_x (weight X)
         val weightXVector = dMatrix.mtimes(xVector)
@@ -67,7 +70,7 @@ object BezierFit {
         val weightYVector = dMatrix.mtimes(yVector)
 
         // T * M
-        val eMatrix = tVector.mtimes(mMatrix)
+        val eMatrix = bigTMatrix.mtimes(mMatrix)
 
         fun calculateFitError(
             /**
@@ -110,12 +113,22 @@ object BezierFit {
             return Point(x, y)
         }
 
-        return CubicBezierCurve(
+        val bezierCurve = CubicBezierCurve(
             start = getWeight(0),
             control0 = getWeight(1),
             control1 = getWeight(2),
             end = getWeight(3),
         )
+
+
+        fun calculateFitError2(): Double = points.zip(smallTVector).sumOf { (p, ti) ->
+            val bTi = bezierCurve.pathFunction.evaluate(t = ti)
+            bTi.distanceSquaredTo(p)
+        }
+
+        val errorJoint = calculateFitError2()
+
+        return bezierCurve
     }
 
     private fun buildYVector(
@@ -130,10 +143,10 @@ object BezierFit {
         collection = points,
     ) { it.x }
 
-    private fun buildTVector(
-        points: List<Point>,
+    private fun buildBigTMatrix(
+        smallTVector: List<Double>,
     ): Matrix = Matrix.Factory.fillFrom(
-        collection = buildNormalizedPathLengthsVector(points = points),
+        collection = smallTVector,
         rowWidth = 4,
     ) { t ->
         doubleArrayOf(

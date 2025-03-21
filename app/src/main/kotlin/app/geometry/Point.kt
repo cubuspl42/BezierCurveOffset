@@ -34,6 +34,10 @@ data class Point(
         other: Point,
     ): Double = (other.p - this.p).length
 
+    fun distanceSquaredTo(
+        other: Point,
+    ): Double = (other.p - this.p).lengthSquared
+
     /**
      * @param other - point to find the direction to, must be a different point
      */
