@@ -3,7 +3,8 @@ package app.geometry.bezier_curves
 import app.algebra.Vector
 import app.algebra.bezier_formulas.BezierFormula
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
-import app.algebra.bezier_formulas.findCriticalPoints
+import app.algebra.bezier_formulas.findAllCriticalPoints
+import app.algebra.bezier_formulas.findInterestingCriticalPoints
 import app.algebra.bezier_formulas.toPath2D
 import app.geometry.*
 import java.awt.BasicStroke
@@ -79,7 +80,7 @@ abstract class BezierCurve {
         val startPoint = curveFunction.startValue
         val endPoint = curveFunction.endValue
 
-        val inRangeCriticalPointSet = basisFormula.findCriticalPoints().inRange()
+        val inRangeCriticalPointSet = basisFormula.findInterestingCriticalPoints()
 
         val criticalXValues = inRangeCriticalPointSet.criticalPointsX.map { t -> curveFunction.evaluate(t).x }
         val potentialXExtrema = criticalXValues + startPoint.x + endPoint.x
@@ -169,7 +170,7 @@ abstract class BezierCurve {
             radius = 6.0,
         )
 
-        val criticalPointSet = basisFormula.findCriticalPoints()
+        val criticalPointSet = basisFormula.findAllCriticalPoints()
 
         fun drawCriticalPoints(
             criticalPoints: Set<Double>,

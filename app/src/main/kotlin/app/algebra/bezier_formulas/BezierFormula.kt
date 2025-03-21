@@ -18,10 +18,10 @@ sealed class BezierFormula<V> : RealFunction<V>() {
         val criticalPointsY: Set<Double>,
     ) {
         companion object {
-            val range = 0.0 .. 1.0
+            val range = 0.0..1.0
         }
 
-        fun inRange(): CriticalPointSet = CriticalPointSet(
+        fun filterInteresting(): CriticalPointSet = CriticalPointSet(
             criticalPointsX = criticalPointsX.filter { it in range }.toSet(),
             criticalPointsY = criticalPointsY.filter { it in range }.toSet(),
         )
@@ -92,10 +92,13 @@ val BezierFormula<Vector>.componentY: BezierFormula<Double>
 
 fun BezierFormula<Double>.findRoots(): Set<Double> = toPolynomialFormula().findRoots()
 
-fun BezierFormula<Vector>.findCriticalPoints(): BezierFormula.CriticalPointSet {
+fun BezierFormula<Vector>.findAllCriticalPoints(): BezierFormula.CriticalPointSet {
     val derivative = findDerivative()
     return BezierFormula.CriticalPointSet(
         criticalPointsX = derivative.componentX.findRoots(),
         criticalPointsY = derivative.componentY.findRoots(),
     )
 }
+
+fun BezierFormula<Vector>.findInterestingCriticalPoints(): BezierFormula.CriticalPointSet =
+    findAllCriticalPoints().filterInteresting()
