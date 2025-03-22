@@ -12,14 +12,17 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
-data class CubicBezierCurve(
+/**
+ * A cubic Bézier curve
+ */
+data class BezierCurve(
     val start: Point,
     val control0: Point,
     val control1: Point,
     val end: Point,
 ) {
     abstract class OffsetCurveBestFitResult(
-        val offsetCurve: CubicBezierCurve,
+        val offsetCurve: BezierCurve,
     ) {
         abstract fun calculateError(): Double
     }
@@ -117,7 +120,7 @@ data class CubicBezierCurve(
 
     fun findOffsetCurveNormal(
         offset: Double,
-    ): CubicBezierCurve {
+    ): BezierCurve {
         val startNormalRay = normalRayFunction.startValue
         val startNormalLine = startNormalRay.containingLine
 
@@ -235,7 +238,7 @@ data class CubicBezierCurve(
 
     fun mapPointWise(
         transform: (Point) -> Point,
-    ): CubicBezierCurve = CubicBezierCurve(
+    ): BezierCurve = BezierCurve(
         start = transform(start),
         control0 = transform(control0),
         control1 = transform(control1),
@@ -245,7 +248,7 @@ data class CubicBezierCurve(
     fun moveAwayPointWise(
         origin: Point,
         distance: Double,
-    ): CubicBezierCurve = mapPointWise {
+    ): BezierCurve = mapPointWise {
         it.moveAway(
             origin = origin,
             distance = distance,
@@ -255,7 +258,7 @@ data class CubicBezierCurve(
     fun moveInDirectionPointWise(
         direction: Direction,
         distance: Double,
-    ): CubicBezierCurve = mapPointWise {
+    ): BezierCurve = mapPointWise {
         it.moveInDirection(
             direction = direction,
             distance = distance,
@@ -264,31 +267,31 @@ data class CubicBezierCurve(
 
     fun splitAt(
         t: Double,
-    ): BiCubicBezierCurve {
+    ): BiBezierCurve {
         val skeleton0 = basisFormula.findSkeletonCubic(t = t)
         val skeleton1 = skeleton0.findSkeletonQuadratic(t = t)
         val midPoint = skeleton1.evaluateLinear(t = t).toPoint()
 
-        return BiCubicBezierCurve(
-            startNode = OpenCubicBezierSpline.InnerNode.start(
+        return BiBezierCurve(
+            startNode = OpenBezierSpline.InnerNode.start(
                 point = start,
                 control1 = skeleton0.point0,
             ),
-            midNode = OpenCubicBezierSpline.InnerNode(
+            midNode = OpenBezierSpline.InnerNode(
                 backwardControl = skeleton1.point0,
                 point = midPoint,
                 forwardControl = skeleton1.point1,
             ),
-            endNode = OpenCubicBezierSpline.InnerNode.end(
+            endNode = OpenBezierSpline.InnerNode.end(
                 control0 = skeleton0.point2,
                 point = end,
             ),
         )
     }
 
-    fun splitAtMidPoint(): BiCubicBezierCurve = splitAt(t = 0.5)
+    fun splitAtMidPoint(): BiBezierCurve = splitAt(t = 0.5)
 
-    fun splitAtCriticalPoints(): OpenCubicBezierSpline {
+    fun splitAtCriticalPoints(): OpenBezierSpline {
         val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPoints
 
         val splitSpline = splitAtMultiple(
@@ -300,7 +303,7 @@ data class CubicBezierCurve(
 
     fun splitAtMultiple(
         tValues: Set<Double>,
-    ): OpenCubicBezierSpline {
+    ): OpenBezierSpline {
         if (tValues.isEmpty()) {
             return this.toSpline()
         }
@@ -314,13 +317,13 @@ data class CubicBezierCurve(
         return spline
     }
 
-    private fun toSpline(): OpenCubicBezierSpline = MonoCubicBezierCurve(
+    private fun toSpline(): OpenBezierSpline = MonoBezierCurve(
         curve = this,
     )
 
     private fun splitAtMultipleSorted(
         tValuesSorted: List<Double>,
-    ): OpenCubicBezierSpline {
+    ): OpenBezierSpline {
         val partitioningResult = tValuesSorted.partitionSorted() ?: return this.toSpline()
 
         val leftTValues = partitioningResult.leftPart
@@ -342,7 +345,7 @@ data class CubicBezierCurve(
             tValuesSorted = rightCorrectedTValues,
         )
 
-        val mergedSpline = OpenCubicBezierSpline.merge(
+        val mergedSpline = OpenBezierSpline.merge(
             splines = listOfNotNull(
                 leftSubSplitCurve,
                 rightSubSplitCurveOrNull,
@@ -354,7 +357,7 @@ data class CubicBezierCurve(
 
     fun findOffsetSplineBestFit(
         offset: Double,
-    ): OpenCubicBezierSpline {
+    ): OpenBezierSpline {
         val initialOffsetCurveBestFitResult = findOffsetCurveBestFit(
             offset = offset,
         )
@@ -388,7 +391,7 @@ data class CubicBezierCurve(
     private fun findOffsetSplineBestFitOrSubdivide(
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenCubicBezierSpline {
+    ): OpenBezierSpline {
         val offsetCurveBestFitResult = findOffsetCurveBestFit(
             offset = offset,
         )
@@ -409,7 +412,7 @@ data class CubicBezierCurve(
     private fun subdivideAndFindOffsetSplineBestFit(
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenCubicBezierSpline {
+    ): OpenBezierSpline {
         val splitBiBezierCurve = splitAtMidPoint()
         val leftSplitCurve = splitBiBezierCurve.firstSubCurve
         val rightSplitCurve = splitBiBezierCurve.secondSubCurve
@@ -437,7 +440,7 @@ data class CubicBezierCurve(
 
     fun translate(
         translation: Translation,
-    ): CubicBezierCurve = mapPointWise {
+    ): BezierCurve = mapPointWise {
         it.translate(translation = translation)
     }
 }

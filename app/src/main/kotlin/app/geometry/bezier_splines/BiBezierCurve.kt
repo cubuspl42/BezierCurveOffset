@@ -1,19 +1,19 @@
 package app.geometry.bezier_splines
 
-import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.BezierCurve
 
 /**
  * A bi-Bézier curve (a spline formed of a pair of Bézier curves)
  */
-class BiCubicBezierCurve(
-    override val startNode: OpenCubicBezierSpline.StartNode,
-    val midNode: OpenCubicBezierSpline.InnerNode,
-    override val endNode: OpenCubicBezierSpline.EndNode,
-) : OpenCubicBezierSpline() {
-    override val innerNodes: List<OpenCubicBezierSpline.InnerNode> = listOf(midNode)
+class BiBezierCurve(
+    override val startNode: OpenBezierSpline.StartNode,
+    val midNode: OpenBezierSpline.InnerNode,
+    override val endNode: OpenBezierSpline.EndNode,
+) : OpenBezierSpline() {
+    override val innerNodes: List<OpenBezierSpline.InnerNode> = listOf(midNode)
 
     val firstSubCurve by lazy {
-        CubicBezierCurve(
+        BezierCurve(
             start = startNode.point,
             control0 = startNode.forwardControl,
             control1 = midNode.backwardControl,
@@ -22,7 +22,7 @@ class BiCubicBezierCurve(
     }
 
     val secondSubCurve by lazy {
-        CubicBezierCurve(
+        BezierCurve(
             start = midNode.point,
             control0 = midNode.forwardControl,
             control1 = endNode.backwardControl,
@@ -30,7 +30,7 @@ class BiCubicBezierCurve(
         )
     }
 
-    override val subCurves: List<CubicBezierCurve> by lazy {
+    override val subCurves: List<BezierCurve> by lazy {
         listOf(
             firstSubCurve,
             secondSubCurve,

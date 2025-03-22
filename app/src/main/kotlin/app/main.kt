@@ -2,8 +2,8 @@ package app
 
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.geometry.*
-import app.geometry.bezier_splines.OpenCubicBezierSpline
-import app.geometry.bezier_splines.PolyCubicBezierCurve
+import app.geometry.bezier_splines.OpenBezierSpline
+import app.geometry.bezier_splines.PolyBezierCurve
 import app.geometry.bezier_splines.drawSpline
 import app.geometry.bezier_splines.findOffsetSplineBestFitPoly
 import org.jfree.svg.SVGGraphics2D
@@ -36,19 +36,19 @@ fun main(args: Array<String>) {
     val w5 = w4.translate(t4)
     val w6 = w5.translate(t5)
 
-    val baseSpline = PolyCubicBezierCurve(
-        startNode = OpenCubicBezierSpline.InnerNode.start(
+    val baseSpline = PolyBezierCurve(
+        startNode = OpenBezierSpline.InnerNode.start(
             point = w0,
             control1 = w1,
         ),
         innerNodes = listOf(
-            OpenCubicBezierSpline.InnerNode(
+            OpenBezierSpline.InnerNode(
                 backwardControl = w2,
                 point = w3,
                 forwardControl = w4,
             ),
         ),
-        endNode = OpenCubicBezierSpline.InnerNode.end(
+        endNode = OpenBezierSpline.InnerNode.end(
             control0 = w5,
             point = w6,
         ),

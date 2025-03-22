@@ -2,12 +2,15 @@ package app.geometry.bezier_splines
 
 import app.fillCircle
 import app.geometry.*
-import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.BezierCurve
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
-abstract class OpenCubicBezierSpline {
+/**
+ * A spline built from cubic Bézier curves
+ */
+abstract class OpenBezierSpline {
     sealed interface Node {
         val backwardControl: Point?
         val point: Point
@@ -62,8 +65,8 @@ abstract class OpenCubicBezierSpline {
 
     companion object {
         private fun glueSplines(
-            prevSplineEndNode: OpenCubicBezierSpline.EndNode,
-            nextSplineStartNode: OpenCubicBezierSpline.StartNode,
+            prevSplineEndNode: OpenBezierSpline.EndNode,
+            nextSplineStartNode: OpenBezierSpline.StartNode,
         ): InnerNode {
             val startPoint = Point.midPoint(
                 prevSplineEndNode.point,
@@ -104,8 +107,8 @@ abstract class OpenCubicBezierSpline {
         }
 
         fun merge(
-            splines: List<OpenCubicBezierSpline>,
-        ): OpenCubicBezierSpline {
+            splines: List<OpenBezierSpline>,
+        ): OpenBezierSpline {
             require(splines.isNotEmpty())
 
             if (splines.size == 1) return splines.single()
@@ -126,7 +129,7 @@ abstract class OpenCubicBezierSpline {
 
             val lastSplineEndNode = lastSpline.endNode
 
-            val mergedSpline = PolyCubicBezierCurve(
+            val mergedSpline = PolyBezierCurve(
                 startNode = firstSplineStartNode,
                 innerNodes = firstSpline.innerNodes + newInnerNodes,
                 endNode = lastSplineEndNode,
@@ -164,34 +167,34 @@ abstract class OpenCubicBezierSpline {
         listOf(startNode) + innerNodes + endNode
     }
 
-    abstract val subCurves: List<CubicBezierCurve>
+    abstract val subCurves: List<BezierCurve>
 }
 
-val OpenCubicBezierSpline.BackwardNode.backwardControlSegment: Segment
+val OpenBezierSpline.BackwardNode.backwardControlSegment: Segment
     get() = Segment(
         start = point,
         end = backwardControl,
     )
 
-val OpenCubicBezierSpline.ForwardNode.forwardControlSegment: Segment
+val OpenBezierSpline.ForwardNode.forwardControlSegment: Segment
     get() = Segment(
         start = point,
         end = forwardControl,
     )
 
-fun OpenCubicBezierSpline.mergeWith(
-    rightSubSplitCurve: OpenCubicBezierSpline,
-): OpenCubicBezierSpline = OpenCubicBezierSpline.merge(
+fun OpenBezierSpline.mergeWith(
+    rightSubSplitCurve: OpenBezierSpline,
+): OpenBezierSpline = OpenBezierSpline.merge(
     splines = listOf(this, rightSubSplitCurve),
 )
 
-fun OpenCubicBezierSpline.mergeOf(
-    transform: (CubicBezierCurve) -> OpenCubicBezierSpline,
-): OpenCubicBezierSpline = OpenCubicBezierSpline.merge(
+fun OpenBezierSpline.mergeOf(
+    transform: (BezierCurve) -> OpenBezierSpline,
+): OpenBezierSpline = OpenBezierSpline.merge(
     splines = subCurves.map(transform),
 )
 
-fun OpenCubicBezierSpline.toPath2D(): Path2D.Double = Path2D.Double().apply {
+fun OpenBezierSpline.toPath2D(): Path2D.Double = Path2D.Double().apply {
     moveTo(startNode.point)
     subCurves.forEach { subCurve ->
         cubicTo(
@@ -200,7 +203,7 @@ fun OpenCubicBezierSpline.toPath2D(): Path2D.Double = Path2D.Double().apply {
     }
 }
 
-fun OpenCubicBezierSpline.drawSpline(
+fun OpenBezierSpline.drawSpline(
     graphics2D: Graphics2D,
 ) {
     fun drawControlSegment(
@@ -216,11 +219,11 @@ fun OpenCubicBezierSpline.drawSpline(
     graphics2D.color = Color.LIGHT_GRAY
 
     nodes.forEach { node ->
-        (node as? OpenCubicBezierSpline.BackwardNode)?.let {
+        (node as? OpenBezierSpline.BackwardNode)?.let {
             drawControlSegment(it.backwardControlSegment)
         }
 
-        (node as? OpenCubicBezierSpline.ForwardNode)?.let {
+        (node as? OpenBezierSpline.ForwardNode)?.let {
             drawControlSegment(it.forwardControlSegment)
         }
     }

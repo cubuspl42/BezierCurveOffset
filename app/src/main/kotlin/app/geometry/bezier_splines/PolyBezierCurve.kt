@@ -1,32 +1,32 @@
 package app.geometry.bezier_splines
 
-import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.BezierCurve
 
 /**
  * A poly-Bézier curve, also called a composite Bézier curve or a Bézier spline
  * (a spline formed of Bézier curves)
  */
-class PolyCubicBezierCurve(
+class PolyBezierCurve(
     override val startNode: StartNode,
-    override val innerNodes: List<OpenCubicBezierSpline.InnerNode>,
+    override val innerNodes: List<OpenBezierSpline.InnerNode>,
     override val endNode: EndNode,
-) : OpenCubicBezierSpline() {
-    override val subCurves: List<CubicBezierCurve> by lazy {
+) : OpenBezierSpline() {
+    override val subCurves: List<BezierCurve> by lazy {
         listOf(
-            CubicBezierCurve(
+            BezierCurve(
                 start = startNode.point,
                 control0 = startNode.forwardControl,
                 control1 = secondNode.backwardControl,
                 end = secondNode.point,
             ),
         ) + innerNodes.zipWithNext { prevNode, nextNode ->
-            CubicBezierCurve(
+            BezierCurve(
                 start = prevNode.point,
                 control0 = prevNode.forwardControl,
                 control1 = nextNode.backwardControl,
                 end = nextNode.point,
             )
-        } + CubicBezierCurve(
+        } + BezierCurve(
             start = oneBeforeEndNode.point,
             control0 = oneBeforeEndNode.forwardControl,
             control1 = endNode.backwardControl,
@@ -35,8 +35,8 @@ class PolyCubicBezierCurve(
     }
 }
 
-fun PolyCubicBezierCurve.findOffsetSplineBestFitPoly(
+fun PolyBezierCurve.findOffsetSplineBestFitPoly(
     offset: Double,
-): OpenCubicBezierSpline = mergeOf {
+): OpenBezierSpline = mergeOf {
     it.findOffsetSplineBestFit(offset = offset)
 }

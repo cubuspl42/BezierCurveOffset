@@ -4,7 +4,7 @@ import app.algebra.bezier_formulas.CubicBezierFormula
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.fillColumnFrom
 import app.fillFrom
-import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.TimeFunction
 import app.fillCircle
 import app.invSafe
@@ -61,7 +61,7 @@ data class TimedPointSeries(
         }
     }
 
-    fun bestFitCurve(): CubicBezierCurve {
+    fun bestFitCurve(): BezierCurve {
         // T
         val bigTMatrix = buildBigTMatrix()
 
@@ -98,7 +98,7 @@ data class TimedPointSeries(
             return Point(x, y)
         }
 
-        return CubicBezierCurve(
+        return BezierCurve(
             start = getWeight(0),
             control0 = getWeight(1),
             control1 = getWeight(2),
@@ -107,7 +107,7 @@ data class TimedPointSeries(
     }
 
     fun calculateFitError(
-        bezierCurve: CubicBezierCurve,
+        bezierCurve: BezierCurve,
     ): Double = timedPoints.sumOf { timedPoint ->
         val t = timedPoint.t
         val point = timedPoint.point
