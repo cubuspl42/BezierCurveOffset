@@ -1,7 +1,7 @@
 package app.geometry.bezier_curves
 
-import app.algebra.bezier_formulas.BezierFormula
-import app.algebra.bezier_formulas.RealFunction
+import app.algebra.bezier_binomials.BezierBinomial
+import app.algebra.bezier_binomials.RealFunction
 
 /**
  * Time function in range [0, 1].
@@ -11,9 +11,9 @@ import app.algebra.bezier_formulas.RealFunction
 abstract class TimeFunction<R> : RealFunction<R>() {
     companion object {
         fun <R> wrap(
-            bezierFormula: BezierFormula<R>,
+            bezierBinomial: BezierBinomial<R>,
         ): TimeFunction<R> = object : TimeFunction<R>() {
-            override fun evaluateDirectly(t: Double): R = bezierFormula.evaluate(t = t)
+            override fun evaluateDirectly(t: Double): R = bezierBinomial.evaluate(t = t)
         }
 
         fun <A, B, R> map2(

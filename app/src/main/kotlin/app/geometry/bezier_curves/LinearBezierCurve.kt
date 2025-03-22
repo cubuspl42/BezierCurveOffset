@@ -1,7 +1,7 @@
 package app.geometry.bezier_curves
 
 import app.algebra.Vector
-import app.algebra.bezier_formulas.BezierFormula
+import app.algebra.bezier_binomials.BezierBinomial
 import app.geometry.Point
 import app.geometry.Segment
 
@@ -70,6 +70,6 @@ data class LinearBezierCurve private constructor(
         TODO("Not yet implemented")
     }
 
-    override val basisFormula: BezierFormula<Vector>
+    override val basisFormula: BezierBinomial<Vector>
         get() = TODO("Not yet implemented")
 }

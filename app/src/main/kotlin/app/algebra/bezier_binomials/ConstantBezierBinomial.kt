@@ -1,4 +1,4 @@
-package app.algebra.bezier_formulas
+package app.algebra.bezier_binomials
 
 import app.algebra.Vector
 import app.algebra.VectorSpace
@@ -6,27 +6,27 @@ import app.algebra.polynomial_formulas.ConstantFormula
 import app.geometry.Point
 import app.geometry.Segment
 
-data class ConstantBezierFormula<V>(
+data class ConstantBezierBinomial<V>(
     private val vectorSpace: VectorSpace<V>,
     val weight0: V,
-) : BezierFormula<V>() {
-    private val zero: ConstantBezierFormula<V>
-        get() = ConstantBezierFormula(
+) : BezierBinomial<V>() {
+    private val zero: ConstantBezierBinomial<V>
+        get() = ConstantBezierBinomial(
             vectorSpace = vectorSpace,
             weight0 = vectorSpace.zero,
         )
 
-    override fun findDerivative(): BezierFormula<V> = zero
+    override fun findDerivative(): BezierBinomial<V> = zero
 
     override fun evaluate(t: Double): V = evaluateConstant(t = t)
 
     fun evaluateConstant(t: Double): V = weight0
 }
 
-val ConstantBezierFormula<Vector>.point0: Point
+val ConstantBezierBinomial<Vector>.point0: Point
     get() = this.weight0.toPoint()
 
-val ConstantBezierFormula<Vector>.segmentsConstant: List<Segment>
+val ConstantBezierBinomial<Vector>.segmentsConstant: List<Segment>
     get() = listOf(
         Segment(
             start = point0,
@@ -35,18 +35,18 @@ val ConstantBezierFormula<Vector>.segmentsConstant: List<Segment>
     )
 
 
-fun ConstantBezierFormula<Double>.toPolynomialFormulaConstant(): ConstantFormula = ConstantFormula.of(
+fun ConstantBezierBinomial<Double>.toPolynomialFormulaConstant(): ConstantFormula = ConstantFormula.of(
     a = weight0,
 )
 
-val ConstantBezierFormula<Vector>.componentXLinear
-    get() = ConstantBezierFormula(
+val ConstantBezierBinomial<Vector>.componentXLinear
+    get() = ConstantBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.x,
     )
 
-val ConstantBezierFormula<Vector>.componentYLinear
-    get() = ConstantBezierFormula(
+val ConstantBezierBinomial<Vector>.componentYLinear
+    get() = ConstantBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.y,
     )

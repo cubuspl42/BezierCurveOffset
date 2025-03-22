@@ -1,9 +1,7 @@
 package app.geometry.bezier_curves
 
 import app.algebra.Vector
-import app.algebra.bezier_formulas.BezierFormula
-import app.algebra.bezier_formulas.ConstantBezierFormula
-import app.algebra.polynomial_formulas.ConstantFormula
+import app.algebra.bezier_binomials.ConstantBezierBinomial
 import app.geometry.Point
 import app.geometry.bezier_splines.OpenBezierSpline
 
@@ -49,7 +47,7 @@ data class ConstantBezierCurve private constructor(
     override val lastControl: Point
         get() = point
 
-    override val basisFormula = ConstantBezierFormula(
+    override val basisFormula = ConstantBezierBinomial(
         vectorSpace = Vector.VectorVectorSpace,
         weight0 = point.pv,
     )

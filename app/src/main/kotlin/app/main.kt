@@ -1,6 +1,6 @@
 package app
 
-import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
+import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.geometry.*
 import app.geometry.bezier_splines.*
 import org.jfree.svg.SVGGraphics2D

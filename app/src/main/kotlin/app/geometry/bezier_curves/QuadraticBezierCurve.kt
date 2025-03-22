@@ -1,7 +1,7 @@
 package app.geometry.bezier_curves
 
 import app.algebra.Vector
-import app.algebra.bezier_formulas.BezierFormula
+import app.algebra.bezier_binomials.BezierBinomial
 import app.geometry.Point
 
 /**
@@ -50,7 +50,7 @@ data class QuadraticBezierCurve private constructor(
     override val lastControl: Point
         get() = control
 
-    override val basisFormula: BezierFormula<Vector>
+    override val basisFormula: BezierBinomial<Vector>
         get() = TODO("Not yet implemented")
 
     override fun splitAt(t: Double): Pair<BezierCurve<*>, BezierCurve<*>> {

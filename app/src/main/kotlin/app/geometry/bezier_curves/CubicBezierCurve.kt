@@ -1,8 +1,8 @@
 package app.geometry.bezier_curves
 
 import app.algebra.Vector
-import app.algebra.bezier_formulas.*
-import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
+import app.algebra.bezier_binomials.*
+import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.fillCircle
 import app.geometry.*
 import app.geometry.bezier_splines.OpenBezierSpline
@@ -211,7 +211,7 @@ data class CubicBezierCurve private constructor(
     override val lastControl: Point
         get() = control1
 
-    override val basisFormula = CubicBezierFormula(
+    override val basisFormula = CubicBezierBinomial(
         vectorSpace = Vector.VectorVectorSpace,
         weight0 = start.toVector(),
         weight1 = control0.toVector(),

@@ -1,7 +1,7 @@
 package app.geometry.bezier_curves
 
-import app.algebra.bezier_formulas.*
-import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
+import app.algebra.bezier_binomials.*
+import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.geometry.bezier_splines.OpenBezierSpline
 import app.geometry.bezier_splines.mergeWith
 import app.partitionSorted

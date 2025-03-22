@@ -1,7 +1,7 @@
 package app.geometry
 
-import app.algebra.bezier_formulas.CubicBezierFormula
-import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
+import app.algebra.bezier_binomials.CubicBezierBinomial
+import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.fillColumnFrom
 import app.fillFrom
 import app.geometry.bezier_curves.CubicBezierCurve
@@ -82,7 +82,7 @@ data class TimedPointSeries(
         val bMatrix = aMatrix.invSafe()
 
         // (M^-1) * (T^t * T)^-1
-        val cMatrix = CubicBezierFormula.characteristicInvertedMatrix.mtimes(bMatrix)
+        val cMatrix = CubicBezierBinomial.characteristicInvertedMatrix.mtimes(bMatrix)
 
         // (M^-1) * (T^t * T)^-1 * T^t
         val dMatrix = cMatrix.mtimes(bigTTransposedMatrix)

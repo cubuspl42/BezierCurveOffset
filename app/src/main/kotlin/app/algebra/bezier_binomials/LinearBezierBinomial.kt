@@ -1,4 +1,4 @@
-package app.algebra.bezier_formulas
+package app.algebra.bezier_binomials
 
 import app.algebra.polynomial_formulas.PolynomialFormula
 import app.algebra.Vector
@@ -7,12 +7,12 @@ import app.algebra.polynomial_formulas.LinearFormula
 import app.geometry.Point
 import app.geometry.Segment
 
-data class LinearBezierFormula<V>(
+data class LinearBezierBinomial<V>(
     internal val vectorSpace: VectorSpace<V>,
     val weight0: V,
     val weight1: V,
-) : BezierFormula<V>() {
-    override fun findDerivative(): BezierFormula<V> = throw NotImplementedError()
+) : BezierBinomial<V>() {
+    override fun findDerivative(): BezierBinomial<V> = throw NotImplementedError()
 
     override fun evaluate(t: Double): V = evaluateLinear(t = t)
 
@@ -24,43 +24,43 @@ data class LinearBezierFormula<V>(
     }
 }
 
-val LinearBezierFormula<Vector>.point0: Point
+val LinearBezierBinomial<Vector>.point0: Point
     get() = this.weight0.toPoint()
 
-val LinearBezierFormula<Vector>.point1: Point
+val LinearBezierBinomial<Vector>.point1: Point
     get() = this.weight1.toPoint()
 
-val LinearBezierFormula<Vector>.segment0: Segment
+val LinearBezierBinomial<Vector>.segment0: Segment
     get() = Segment(start = point0, end = point1)
 
-val LinearBezierFormula<Vector>.segmentsLinear: List<Segment>
+val LinearBezierBinomial<Vector>.segmentsLinear: List<Segment>
     get() = listOf(segment0)
 
-fun LinearBezierFormula<Vector>.findSkeletonLinear(
+fun LinearBezierBinomial<Vector>.findSkeletonLinear(
     t: Double,
-): ConstantBezierFormula<Vector> {
+): ConstantBezierBinomial<Vector> {
     val subPoint0 = segment0.linearlyInterpolate(t = t)
 
-    return ConstantBezierFormula(
+    return ConstantBezierBinomial(
         vectorSpace = vectorSpace,
         weight0 = subPoint0.pv,
     )
 }
 
-fun LinearBezierFormula<Double>.toPolynomialFormulaLinear(): PolynomialFormula = LinearFormula.of(
+fun LinearBezierBinomial<Double>.toPolynomialFormulaLinear(): PolynomialFormula = LinearFormula.of(
     a = weight1 - weight0,
     b = weight0,
 )
 
-val LinearBezierFormula<Vector>.componentXLinear
-    get() = LinearBezierFormula(
+val LinearBezierBinomial<Vector>.componentXLinear
+    get() = LinearBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.x,
         weight1 = weight1.x,
     )
 
-val LinearBezierFormula<Vector>.componentYLinear
-    get() = LinearBezierFormula(
+val LinearBezierBinomial<Vector>.componentYLinear
+    get() = LinearBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.y,
         weight1 = weight1.y,

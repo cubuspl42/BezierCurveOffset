@@ -1,8 +1,8 @@
 package app.geometry.bezier_curves
 
 import app.algebra.Vector
-import app.algebra.bezier_formulas.BezierFormula
-import app.algebra.bezier_formulas.findFaster
+import app.algebra.bezier_binomials.BezierBinomial
+import app.algebra.bezier_binomials.findFaster
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
@@ -11,7 +11,6 @@ import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.bezier_splines.BezierSpline
 import app.geometry.bezier_splines.MonoBezierCurve
 import app.geometry.bezier_splines.OpenBezierSpline
-import app.partitionSorted
 
 sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
     companion object {
@@ -110,7 +109,7 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
 
     abstract val lastControl: Point
 
-    abstract val basisFormula: BezierFormula<Vector>
+    abstract val basisFormula: BezierBinomial<Vector>
 
     abstract val asProper: ProperBezierCurve<*>?
 

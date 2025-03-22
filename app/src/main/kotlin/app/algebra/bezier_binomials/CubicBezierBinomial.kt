@@ -1,4 +1,4 @@
-package app.algebra.bezier_formulas
+package app.algebra.bezier_binomials
 
 import app.algebra.Vector
 import app.algebra.VectorSpace
@@ -7,13 +7,13 @@ import app.geometry.Segment
 import app.invSafe
 import org.ujmp.core.Matrix
 
-data class CubicBezierFormula<V>(
+data class CubicBezierBinomial<V>(
     internal val vectorSpace: VectorSpace<V>,
     val weight0: V,
     val weight1: V,
     val weight2: V,
     val weight3: V,
-) : BezierFormula<V>() {
+) : BezierBinomial<V>() {
     companion object {
         /**
          * The characteristic matrix of the cubic Bézier curve.
@@ -43,10 +43,10 @@ data class CubicBezierFormula<V>(
         val characteristicInvertedMatrix = characteristicMatrix.invSafe()
     }
 
-    override fun findDerivative(): QuadraticBezierFormula<V> {
+    override fun findDerivative(): QuadraticBezierBinomial<V> {
         fun scale3(v: V) = vectorSpace.scale(3.0, v)
 
-        return QuadraticBezierFormula(
+        return QuadraticBezierBinomial(
             vectorSpace = vectorSpace,
             weight0 = scale3(vectorSpace.subtract(weight1, weight0)),
             weight1 = scale3(vectorSpace.subtract(weight2, weight1)),
@@ -64,32 +64,32 @@ data class CubicBezierFormula<V>(
     }
 }
 
-val CubicBezierFormula<Vector>.point0: Point
+val CubicBezierBinomial<Vector>.point0: Point
     get() = this.weight0.toPoint()
 
-val CubicBezierFormula<Vector>.point1: Point
+val CubicBezierBinomial<Vector>.point1: Point
     get() = this.weight1.toPoint()
 
-val CubicBezierFormula<Vector>.point2: Point
+val CubicBezierBinomial<Vector>.point2: Point
     get() = this.weight2.toPoint()
 
-val CubicBezierFormula<Vector>.point3: Point
+val CubicBezierBinomial<Vector>.point3: Point
     get() = this.weight3.toPoint()
 
-val CubicBezierFormula<Vector>.segmentsCubic: List<Segment>
+val CubicBezierBinomial<Vector>.segmentsCubic: List<Segment>
     get() = listOf(segment0, segment1, segment2)
 
-val CubicBezierFormula<Vector>.segment0: Segment
+val CubicBezierBinomial<Vector>.segment0: Segment
     get() = Segment(start = point0, end = point1)
 
-val CubicBezierFormula<Vector>.segment1: Segment
+val CubicBezierBinomial<Vector>.segment1: Segment
     get() = Segment(start = point1, end = point2)
 
-val CubicBezierFormula<Vector>.segment2: Segment
+val CubicBezierBinomial<Vector>.segment2: Segment
     get() = Segment(start = point2, end = point3)
 
-val CubicBezierFormula<Vector>.componentXCubic
-    get() = CubicBezierFormula(
+val CubicBezierBinomial<Vector>.componentXCubic
+    get() = CubicBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.x,
         weight1 = weight1.x,
@@ -97,8 +97,8 @@ val CubicBezierFormula<Vector>.componentXCubic
         weight3 = weight3.x,
     )
 
-val CubicBezierFormula<Vector>.componentYCubic
-    get() = CubicBezierFormula(
+val CubicBezierBinomial<Vector>.componentYCubic
+    get() = CubicBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.y,
         weight1 = weight1.y,
@@ -106,14 +106,14 @@ val CubicBezierFormula<Vector>.componentYCubic
         weight3 = weight3.y,
     )
 
-fun CubicBezierFormula<Vector>.findSkeletonCubic(
+fun CubicBezierBinomial<Vector>.findSkeletonCubic(
     t: Double,
-): QuadraticBezierFormula<Vector> {
+): QuadraticBezierBinomial<Vector> {
     val subPoint0 = segment0.linearlyInterpolate(t = t)
     val subPoint1 = segment1.linearlyInterpolate(t = t)
     val subPoint2 = segment2.linearlyInterpolate(t = t)
 
-    return QuadraticBezierFormula(
+    return QuadraticBezierBinomial(
         vectorSpace = vectorSpace,
         weight0 = subPoint0.pv,
         weight1 = subPoint1.pv,
@@ -121,6 +121,6 @@ fun CubicBezierFormula<Vector>.findSkeletonCubic(
     )
 }
 
-fun CubicBezierFormula<Vector>.evaluateFastCubic(
+fun CubicBezierBinomial<Vector>.evaluateFastCubic(
     t: Double,
 ): Vector = findSkeletonCubic(t = t).evaluateFastQuadratic(t = t)

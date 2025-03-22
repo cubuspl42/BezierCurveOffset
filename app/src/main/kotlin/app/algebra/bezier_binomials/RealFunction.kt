@@ -1,7 +1,7 @@
-package app.algebra.bezier_formulas
+package app.algebra.bezier_binomials
 
 import app.algebra.Vector
-import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
+import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.geometry.lineTo
 import app.geometry.moveTo
 import app.step
