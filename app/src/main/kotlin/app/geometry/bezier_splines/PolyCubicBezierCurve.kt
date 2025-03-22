@@ -7,21 +7,31 @@ import app.geometry.bezier_curves.CubicBezierCurve
  * (a spline formed of Bézier curves)
  */
 class PolyCubicBezierCurve(
-    override val nodes: List<CubicBezierSpline.Node>,
+    override val startNode: StartNode,
+    override val innerNodes: List<CubicBezierSpline.InnerNode>,
+    override val endNode: EndNode,
 ) : CubicBezierSpline() {
-    init {
-        require(nodes.size >= 2)
-    }
-
     override val subCurves: List<CubicBezierCurve> by lazy {
-        nodes.zipWithNext { node, nextNode ->
+        listOf(
             CubicBezierCurve(
-                start = node.point,
-                control0 = node.control1,
-                control1 = nextNode.control0,
+                start = startNode.point,
+                control0 = startNode.forwardControl,
+                control1 = secondNode.backwardControl,
+                end = secondNode.point,
+            ),
+        ) + innerNodes.zipWithNext { prevNode, nextNode ->
+            CubicBezierCurve(
+                start = prevNode.point,
+                control0 = prevNode.forwardControl,
+                control1 = nextNode.backwardControl,
                 end = nextNode.point,
             )
-        }
+        } + CubicBezierCurve(
+            start = oneBeforeEndNode.point,
+            control0 = oneBeforeEndNode.forwardControl,
+            control1 = endNode.backwardControl,
+            end = endNode.point,
+        )
     }
 }
 

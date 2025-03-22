@@ -2,64 +2,76 @@ package app.geometry.bezier_splines
 
 import app.fillCircle
 import app.geometry.*
-import app.geometry.bezier_splines.CubicBezierSpline.Node
 import app.geometry.bezier_curves.CubicBezierCurve
-import app.uncons
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
 abstract class CubicBezierSpline {
-    class Node(
-        val control0: Point,
-        val point: Point,
-        val control1: Point,
-    ) {
+    sealed interface Node {
+        val backwardControl: Point?
+        val point: Point
+        val forwardControl: Point?
+    }
+
+    sealed interface ForwardNode : Node {
+        override val forwardControl: Point
+    }
+
+    sealed interface BackwardNode : Node {
+        override val backwardControl: Point
+    }
+
+    class StartNode(
+        override val point: Point,
+        override val forwardControl: Point,
+    ) : ForwardNode {
+        override val backwardControl: Nothing? = null
+    }
+
+    class InnerNode(
+        override val backwardControl: Point,
+        override val point: Point,
+        override val forwardControl: Point,
+    ) : ForwardNode, BackwardNode {
         companion object {
             fun start(
                 point: Point,
                 control1: Point,
-            ): Node = Node(
-                control0 = point,
+            ): StartNode = StartNode(
                 point = point,
-                control1 = control1,
+                forwardControl = control1,
             )
 
             fun end(
                 control0: Point,
                 point: Point,
-            ): Node = Node(
-                control0 = control0,
+            ): EndNode = EndNode(
+                backwardControl = control0,
                 point = point,
-                control1 = point,
             )
         }
+    }
 
-        val firstControlSegment: Segment
-            get() = Segment(
-                start = point,
-                end = control0,
-            )
-
-        val secondControlSegment: Segment
-            get() = Segment(
-                start = point,
-                end = control1,
-            )
+    class EndNode(
+        override val point: Point,
+        override val backwardControl: Point,
+    ) : BackwardNode {
+        override val forwardControl: Nothing? = null
     }
 
     companion object {
         private fun glueSplines(
-            prevSplineEndNode: CubicBezierSpline.Node,
-            nextSplineStartNode: CubicBezierSpline.Node,
-        ): Node {
+            prevSplineEndNode: CubicBezierSpline.EndNode,
+            nextSplineStartNode: CubicBezierSpline.StartNode,
+        ): InnerNode {
             val startPoint = Point.midPoint(
                 prevSplineEndNode.point,
                 nextSplineStartNode.point,
             )
 
-            val givenControl0 = prevSplineEndNode.control0
-            val givenControl1 = nextSplineStartNode.control1
+            val givenControl0 = prevSplineEndNode.backwardControl
+            val givenControl1 = nextSplineStartNode.forwardControl
 
             val givenControlsBiRay = BiRay.fromPoints(
                 basePoint = startPoint,
@@ -75,18 +87,18 @@ abstract class CubicBezierSpline {
                     val projectedControl0 = givenControl0.projectOnto(projectionLine)
                     val projectedControl1 = givenControl1.projectOnto(projectionLine)
 
-                    Node(
-                        control0 = projectedControl0,
+                    InnerNode(
+                        backwardControl = projectedControl0,
                         point = startPoint,
-                        control1 = projectedControl1,
+                        forwardControl = projectedControl1,
                     )
                 }
 
                 // Control segments are already parallel, let's use them as they are
-                else -> Node(
-                    control0 = givenControl0,
+                else -> InnerNode(
+                    backwardControl = givenControl0,
                     point = startPoint,
-                    control1 = givenControl1,
+                    forwardControl = givenControl1,
                 )
             }
         }
@@ -101,45 +113,71 @@ abstract class CubicBezierSpline {
             val firstSpline = splines.first()
             val lastSpline = splines.last()
 
-            val firstSplineInitialNodes = firstSpline.nodes.dropLast(1)
+            val firstSplineStartNode = firstSpline.startNode
 
-            val innerNodes = splines.zipWithNext().flatMap { (prevSpline, nextSpline) ->
-                val prevSplineEndNode = prevSpline.endNode
-
-                val (nextSplineStartNode, nextSplineRemainingNodes) = nextSpline.nodes.uncons()!!
-
+            val newInnerNodes = splines.zipWithNext().flatMap { (prevSpline, nextSpline) ->
                 val jointNode = glueSplines(
-                    prevSplineEndNode = prevSplineEndNode,
-                    nextSplineStartNode = nextSplineStartNode,
+                    prevSplineEndNode = prevSpline.endNode,
+                    nextSplineStartNode = nextSpline.startNode,
                 )
 
-                listOf(jointNode) + nextSplineRemainingNodes.dropLast(1)
+                listOf(jointNode) + nextSpline.innerNodes
             }
 
-            val lastNode = lastSpline.nodes.last()
+            val lastSplineEndNode = lastSpline.endNode
 
             val joinedSpline = PolyCubicBezierCurve(
-                nodes = firstSplineInitialNodes + innerNodes + lastNode,
+                startNode = firstSplineStartNode,
+                innerNodes = firstSpline.innerNodes + newInnerNodes,
+                endNode = lastSplineEndNode,
             )
 
             return joinedSpline
         }
     }
 
+    val secondNode: BackwardNode
+        get() = innerNodes.firstOrNull() ?: endNode
+
+    val oneBeforeEndNode: ForwardNode
+        get() = innerNodes.lastOrNull() ?: startNode
+
+    abstract val startNode: StartNode
+
     /**
      * The nodes of this spline. The first control point of the first node and
      * the last control point of the last node are not effective.
      */
-    abstract val nodes: List<Node>
+    abstract val innerNodes: List<InnerNode>
+
+    abstract val endNode: EndNode
+
+    val forwardNodes: List<ForwardNode> by lazy {
+        listOf(startNode) + innerNodes
+    }
+
+    val backwardNodes: List<BackwardNode> by lazy {
+        innerNodes + endNode
+    }
+
+    val nodes by lazy {
+        listOf(startNode) + innerNodes + endNode
+    }
 
     abstract val subCurves: List<CubicBezierCurve>
 }
 
-val CubicBezierSpline.startNode: Node
-    get() = nodes.first()
+val CubicBezierSpline.BackwardNode.backwardControlSegment: Segment
+    get() = Segment(
+        start = point,
+        end = backwardControl,
+    )
 
-val CubicBezierSpline.endNode: Node
-    get() = nodes.last()
+val CubicBezierSpline.ForwardNode.forwardControlSegment: Segment
+    get() = Segment(
+        start = point,
+        end = forwardControl,
+    )
 
 fun CubicBezierSpline.joinWith(
     rightSubSplitCurve: CubicBezierSpline,
@@ -177,9 +215,14 @@ fun CubicBezierSpline.drawSpline(
 
     graphics2D.color = Color.LIGHT_GRAY
 
-    nodes.forEach {
-        drawControlSegment(it.firstControlSegment)
-        drawControlSegment(it.secondControlSegment)
+    nodes.forEach { node ->
+        (node as? CubicBezierSpline.BackwardNode)?.let {
+            drawControlSegment(it.backwardControlSegment)
+        }
+
+        (node as? CubicBezierSpline.ForwardNode)?.let {
+            drawControlSegment(it.forwardControlSegment)
+        }
     }
 
     graphics2D.color = Color.BLACK

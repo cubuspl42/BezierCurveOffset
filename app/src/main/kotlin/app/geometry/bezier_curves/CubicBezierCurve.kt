@@ -65,16 +65,16 @@ data class CubicBezierCurve(
         val midPoint = skeleton1.evaluateLinear(t = t).toPoint()
 
         return BiCubicBezierCurve(
-            startNode = CubicBezierSpline.Node.start(
+            startNode = CubicBezierSpline.InnerNode.start(
                 point = start,
                 control1 = skeleton0.point0,
             ),
-            midNode = CubicBezierSpline.Node(
-                control0 = skeleton1.point0,
+            midNode = CubicBezierSpline.InnerNode(
+                backwardControl = skeleton1.point0,
                 point = midPoint,
-                control1 = skeleton1.point1,
+                forwardControl = skeleton1.point1,
             ),
-            endNode = CubicBezierSpline.Node.end(
+            endNode = CubicBezierSpline.InnerNode.end(
                 control0 = skeleton0.point2,
                 point = end,
             ),

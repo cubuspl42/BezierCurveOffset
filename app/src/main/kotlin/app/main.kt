@@ -19,7 +19,7 @@ val outerSamplingStrategy = SamplingStrategy(
 
 fun main(args: Array<String>) {
 
-    val p0 =  Point(318.0, 181.0)
+    val p0 = Point(318.0, 181.0)
 
     val t0 = Translation(400.0, -100.0)
     val t1 = Translation(-20.0, 200.0)
@@ -37,20 +37,20 @@ fun main(args: Array<String>) {
     val w6 = w5.translate(t5)
 
     val baseSpline = PolyCubicBezierCurve(
-        nodes = listOf(
-            CubicBezierSpline.Node.start(
-                point = w0,
-                control1 = w1,
-            ),
-            CubicBezierSpline.Node(
-                control0 = w2,
+        startNode = CubicBezierSpline.InnerNode.start(
+            point = w0,
+            control1 = w1,
+        ),
+        innerNodes = listOf(
+            CubicBezierSpline.InnerNode(
+                backwardControl = w2,
                 point = w3,
-                control1 = w4,
+                forwardControl = w4,
             ),
-            CubicBezierSpline.Node.end(
-                control0 = w5,
-                point = w6,
-            ),
+        ),
+        endNode = CubicBezierSpline.InnerNode.end(
+            control0 = w5,
+            point = w6,
         ),
     )
 
