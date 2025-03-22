@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
     val w5 = w4.translate(t4)
     val w6 = w5.translate(t5)
 
-    val baseSpline = PolyBezierCurve(
+    val baseSpline = OpenPolyBezierCurve(
         startNode = BezierSpline.InnerNode.start(
             point = w0,
             control1 = w1,

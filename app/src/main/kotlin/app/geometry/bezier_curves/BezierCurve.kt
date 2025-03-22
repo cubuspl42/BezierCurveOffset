@@ -31,6 +31,25 @@ data class BezierCurve(
         private const val bestFitErrorThreshold = 0.001
         private const val bestFitMaxSubdivisionLevel = 4
 
+        fun interConnect(
+            prevNode: BezierSpline.InnerNode,
+            nextNode: BezierSpline.InnerNode,
+        ): BezierCurve = BezierCurve(
+            start = prevNode.point,
+            control0 = prevNode.forwardControl,
+            control1 = nextNode.backwardControl,
+            end = nextNode.point,
+        )
+
+        fun interConnectAll(
+            innerNodes: List<BezierSpline.InnerNode>,
+        ): List<BezierCurve> = innerNodes.zipWithNext { prevNode, nextNode ->
+            BezierCurve.interConnect(
+                prevNode = prevNode,
+                nextNode = nextNode,
+            )
+        }
+
         fun bindRay(
             pointFunction: TimeFunction<Point>,
             vectorFunction: TimeFunction<Direction>,

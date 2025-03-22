@@ -1,7 +1,12 @@
 package app.geometry.bezier_splines
 
 import app.geometry.Point
+import app.geometry.bezier_curves.BezierCurve
 
+/**
+ * A Bézier spline, also called "poly-Bézier curve", or "composite Bézier curve"
+ * (a spline formed of cubic Bézier curves)
+ */
 abstract class BezierSpline {
     sealed interface Node {
         val backwardControl: Point?
@@ -49,4 +54,8 @@ abstract class BezierSpline {
     }
 
     abstract val nodes: List<Node>
+
+    abstract val innerNodes: List<InnerNode>
+
+    abstract val subCurves: List<BezierCurve>
 }

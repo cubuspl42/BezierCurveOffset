@@ -8,7 +8,8 @@ import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
 /**
- * A spline built from cubic Bézier curves
+ * An open Bézier spline, i.e. such that its start and end nodes are not
+ * connected
  */
 abstract class OpenBezierSpline : BezierSpline() {
     class EndNode(
@@ -84,7 +85,7 @@ abstract class OpenBezierSpline : BezierSpline() {
 
             val lastSplineEndNode = lastSpline.endNode
 
-            val mergedSpline = PolyBezierCurve(
+            val mergedSpline = OpenPolyBezierCurve(
                 startNode = firstSplineStartNode,
                 innerNodes = firstSpline.innerNodes + newInnerNodes,
                 endNode = lastSplineEndNode,
@@ -102,27 +103,11 @@ abstract class OpenBezierSpline : BezierSpline() {
 
     abstract val startNode: StartNode
 
-    /**
-     * The nodes of this spline. The first control point of the first node and
-     * the last control point of the last node are not effective.
-     */
-    abstract val innerNodes: List<InnerNode>
-
     abstract val endNode: EndNode
 
-    val forwardNodes: List<ForwardNode> by lazy {
-        listOf(startNode) + innerNodes
-    }
-
-    val backwardNodes: List<BackwardNode> by lazy {
-        innerNodes + endNode
-    }
-
-    override val nodes: List<Node> by lazy {
+    final override val nodes: List<Node> by lazy {
         listOf(startNode) + innerNodes + endNode
     }
-
-    abstract val subCurves: List<BezierCurve>
 }
 
 val BezierSpline.BackwardNode.backwardControlSegment: Segment
