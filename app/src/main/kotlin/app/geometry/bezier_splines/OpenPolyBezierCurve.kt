@@ -1,5 +1,6 @@
 package app.geometry.bezier_splines
 
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
 
 class OpenPolyBezierCurve(
@@ -7,17 +8,17 @@ class OpenPolyBezierCurve(
     override val innerNodes: List<BezierSpline.InnerNode>,
     override val endNode: EndNode,
 ) : OpenBezierSpline() {
-    override val subCurves: List<CubicBezierCurve> by lazy {
+    override val subCurves: List<BezierCurve<*>> by lazy {
         listOf(
-            CubicBezierCurve(
+            CubicBezierCurve.of(
                 start = startNode.point,
                 control0 = startNode.forwardControl,
                 control1 = secondNode.backwardControl,
                 end = secondNode.point,
             ),
-        ) + CubicBezierCurve.interConnectAll(
+        ) + BezierCurve.interConnectAll(
             innerNodes = innerNodes,
-        ) + CubicBezierCurve(
+        ) + CubicBezierCurve.of(
             start = oneBeforeEndNode.point,
             control0 = oneBeforeEndNode.forwardControl,
             control1 = endNode.backwardControl,

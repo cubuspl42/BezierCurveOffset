@@ -3,7 +3,7 @@ package app.geometry.bezier_splines
 import app.fillCircle
 import app.geometry.Point
 import app.geometry.Segment
-import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.*
 import app.geometry.cubicTo
 import app.geometry.moveTo
 import java.awt.Color
@@ -67,15 +67,21 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
     }
 
     fun mergeOf(
-        transform: (CubicBezierCurve) -> OpenBezierSpline,
+        transform: (BezierCurve<*>) -> OpenBezierSpline,
     ): SplineT = prototype.merge(
         splines = subCurves.map(transform),
     )
 
+    fun mergeOfNotNull(
+        transform: (BezierCurve<*>) -> OpenBezierSpline?,
+    ): SplineT = prototype.merge(
+        splines = subCurves.mapNotNull(transform),
+    )
+
     fun findOffsetSpline(
-        strategy: CubicBezierCurve.OffsetStrategy,
+        strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,
-    ): SplineT = mergeOf {
+    ): SplineT = mergeOfNotNull {
         it.findOffsetSpline(
             strategy = strategy,
             offset = offset,
@@ -85,14 +91,14 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
     fun findOffsetSplineBestFit(
         offset: Double,
     ): SplineT = findOffsetSpline(
-        strategy = CubicBezierCurve.BestFitOffsetStrategy,
+        strategy = ProperBezierCurve.BestFitOffsetStrategy,
         offset = offset,
     )
 
     fun findOffsetSplineNormal(
         offset: Double,
     ): SplineT = findOffsetSpline(
-        strategy = CubicBezierCurve.NormalOffsetStrategy,
+        strategy = ProperBezierCurve.NormalOffsetStrategy,
         offset = offset,
     )
 
@@ -102,15 +108,30 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
 
     abstract val innerNodes: List<InnerNode>
 
-    abstract val subCurves: List<CubicBezierCurve>
+    abstract val subCurves: List<BezierCurve<*>>
+}
+
+fun Path2D.pathTo(
+    subCurve: BezierCurve<*>,
+) {
+    when (subCurve) {
+        is ConstantBezierCurve -> TODO()
+        is LinearBezierCurve -> TODO()
+        is QuadraticBezierCurve -> TODO()
+        is CubicBezierCurve -> cubicTo(
+            control1 = subCurve.control0,
+            control2 = subCurve.control1,
+            end = subCurve.end,
+        )
+    }
 }
 
 fun BezierSpline<*>.toPath2D(): Path2D.Double = Path2D.Double().apply {
     moveTo(nodes.first().point)
 
     subCurves.forEach { subCurve ->
-        cubicTo(
-            control1 = subCurve.control0, control2 = subCurve.control1, end = subCurve.end
+        pathTo(
+            subCurve = subCurve,
         )
     }
 }

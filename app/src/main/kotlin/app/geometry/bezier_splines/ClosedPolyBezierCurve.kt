@@ -1,6 +1,6 @@
 package app.geometry.bezier_splines
 
-import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.BezierCurve
 
 class ClosedPolyBezierCurve(
     override val innerNodes: List<InnerNode>,
@@ -9,10 +9,10 @@ class ClosedPolyBezierCurve(
         require(innerNodes.size >= 2)
     }
 
-    override val subCurves: List<CubicBezierCurve> by lazy {
-        CubicBezierCurve.interConnectAll(
+    override val subCurves: List<BezierCurve<*>> by lazy {
+        BezierCurve.interConnectAll(
             innerNodes = innerNodes,
-        ) + CubicBezierCurve.interConnect(
+        ) + BezierCurve.interConnect(
             prevNode = innerNodes.last(),
             nextNode = innerNodes.first(),
         )

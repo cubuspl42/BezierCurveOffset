@@ -6,7 +6,7 @@ class ConstantFormula private constructor(
     companion object {
         fun of(
             a: Double,
-        ): PolynomialFormula = ConstantFormula(
+        ): ConstantFormula = ConstantFormula(
             a = a,
         )
     }

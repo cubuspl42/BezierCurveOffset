@@ -1,5 +1,6 @@
 package app.geometry.bezier_splines
 
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
 
 /**
@@ -13,7 +14,7 @@ class BiBezierCurve(
     override val innerNodes: List<BezierSpline.InnerNode> = listOf(midNode)
 
     val firstSubCurve by lazy {
-        CubicBezierCurve(
+        CubicBezierCurve.of(
             start = startNode.point,
             control0 = startNode.forwardControl,
             control1 = midNode.backwardControl,
@@ -22,7 +23,7 @@ class BiBezierCurve(
     }
 
     val secondSubCurve by lazy {
-        CubicBezierCurve(
+        CubicBezierCurve.of(
             start = midNode.point,
             control0 = midNode.forwardControl,
             control1 = endNode.backwardControl,
@@ -30,7 +31,7 @@ class BiBezierCurve(
         )
     }
 
-    override val subCurves: List<CubicBezierCurve> by lazy {
+    override val subCurves: List<BezierCurve<*>> by lazy {
         listOf(
             firstSubCurve,
             secondSubCurve,

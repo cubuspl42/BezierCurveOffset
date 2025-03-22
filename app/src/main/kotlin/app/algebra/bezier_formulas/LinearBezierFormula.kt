@@ -8,7 +8,7 @@ import app.geometry.Point
 import app.geometry.Segment
 
 data class LinearBezierFormula<V>(
-    private val vectorSpace: VectorSpace<V>,
+    internal val vectorSpace: VectorSpace<V>,
     val weight0: V,
     val weight1: V,
 ) : BezierFormula<V>() {
@@ -30,8 +30,22 @@ val LinearBezierFormula<Vector>.point0: Point
 val LinearBezierFormula<Vector>.point1: Point
     get() = this.weight1.toPoint()
 
+val LinearBezierFormula<Vector>.segment0: Segment
+    get() = Segment(start = point0, end = point1)
+
 val LinearBezierFormula<Vector>.segmentsLinear: List<Segment>
-    get() = emptyList()
+    get() = listOf(segment0)
+
+fun LinearBezierFormula<Vector>.findSkeletonLinear(
+    t: Double,
+): ConstantBezierFormula<Vector> {
+    val subPoint0 = segment0.linearlyInterpolate(t = t)
+
+    return ConstantBezierFormula(
+        vectorSpace = vectorSpace,
+        weight0 = subPoint0.pv,
+    )
+}
 
 fun LinearBezierFormula<Double>.toPolynomialFormulaLinear(): PolynomialFormula = LinearFormula.of(
     a = weight1 - weight0,

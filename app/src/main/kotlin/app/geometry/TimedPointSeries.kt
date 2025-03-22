@@ -7,6 +7,7 @@ import app.fillFrom
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.TimeFunction
 import app.fillCircle
+import app.geometry.bezier_curves.BezierCurve
 import app.invSafe
 import org.ujmp.core.Matrix
 import java.awt.Color
@@ -61,7 +62,7 @@ data class TimedPointSeries(
         }
     }
 
-    fun bestFitCurve(): CubicBezierCurve {
+    fun bestFitCurve(): BezierCurve<*> {
         // T
         val bigTMatrix = buildBigTMatrix()
 
@@ -98,7 +99,7 @@ data class TimedPointSeries(
             return Point(x, y)
         }
 
-        return CubicBezierCurve(
+        return CubicBezierCurve.of(
             start = getWeight(0),
             control0 = getWeight(1),
             control1 = getWeight(2),

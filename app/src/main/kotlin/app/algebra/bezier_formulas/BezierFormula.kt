@@ -42,6 +42,7 @@ sealed class BezierFormula<V> : RealFunction<V>() {
 
 val BezierFormula<Vector>.segments: List<Segment>
     get() = when (this) {
+        is ConstantBezierFormula<Vector> -> this.segmentsConstant
         is LinearBezierFormula<Vector> -> this.segmentsLinear
         is QuadraticBezierFormula<Vector> -> this.segmentsQuadratic
         is CubicBezierFormula<Vector> -> this.segmentsCubic
@@ -50,7 +51,8 @@ val BezierFormula<Vector>.segments: List<Segment>
 fun BezierFormula<Vector>.findSkeleton(
     t: Double,
 ): BezierFormula<Vector> = when (this) {
-    is LinearBezierFormula<Vector> -> throw NotImplementedError()
+    is ConstantBezierFormula<*> -> TODO("Move this logic to curves")
+    is LinearBezierFormula<Vector> ->  this.findSkeletonLinear(t = t)
     is QuadraticBezierFormula<Vector> -> this.findSkeletonQuadratic(t = t)
     is CubicBezierFormula<Vector> -> this.findSkeletonCubic(t = t)
 }
@@ -76,6 +78,7 @@ fun BezierFormula<Vector>.toDataset(
 }
 
 fun BezierFormula<Double>.toPolynomialFormula(): PolynomialFormula = when (this) {
+    is ConstantBezierFormula<Double> -> this.toPolynomialFormulaConstant()
     is LinearBezierFormula<Double> -> this.toPolynomialFormulaLinear()
     is QuadraticBezierFormula<Double> -> this.toPolynomialFormulaQuadratic()
     // We shouldn't need cubic polynomials
@@ -91,6 +94,7 @@ fun BezierFormula<Vector>.findFaster(): TimeFunction<Vector> {
 fun BezierFormula<Vector>.evaluateFast(
     t: Double,
 ): Vector = when (this) {
+    is ConstantBezierFormula<Vector> -> TODO("Move this to curves")
     is LinearBezierFormula<Vector> -> this.evaluateLinear(t = t)
     is QuadraticBezierFormula<Vector> -> this.evaluateFastQuadratic(t = t)
     is CubicBezierFormula<Vector> -> this.evaluateFastCubic(t = t)
@@ -98,6 +102,7 @@ fun BezierFormula<Vector>.evaluateFast(
 
 val BezierFormula<Vector>.componentX: BezierFormula<Double>
     get() = when (this) {
+        is ConstantBezierFormula<Vector> -> TODO("Move this to curves")
         is LinearBezierFormula<Vector> -> this.componentXLinear
         is QuadraticBezierFormula<Vector> -> this.componentXQuadratic
         is CubicBezierFormula<Vector> -> this.componentXCubic
@@ -105,6 +110,7 @@ val BezierFormula<Vector>.componentX: BezierFormula<Double>
 
 val BezierFormula<Vector>.componentY: BezierFormula<Double>
     get() = when (this) {
+        is ConstantBezierFormula<Vector> -> TODO("Move this to curves")
         is LinearBezierFormula<Vector> -> this.componentYLinear
         is QuadraticBezierFormula<Vector> -> this.componentYQuadratic
         is CubicBezierFormula<Vector> -> this.componentYCubic
