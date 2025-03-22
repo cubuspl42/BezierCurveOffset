@@ -3,6 +3,10 @@ package app.geometry.bezier_curves
 import app.algebra.Vector
 import app.algebra.bezier_formulas.*
 import app.geometry.*
+import app.geometry.bezier_splines.BiCubicBezierCurve
+import app.geometry.bezier_splines.CubicBezierSpline
+import app.geometry.bezier_splines.joinOf
+import app.geometry.bezier_splines.joinWith
 import app.partitionSorted
 import java.awt.geom.Path2D
 

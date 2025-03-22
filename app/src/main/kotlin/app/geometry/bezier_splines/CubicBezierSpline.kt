@@ -1,7 +1,8 @@
-package app.geometry
+package app.geometry.bezier_splines
 
 import app.fillCircle
-import app.geometry.CubicBezierSpline.Node
+import app.geometry.*
+import app.geometry.bezier_splines.CubicBezierSpline.Node
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.uncons
 import java.awt.Color

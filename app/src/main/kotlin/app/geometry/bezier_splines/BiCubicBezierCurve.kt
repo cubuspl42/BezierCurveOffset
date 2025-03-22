@@ -1,4 +1,4 @@
-package app.geometry
+package app.geometry.bezier_splines
 
 import app.geometry.bezier_curves.CubicBezierCurve
 

@@ -1,13 +1,14 @@
 package app
 
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
-import app.algebra.bezier_formulas.findAllCriticalPoints
 import app.geometry.*
-import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_splines.CubicBezierSpline
+import app.geometry.bezier_splines.PolyCubicBezierCurve
+import app.geometry.bezier_splines.drawSpline
+import app.geometry.bezier_splines.findOffsetSplineBestFitPoly
 import org.jfree.svg.SVGGraphics2D
 import org.jfree.svg.SVGUtils
 import java.awt.BasicStroke
-import java.awt.Color
 import java.io.File
 
 val outerSamplingStrategy = SamplingStrategy(

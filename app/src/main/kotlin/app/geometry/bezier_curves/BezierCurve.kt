@@ -5,6 +5,7 @@ import app.algebra.bezier_formulas.*
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.fillCircle
 import app.geometry.*
+import app.geometry.bezier_splines.BiCubicBezierCurve
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
