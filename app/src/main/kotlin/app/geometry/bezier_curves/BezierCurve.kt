@@ -28,8 +28,8 @@ data class BezierCurve(
     }
 
     companion object {
-        private const val bestFitErrorThreshold = 0.001
-        private const val bestFitMaxSubdivisionLevel = 4
+        private const val bestFitErrorThreshold = 0.0001
+        private const val bestFitMaxSubdivisionLevel = 8
 
         fun interConnect(
             prevNode: BezierSpline.InnerNode,

@@ -2,7 +2,6 @@ package app.geometry.bezier_splines
 
 import app.fillCircle
 import app.geometry.*
-import app.geometry.bezier_curves.BezierCurve
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
@@ -11,7 +10,7 @@ import java.awt.geom.Path2D
  * An open Bézier spline, i.e. such that its start and end nodes are not
  * connected
  */
-abstract class OpenBezierSpline : BezierSpline() {
+abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
     class EndNode(
         override val point: Point,
         override val backwardControl: Point,
@@ -19,18 +18,18 @@ abstract class OpenBezierSpline : BezierSpline() {
         override val forwardControl: Nothing? = null
     }
 
-    companion object {
-        private fun glueSplines(
-            prevSplineEndNode: OpenBezierSpline.EndNode,
-            nextSplineStartNode: BezierSpline.StartNode,
+    companion object : Prototype<OpenBezierSpline>() {
+        fun glueSplineExposedNodes(
+            prevNode: BackwardNode,
+            nextNode: ForwardNode,
         ): InnerNode {
             val startPoint = Point.midPoint(
-                prevSplineEndNode.point,
-                nextSplineStartNode.point,
+                prevNode.point,
+                nextNode.point,
             )
 
-            val givenControl0 = prevSplineEndNode.backwardControl
-            val givenControl1 = nextSplineStartNode.forwardControl
+            val givenControl0 = prevNode.backwardControl
+            val givenControl1 = nextNode.forwardControl
 
             val givenControlsBiRay = BiRay.fromPoints(
                 basePoint = startPoint,
@@ -62,33 +61,34 @@ abstract class OpenBezierSpline : BezierSpline() {
             }
         }
 
-        fun merge(
+        fun glueSplinesInnerNodes(
+            splines: List<OpenBezierSpline>
+        ): List<BezierSpline.InnerNode> {
+            val firstSpline = splines.first()
+
+            return firstSpline.innerNodes + splines.zipWithNext().flatMap { (prevSpline, nextSpline) ->
+                val jointNode = OpenBezierSpline.glueSplineExposedNodes(
+                    prevNode = prevSpline.endNode,
+                    nextNode = nextSpline.startNode,
+                )
+
+                listOf(jointNode) + nextSpline.innerNodes
+            }
+        }
+
+        override fun merge(
             splines: List<OpenBezierSpline>,
         ): OpenBezierSpline {
             require(splines.isNotEmpty())
 
             if (splines.size == 1) return splines.single()
 
-            val firstSpline = splines.first()
-            val lastSpline = splines.last()
-
-            val firstSplineStartNode = firstSpline.startNode
-
-            val newInnerNodes = splines.zipWithNext().flatMap { (prevSpline, nextSpline) ->
-                val jointNode = glueSplines(
-                    prevSplineEndNode = prevSpline.endNode,
-                    nextSplineStartNode = nextSpline.startNode,
-                )
-
-                listOf(jointNode) + nextSpline.innerNodes
-            }
-
-            val lastSplineEndNode = lastSpline.endNode
+            val gluedInnerNodes = glueSplinesInnerNodes(splines = splines)
 
             val mergedSpline = OpenPolyBezierCurve(
-                startNode = firstSplineStartNode,
-                innerNodes = firstSpline.innerNodes + newInnerNodes,
-                endNode = lastSplineEndNode,
+                startNode = splines.first().startNode,
+                innerNodes = gluedInnerNodes,
+                endNode = splines.last().endNode,
             )
 
             return mergedSpline
@@ -104,6 +104,8 @@ abstract class OpenBezierSpline : BezierSpline() {
     abstract val startNode: StartNode
 
     abstract val endNode: EndNode
+
+    final override val prototype = OpenBezierSpline
 
     final override val nodes: List<Node> by lazy {
         listOf(startNode) + innerNodes + endNode
@@ -127,54 +129,3 @@ fun OpenBezierSpline.mergeWith(
 ): OpenBezierSpline = OpenBezierSpline.merge(
     splines = listOf(this, rightSubSplitCurve),
 )
-
-fun OpenBezierSpline.mergeOf(
-    transform: (BezierCurve) -> OpenBezierSpline,
-): OpenBezierSpline = OpenBezierSpline.merge(
-    splines = subCurves.map(transform),
-)
-
-fun OpenBezierSpline.toPath2D(): Path2D.Double = Path2D.Double().apply {
-    moveTo(startNode.point)
-    subCurves.forEach { subCurve ->
-        cubicTo(
-            control1 = subCurve.control0, control2 = subCurve.control1, end = subCurve.end
-        )
-    }
-}
-
-fun OpenBezierSpline.drawSpline(
-    graphics2D: Graphics2D,
-) {
-    fun drawControlSegment(
-        controlSegment: Segment,
-    ) {
-        graphics2D.draw(controlSegment.toLine2D())
-        graphics2D.fillCircle(
-            center = controlSegment.end,
-            radius = 2.0,
-        )
-    }
-
-    graphics2D.color = Color.LIGHT_GRAY
-
-    nodes.forEach { node ->
-        (node as? BezierSpline.BackwardNode)?.let {
-            drawControlSegment(it.backwardControlSegment)
-        }
-
-        (node as? BezierSpline.ForwardNode)?.let {
-            drawControlSegment(it.forwardControlSegment)
-        }
-    }
-
-    graphics2D.color = Color.BLACK
-    graphics2D.draw(toPath2D())
-
-    nodes.forEach {
-        graphics2D.fillCircle(
-            center = it.point,
-            radius = 2.0,
-        )
-    }
-}
