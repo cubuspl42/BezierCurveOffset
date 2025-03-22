@@ -1,12 +1,12 @@
-package app.algebra.polynomial_formulas
+package app.algebra.polynomials
 
-class ConstantFormula private constructor(
+class ConstantPolynomial private constructor(
     val a: Double,
-) : PolynomialFormula() {
+) : Polynomial() {
     companion object {
         fun of(
             a: Double,
-        ): ConstantFormula = ConstantFormula(
+        ): ConstantPolynomial = ConstantPolynomial(
             a = a,
         )
     }

@@ -1,9 +1,9 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.polynomial_formulas.PolynomialFormula
+import app.algebra.polynomials.Polynomial
 import app.algebra.Vector
 import app.algebra.VectorSpace
-import app.algebra.polynomial_formulas.LinearFormula
+import app.algebra.polynomials.LinearPolynomial
 import app.geometry.Point
 import app.geometry.Segment
 
@@ -47,7 +47,7 @@ fun LinearBezierBinomial<Vector>.findSkeletonLinear(
     )
 }
 
-fun LinearBezierBinomial<Double>.toPolynomialFormulaLinear(): PolynomialFormula = LinearFormula.of(
+fun LinearBezierBinomial<Double>.toPolynomialFormulaLinear(): Polynomial = LinearPolynomial.of(
     a = weight1 - weight0,
     b = weight0,
 )

@@ -1,7 +1,7 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.polynomial_formulas.PolynomialFormula
-import app.algebra.polynomial_formulas.QuadraticFormula
+import app.algebra.polynomials.Polynomial
+import app.algebra.polynomials.QuadraticPolynomial
 import app.algebra.Vector
 import app.algebra.VectorSpace
 import app.geometry.Point
@@ -67,7 +67,7 @@ fun QuadraticBezierBinomial<Vector>.evaluateFastQuadratic(
     t: Double,
 ): Vector = findSkeletonQuadratic(t = t).evaluateLinear(t = t)
 
-fun QuadraticBezierBinomial<Double>.toPolynomialFormulaQuadratic(): PolynomialFormula = QuadraticFormula.of(
+fun QuadraticBezierBinomial<Double>.toPolynomialFormulaQuadratic(): Polynomial = QuadraticPolynomial.of(
     a = weight0 - 2.0 * weight1 + weight2,
     b = 2.0 * (weight1 - weight0),
     c = weight0,

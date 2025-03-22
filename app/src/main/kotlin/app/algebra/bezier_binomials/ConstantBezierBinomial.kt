@@ -2,7 +2,7 @@ package app.algebra.bezier_binomials
 
 import app.algebra.Vector
 import app.algebra.VectorSpace
-import app.algebra.polynomial_formulas.ConstantFormula
+import app.algebra.polynomials.ConstantPolynomial
 import app.geometry.Point
 import app.geometry.Segment
 
@@ -34,8 +34,7 @@ val ConstantBezierBinomial<Vector>.segmentsConstant: List<Segment>
         ),
     )
 
-
-fun ConstantBezierBinomial<Double>.toPolynomialFormulaConstant(): ConstantFormula = ConstantFormula.of(
+fun ConstantBezierBinomial<Double>.toPolynomialFormulaConstant(): ConstantPolynomial = ConstantPolynomial.of(
     a = weight0,
 )
 

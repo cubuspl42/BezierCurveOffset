@@ -1,16 +1,16 @@
-package app.algebra.polynomial_formulas
+package app.algebra.polynomials
 
-class LinearFormula private constructor(
+class LinearPolynomial private constructor(
     val a: Double,
     val b: Double,
-) : PolynomialFormula() {
+) : Polynomial() {
     companion object {
         fun of(
             a: Double,
             b: Double,
-        ): PolynomialFormula = when {
-            a == 0.0 -> ConstantFormula.of(a = b)
-            else -> LinearFormula(a = a, b = b)
+        ): Polynomial = when {
+            a == 0.0 -> ConstantPolynomial.of(a = b)
+            else -> LinearPolynomial(a = a, b = b)
         }
     }
 

@@ -2,7 +2,7 @@ package app.algebra.bezier_binomials
 
 import app.algebra.Vector
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
-import app.algebra.polynomial_formulas.PolynomialFormula
+import app.algebra.polynomials.Polynomial
 import app.geometry.Segment
 import app.geometry.bezier_curves.TimeFunction
 import org.jfree.data.xy.XYSeries
@@ -77,7 +77,7 @@ fun BezierBinomial<Vector>.toDataset(
     }
 }
 
-fun BezierBinomial<Double>.toPolynomialFormula(): PolynomialFormula = when (this) {
+fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial = when (this) {
     is ConstantBezierBinomial<Double> -> this.toPolynomialFormulaConstant()
     is LinearBezierBinomial<Double> -> this.toPolynomialFormulaLinear()
     is QuadraticBezierBinomial<Double> -> this.toPolynomialFormulaQuadratic()
