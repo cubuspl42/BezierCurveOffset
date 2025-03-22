@@ -20,7 +20,7 @@ data class CubicBezierCurve(
     val control0: Point,
     val control1: Point,
     val end: Point,
-) {
+): ProperBezierCurve() {
     abstract class OffsetCurveApproximationResult(
         val offsetCurve: CubicBezierCurve,
     ) {

@@ -43,7 +43,7 @@ fun main(args: Array<String>) {
 //    val offsetCurveBestFit = baseCurve.findOffsetCurveBestFit(offset = offset).offsetCurve
 
     val offsetSplineBestFit = baseSpline.findOffsetSplineBestFit(offset = offset)
-    val offsetSplineNormal = baseSpline.findOffsetSplineNormal(offset = offset)
+//    val offsetSplineNormal = baseSpline.findOffsetSplineNormal(offset = offset)
 
 //    val criticalPoints = baseCurve.basisFormula.findAllCriticalPoints().criticalPoints
     val criticalPoints = setOf(
@@ -78,11 +78,10 @@ fun main(args: Array<String>) {
 //        color = Color.ORANGE,
 //    )
 
-    offsetSplineNormal.drawSpline(
-        graphics2D = svgGraphics2D,
-        color = Color.BLUE,
-    )
-
+//    offsetSplineNormal.drawSpline(
+//        graphics2D = svgGraphics2D,
+//        color = Color.BLUE,
+//    )
 
     offsetSplineBestFit.drawSpline(
         graphics2D = svgGraphics2D,
