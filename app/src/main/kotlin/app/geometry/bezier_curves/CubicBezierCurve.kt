@@ -12,6 +12,11 @@ data class CubicBezierCurve(
     val control1: Point,
     override val end: Point,
 ) : BezierCurve(), CubicBezierSpline {
+    companion object {
+        private const val bestFitErrorThreshold = 0.001
+        private const val bestFitMaxSubdivisionLevel = 4
+    }
+
     override fun isSingularity(): Boolean = setOf(start, control0, control1, end).size == 1
 
     override val basisFormula = CubicBezierFormula(
@@ -51,68 +56,59 @@ data class CubicBezierCurve(
         )
     }
 
-    override fun split(
+    override fun splitAt(
         t: Double,
-    ): Pair<CubicBezierCurve, CubicBezierCurve?> {
-        if (isSingularity()) {
-            return Pair(this, null)
-        }
-
+    ): BiCubicBezierCurve {
         val skeleton0 = basisFormula.findSkeletonCubic(t = t)
         val skeleton1 = skeleton0.findSkeletonQuadratic(t = t)
         val midPoint = skeleton1.evaluateLinear(t = t).toPoint()
 
-        val firstCurve = CubicBezierCurve(
-            start = start,
-            control0 = skeleton0.point0,
-            control1 = skeleton1.point0,
-            end = midPoint,
-        )
-
-        if (firstCurve.isSingularity()) {
-            return Pair(this, null)
-        }
-
-        val secondCurve = CubicBezierCurve(
-            start = midPoint,
-            control0 = skeleton1.point1,
-            control1 = skeleton0.point2,
-            end = end,
-        )
-
-        return Pair(
-            firstCurve,
-            secondCurve.takeIf { !it.isSingularity() },
+        return BiCubicBezierCurve(
+            startNode = CubicBezierSpline.Node.start(
+                point = start,
+                control1 = skeleton0.point0,
+            ),
+            midNode = CubicBezierSpline.Node(
+                control0 = skeleton1.point0,
+                point = midPoint,
+                control1 = skeleton1.point1,
+            ),
+            endNode = CubicBezierSpline.Node.end(
+                control0 = skeleton0.point2,
+                point = end,
+            ),
         )
     }
 
-    fun splitAtCriticalPoints(): CubicBezierSpline? {
+    fun splitAtMidPoint(): BiCubicBezierCurve = splitAt(t = 0.5)
+
+    fun splitAtCriticalPoints(): CubicBezierSpline {
         val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPoints
 
-        if (criticalPoints.isEmpty()) {
-            return null
-        }
-
-        val splitSpline = splitAt(
+        val splitSpline = splitAtMultiple(
             tValues = criticalPoints,
         )
 
         return splitSpline
     }
 
-    fun splitAt(
+    fun splitAtMultiple(
         tValues: Set<Double>,
     ): CubicBezierSpline {
+        if (tValues.isEmpty()) {
+            return this
+        }
+
         val tValuesSorted = tValues.sorted()
 
-        val spline = splitAtRecursive(
+        val spline = splitAtMultipleSorted(
             tValuesSorted = tValuesSorted,
         )
 
         return spline
     }
 
-    fun splitAtRecursive(
+    private fun splitAtMultipleSorted(
         tValuesSorted: List<Double>,
     ): CubicBezierSpline {
         val partitioningResult = tValuesSorted.partitionSorted() ?: return this
@@ -121,13 +117,20 @@ data class CubicBezierCurve(
         val medianTValue = partitioningResult.medianValue
         val rightTValues = partitioningResult.rightPart
 
-        val (leftSplitCurve, rightSplitCurveOrNull) = split(t = medianTValue)
+        val splitBiBezierCurve = splitAt(t = medianTValue)
+        val leftSplitCurve = splitBiBezierCurve.firstCurve
+        val rightSplitCurve = splitBiBezierCurve.secondCurve
 
         val leftCorrectedTValues = leftTValues.map { it / medianTValue }
         val rightCorrectedTValues = rightTValues.map { (it - medianTValue) / (1.0 - medianTValue) }
 
-        val leftSubSplitCurve = leftSplitCurve.splitAtRecursive(tValuesSorted = leftCorrectedTValues)
-        val rightSubSplitCurveOrNull = rightSplitCurveOrNull?.splitAtRecursive(tValuesSorted = rightCorrectedTValues)
+        val leftSubSplitCurve = leftSplitCurve.splitAtMultipleSorted(
+            tValuesSorted = leftCorrectedTValues,
+        )
+
+        val rightSubSplitCurveOrNull = rightSplitCurve.splitAtMultipleSorted(
+            tValuesSorted = rightCorrectedTValues,
+        )
 
         val joinedSpline = CubicBezierSpline.join(
             splines = listOfNotNull(
@@ -141,18 +144,41 @@ data class CubicBezierCurve(
 
     fun findOffsetSplineBestFit(
         offset: Double,
-    ): CubicBezierSpline = findOffsetSplineBestFitRecursive(
-        offset = offset,
-        level = 0,
-    )
-
-    private fun findOffsetSplineBestFitRecursive(
-        offset: Double,
-        level: Int,
     ): CubicBezierSpline {
-        val maxLevel = 8
-        val errorThreshold = 0.0001
+        val initialOffsetCurveBestFitResult = findOffsetCurveBestFit(
+            offset = offset,
+        )
 
+        val initialOffsetCurve = initialOffsetCurveBestFitResult.offsetCurve
+        val initialError = initialOffsetCurveBestFitResult.calculateError()
+
+        if (initialError < bestFitErrorThreshold) {
+            return initialOffsetCurve
+        } else {
+            val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPoints
+
+            if (criticalPoints.isEmpty()) {
+                val initialSplitSpline = splitAtMultiple(criticalPoints)
+
+                return initialSplitSpline.joinOf { splitCurve ->
+                    splitCurve.findOffsetSplineBestFitOrSubdivide(
+                        offset = offset,
+                        subdivisionLevel = 0,
+                    )
+                }
+            } else {
+                return subdivideAndFindOffsetSplineBestFit(
+                    offset = offset,
+                    subdivisionLevel = 0,
+                )
+            }
+        }
+    }
+
+    private fun findOffsetSplineBestFitOrSubdivide(
+        offset: Double,
+        subdivisionLevel: Int,
+    ): CubicBezierSpline {
         val offsetCurveBestFitResult = findOffsetCurveBestFit(
             offset = offset,
         )
@@ -160,22 +186,39 @@ data class CubicBezierCurve(
         val offsetCurve = offsetCurveBestFitResult.offsetCurve
         val error = offsetCurveBestFitResult.calculateError()
 
-        // TODO: First split at extrema, then at the midpoint (also, check the second derivative?)
         return when {
-            error < errorThreshold || level >= maxLevel -> offsetCurve
+            error < bestFitErrorThreshold || subdivisionLevel >= bestFitMaxSubdivisionLevel -> offsetCurve
 
-            else -> {
-                val splitSpline = splitAtCriticalPoints() ?: return offsetCurve
-
-                splitSpline.joinOf { splitCurve ->
-                    splitCurve.findOffsetSplineBestFitRecursive(
-                        offset = offset,
-                        level = level + 1,
-                    )
-                }
-            }
+            else -> subdivideAndFindOffsetSplineBestFit(
+                offset = offset,
+                subdivisionLevel = subdivisionLevel,
+            )
         }
     }
+
+    private fun subdivideAndFindOffsetSplineBestFit(
+        offset: Double,
+        subdivisionLevel: Int,
+    ): CubicBezierSpline {
+        val splitBiBezierCurve = splitAtMidPoint()
+        val leftSplitCurve = splitBiBezierCurve.firstCurve
+        val rightSplitCurve = splitBiBezierCurve.secondCurve
+
+        val nextSubDivisionLevel = subdivisionLevel + 1
+
+        val leftSubSplitCurve = leftSplitCurve.findOffsetSplineBestFitOrSubdivide(
+            offset = offset,
+            subdivisionLevel = nextSubDivisionLevel,
+        )
+
+        val rightSubSplitCurve = rightSplitCurve.findOffsetSplineBestFitOrSubdivide(
+            offset = offset,
+            subdivisionLevel = nextSubDivisionLevel,
+        )
+
+        return leftSubSplitCurve.joinWith(rightSubSplitCurve)
+    }
+
 
     override fun toPath2D(): Path2D.Double = Path2D.Double().apply {
         moveTo(start)
@@ -188,13 +231,13 @@ data class CubicBezierCurve(
         it.translate(translation = translation)
     }
 
-    override val nodes: List<CompositeCubicBezierCurve.Node> = listOf(
-        CompositeCubicBezierCurve.Node(
+    override val nodes: List<CubicBezierSpline.Node> = listOf(
+        CubicBezierSpline.Node(
             control0 = start,
             point = start,
             control1 = control0,
         ),
-        CompositeCubicBezierCurve.Node(
+        CubicBezierSpline.Node(
             control0 = control1,
             point = end,
             control1 = end,

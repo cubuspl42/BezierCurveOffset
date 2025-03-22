@@ -238,9 +238,9 @@ abstract class BezierCurve {
         distance: Double,
     ): BezierCurve
 
-    abstract fun split(
+    abstract fun splitAt(
         t: Double,
-    ): Pair<BezierCurve, BezierCurve?>
+    ): BiCubicBezierCurve
 
     abstract fun toPath2D(): Path2D
 }

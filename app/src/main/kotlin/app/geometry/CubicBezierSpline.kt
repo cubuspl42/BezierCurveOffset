@@ -1,7 +1,7 @@
 package app.geometry
 
 import app.fillCircle
-import app.geometry.CompositeCubicBezierCurve.Node
+import app.geometry.CubicBezierSpline.Node
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.uncons
 import java.awt.Color
@@ -9,6 +9,44 @@ import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
 interface CubicBezierSpline {
+    class Node(
+        val control0: Point,
+        val point: Point,
+        val control1: Point,
+    ) {
+        companion object {
+            fun start(
+                point: Point,
+                control1: Point,
+            ): Node = Node(
+                control0 = point,
+                point = point,
+                control1 = control1,
+            )
+
+            fun end(
+                control0: Point,
+                point: Point,
+            ): Node = Node(
+                control0 = control0,
+                point = point,
+                control1 = point,
+            )
+        }
+
+        val firstControlSegment: Segment
+            get() = Segment(
+                start = point,
+                end = control0,
+            )
+
+        val secondControlSegment: Segment
+            get() = Segment(
+                start = point,
+                end = control1,
+            )
+    }
+
     companion object {
         fun join(
             splines: List<CubicBezierSpline>,
@@ -30,7 +68,7 @@ interface CubicBezierSpline {
                 val (startNode, remainingNodes) = spline.nodes.uncons()!!
 
                 listOf(
-                    CompositeCubicBezierCurve.Node(
+                    Node(
                         control0 = prevSpline.endNode.control0,
                         point = startNode.point,
                         control1 = startNode.control1,
@@ -40,7 +78,7 @@ interface CubicBezierSpline {
 
             val nodesSuffix = listOf(lastNode)
 
-            val joinedSpline = CompositeCubicBezierCurve(
+            val joinedSpline = PolyCubicBezierCurve(
                 nodes = nodesPrefix + nodesInfix + nodesSuffix
             )
 
@@ -48,7 +86,7 @@ interface CubicBezierSpline {
         }
     }
 
-    val nodes: List<CompositeCubicBezierCurve.Node>
+    val nodes: List<Node>
 
     val subCurves: List<CubicBezierCurve>
 }
@@ -58,6 +96,12 @@ val CubicBezierSpline.startNode: Node
 
 val CubicBezierSpline.endNode: Node
     get() = nodes.last()
+
+fun CubicBezierSpline.joinWith(
+    rightSubSplitCurve: CubicBezierSpline,
+): CubicBezierSpline = CubicBezierSpline.join(
+    splines = listOf(this, rightSubSplitCurve),
+)
 
 fun CubicBezierSpline.joinOf(
     transform: (CubicBezierCurve) -> CubicBezierSpline,

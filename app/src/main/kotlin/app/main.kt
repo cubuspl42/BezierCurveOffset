@@ -2,10 +2,8 @@ package app
 
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.algebra.bezier_formulas.findAllCriticalPoints
-import app.geometry.Point
-import app.geometry.Translation
+import app.geometry.*
 import app.geometry.bezier_curves.CubicBezierCurve
-import app.geometry.drawSpline
 import org.jfree.svg.SVGGraphics2D
 import org.jfree.svg.SVGUtils
 import java.awt.BasicStroke
@@ -19,24 +17,49 @@ val outerSamplingStrategy = SamplingStrategy(
 )
 
 fun main(args: Array<String>) {
-    val baseCurve = CubicBezierCurve(
-        start = Point(18.0, 81.0),
-        control0 = Point(226.0, 26.0),
-        control1 = Point(70.0, 259.0),
-        end = Point(8.0, 181.0),
-    ).translate(
-        translation = Translation(
-            tx = 400.0,
-            ty = 200.0,
+
+    val p0 =  Point(318.0, 181.0)
+
+    val t0 = Translation(400.0, -100.0)
+    val t1 = Translation(-100.0, 200.0)
+    val t2 = Translation(-120.0, 150.0)
+    val t3 = t2
+    val t4 = Translation(-160.0, 0.0)
+    val t5 = Translation(-140.0, 300.0)
+
+    val w0 = p0
+    val w1 = p0.translate(t0)
+    val w2 = w1.translate(t1)
+    val w3 = w2.translate(t2)
+    val w4 = w3.translate(t3)
+    val w5 = w4.translate(t4)
+    val w6 = w5.translate(t5)
+
+    val baseSpline = PolyCubicBezierCurve(
+        nodes = listOf(
+            CubicBezierSpline.Node.start(
+                point = w0,
+                control1 = w1,
+            ),
+            CubicBezierSpline.Node(
+                control0 = w2,
+                point = w3,
+                control1 = w4,
+            ),
+            CubicBezierSpline.Node.end(
+                control0 = w5,
+                point = w6,
+            ),
         ),
     )
 
-    val offset = 20.0
-    val offsetPointSeries = baseCurve.findOffsetTimedSeries(offset = offset)
+    val offset = 30.0
+//    val offsetPointSeries = baseCurve.findOffsetTimedSeries(offset = offset)
+//
+//    val offsetCurveNormal = baseCurve.findOffsetCurveNormal(offset = offset)
+//    val offsetCurveBestFit = baseCurve.findOffsetCurveBestFit(offset = offset).offsetCurve
 
-    val offsetCurveNormal = baseCurve.findOffsetCurveNormal(offset = offset)
-    val offsetCurveBestFit = baseCurve.findOffsetCurveBestFit(offset = offset).offsetCurve
-    val offsetSplineBestFit = baseCurve.findOffsetSplineBestFit(offset = offset)
+    val offsetSplineBestFit = baseSpline.findOffsetSplineBestFitPoly(offset = offset)
 
 //    val criticalPoints = baseCurve.basisFormula.findAllCriticalPoints().criticalPoints
     val criticalPoints = setOf(
@@ -53,11 +76,11 @@ fun main(args: Array<String>) {
 
     val svgGraphics2D = SVGGraphics2D(width.toDouble(), height.toDouble())
 
-    baseCurve.draw(
+    baseSpline.drawSpline(
         graphics2D = svgGraphics2D,
-        innerColor = Color.BLACK,
-        outerColor = Color.LIGHT_GRAY,
-        outerSamplingStrategy = outerSamplingStrategy,
+//        innerColor = Color.BLACK,
+//        outerColor = Color.LIGHT_GRAY,
+//        outerSamplingStrategy = outerSamplingStrategy,
     )
 
 //    splitSpline.drawSpline(

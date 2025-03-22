@@ -3,33 +3,15 @@ package app.geometry
 import app.geometry.bezier_curves.CubicBezierCurve
 
 /**
- * A Composite Bézier curve, also called a poly-Bézier curve
+ * A poly-Bézier curve, also called a composite Bézier curve
  */
-class CompositeCubicBezierCurve(
+class PolyCubicBezierCurve(
     /**
      * The nodes of this composite curve. The first control point of the first node and the last control point of the
      * last node are not effective.
      */
-    override val nodes: List<Node>,
+    override val nodes: List<CubicBezierSpline.Node>,
 ) : CubicBezierSpline {
-    class Node(
-        val control0: Point,
-        val point: Point,
-        val control1: Point,
-    ) {
-        val firstControlSegment: Segment
-            get() = Segment(
-                start = point,
-                end = control0,
-            )
-
-        val secondControlSegment: Segment
-            get() = Segment(
-                start = point,
-                end = control1,
-            )
-    }
-
     init {
         require(nodes.size >= 2)
     }
@@ -44,4 +26,10 @@ class CompositeCubicBezierCurve(
             )
         }
     }
+}
+
+fun PolyCubicBezierCurve.findOffsetSplineBestFitPoly(
+    offset: Double,
+): CubicBezierSpline = joinOf {
+    it.findOffsetSplineBestFit(offset = offset)
 }
