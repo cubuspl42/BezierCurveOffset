@@ -103,7 +103,7 @@ abstract class CubicBezierSpline {
             }
         }
 
-        fun join(
+        fun merge(
             splines: List<CubicBezierSpline>,
         ): CubicBezierSpline {
             require(splines.isNotEmpty())
@@ -126,13 +126,13 @@ abstract class CubicBezierSpline {
 
             val lastSplineEndNode = lastSpline.endNode
 
-            val joinedSpline = PolyCubicBezierCurve(
+            val mergedSpline = PolyCubicBezierCurve(
                 startNode = firstSplineStartNode,
                 innerNodes = firstSpline.innerNodes + newInnerNodes,
                 endNode = lastSplineEndNode,
             )
 
-            return joinedSpline
+            return mergedSpline
         }
     }
 
@@ -179,15 +179,15 @@ val CubicBezierSpline.ForwardNode.forwardControlSegment: Segment
         end = forwardControl,
     )
 
-fun CubicBezierSpline.joinWith(
+fun CubicBezierSpline.mergeWith(
     rightSubSplitCurve: CubicBezierSpline,
-): CubicBezierSpline = CubicBezierSpline.join(
+): CubicBezierSpline = CubicBezierSpline.merge(
     splines = listOf(this, rightSubSplitCurve),
 )
 
-fun CubicBezierSpline.joinOf(
+fun CubicBezierSpline.mergeOf(
     transform: (CubicBezierCurve) -> CubicBezierSpline,
-): CubicBezierSpline = CubicBezierSpline.join(
+): CubicBezierSpline = CubicBezierSpline.merge(
     splines = subCurves.map(transform),
 )
 

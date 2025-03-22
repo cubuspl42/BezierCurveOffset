@@ -37,6 +37,6 @@ class PolyCubicBezierCurve(
 
 fun PolyCubicBezierCurve.findOffsetSplineBestFitPoly(
     offset: Double,
-): CubicBezierSpline = joinOf {
+): CubicBezierSpline = mergeOf {
     it.findOffsetSplineBestFit(offset = offset)
 }

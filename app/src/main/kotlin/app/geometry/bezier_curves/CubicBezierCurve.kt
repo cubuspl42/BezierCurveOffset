@@ -137,14 +137,14 @@ data class CubicBezierCurve(
             tValuesSorted = rightCorrectedTValues,
         )
 
-        val joinedSpline = CubicBezierSpline.join(
+        val mergedSpline = CubicBezierSpline.merge(
             splines = listOfNotNull(
                 leftSubSplitCurve,
                 rightSubSplitCurveOrNull,
             ),
         )
 
-        return joinedSpline
+        return mergedSpline
     }
 
     fun findOffsetSplineBestFit(
@@ -165,7 +165,7 @@ data class CubicBezierCurve(
             if (criticalPoints.isEmpty()) {
                 val initialSplitSpline = splitAtMultiple(criticalPoints)
 
-                return initialSplitSpline.joinOf { splitCurve ->
+                return initialSplitSpline.mergeOf { splitCurve ->
                     splitCurve.findOffsetSplineBestFitOrSubdivide(
                         offset = offset,
                         subdivisionLevel = 0,
@@ -221,7 +221,7 @@ data class CubicBezierCurve(
             subdivisionLevel = nextSubDivisionLevel,
         )
 
-        return leftSubSplitCurve.joinWith(rightSubSplitCurve)
+        return leftSubSplitCurve.mergeWith(rightSubSplitCurve)
     }
 
 
