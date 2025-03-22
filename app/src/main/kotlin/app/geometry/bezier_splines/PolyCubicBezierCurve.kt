@@ -3,15 +3,12 @@ package app.geometry.bezier_splines
 import app.geometry.bezier_curves.CubicBezierCurve
 
 /**
- * A poly-Bézier curve, also called a composite Bézier curve
+ * A poly-Bézier curve, also called a composite Bézier curve or a Bézier spline
+ * (a spline formed of Bézier curves)
  */
 class PolyCubicBezierCurve(
-    /**
-     * The nodes of this composite curve. The first control point of the first node and the last control point of the
-     * last node are not effective.
-     */
     override val nodes: List<CubicBezierSpline.Node>,
-) : CubicBezierSpline {
+) : CubicBezierSpline() {
     init {
         require(nodes.size >= 2)
     }

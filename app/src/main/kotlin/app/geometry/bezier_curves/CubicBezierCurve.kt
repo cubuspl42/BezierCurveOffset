@@ -3,10 +3,7 @@ package app.geometry.bezier_curves
 import app.algebra.Vector
 import app.algebra.bezier_formulas.*
 import app.geometry.*
-import app.geometry.bezier_splines.BiCubicBezierCurve
-import app.geometry.bezier_splines.CubicBezierSpline
-import app.geometry.bezier_splines.joinOf
-import app.geometry.bezier_splines.joinWith
+import app.geometry.bezier_splines.*
 import app.partitionSorted
 import java.awt.geom.Path2D
 
@@ -15,7 +12,7 @@ data class CubicBezierCurve(
     val control0: Point,
     val control1: Point,
     override val end: Point,
-) : BezierCurve(), CubicBezierSpline {
+) : BezierCurve() {
     companion object {
         private const val bestFitErrorThreshold = 0.001
         private const val bestFitMaxSubdivisionLevel = 4
@@ -100,7 +97,7 @@ data class CubicBezierCurve(
         tValues: Set<Double>,
     ): CubicBezierSpline {
         if (tValues.isEmpty()) {
-            return this
+            return this.toSpline()
         }
 
         val tValuesSorted = tValues.sorted()
@@ -112,10 +109,14 @@ data class CubicBezierCurve(
         return spline
     }
 
+    private fun toSpline(): CubicBezierSpline = MonoCubicBezierCurve(
+        curve = this,
+    )
+
     private fun splitAtMultipleSorted(
         tValuesSorted: List<Double>,
     ): CubicBezierSpline {
-        val partitioningResult = tValuesSorted.partitionSorted() ?: return this
+        val partitioningResult = tValuesSorted.partitionSorted() ?: return this.toSpline()
 
         val leftTValues = partitioningResult.leftPart
         val medianTValue = partitioningResult.medianValue
@@ -157,7 +158,7 @@ data class CubicBezierCurve(
         val initialError = initialOffsetCurveBestFitResult.calculateError()
 
         if (initialError < bestFitErrorThreshold) {
-            return initialOffsetCurve
+            return initialOffsetCurve.toSpline()
         } else {
             val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPoints
 
@@ -191,7 +192,7 @@ data class CubicBezierCurve(
         val error = offsetCurveBestFitResult.calculateError()
 
         return when {
-            error < bestFitErrorThreshold || subdivisionLevel >= bestFitMaxSubdivisionLevel -> offsetCurve
+            error < bestFitErrorThreshold || subdivisionLevel >= bestFitMaxSubdivisionLevel -> offsetCurve.toSpline()
 
             else -> subdivideAndFindOffsetSplineBestFit(
                 offset = offset,
@@ -234,19 +235,4 @@ data class CubicBezierCurve(
     ): CubicBezierCurve = mapPointWise {
         it.translate(translation = translation)
     }
-
-    override val nodes: List<CubicBezierSpline.Node> = listOf(
-        CubicBezierSpline.Node(
-            control0 = start,
-            point = start,
-            control1 = control0,
-        ),
-        CubicBezierSpline.Node(
-            control0 = control1,
-            point = end,
-            control1 = end,
-        ),
-    )
-
-    override val subCurves: List<CubicBezierCurve> = listOf(this)
 }

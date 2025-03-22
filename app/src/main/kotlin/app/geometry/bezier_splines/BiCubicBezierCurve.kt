@@ -3,13 +3,13 @@ package app.geometry.bezier_splines
 import app.geometry.bezier_curves.CubicBezierCurve
 
 /**
- * A bi-Bézier curve (a pair of Bézier curves)
+ * A bi-Bézier curve (a spline formed of a pair of Bézier curves)
  */
 class BiCubicBezierCurve(
     val startNode: CubicBezierSpline.Node,
     val midNode: CubicBezierSpline.Node,
     val endNode: CubicBezierSpline.Node,
-) : CubicBezierSpline {
+) : CubicBezierSpline() {
     override val nodes: List<CubicBezierSpline.Node> = listOf(
         startNode,
         midNode,

@@ -9,7 +9,7 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
-interface CubicBezierSpline {
+abstract class CubicBezierSpline {
     class Node(
         val control0: Point,
         val point: Point,
@@ -126,9 +126,13 @@ interface CubicBezierSpline {
         }
     }
 
-    val nodes: List<Node>
+    /**
+     * The nodes of this spline. The first control point of the first node and
+     * the last control point of the last node are not effective.
+     */
+    abstract val nodes: List<Node>
 
-    val subCurves: List<CubicBezierCurve>
+    abstract val subCurves: List<CubicBezierCurve>
 }
 
 val CubicBezierSpline.startNode: Node
