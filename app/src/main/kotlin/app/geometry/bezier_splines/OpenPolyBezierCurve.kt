@@ -1,23 +1,23 @@
 package app.geometry.bezier_splines
 
-import app.geometry.bezier_curves.BezierCurve
+import app.geometry.bezier_curves.CubicBezierCurve
 
 class OpenPolyBezierCurve(
     override val startNode: StartNode,
     override val innerNodes: List<BezierSpline.InnerNode>,
     override val endNode: EndNode,
 ) : OpenBezierSpline() {
-    override val subCurves: List<BezierCurve> by lazy {
+    override val subCurves: List<CubicBezierCurve> by lazy {
         listOf(
-            BezierCurve(
+            CubicBezierCurve(
                 start = startNode.point,
                 control0 = startNode.forwardControl,
                 control1 = secondNode.backwardControl,
                 end = secondNode.point,
             ),
-        ) + BezierCurve.interConnectAll(
+        ) + CubicBezierCurve.interConnectAll(
             innerNodes = innerNodes,
-        ) + BezierCurve(
+        ) + CubicBezierCurve(
             start = oneBeforeEndNode.point,
             control0 = oneBeforeEndNode.forwardControl,
             control1 = endNode.backwardControl,

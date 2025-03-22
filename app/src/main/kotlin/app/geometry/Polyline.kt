@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.geometry.bezier_curves.BezierCurve
+import app.geometry.bezier_curves.CubicBezierCurve
 import java.awt.geom.Path2D
 
 data class Polyline(
@@ -17,7 +17,7 @@ data class Polyline(
         }
     }
 
-    fun bestFitCurve(): BezierCurve = timeNaively().bestFitCurve()
+    fun bestFitCurve(): CubicBezierCurve = timeNaively().bestFitCurve()
 
     fun timeNaively(): TimedPointSeries {
         val pathLengthByPointIndex = points.zipWithNext().scan(

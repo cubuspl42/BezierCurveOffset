@@ -1,12 +1,12 @@
 package app.geometry.bezier_splines
 
-import app.geometry.bezier_curves.BezierCurve
+import app.geometry.bezier_curves.CubicBezierCurve
 
 /**
  * A mono-Bézier curve (a spline formed of a single curve)
  */
 class MonoBezierCurve(
-    val curve: BezierCurve
+    val curve: CubicBezierCurve
 ) : OpenBezierSpline() {
     override val startNode = InnerNode.start(
         point = curve.start,
@@ -20,5 +20,5 @@ class MonoBezierCurve(
         point = curve.end,
     )
 
-    override val subCurves: List<BezierCurve> = listOf(curve)
+    override val subCurves: List<CubicBezierCurve> = listOf(curve)
 }

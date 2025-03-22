@@ -3,7 +3,7 @@ package app.geometry.bezier_splines
 import app.fillCircle
 import app.geometry.Point
 import app.geometry.Segment
-import app.geometry.bezier_curves.BezierCurve
+import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.cubicTo
 import app.geometry.moveTo
 import java.awt.Color
@@ -67,13 +67,13 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
     }
 
     fun mergeOf(
-        transform: (BezierCurve) -> OpenBezierSpline,
+        transform: (CubicBezierCurve) -> OpenBezierSpline,
     ): SplineT = prototype.merge(
         splines = subCurves.map(transform),
     )
 
     fun findOffsetSpline(
-        strategy: BezierCurve.OffsetStrategy,
+        strategy: CubicBezierCurve.OffsetStrategy,
         offset: Double,
     ): SplineT = mergeOf {
         it.findOffsetSpline(
@@ -85,14 +85,14 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
     fun findOffsetSplineBestFit(
         offset: Double,
     ): SplineT = findOffsetSpline(
-        strategy = BezierCurve.BestFitOffsetStrategy,
+        strategy = CubicBezierCurve.BestFitOffsetStrategy,
         offset = offset,
     )
 
     fun findOffsetSplineNormal(
         offset: Double,
     ): SplineT = findOffsetSpline(
-        strategy = BezierCurve.NormalOffsetStrategy,
+        strategy = CubicBezierCurve.NormalOffsetStrategy,
         offset = offset,
     )
 
@@ -102,7 +102,7 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
 
     abstract val innerNodes: List<InnerNode>
 
-    abstract val subCurves: List<BezierCurve>
+    abstract val subCurves: List<CubicBezierCurve>
 }
 
 fun BezierSpline<*>.toPath2D(): Path2D.Double = Path2D.Double().apply {

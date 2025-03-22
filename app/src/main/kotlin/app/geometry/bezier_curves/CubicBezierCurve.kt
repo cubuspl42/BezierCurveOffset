@@ -15,14 +15,14 @@ import java.awt.geom.Path2D
 /**
  * A cubic Bézier curve
  */
-data class BezierCurve(
+data class CubicBezierCurve(
     val start: Point,
     val control0: Point,
     val control1: Point,
     val end: Point,
 ) {
     abstract class OffsetCurveApproximationResult(
-        val offsetCurve: BezierCurve,
+        val offsetCurve: CubicBezierCurve,
     ) {
         companion object {
             val approximationRatingSampleCount = 16
@@ -33,16 +33,16 @@ data class BezierCurve(
 
     sealed class OffsetStrategy {
         abstract fun approximateOffsetCurve(
-            curve: BezierCurve,
+            curve: CubicBezierCurve,
             offset: Double,
-        ): BezierCurve
+        ): CubicBezierCurve
     }
 
     data object BestFitOffsetStrategy : OffsetStrategy() {
         override fun approximateOffsetCurve(
-            curve: BezierCurve,
+            curve: CubicBezierCurve,
             offset: Double,
-        ): BezierCurve {
+        ): CubicBezierCurve {
             val offsetTimedSeries = curve.findOffsetTimedSeries(offset = offset)
             return offsetTimedSeries.bestFitCurve()
         }
@@ -50,9 +50,9 @@ data class BezierCurve(
 
     data object NormalOffsetStrategy : OffsetStrategy() {
         override fun approximateOffsetCurve(
-            curve: BezierCurve,
+            curve: CubicBezierCurve,
             offset: Double,
-        ): BezierCurve {
+        ): CubicBezierCurve {
             val startNormalRay = curve.normalRayFunction.startValue
             val startNormalLine = startNormalRay.containingLine
 
@@ -80,7 +80,7 @@ data class BezierCurve(
         fun interConnect(
             prevNode: BezierSpline.InnerNode,
             nextNode: BezierSpline.InnerNode,
-        ): BezierCurve = BezierCurve(
+        ): CubicBezierCurve = CubicBezierCurve(
             start = prevNode.point,
             control0 = prevNode.forwardControl,
             control1 = nextNode.backwardControl,
@@ -89,8 +89,8 @@ data class BezierCurve(
 
         fun interConnectAll(
             innerNodes: List<BezierSpline.InnerNode>,
-        ): List<BezierCurve> = innerNodes.zipWithNext { prevNode, nextNode ->
-            BezierCurve.interConnect(
+        ): List<CubicBezierCurve> = innerNodes.zipWithNext { prevNode, nextNode ->
+            CubicBezierCurve.interConnect(
                 prevNode = prevNode,
                 nextNode = nextNode,
             )
@@ -266,7 +266,7 @@ data class BezierCurve(
 
     fun mapPointWise(
         transform: (Point) -> Point,
-    ): BezierCurve = BezierCurve(
+    ): CubicBezierCurve = CubicBezierCurve(
         start = transform(start),
         control0 = transform(control0),
         control1 = transform(control1),
@@ -276,7 +276,7 @@ data class BezierCurve(
     fun moveAwayPointWise(
         origin: Point,
         distance: Double,
-    ): BezierCurve = mapPointWise {
+    ): CubicBezierCurve = mapPointWise {
         it.moveAway(
             origin = origin,
             distance = distance,
@@ -286,7 +286,7 @@ data class BezierCurve(
     fun moveInDirectionPointWise(
         direction: Direction,
         distance: Double,
-    ): BezierCurve = mapPointWise {
+    ): CubicBezierCurve = mapPointWise {
         it.moveInDirection(
             direction = direction,
             distance = distance,
@@ -511,7 +511,7 @@ data class BezierCurve(
 
     fun translate(
         translation: Translation,
-    ): BezierCurve = mapPointWise {
+    ): CubicBezierCurve = mapPointWise {
         it.translate(translation = translation)
     }
 }
