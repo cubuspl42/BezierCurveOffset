@@ -8,9 +8,9 @@ import app.geometry.bezier_curves.CubicBezierCurve
  */
 class PolyCubicBezierCurve(
     override val startNode: StartNode,
-    override val innerNodes: List<CubicBezierSpline.InnerNode>,
+    override val innerNodes: List<OpenCubicBezierSpline.InnerNode>,
     override val endNode: EndNode,
-) : CubicBezierSpline() {
+) : OpenCubicBezierSpline() {
     override val subCurves: List<CubicBezierCurve> by lazy {
         listOf(
             CubicBezierCurve(
@@ -37,6 +37,6 @@ class PolyCubicBezierCurve(
 
 fun PolyCubicBezierCurve.findOffsetSplineBestFitPoly(
     offset: Double,
-): CubicBezierSpline = mergeOf {
+): OpenCubicBezierSpline = mergeOf {
     it.findOffsetSplineBestFit(offset = offset)
 }

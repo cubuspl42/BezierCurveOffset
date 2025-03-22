@@ -2,7 +2,7 @@ package app
 
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.geometry.*
-import app.geometry.bezier_splines.CubicBezierSpline
+import app.geometry.bezier_splines.OpenCubicBezierSpline
 import app.geometry.bezier_splines.PolyCubicBezierCurve
 import app.geometry.bezier_splines.drawSpline
 import app.geometry.bezier_splines.findOffsetSplineBestFitPoly
@@ -37,18 +37,18 @@ fun main(args: Array<String>) {
     val w6 = w5.translate(t5)
 
     val baseSpline = PolyCubicBezierCurve(
-        startNode = CubicBezierSpline.InnerNode.start(
+        startNode = OpenCubicBezierSpline.InnerNode.start(
             point = w0,
             control1 = w1,
         ),
         innerNodes = listOf(
-            CubicBezierSpline.InnerNode(
+            OpenCubicBezierSpline.InnerNode(
                 backwardControl = w2,
                 point = w3,
                 forwardControl = w4,
             ),
         ),
-        endNode = CubicBezierSpline.InnerNode.end(
+        endNode = OpenCubicBezierSpline.InnerNode.end(
             control0 = w5,
             point = w6,
         ),

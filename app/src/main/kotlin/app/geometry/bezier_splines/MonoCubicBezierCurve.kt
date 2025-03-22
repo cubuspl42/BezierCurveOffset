@@ -7,7 +7,7 @@ import app.geometry.bezier_curves.CubicBezierCurve
  */
 class MonoCubicBezierCurve(
     val curve: CubicBezierCurve
-) : CubicBezierSpline() {
+) : OpenCubicBezierSpline() {
     override val startNode = InnerNode.start(
         point = curve.start,
         control1 = curve.control0,
