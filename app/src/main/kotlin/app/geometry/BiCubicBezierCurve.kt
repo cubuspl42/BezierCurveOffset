@@ -16,7 +16,7 @@ class BiCubicBezierCurve(
         endNode,
     )
 
-    val firstCurve by lazy {
+    val firstSubCurve by lazy {
         CubicBezierCurve(
             start = startNode.point,
             control0 = startNode.control1,
@@ -25,7 +25,7 @@ class BiCubicBezierCurve(
         )
     }
 
-    val secondCurve by lazy {
+    val secondSubCurve by lazy {
         CubicBezierCurve(
             start = midNode.point,
             control0 = midNode.control1,
@@ -36,8 +36,8 @@ class BiCubicBezierCurve(
 
     override val subCurves: List<CubicBezierCurve> by lazy {
         listOf(
-            firstCurve,
-            secondCurve,
+            firstSubCurve,
+            secondSubCurve,
         )
     }
 }

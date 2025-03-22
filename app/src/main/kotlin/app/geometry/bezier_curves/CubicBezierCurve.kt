@@ -117,9 +117,9 @@ data class CubicBezierCurve(
         val medianTValue = partitioningResult.medianValue
         val rightTValues = partitioningResult.rightPart
 
-        val splitBiBezierCurve = splitAt(t = medianTValue)
-        val leftSplitCurve = splitBiBezierCurve.firstCurve
-        val rightSplitCurve = splitBiBezierCurve.secondCurve
+        val splitBezierCurve = splitAt(t = medianTValue)
+        val leftSplitCurve = splitBezierCurve.firstSubCurve
+        val rightSplitCurve = splitBezierCurve.secondSubCurve
 
         val leftCorrectedTValues = leftTValues.map { it / medianTValue }
         val rightCorrectedTValues = rightTValues.map { (it - medianTValue) / (1.0 - medianTValue) }
@@ -201,8 +201,8 @@ data class CubicBezierCurve(
         subdivisionLevel: Int,
     ): CubicBezierSpline {
         val splitBiBezierCurve = splitAtMidPoint()
-        val leftSplitCurve = splitBiBezierCurve.firstCurve
-        val rightSplitCurve = splitBiBezierCurve.secondCurve
+        val leftSplitCurve = splitBiBezierCurve.firstSubCurve
+        val rightSplitCurve = splitBiBezierCurve.secondSubCurve
 
         val nextSubDivisionLevel = subdivisionLevel + 1
 

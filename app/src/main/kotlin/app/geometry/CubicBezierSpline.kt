@@ -48,6 +48,48 @@ interface CubicBezierSpline {
     }
 
     companion object {
+        private fun glueSplines(
+            prevSplineEndNode: CubicBezierSpline.Node,
+            nextSplineStartNode: CubicBezierSpline.Node,
+        ): Node {
+            val startPoint = Point.midPoint(
+                prevSplineEndNode.point,
+                nextSplineStartNode.point,
+            )
+
+            val givenControl0 = prevSplineEndNode.control0
+            val givenControl1 = nextSplineStartNode.control1
+
+            val givenControlsBiRay = BiRay.fromPoints(
+                basePoint = startPoint,
+                directionPoint1 = givenControl0,
+                directionPoint2 = givenControl1,
+            )
+
+            val projectionLine = givenControlsBiRay.tangentLine
+
+            return when {
+                // Control segments are not parallel, we can fix that
+                projectionLine != null -> {
+                    val projectedControl0 = givenControl0.projectOnto(projectionLine)
+                    val projectedControl1 = givenControl1.projectOnto(projectionLine)
+
+                    Node(
+                        control0 = projectedControl0,
+                        point = startPoint,
+                        control1 = projectedControl1,
+                    )
+                }
+
+                // Control segments are already parallel, let's use them as they are
+                else -> Node(
+                    control0 = givenControl0,
+                    point = startPoint,
+                    control1 = givenControl1,
+                )
+            }
+        }
+
         fun join(
             splines: List<CubicBezierSpline>,
         ): CubicBezierSpline {
@@ -58,57 +100,25 @@ interface CubicBezierSpline {
             val firstSpline = splines.first()
             val lastSpline = splines.last()
 
-            val lastNode = lastSpline.nodes.last()
+            val firstSplineInitialNodes = firstSpline.nodes.dropLast(1)
 
-            val nodesPrefix = firstSpline.nodes.dropLast(1)
+            val innerNodes = splines.zipWithNext().flatMap { (prevSpline, nextSpline) ->
+                val prevSplineEndNode = prevSpline.endNode
 
-            val nodesInfix = splines.zipWithNext().flatMap { (prevSpline, spline) ->
-                val startPoint = Point.midPoint(
-                    prevSpline.endNode.point,
-                    spline.startNode.point,
+                val (nextSplineStartNode, nextSplineRemainingNodes) = nextSpline.nodes.uncons()!!
+
+                val jointNode = glueSplines(
+                    prevSplineEndNode = prevSplineEndNode,
+                    nextSplineStartNode = nextSplineStartNode,
                 )
 
-                val (startNode, remainingNodes) = spline.nodes.uncons()!!
-
-                val givenControl0 = prevSpline.endNode.control0
-                val givenControl1 = startNode.control1
-
-                val givenControlsBiRay = BiRay.fromPoints(
-                    basePoint = startPoint,
-                    directionPoint1 = givenControl0,
-                    directionPoint2 = givenControl1,
-                )
-
-                val projectionLine = givenControlsBiRay.tangentLine
-
-                val joinedStartNode = when {
-                    // Control segments are not parallel, we can fix that
-                    projectionLine != null -> {
-                        val projectedControl0 = givenControl0.projectOnto(projectionLine)
-                        val projectedControl1 = givenControl1.projectOnto(projectionLine)
-
-                        Node(
-                            control0 = projectedControl0,
-                            point = startPoint,
-                            control1 = projectedControl1,
-                        )
-                    }
-
-                    // Control segments are already parallel, let's use them as they are
-                    else -> Node(
-                        control0 = givenControl0,
-                        point = startPoint,
-                        control1 = givenControl1,
-                    )
-                }
-
-                listOf(joinedStartNode) + remainingNodes.dropLast(1)
+                listOf(jointNode) + nextSplineRemainingNodes.dropLast(1)
             }
 
-            val nodesSuffix = listOf(lastNode)
+            val lastNode = lastSpline.nodes.last()
 
             val joinedSpline = PolyCubicBezierCurve(
-                nodes = nodesPrefix + nodesInfix + nodesSuffix,
+                nodes = firstSplineInitialNodes + innerNodes + lastNode,
             )
 
             return joinedSpline
