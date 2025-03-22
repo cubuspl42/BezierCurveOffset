@@ -25,9 +25,3 @@ class OpenPolyBezierCurve(
         )
     }
 }
-
-fun OpenPolyBezierCurve.findOffsetSplineBestFitPoly(
-    offset: Double,
-): OpenBezierSpline = mergeOf {
-    it.findOffsetSplineBestFit(offset = offset)
-}

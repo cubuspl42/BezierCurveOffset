@@ -6,6 +6,7 @@ import app.geometry.bezier_splines.*
 import org.jfree.svg.SVGGraphics2D
 import org.jfree.svg.SVGUtils
 import java.awt.BasicStroke
+import java.awt.Color
 import java.io.File
 
 val outerSamplingStrategy = SamplingStrategy(
@@ -41,7 +42,8 @@ fun main(args: Array<String>) {
 //    val offsetCurveNormal = baseCurve.findOffsetCurveNormal(offset = offset)
 //    val offsetCurveBestFit = baseCurve.findOffsetCurveBestFit(offset = offset).offsetCurve
 
-    val offsetSplineBestFit = baseSpline.findOffsetSplineBestFitPoly(offset = offset)
+    val offsetSplineBestFit = baseSpline.findOffsetSplineBestFit(offset = offset)
+    val offsetSplineNormal = baseSpline.findOffsetSplineNormal(offset = offset)
 
 //    val criticalPoints = baseCurve.basisFormula.findAllCriticalPoints().criticalPoints
     val criticalPoints = setOf(
@@ -76,8 +78,15 @@ fun main(args: Array<String>) {
 //        color = Color.ORANGE,
 //    )
 
+    offsetSplineNormal.drawSpline(
+        graphics2D = svgGraphics2D,
+        color = Color.BLUE,
+    )
+
+
     offsetSplineBestFit.drawSpline(
         graphics2D = svgGraphics2D,
+        color = Color.RED,
     )
 
 //    offsetCurveBestFit.draw(

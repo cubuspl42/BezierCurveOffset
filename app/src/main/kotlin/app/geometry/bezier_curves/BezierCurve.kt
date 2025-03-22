@@ -21,15 +21,61 @@ data class BezierCurve(
     val control1: Point,
     val end: Point,
 ) {
-    abstract class OffsetCurveBestFitResult(
+    abstract class OffsetCurveApproximationResult(
         val offsetCurve: BezierCurve,
     ) {
+        companion object {
+            val approximationRatingSampleCount = 16
+        }
+
         abstract fun calculateError(): Double
     }
 
+    sealed class OffsetStrategy {
+        abstract fun approximateOffsetCurve(
+            curve: BezierCurve,
+            offset: Double,
+        ): BezierCurve
+    }
+
+    data object BestFitOffsetStrategy : OffsetStrategy() {
+        override fun approximateOffsetCurve(
+            curve: BezierCurve,
+            offset: Double,
+        ): BezierCurve {
+            val offsetTimedSeries = curve.findOffsetTimedSeries(offset = offset)
+            return offsetTimedSeries.bestFitCurve()
+        }
+    }
+
+    data object NormalOffsetStrategy : OffsetStrategy() {
+        override fun approximateOffsetCurve(
+            curve: BezierCurve,
+            offset: Double,
+        ): BezierCurve {
+            val startNormalRay = curve.normalRayFunction.startValue
+            val startNormalLine = startNormalRay.containingLine
+
+            val endNormalRay = curve.normalRayFunction.endValue
+            val endNormalLine = endNormalRay.containingLine
+
+            val normalIntersectionPoint =
+                startNormalLine.findIntersectionPoint(endNormalLine) ?: return curve.moveInDirectionPointWise(
+                    // If there's no intersection point, the start and end vectors are parallel. We could choose either.
+                    direction = startNormalRay.direction,
+                    distance = offset,
+                )
+
+            return curve.moveAwayPointWise(
+                origin = normalIntersectionPoint,
+                distance = offset,
+            )
+        }
+    }
+
     companion object {
-        private const val bestFitErrorThreshold = 0.0001
-        private const val bestFitMaxSubdivisionLevel = 8
+        private const val findOffsetErrorThreshold = 0.0001
+        private const val findOffsetMaxSubdivisionLevel = 8
 
         fun interConnect(
             prevNode: BezierSpline.InnerNode,
@@ -65,7 +111,7 @@ data class BezierCurve(
     }
 
     val curveFunction: TimeFunction<Point> by lazy {
-        TimeFunction.wrap(basisFormula).map { it.toPoint() }
+        basisFormula.findFaster().map { it.toPoint() }
     }
 
     fun findOffsetCurveFunction(
@@ -135,43 +181,6 @@ data class BezierCurve(
             curveFunction = offsetCurveFunction,
             sampleCount = 6,
         )
-    }
-
-    fun findOffsetCurveNormal(
-        offset: Double,
-    ): BezierCurve {
-        val startNormalRay = normalRayFunction.startValue
-        val startNormalLine = startNormalRay.containingLine
-
-        val endNormalRay = normalRayFunction.endValue
-        val endNormalLine = endNormalRay.containingLine
-
-        val normalIntersectionPoint =
-            startNormalLine.findIntersectionPoint(endNormalLine) ?: return moveInDirectionPointWise(
-                // If there's no intersection point, the start and end vectors are parallel. We could choose either.
-                direction = startNormalRay.direction,
-                distance = offset,
-            )
-
-        return moveAwayPointWise(
-            origin = normalIntersectionPoint,
-            distance = offset,
-        )
-    }
-
-    fun findOffsetCurveBestFit(
-        offset: Double,
-    ): OffsetCurveBestFitResult {
-        val offsetTimedSeries = findOffsetTimedSeries(offset = offset)
-        val offsetCurve = offsetTimedSeries.bestFitCurve()
-
-        return object : OffsetCurveBestFitResult(
-            offsetCurve = offsetCurve,
-        ) {
-            override fun calculateError(): Double {
-                return offsetTimedSeries.calculateFitError(offsetCurve)
-            }
-        }
     }
 
     fun draw(
@@ -374,17 +383,19 @@ data class BezierCurve(
         return mergedSpline
     }
 
-    fun findOffsetSplineBestFit(
+    fun findOffsetSpline(
+        strategy: OffsetStrategy,
         offset: Double,
     ): OpenBezierSpline {
-        val initialOffsetCurveBestFitResult = findOffsetCurveBestFit(
+        val initialOffsetCurveResult = approximateOffsetCurve(
+            strategy = strategy,
             offset = offset,
         )
 
-        val initialOffsetCurve = initialOffsetCurveBestFitResult.offsetCurve
-        val initialError = initialOffsetCurveBestFitResult.calculateError()
+        val initialOffsetCurve = initialOffsetCurveResult.offsetCurve
+        val initialError = initialOffsetCurveResult.calculateError()
 
-        if (initialError < bestFitErrorThreshold) {
+        if (initialError < findOffsetErrorThreshold) {
             return initialOffsetCurve.toSpline()
         } else {
             val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPoints
@@ -393,13 +404,15 @@ data class BezierCurve(
                 val initialSplitSpline = splitAtMultiple(criticalPoints)
 
                 return initialSplitSpline.mergeOf { splitCurve ->
-                    splitCurve.findOffsetSplineBestFitOrSubdivide(
+                    splitCurve.findOffsetSplineOrSubdivide(
+                        strategy = strategy,
                         offset = offset,
                         subdivisionLevel = 0,
                     )
                 }
             } else {
-                return subdivideAndFindOffsetSplineBestFit(
+                return subdivideAndFindOffsetSpline(
+                    strategy = strategy,
                     offset = offset,
                     subdivisionLevel = 0,
                 )
@@ -407,28 +420,65 @@ data class BezierCurve(
         }
     }
 
-    private fun findOffsetSplineBestFitOrSubdivide(
+    private fun findOffsetSplineOrSubdivide(
+        strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
     ): OpenBezierSpline {
-        val offsetCurveBestFitResult = findOffsetCurveBestFit(
+        val offsetResult = approximateOffsetCurve(
+            strategy = strategy,
             offset = offset,
         )
 
-        val offsetCurve = offsetCurveBestFitResult.offsetCurve
-        val error = offsetCurveBestFitResult.calculateError()
+        val offsetCurve = offsetResult.offsetCurve
+        val error = offsetResult.calculateError()
 
         return when {
-            error < bestFitErrorThreshold || subdivisionLevel >= bestFitMaxSubdivisionLevel -> offsetCurve.toSpline()
+            error < findOffsetErrorThreshold || subdivisionLevel >= findOffsetMaxSubdivisionLevel -> offsetCurve.toSpline()
 
-            else -> subdivideAndFindOffsetSplineBestFit(
+            else -> subdivideAndFindOffsetSpline(
                 offset = offset,
                 subdivisionLevel = subdivisionLevel,
+                strategy = strategy,
             )
         }
     }
 
-    private fun subdivideAndFindOffsetSplineBestFit(
+    private fun approximateOffsetCurve(
+        strategy: OffsetStrategy,
+        offset: Double
+    ): OffsetCurveApproximationResult {
+        val approximatedOffsetCurve = strategy.approximateOffsetCurve(
+            curve = this,
+            offset = offset,
+        )
+
+        return object : OffsetCurveApproximationResult(
+            offsetCurve = approximatedOffsetCurve,
+        ) {
+            override fun calculateError(): Double {
+                val offsetCurveFunction = findOffsetCurveFunction(offset = offset)
+
+                val samples = offsetCurveFunction.sample(
+                    strategy = SamplingStrategy.withSampleCount(
+                        sampleCount = approximationRatingSampleCount,
+                    ),
+                )
+
+                return samples.map { sample ->
+                    val t = sample.x
+
+                    val offsetPoint = sample.value
+                    val approximatedOffsetPoint = approximatedOffsetCurve.curveFunction.evaluate(t = t)
+
+                    offsetPoint.distanceSquaredTo(approximatedOffsetPoint)
+                }.average()
+            }
+        }
+    }
+
+    private fun subdivideAndFindOffsetSpline(
+        strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
     ): OpenBezierSpline {
@@ -438,12 +488,14 @@ data class BezierCurve(
 
         val nextSubDivisionLevel = subdivisionLevel + 1
 
-        val leftSubSplitCurve = leftSplitCurve.findOffsetSplineBestFitOrSubdivide(
+        val leftSubSplitCurve = leftSplitCurve.findOffsetSplineOrSubdivide(
+            strategy = strategy,
             offset = offset,
             subdivisionLevel = nextSubDivisionLevel,
         )
 
-        val rightSubSplitCurve = rightSplitCurve.findOffsetSplineBestFitOrSubdivide(
+        val rightSubSplitCurve = rightSplitCurve.findOffsetSplineOrSubdivide(
+            strategy = strategy,
             offset = offset,
             subdivisionLevel = nextSubDivisionLevel,
         )

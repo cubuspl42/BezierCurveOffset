@@ -72,11 +72,29 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
         splines = subCurves.map(transform),
     )
 
-    fun findOffsetSplineBestFitPoly(
+    fun findOffsetSpline(
+        strategy: BezierCurve.OffsetStrategy,
         offset: Double,
     ): SplineT = mergeOf {
-        it.findOffsetSplineBestFit(offset = offset)
+        it.findOffsetSpline(
+            strategy = strategy,
+            offset = offset,
+        )
     }
+
+    fun findOffsetSplineBestFit(
+        offset: Double,
+    ): SplineT = findOffsetSpline(
+        strategy = BezierCurve.BestFitOffsetStrategy,
+        offset = offset,
+    )
+
+    fun findOffsetSplineNormal(
+        offset: Double,
+    ): SplineT = findOffsetSpline(
+        strategy = BezierCurve.NormalOffsetStrategy,
+        offset = offset,
+    )
 
     abstract val prototype: Prototype<SplineT>
 
@@ -99,6 +117,7 @@ fun BezierSpline<*>.toPath2D(): Path2D.Double = Path2D.Double().apply {
 
 fun BezierSpline<*>.drawSpline(
     graphics2D: Graphics2D,
+    color: Color = Color.BLACK,
 ) {
     fun drawControlSegment(
         controlSegment: Segment,
@@ -122,13 +141,13 @@ fun BezierSpline<*>.drawSpline(
         }
     }
 
-    graphics2D.color = Color.BLACK
+    graphics2D.color = color
     graphics2D.draw(toPath2D())
 
-//    nodes.forEach {
-//        graphics2D.fillCircle(
-//            center = it.point,
-//            radius = 2.0,
-//        )
-//    }
+    nodes.forEach {
+        graphics2D.fillCircle(
+            center = it.point,
+            radius = 2.0,
+        )
+    }
 }
