@@ -21,11 +21,11 @@ fun main(args: Array<String>) {
     val p0 =  Point(318.0, 181.0)
 
     val t0 = Translation(400.0, -100.0)
-    val t1 = Translation(-100.0, 200.0)
+    val t1 = Translation(-20.0, 200.0)
     val t2 = Translation(-120.0, 150.0)
     val t3 = t2
     val t4 = Translation(-160.0, 0.0)
-    val t5 = Translation(-140.0, 300.0)
+    val t5 = Translation(-140.0, 30.0)
 
     val w0 = p0
     val w1 = p0.translate(t0)

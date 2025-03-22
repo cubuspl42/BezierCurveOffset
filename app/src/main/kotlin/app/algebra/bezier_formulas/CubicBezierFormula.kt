@@ -115,9 +115,9 @@ fun CubicBezierFormula<Vector>.findSkeletonCubic(
 
     return QuadraticBezierFormula(
         vectorSpace = vectorSpace,
-        weight0 = subPoint0.p,
-        weight1 = subPoint1.p,
-        weight2 = subPoint2.p,
+        weight0 = subPoint0.pv,
+        weight1 = subPoint1.pv,
+        weight2 = subPoint2.pv,
     )
 }
 

@@ -14,7 +14,7 @@ data class Segment(
 
         return start.translate(
             translation = Translation(
-                tv = (end.p - start.p).scale(t),
+                tv = (end.pv - start.pv).scale(t),
             ),
         )
     }

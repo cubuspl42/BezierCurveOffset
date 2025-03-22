@@ -18,3 +18,5 @@ data class Direction(
     val perpendicular: Direction
         get() = Direction(d = d.perpendicular)
 }
+
+internal fun Vector.toDirection(): Direction = Direction(d = this)

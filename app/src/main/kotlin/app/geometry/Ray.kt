@@ -34,7 +34,7 @@ data class Ray(
             point: Point,
             direction: Direction,
         ): Ray = Ray(
-            s = point.p,
+            s = point.pv,
             d = direction.d,
         )
     }
@@ -53,6 +53,13 @@ data class Ray(
             d = d,
         )
 
+    val perpendicularLine: Line
+        get() = Line(
+            s = s,
+            // If d is non-zero, its perpendicular vector will also be non-zero
+            d = d.perpendicular,
+        )
+
     fun intersect(
         other: Ray,
     ): Point? {
@@ -65,7 +72,7 @@ data class Ray(
 
         return when {
             u > 0.0 && v > 0.0 -> Point(
-                p = evaluate(t = u),
+                pv = evaluate(t = u),
             )
 
             // The intersection point would lye outside the ray

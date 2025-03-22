@@ -58,8 +58,8 @@ fun QuadraticBezierFormula<Vector>.findSkeletonQuadratic(
 
     return LinearBezierFormula(
         vectorSpace = vectorSpace,
-        weight0 = subPoint0.p,
-        weight1 = subPoint1.p,
+        weight0 = subPoint0.pv,
+        weight1 = subPoint1.pv,
     )
 }
 

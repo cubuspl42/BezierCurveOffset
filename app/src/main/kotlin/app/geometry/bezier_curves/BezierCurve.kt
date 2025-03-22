@@ -110,7 +110,7 @@ abstract class BezierCurve {
 
         return TimedPointSeries.sample(
             curveFunction = offsetCurveFunction,
-            sampleCount = 12,
+            sampleCount = 6,
         )
     }
 
@@ -123,7 +123,7 @@ abstract class BezierCurve {
         val endNormalRay = normalRayFunction.endValue
         val endNormalLine = endNormalRay.containingLine
 
-        val normalIntersectionPoint = startNormalLine.intersect(endNormalLine) ?: return moveInDirectionPointWise(
+        val normalIntersectionPoint = startNormalLine.findIntersectionPoint(endNormalLine) ?: return moveInDirectionPointWise(
             // If there's no intersection point, the start and end vectors are parallel. We could choose either.
             direction = startNormalRay.direction,
             distance = offset,

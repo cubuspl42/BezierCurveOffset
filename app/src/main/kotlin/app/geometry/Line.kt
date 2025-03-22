@@ -11,18 +11,10 @@ data class Line(
      */
     val s: Vector,
     /**
-     * One of the infinitely many vectors this line is parallel to
+     * One of the infinitely many vectors this line is parallel to, cannot be a zero vector
      */
     val d: Vector,
 ) {
-    init {
-        require(d != Vector.zero)
-    }
-
-    private fun evaluate(
-        t: Double,
-    ): Vector = s + d.scale(t)
-
     companion object {
         fun inDirection(
             point: Point,
@@ -33,17 +25,25 @@ data class Line(
         ).containingLine
     }
 
-    fun intersect(
+    init {
+        require(d != Vector.zero)
+    }
+
+    private fun evaluate(
+        t: Double,
+    ): Vector = s + d.scale(t)
+
+    fun findIntersectionPoint(
         other: Line,
     ): Point? {
         val det = d.cross(other.d)
         if (det == 0.0) return null // The lines are parallel
 
-        val d = other.s - s
-        val u = d.cross(other.d) / det
+        val ds = other.s - s
+        val u = ds.cross(other.d) / det
 
         return Point(
-            p = evaluate(u)
+            pv = evaluate(u)
         )
     }
 }

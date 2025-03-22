@@ -35,11 +35,16 @@ data class Vector(
 
     companion object {
         val zero = Vector(0.0, 0.0)
+
+        fun bisector(
+            a: Vector,
+            b: Vector,
+        ): Vector = b.length * a + a.length * b
     }
 
     init {
-        require (!x.isNaN())
-        require (!y.isNaN())
+        require(!x.isNaN())
+        require(!y.isNaN())
     }
 
     operator fun minus(
@@ -106,5 +111,19 @@ data class Vector(
     val length: Double
         get() = sqrt(lengthSquared)
 
-    fun toPoint(): Point = Point(p = this)
+    fun toPoint(): Point = Point(pv = this)
 }
+
+operator fun Double.times(
+    v: Vector,
+): Vector = Vector(
+    x = this * v.x,
+    y = this * v.y,
+)
+
+operator fun Vector.div(
+    divisor: Double,
+): Vector = Vector(
+    x = x / divisor,
+    y = y / divisor,
+)

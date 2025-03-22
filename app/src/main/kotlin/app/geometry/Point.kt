@@ -1,16 +1,26 @@
 package app.geometry
 
 import app.algebra.Vector
+import app.algebra.div
 import java.awt.geom.Path2D
 
 data class Point(
-    val p: Vector,
+    val pv: Vector,
 ) {
+    companion object {
+        fun midPoint(
+            a: Point,
+            b: Point,
+        ): Point = Point(
+            pv = a.pv + (b.pv - a.pv) / 2.0,
+        )
+    }
+
     constructor(
         px: Double,
         py: Double,
     ) : this(
-        p = Vector(
+        pv = Vector(
             x = px,
             y = py,
         ),
@@ -25,18 +35,18 @@ data class Point(
     )
 
     val x: Double
-        get() = p.x
+        get() = pv.x
 
     val y: Double
-        get() = p.y
+        get() = pv.y
 
     fun distanceTo(
         other: Point,
-    ): Double = (other.p - this.p).length
+    ): Double = (other.pv - this.pv).length
 
     fun distanceSquaredTo(
         other: Point,
-    ): Double = (other.p - this.p).lengthSquared
+    ): Double = (other.pv - this.pv).lengthSquared
 
     /**
      * @param other - point to find the direction to, must be a different point
@@ -46,14 +56,14 @@ data class Point(
     ): Direction {
         if (this == other) throw IllegalArgumentException("Points must be different")
         return Direction(
-            d = other.p - this.p,
+            d = other.pv - this.pv,
         )
     }
 
     fun translate(
         translation: Translation,
     ): Point = Point(
-        p = p + translation.tv,
+        pv = pv + translation.tv,
     )
 
     /**
@@ -67,7 +77,7 @@ data class Point(
         val v = direction.d
         val d = v.length
         return Point(
-            p = p + v.scale(distance / d),
+            pv = pv + v.scale(distance / d),
         )
     }
 
@@ -88,6 +98,14 @@ data class Point(
     }
 
     fun toVector(): Vector = Vector(x, y)
+
+    fun projectOnto(line: Line): Point {
+        val s = line.s
+        val d = line.d
+        val v = pv - s
+        val t = v.dot(d) / d.lengthSquared
+        return Point(s + d.scale(t))
+    }
 }
 
 fun Path2D.moveTo(point: Point) {
