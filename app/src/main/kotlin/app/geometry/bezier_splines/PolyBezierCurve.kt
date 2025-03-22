@@ -8,7 +8,7 @@ import app.geometry.bezier_curves.BezierCurve
  */
 class PolyBezierCurve(
     override val startNode: StartNode,
-    override val innerNodes: List<OpenBezierSpline.InnerNode>,
+    override val innerNodes: List<BezierSpline.InnerNode>,
     override val endNode: EndNode,
 ) : OpenBezierSpline() {
     override val subCurves: List<BezierCurve> by lazy {

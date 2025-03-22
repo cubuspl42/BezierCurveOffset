@@ -10,52 +10,7 @@ import java.awt.geom.Path2D
 /**
  * A spline built from cubic Bézier curves
  */
-abstract class OpenBezierSpline {
-    sealed interface Node {
-        val backwardControl: Point?
-        val point: Point
-        val forwardControl: Point?
-    }
-
-    sealed interface ForwardNode : Node {
-        override val forwardControl: Point
-    }
-
-    sealed interface BackwardNode : Node {
-        override val backwardControl: Point
-    }
-
-    class StartNode(
-        override val point: Point,
-        override val forwardControl: Point,
-    ) : ForwardNode {
-        override val backwardControl: Nothing? = null
-    }
-
-    class InnerNode(
-        override val backwardControl: Point,
-        override val point: Point,
-        override val forwardControl: Point,
-    ) : ForwardNode, BackwardNode {
-        companion object {
-            fun start(
-                point: Point,
-                control1: Point,
-            ): StartNode = StartNode(
-                point = point,
-                forwardControl = control1,
-            )
-
-            fun end(
-                control0: Point,
-                point: Point,
-            ): EndNode = EndNode(
-                backwardControl = control0,
-                point = point,
-            )
-        }
-    }
-
+abstract class OpenBezierSpline : BezierSpline() {
     class EndNode(
         override val point: Point,
         override val backwardControl: Point,
@@ -66,7 +21,7 @@ abstract class OpenBezierSpline {
     companion object {
         private fun glueSplines(
             prevSplineEndNode: OpenBezierSpline.EndNode,
-            nextSplineStartNode: OpenBezierSpline.StartNode,
+            nextSplineStartNode: BezierSpline.StartNode,
         ): InnerNode {
             val startPoint = Point.midPoint(
                 prevSplineEndNode.point,
@@ -163,20 +118,20 @@ abstract class OpenBezierSpline {
         innerNodes + endNode
     }
 
-    val nodes by lazy {
+    override val nodes: List<Node> by lazy {
         listOf(startNode) + innerNodes + endNode
     }
 
     abstract val subCurves: List<BezierCurve>
 }
 
-val OpenBezierSpline.BackwardNode.backwardControlSegment: Segment
+val BezierSpline.BackwardNode.backwardControlSegment: Segment
     get() = Segment(
         start = point,
         end = backwardControl,
     )
 
-val OpenBezierSpline.ForwardNode.forwardControlSegment: Segment
+val BezierSpline.ForwardNode.forwardControlSegment: Segment
     get() = Segment(
         start = point,
         end = forwardControl,
@@ -219,11 +174,11 @@ fun OpenBezierSpline.drawSpline(
     graphics2D.color = Color.LIGHT_GRAY
 
     nodes.forEach { node ->
-        (node as? OpenBezierSpline.BackwardNode)?.let {
+        (node as? BezierSpline.BackwardNode)?.let {
             drawControlSegment(it.backwardControlSegment)
         }
 
-        (node as? OpenBezierSpline.ForwardNode)?.let {
+        (node as? BezierSpline.ForwardNode)?.let {
             drawControlSegment(it.forwardControlSegment)
         }
     }

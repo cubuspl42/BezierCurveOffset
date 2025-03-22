@@ -273,16 +273,16 @@ data class BezierCurve(
         val midPoint = skeleton1.evaluateLinear(t = t).toPoint()
 
         return BiBezierCurve(
-            startNode = OpenBezierSpline.InnerNode.start(
+            startNode = BezierSpline.InnerNode.start(
                 point = start,
                 control1 = skeleton0.point0,
             ),
-            midNode = OpenBezierSpline.InnerNode(
+            midNode = BezierSpline.InnerNode(
                 backwardControl = skeleton1.point0,
                 point = midPoint,
                 forwardControl = skeleton1.point1,
             ),
-            endNode = OpenBezierSpline.InnerNode.end(
+            endNode = BezierSpline.InnerNode.end(
                 control0 = skeleton0.point2,
                 point = end,
             ),

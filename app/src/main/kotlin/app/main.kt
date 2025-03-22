@@ -2,10 +2,7 @@ package app
 
 import app.algebra.bezier_formulas.RealFunction.SamplingStrategy
 import app.geometry.*
-import app.geometry.bezier_splines.OpenBezierSpline
-import app.geometry.bezier_splines.PolyBezierCurve
-import app.geometry.bezier_splines.drawSpline
-import app.geometry.bezier_splines.findOffsetSplineBestFitPoly
+import app.geometry.bezier_splines.*
 import org.jfree.svg.SVGGraphics2D
 import org.jfree.svg.SVGUtils
 import java.awt.BasicStroke
@@ -37,18 +34,18 @@ fun main(args: Array<String>) {
     val w6 = w5.translate(t5)
 
     val baseSpline = PolyBezierCurve(
-        startNode = OpenBezierSpline.InnerNode.start(
+        startNode = BezierSpline.InnerNode.start(
             point = w0,
             control1 = w1,
         ),
         innerNodes = listOf(
-            OpenBezierSpline.InnerNode(
+            BezierSpline.InnerNode(
                 backwardControl = w2,
                 point = w3,
                 forwardControl = w4,
             ),
         ),
-        endNode = OpenBezierSpline.InnerNode.end(
+        endNode = BezierSpline.InnerNode.end(
             control0 = w5,
             point = w6,
         ),
