@@ -4,9 +4,8 @@ import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.geometry.bezier_splines.OpenBezierSpline
 import app.geometry.bezier_splines.mergeWith
-import app.partitionSorted
 
-sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : BezierCurve<CurveT>() {
+sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : LongitudinalBezierCurve<CurveT>() {
     abstract class OffsetCurveApproximationResult(
         val offsetCurve: BezierCurve<*>,
     ) {
@@ -48,12 +47,11 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : BezierCurve
     }
 
     companion object {
-
         private const val findOffsetErrorThreshold = 0.0001
         private const val findOffsetMaxSubdivisionLevel = 8
     }
 
-    override fun findOffsetSpline(
+    final override fun findOffsetSpline(
         strategy: OffsetStrategy,
         offset: Double,
     ): OpenBezierSpline {
@@ -177,68 +175,6 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : BezierCurve
 
     final override val asProper: ProperBezierCurve<*>
         get() = this
-
-    final override fun splitAtMultiple(
-        tValues: Set<Double>,
-    ): OpenBezierSpline {
-        if (tValues.isEmpty()) {
-            return this.toSpline()
-        }
-
-        val tValuesSorted = tValues.sorted()
-
-        val spline = splitAtMultipleSorted(
-            tValuesSorted = tValuesSorted,
-        )
-
-        return spline
-    }
-
-    private fun splitAtMultipleSorted(
-        tValuesSorted: List<Double>,
-    ): OpenBezierSpline {
-        val partitioningResult =
-            tValuesSorted.partitionSorted() ?: return this.toSpline() // We're done, no more places to split
-
-        val leftTValues = partitioningResult.leftPart
-        val medianTValue = partitioningResult.medianValue
-        val rightTValues = partitioningResult.rightPart
-
-        val leftCorrectedTValues = leftTValues.map { it / medianTValue }
-        val rightCorrectedTValues = rightTValues.map { (it - medianTValue) / (1.0 - medianTValue) }
-
-        val (leftSplitCurve, rightSplitCurve) = splitAtProper(
-            t = medianTValue,
-        )
-
-        val leftSubSplitCurve = leftSplitCurve.splitAtMultipleSorted(
-            tValuesSorted = leftCorrectedTValues,
-        )
-
-        val rightSubSplitCurveOrNull = rightSplitCurve?.splitAtMultipleSorted(
-            tValuesSorted = rightCorrectedTValues,
-        )
-
-        return when {
-            else -> OpenBezierSpline.merge(
-                splines = listOfNotNull(
-                    leftSubSplitCurve,
-                    rightSubSplitCurveOrNull,
-                ),
-            )
-        }
-    }
-
-//    fun splitAt2(
-//        t: Double,
-//    ): Pair<ProperBezierCurve<*>, ProperBezierCurve<*>>? {
-//        val (leftSplitCurve, rightSplitCurve) = splitAt(t = t)
-//        val leftProperSplitCurve = leftSplitCurve.asProper ?: return null
-//        val rightProperSplitCurve = rightSplitCurve.asProper ?: return null
-//        return Pair(leftProperSplitCurve, rightProperSplitCurve)
-//    }
-
-    fun splitAtMidPoint() = splitAt(t = 0.5)
 
     private fun subdivideAndFindOffsetSpline(
         strategy: OffsetStrategy,

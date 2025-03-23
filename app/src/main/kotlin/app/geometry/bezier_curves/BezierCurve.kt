@@ -113,6 +113,8 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
 
     abstract val asProper: ProperBezierCurve<*>?
 
+    abstract val asLongitudinal: LongitudinalBezierCurve<*>?
+
     abstract fun splitAt(
         t: Double,
     ): Pair<BezierCurve<*>, BezierCurve<*>>

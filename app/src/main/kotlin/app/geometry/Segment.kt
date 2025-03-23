@@ -9,6 +9,10 @@ data class Segment(
     val start: Point,
     val end: Point,
 ) {
+    val direction: Direction? = Direction.of(
+        end.pv - start.pv,
+    )
+
     fun linearlyInterpolate(t: Double): Point {
         if (t < 0 || t > 1) throw IllegalArgumentException("t must be in [0, 1], was: $t")
 
@@ -45,5 +49,19 @@ data class Segment(
         start.y,
         end.x,
         end.y,
+    )
+
+    fun moveInDirection(
+        direction: Direction,
+        distance: Double,
+    ): Segment = Segment(
+        start = start.moveInDirection(
+            direction = direction,
+            distance = distance,
+        ),
+        end = end.moveInDirection(
+            direction = direction,
+            distance = distance,
+        ),
     )
 }

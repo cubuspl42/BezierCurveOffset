@@ -52,4 +52,7 @@ data class PointBezierCurve private constructor(
 
     override val asProper: Nothing?
         get() = null
+
+    override val asLongitudinal: Nothing?
+        get() = null
 }

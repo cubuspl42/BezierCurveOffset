@@ -11,11 +11,21 @@ data class Direction(
      */
     val d: Vector,
 ) {
+    companion object {
+        fun of(
+            d: Vector,
+        ): Direction? = when {
+            d == Vector.zero -> null
+            else -> Direction(d = d)
+        }
+    }
+
     init {
         require(d != Vector.zero)
     }
 
     val perpendicular: Direction
+        // If d is non-zero, its perpendicular vector will also be non-zero
         get() = Direction(d = d.perpendicular)
 }
 
