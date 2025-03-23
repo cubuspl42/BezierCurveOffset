@@ -115,8 +115,8 @@ fun Path2D.pathTo(
     subCurve: BezierCurve<*>,
 ) {
     when (subCurve) {
-        is ConstantBezierCurve -> TODO()
-        is LinearBezierCurve -> TODO()
+        is PointBezierCurve -> TODO()
+        is LineSegmentBezierCurve -> TODO()
         is QuadraticBezierCurve -> TODO()
         is CubicBezierCurve -> cubicTo(
             control1 = subCurve.control0,

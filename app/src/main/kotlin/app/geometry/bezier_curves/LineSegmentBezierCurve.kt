@@ -9,37 +9,39 @@ import app.geometry.Segment
  * A linear Bézier curve (a line segment)
  */
 @Suppress("DataClassPrivateConstructor")
-data class LinearBezierCurve private constructor(
-    override val start: Point,
-    override val end: Point,
-) : ProperBezierCurve<LinearBezierCurve>() {
+data class LineSegmentBezierCurve private constructor(
+    val segment: Segment,
+) : ProperBezierCurve<LineSegmentBezierCurve>() {
     companion object {
         fun of(
             start: Point,
             end: Point,
         ): BezierCurve<*> = when {
-            start == end -> ConstantBezierCurve.of(
-                start = start,
+            start == end -> PointBezierCurve.of(
                 point = start,
-                end = end,
             )
 
-            else -> LinearBezierCurve(
-                start = start,
-                end = end,
+            else -> LineSegmentBezierCurve(
+                segment = Segment(
+                    start = start,
+                    end = end,
+                ),
             )
         }
     }
+
+    override val start: Point
+        get() = segment.start
+
+
+    override val end: Point
+        get() = TODO("Not yet implemented")
+
 
     init {
         require(start != end)
     }
 
-    val segment: Segment
-        get() = Segment(
-            start = start,
-            end = end,
-        )
 
     override val firstControl: Point
         get() = start
@@ -53,11 +55,11 @@ data class LinearBezierCurve private constructor(
         val midPoint = segment.linearlyInterpolate(t = t)
 
         return Pair(
-            LinearBezierCurve.of(
+            LineSegmentBezierCurve.of(
                 start = start,
                 end = midPoint,
             ),
-            LinearBezierCurve.of(
+            LineSegmentBezierCurve.of(
                 start = midPoint,
                 end = end,
             ),
@@ -66,7 +68,7 @@ data class LinearBezierCurve private constructor(
 
     override fun moveInNormalDirection(
         distance: Double,
-    ): LinearBezierCurve {
+    ): LineSegmentBezierCurve {
         TODO("Not yet implemented")
     }
 

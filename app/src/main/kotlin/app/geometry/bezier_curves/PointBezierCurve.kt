@@ -9,22 +9,20 @@ import app.geometry.bezier_splines.OpenBezierSpline
  * A constant Bézier curve (a point)
  */
 @Suppress("DataClassPrivateConstructor")
-data class ConstantBezierCurve private constructor(
+data class PointBezierCurve private constructor(
     val point: Point,
-) : BezierCurve<ConstantBezierCurve>() {
+) : BezierCurve<PointBezierCurve>() {
     companion object {
         fun of(
-            start: Point,
             point: Point,
-            end: Point,
-        ): ConstantBezierCurve = ConstantBezierCurve(
+        ): PointBezierCurve = PointBezierCurve(
             point = point,
         )
     }
 
     override fun splitAt(
         t: Double,
-    ): Pair<ConstantBezierCurve, ConstantBezierCurve> = Pair(this, this)
+    ): Pair<PointBezierCurve, PointBezierCurve> = Pair(this, this)
 
     override fun splitAtMultiple(
         tValues: Set<Double>,

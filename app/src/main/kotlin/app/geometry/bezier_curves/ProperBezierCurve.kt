@@ -154,8 +154,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : BezierCurve
         t: Double,
     ): Pair<ProperBezierCurve<*>, ProperBezierCurve<*>?> {
         val (leftSplitCurve, rightSplitCurve) = splitAt(t = t)
-        val leftProperSplitCurve = leftSplitCurve?.asProper
-        val rightProperSplitCurve = rightSplitCurve?.asProper
+        val leftProperSplitCurve = leftSplitCurve.asProper
+        val rightProperSplitCurve = rightSplitCurve.asProper
 
         return when {
             leftProperSplitCurve != null -> Pair(
@@ -175,7 +175,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : BezierCurve
         }
     }
 
-    final override val asProper: ProperBezierCurve<*>? = this
+    final override val asProper: ProperBezierCurve<*>
+        get() = this
 
     final override fun splitAtMultiple(
         tValues: Set<Double>,
