@@ -55,7 +55,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         strategy: OffsetStrategy,
         offset: Double,
     ): OpenBezierSpline {
-        val initialOffsetCurveResult = approximateOffsetCurve(
+        val initialOffsetCurveResult = findApproximatedOffsetCurve(
             strategy = strategy,
             offset = offset,
         )
@@ -66,21 +66,21 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         if (initialError < findOffsetErrorThreshold) {
             return initialOffsetCurve.toSpline()
         } else {
-            val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPoints
+            val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
 
-            if (criticalPoints.isEmpty()) {
+            if (criticalPoints.isNotEmpty() && false) { // FIXME
                 val initialSplitSpline = splitAtMultiple(criticalPoints)
 
                 return initialSplitSpline.mergeOf { splitCurve ->
-                    TODO()
-//                    splitCurve.findOffsetSplineOrSubdivide(
-//                        strategy = strategy,
-//                        offset = offset,
-//                        subdivisionLevel = 0,
-//                    )
+                    // FIXME
+                    (splitCurve as LongitudinalBezierCurve<*>).findOffsetSplineRecursive(
+                        strategy = strategy,
+                        offset = offset,
+                        subdivisionLevel = 0,
+                    )
                 }
             } else {
-                return subdivideAndFindOffsetSpline(
+                return subdivideAndFindOffsetSplineRecursive(
                     strategy = strategy,
                     offset = offset,
                     subdivisionLevel = 0,
@@ -89,12 +89,12 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         }
     }
 
-    private fun findOffsetSplineOrSubdivide(
+    override fun findOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
     ): OpenBezierSpline {
-        val offsetResult = approximateOffsetCurve(
+        val offsetResult = findApproximatedOffsetCurve(
             strategy = strategy,
             offset = offset,
         )
@@ -105,7 +105,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         return when {
             error < findOffsetErrorThreshold || subdivisionLevel >= findOffsetMaxSubdivisionLevel -> offsetCurve.toSpline()
 
-            else -> subdivideAndFindOffsetSpline(
+            else -> subdivideAndFindOffsetSplineRecursive(
                 offset = offset,
                 subdivisionLevel = subdivisionLevel,
                 strategy = strategy,
@@ -113,8 +113,9 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         }
     }
 
-    private fun approximateOffsetCurve(
-        strategy: OffsetStrategy, offset: Double
+    private fun findApproximatedOffsetCurve(
+        strategy: OffsetStrategy,
+        offset: Double,
     ): OffsetCurveApproximationResult {
         val approximatedOffsetCurve = strategy.approximateOffsetCurve(
             curve = this,
@@ -145,47 +146,19 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         }
     }
 
-    /**
-     * Split at the given t-value, ensuring to return at least one proper curve.
-     */
-    fun splitAtProper(
-        t: Double,
-    ): Pair<ProperBezierCurve<*>, ProperBezierCurve<*>?> {
-        val (leftSplitCurve, rightSplitCurve) = splitAt(t = t)
-        val leftProperSplitCurve = leftSplitCurve.asProper
-        val rightProperSplitCurve = rightSplitCurve.asProper
-
-        return when {
-            leftProperSplitCurve != null -> Pair(
-                leftProperSplitCurve,
-                rightProperSplitCurve,
-            )
-
-            rightProperSplitCurve != null -> Pair(
-                rightProperSplitCurve,
-                null,
-            )
-
-            // This is a numerical corner case, maybe even impossible. A linear
-            // Bézier curve (a line segment) would need to split to two constant
-            // Bézier curves (two points), or something equivalent.
-            else -> Pair(this, null)
-        }
-    }
-
     final override val asProper: ProperBezierCurve<*>
         get() = this
 
-    private fun subdivideAndFindOffsetSpline(
+    private fun subdivideAndFindOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
     ): OpenBezierSpline {
-        val (leftSplitCurve, rightSplitCurve) = splitAtProper(t = 0.5)
+        val (leftSplitCurve, rightSplitCurve) = splitAtSafe(t = 0.5)
 
         val nextSubDivisionLevel = subdivisionLevel + 1
 
-        val firstSubSplitCurve = leftSplitCurve.findOffsetSplineOrSubdivide(
+        val firstSubSplitCurve = leftSplitCurve.findOffsetSplineRecursive(
             strategy = strategy,
             offset = offset,
             subdivisionLevel = nextSubDivisionLevel,
@@ -197,7 +170,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             return firstSubSplitCurve
         }
 
-        val secondSubSplitCurve = rightSplitCurve.findOffsetSplineOrSubdivide(
+        val secondSubSplitCurve = rightSplitCurve.findOffsetSplineRecursive(
             strategy = strategy,
             offset = offset,
             subdivisionLevel = nextSubDivisionLevel,

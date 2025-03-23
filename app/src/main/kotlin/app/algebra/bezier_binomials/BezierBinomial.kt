@@ -21,7 +21,7 @@ sealed class BezierBinomial<V> : RealFunction<V>() {
             private val range = 0.0..1.0
         }
 
-        val criticalPoints: Set<Double> by lazy {
+        val criticalPointsXY: Set<Double> by lazy {
             criticalPointsX + criticalPointsY
         }
 

@@ -249,7 +249,7 @@ data class CubicBezierCurve private constructor(
     }
 
     fun splitAtCriticalPoints(): OpenBezierSpline {
-        val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPoints
+        val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
 
         val splitSpline = splitAtMultiple(
             tValues = criticalPoints,

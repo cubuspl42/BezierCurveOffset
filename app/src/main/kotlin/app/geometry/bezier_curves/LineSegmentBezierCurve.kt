@@ -50,16 +50,17 @@ data class LineSegmentBezierCurve private constructor(
     override fun findOffsetSpline(
         strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,
-    ): OpenBezierSpline {
-        val offsetSegment = segment.moveInDirection(
-            direction = segment.direction!!.perpendicular,
-            distance = offset,
-        )
+    ): OpenBezierSpline = findOffsetLineSegmentCurve(
+        offset = offset,
+    ).toSpline()
 
-        return LineSegmentBezierCurve(
-            segment = offsetSegment,
-        ).toSpline()
-    }
+    override fun findOffsetSplineRecursive(
+        strategy: ProperBezierCurve.OffsetStrategy,
+        offset: Double,
+        subdivisionLevel: Int,
+    ): OpenBezierSpline = findOffsetLineSegmentCurve(
+        offset = offset,
+    ).toSpline()
 
     override fun splitAt(
         t: Double,
@@ -75,6 +76,19 @@ data class LineSegmentBezierCurve private constructor(
                 start = midPoint,
                 end = end,
             ),
+        )
+    }
+
+    fun findOffsetLineSegmentCurve(
+        offset: Double,
+    ): LineSegmentBezierCurve {
+        val offsetSegment = segment.moveInDirection(
+            direction = segment.direction!!.perpendicular,
+            distance = offset,
+        )
+
+        return LineSegmentBezierCurve(
+            segment = offsetSegment,
         )
     }
 

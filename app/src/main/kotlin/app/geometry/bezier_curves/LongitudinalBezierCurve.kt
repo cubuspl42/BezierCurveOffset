@@ -1,5 +1,6 @@
 package app.geometry.bezier_curves
 
+import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.bezier_splines.OpenBezierSpline
 import app.partitionSorted
 
@@ -100,5 +101,9 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
 
     fun splitAtMidPoint() = splitAt(t = 0.5)
 
-
+    abstract fun findOffsetSplineRecursive(
+        strategy: OffsetStrategy,
+        offset: Double,
+        subdivisionLevel: Int,
+    ): OpenBezierSpline
 }
