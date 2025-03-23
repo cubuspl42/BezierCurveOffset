@@ -1,5 +1,7 @@
 package app.geometry.bezier_splines
 
+import app.geometry.bezier_curves.ProperBezierCurve
+
 /**
  * A closed Bézier spline, i.e. such that forms a loops
  */
@@ -31,4 +33,14 @@ abstract class ClosedBezierSpline : BezierSpline<ClosedBezierSpline>() {
 
     final override val nodes: List<InnerNode>
         get() = innerNodes
+
+    fun findContourSpline(
+        strategy: ProperBezierCurve.OffsetStrategy,
+        offset: Double,
+    ): ClosedBezierSpline = mergeOfNotNull {
+        it.findOffsetSpline(
+            strategy = strategy,
+            offset = offset,
+        )
+    }
 }

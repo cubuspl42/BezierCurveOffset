@@ -77,31 +77,6 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
     ): SplineT = prototype.merge(
         splines = subCurves.mapNotNull(transform),
     )
-
-    fun findOffsetSpline(
-        strategy: ProperBezierCurve.OffsetStrategy,
-        offset: Double,
-    ): SplineT = mergeOfNotNull {
-        it.findOffsetSpline(
-            strategy = strategy,
-            offset = offset,
-        )
-    }
-
-    fun findOffsetSplineBestFit(
-        offset: Double,
-    ): SplineT = findOffsetSpline(
-        strategy = ProperBezierCurve.BestFitOffsetStrategy,
-        offset = offset,
-    )
-
-    fun findOffsetSplineNormal(
-        offset: Double,
-    ): SplineT = findOffsetSpline(
-        strategy = ProperBezierCurve.NormalOffsetStrategy,
-        offset = offset,
-    )
-
     abstract val prototype: Prototype<SplineT>
 
     abstract val nodes: List<Node>

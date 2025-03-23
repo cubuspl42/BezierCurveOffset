@@ -2,6 +2,7 @@ package app.geometry.bezier_splines
 
 import app.fillCircle
 import app.geometry.*
+import app.geometry.bezier_curves.ProperBezierCurve
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
@@ -100,6 +101,16 @@ abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
 
     val oneBeforeEndNode: ForwardNode
         get() = innerNodes.lastOrNull() ?: startNode
+
+    fun findOffsetSpline(
+        strategy: ProperBezierCurve.OffsetStrategy,
+        offset: Double,
+    ): OpenBezierSpline = mergeOfNotNull {
+        it.findOffsetSpline(
+            strategy = strategy,
+            offset = offset,
+        )
+    }
 
     abstract val startNode: StartNode
 

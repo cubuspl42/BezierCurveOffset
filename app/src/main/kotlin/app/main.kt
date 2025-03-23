@@ -2,6 +2,7 @@ package app
 
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.geometry.*
+import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_splines.*
 import org.jfree.svg.SVGGraphics2D
 import org.jfree.svg.SVGUtils
@@ -24,12 +25,12 @@ fun main(args: Array<String>) {
                 forwardControl = Point(500.0, 400.0),
             ),
             BezierSpline.InnerNode(
-                backwardControl =  Point(450.0, 650.0),
+                backwardControl = Point(450.0, 650.0),
                 point = Point(400.0, 700.0),
                 forwardControl = Point(350.0, 750.0),
             ),
             BezierSpline.InnerNode(
-                backwardControl =  Point(300.0, 750.0),
+                backwardControl = Point(300.0, 750.0),
                 point = Point(250.0, 700.0),
                 forwardControl = Point(200.0, 650.0),
             ),
@@ -42,7 +43,10 @@ fun main(args: Array<String>) {
 //    val offsetCurveNormal = baseCurve.findOffsetCurveNormal(offset = offset)
 //    val offsetCurveBestFit = baseCurve.findOffsetCurveBestFit(offset = offset).offsetCurve
 
-    val offsetSplineBestFit = baseSpline.findOffsetSplineBestFit(offset = offset)
+    val contourSplineBestFit = baseSpline.findContourSpline(
+        ProperBezierCurve.BestFitOffsetStrategy,
+        offset = offset,
+    )
 //    val offsetSplineNormal = baseSpline.findOffsetSplineNormal(offset = offset)
 
 //    val criticalPoints = baseCurve.basisFormula.findAllCriticalPoints().criticalPoints
@@ -83,7 +87,7 @@ fun main(args: Array<String>) {
 //        color = Color.BLUE,
 //    )
 
-    offsetSplineBestFit.drawSpline(
+    contourSplineBestFit.drawSpline(
         graphics2D = svgGraphics2D,
         color = Color.RED,
     )
