@@ -37,13 +37,9 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         override fun approximateOffsetCurve(
             curve: ProperBezierCurve<*>,
             offset: Double,
-        ): BezierCurve<*> {
-            return curve.moveInNormalDirection(
-                distance = offset,
-            )
-
-
-        }
+        ): BezierCurve<*> = curve.moveInNormalDirection(
+            distance = offset,
+        )
     }
 
     companion object {
@@ -68,16 +64,23 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         } else {
             val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
 
-            if (criticalPoints.isNotEmpty() && false) { // FIXME
+            if (criticalPoints.isNotEmpty()) {
                 val initialSplitSpline = splitAtMultiple(criticalPoints)
 
-                return initialSplitSpline.mergeOf { splitCurve ->
-                    // FIXME
-                    (splitCurve as LongitudinalBezierCurve<*>).findOffsetSplineRecursive(
+                return initialSplitSpline.reshape { splitCurve ->
+                    splitCurve.findOffsetSplineRecursive(
                         strategy = strategy,
                         offset = offset,
                         subdivisionLevel = 0,
                     )
+                } ?: run {
+                    // A proper Bézier curve shouldn't ever split to an
+                    // effectively-singularity spline, but it's not clear if
+                    // this might not happen because of numeric errors. Let's
+                    // return the initial offset curve then, as further
+                    // splitting an effectively-singularity spline is not a
+                    // good idea.
+                    initialOffsetCurve.toSpline()
                 }
             } else {
                 return subdivideAndFindOffsetSplineRecursive(
@@ -113,6 +116,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         }
     }
 
+    // TODO: Is this always possible numerically?
     private fun findApproximatedOffsetCurve(
         strategy: OffsetStrategy,
         offset: Double,
@@ -179,6 +183,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         return firstSubSplitCurve.mergeWith(secondSubSplitCurve)
     }
 
+    // TODO: Is this always possible numerically?
     abstract fun moveInNormalDirection(
         distance: Double,
     ): CurveT

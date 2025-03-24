@@ -21,21 +21,40 @@ fun main(args: Array<String>) {
         innerNodes = listOf(
             BezierSpline.InnerNode(
                 backwardControl = Point(300.0, 400.0),
-                point = Point(400.0, 400.0),
+                knotPoint = Point(400.0, 400.0),
                 forwardControl = Point(500.0, 400.0),
             ),
             BezierSpline.InnerNode(
                 backwardControl = Point(450.0, 650.0),
-                point = Point(400.0, 700.0),
+                knotPoint = Point(400.0, 700.0),
                 forwardControl = Point(350.0, 750.0),
             ),
             BezierSpline.InnerNode(
                 backwardControl = Point(300.0, 750.0),
-                point = Point(250.0, 700.0),
+                knotPoint = Point(250.0, 700.0),
                 forwardControl = Point(200.0, 650.0),
             ),
         ),
     )
+
+    val subCurve = baseSpline.longitudinalSubCurves[1]
+
+    val subCurveOffsetSpline = subCurve.findOffsetSpline(
+        strategy = ProperBezierCurve.BestFitOffsetStrategy,
+        offset = 30.0,
+    )
+
+//    val baseSpline = OpenPolyBezierCurve(
+//        startNode = BezierSpline.StartNode(
+//            knotPoint = Point(400.0, 700.0),
+//            forwardControl = Point(350.0, 750.0),
+//        ),
+//        innerNodes = emptyList(),
+//        endNode = BezierSpline.EndNode(
+//            backwardControl = Point(300.0, 750.0),
+//            knotPoint = Point(250.0, 700.0),
+//        ),
+//    )
 
     val offset = 30.0
 //    val offsetPointSeries = baseCurve.findOffsetTimedSeries(offset = offset)
@@ -46,17 +65,9 @@ fun main(args: Array<String>) {
     val contourSplineBestFit = baseSpline.findContourSpline(
         ProperBezierCurve.BestFitOffsetStrategy,
         offset = offset,
-    )
+    )!!
+
 //    val offsetSplineNormal = baseSpline.findOffsetSplineNormal(offset = offset)
-
-//    val criticalPoints = baseCurve.basisFormula.findAllCriticalPoints().criticalPoints
-    val criticalPoints = setOf(
-        0.3734586167618398,
-        0.854097765727581,
-//        0.10750490539094985,
-    )
-    println(criticalPoints)
-
 //    val splitSpline = baseCurve.splitAtCriticalPoints()
 
     val width = 1024
@@ -66,42 +77,23 @@ fun main(args: Array<String>) {
 
     baseSpline.drawSpline(
         graphics2D = svgGraphics2D,
-//        innerColor = Color.BLACK,
-//        outerColor = Color.LIGHT_GRAY,
-//        outerSamplingStrategy = outerSamplingStrategy,
     )
 
-//    splitSpline.drawSpline(
-//        graphics2D = svgGraphics2D,
-//    )
-
     svgGraphics2D.stroke = BasicStroke(1.0f)
-
-//    offsetPointSeries.draw(
-//        graphics2D = svgGraphics2D,
-//        color = Color.ORANGE,
-//    )
-
-//    offsetSplineNormal.drawSpline(
-//        graphics2D = svgGraphics2D,
-//        color = Color.BLUE,
-//    )
 
     contourSplineBestFit.drawSpline(
         graphics2D = svgGraphics2D,
         color = Color.RED,
     )
 
-//    offsetCurveBestFit.draw(
-//        graphics2D = svgGraphics2D,
-//        innerColor = Color.RED,
-//        outerSamplingStrategy = outerSamplingStrategy,
-//    )
+    svgGraphics2D.color = Color.ORANGE
+    svgGraphics2D.draw(
+        subCurve.toPath2D(),
+    )
 
-//    offsetCurveNormal.draw(
+//    subCurveOffsetSpline.drawSpline(
 //        graphics2D = svgGraphics2D,
-//        innerColor = Color.BLUE,
-//        outerSamplingStrategy = outerSamplingStrategy,
+//        color = Color.GREEN,
 //    )
 
     val file = File("Bezier.svg")

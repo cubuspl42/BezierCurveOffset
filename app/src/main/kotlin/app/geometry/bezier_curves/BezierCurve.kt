@@ -18,10 +18,10 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
             prevNode: BezierSpline.InnerNode,
             nextNode: BezierSpline.InnerNode,
         ): BezierCurve<*> = CubicBezierCurve.of(
-            start = prevNode.point,
+            start = prevNode.knotPoint,
             control0 = prevNode.forwardControl,
             control1 = nextNode.backwardControl,
-            end = nextNode.point,
+            end = nextNode.knotPoint,
         )
 
         fun interConnectAll(
@@ -75,10 +75,12 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
     }
 
     val normalFunction: TimeFunction<Direction> by lazy {
-        tangentFunction.map { it.perpendicular }
+        tangentFunction.map {
+            it.perpendicular
+        }
     }
 
-    val normalRayFunction by lazy {
+    val normalRayFunction: TimeFunction<Ray> by lazy {
         bindRay(
             pointFunction = curveFunction,
             vectorFunction = normalFunction,

@@ -37,7 +37,7 @@ abstract class ClosedBezierSpline : BezierSpline<ClosedBezierSpline>() {
     fun findContourSpline(
         strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,
-    ): ClosedBezierSpline = mergeOfNotNull {
+    ): ClosedBezierSpline? = reshape {
         it.findOffsetSpline(
             strategy = strategy,
             offset = offset,

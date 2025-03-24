@@ -23,8 +23,10 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
 
     sealed interface Node {
         val backwardControl: Point?
-        val point: Point
+        val knotPoint: Point
         val forwardControl: Point?
+
+        fun isLoose(): Boolean
     }
 
     sealed interface ForwardNode : Node {
@@ -36,15 +38,27 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
     }
 
     class StartNode(
-        override val point: Point,
+        override val knotPoint: Point,
         override val forwardControl: Point,
     ) : ForwardNode {
         override val backwardControl: Nothing? = null
+
+        override fun isLoose(): Boolean = knotPoint == forwardControl
+    }
+
+    class EndNode(
+        override val knotPoint: Point,
+        override val backwardControl: Point,
+    ) : BackwardNode {
+        override val forwardControl: Nothing? = null
+        override fun isLoose(): Boolean {
+            TODO("Not yet implemented")
+        }
     }
 
     class InnerNode(
         override val backwardControl: Point,
-        override val point: Point,
+        override val knotPoint: Point,
         override val forwardControl: Point,
     ) : ForwardNode, BackwardNode {
         companion object {
@@ -52,37 +66,81 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
                 point: Point,
                 control1: Point,
             ): StartNode = StartNode(
-                point = point,
+                knotPoint = point,
                 forwardControl = control1,
             )
 
             fun end(
                 control0: Point,
                 point: Point,
-            ): OpenBezierSpline.EndNode = OpenBezierSpline.EndNode(
+            ): EndNode = EndNode(
                 backwardControl = control0,
-                point = point,
+                knotPoint = point,
+            )
+        }
+
+        override fun isLoose(): Boolean = knotPoint == backwardControl && knotPoint == forwardControl
+    }
+
+    /**
+     * @return A reshaped spline, or null if no longitudinal sub-curves could be
+     * found (a spline is_effectively a singularity spline)
+     */
+    fun reshape(
+        transformCurve: (LongitudinalBezierCurve<*>) -> OpenBezierSpline,
+    ): SplineT? {
+        val transformedSplines = longitudinalSubCurves.map(transformCurve)
+
+        return when {
+            transformedSplines.isEmpty() -> null
+
+            else -> prototype.merge(
+                splines = transformedSplines,
             )
         }
     }
 
-    fun mergeOf(
-        transform: (BezierCurve<*>) -> OpenBezierSpline,
-    ): SplineT = prototype.merge(
-        splines = subCurves.map(transform),
-    )
+    /**
+     * A singularity spline is effectively a point. Mathematically, it's the
+     * worst of corner cases.
+     */
+    fun isSingularity(): Boolean = knotPoints.size == 1 && nodes.all { it.isLoose() }
 
-    fun mergeOfNotNull(
-        transform: (BezierCurve<*>) -> OpenBezierSpline?,
-    ): SplineT = prototype.merge(
-        splines = subCurves.mapNotNull(transform),
-    )
     abstract val prototype: Prototype<SplineT>
 
+    /**
+     * Splines always have at least one node
+     */
     abstract val nodes: List<Node>
 
+    /**
+     * In a corner case (an open spline with just th start and the end node), a
+     * spline might have no inner nodes.
+     */
     abstract val innerNodes: List<InnerNode>
 
+    /**
+     * Splines always have at least one knot point
+     */
+    val knotPoints: Set<Point> by lazy {
+        nodes.map { it.knotPoint }.toSet()
+    }
+
+    /**
+     * In a corner case (a singularity spline), a spline doesn't have any
+     * longitudinal sub-curves. It is not clear whether this might also happen
+     * when a spline is _close_ to being a singularity (a _effectively_ being a
+     * singularity), i.e. when all sub-curves of a technically non-singularity
+     * spline appear to be points because of numerical errors.
+     */
+    val longitudinalSubCurves: List<LongitudinalBezierCurve<*>> by lazy {
+        subCurves.mapNotNull { it.asLongitudinal }
+    }
+
+    /**
+     * Splines always have at least one sub-curve, but none of them might be
+     * proper in a corner case (they might all be points)
+     */
     abstract val subCurves: List<BezierCurve<*>>
 }
 
@@ -102,7 +160,7 @@ fun Path2D.pathTo(
 }
 
 fun BezierSpline<*>.toPath2D(): Path2D.Double = Path2D.Double().apply {
-    moveTo(nodes.first().point)
+    moveTo(nodes.first().knotPoint)
 
     subCurves.forEach { subCurve ->
         pathTo(
@@ -142,7 +200,7 @@ fun BezierSpline<*>.drawSpline(
 
     nodes.forEach {
         graphics2D.fillCircle(
-            center = it.point,
+            center = it.knotPoint,
             radius = 2.0,
         )
     }

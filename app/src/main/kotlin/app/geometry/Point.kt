@@ -2,6 +2,8 @@ package app.geometry
 
 import app.algebra.Vector
 import app.algebra.div
+import app.equalsApproximately
+import app.equalsZeroApproximately
 import java.awt.geom.Path2D
 
 data class Point(
@@ -14,6 +16,17 @@ data class Point(
         ): Point = Point(
             pv = a.pv + (b.pv - a.pv) / 2.0,
         )
+
+        fun areCollinear(
+            a: Point,
+            b: Point,
+            c: Point,
+            epsilon: Double = Constants.epsilon,
+        ): Boolean {
+            val ab = b.pv - a.pv
+            val ac = c.pv - a.pv
+            return ab.cross(ac).equalsZeroApproximately(epsilon = epsilon)
+        }
     }
 
     constructor(
@@ -52,7 +65,7 @@ data class Point(
      * @param other - point to find the direction to, must be a different point
      */
     fun directionTo(
-        other: Point
+        other: Point,
     ): Direction {
         if (this == other) throw IllegalArgumentException("Points must be different")
         return Direction(

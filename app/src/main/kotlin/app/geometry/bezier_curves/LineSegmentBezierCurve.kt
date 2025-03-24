@@ -2,9 +2,9 @@ package app.geometry.bezier_curves
 
 import app.algebra.Vector
 import app.algebra.bezier_binomials.BezierBinomial
-import app.geometry.Point
-import app.geometry.Segment
+import app.geometry.*
 import app.geometry.bezier_splines.OpenBezierSpline
+import java.awt.geom.Path2D
 
 /**
  * A linear Bézier curve (a line segment)
@@ -90,6 +90,11 @@ data class LineSegmentBezierCurve private constructor(
         return LineSegmentBezierCurve(
             segment = offsetSegment,
         )
+    }
+
+    override fun toPath2D(): Path2D.Double = Path2D.Double().apply {
+        moveTo(start)
+        lineTo(end)
     }
 
     override val basisFormula: BezierBinomial<Vector>

@@ -183,6 +183,7 @@ data class CubicBezierCurve private constructor(
     fun isSingularity(): Boolean = setOf(start, control0, control1, end).size == 1
 
     // FIXME: Use two origin points
+    // TODO: Is this always possible numerically?
     override fun moveInNormalDirection(
         distance: Double,
     ): CubicBezierCurve {
@@ -258,7 +259,7 @@ data class CubicBezierCurve private constructor(
         return splitSpline
     }
 
-    fun toPath2D(): Path2D.Double = Path2D.Double().apply {
+    override fun toPath2D(): Path2D.Double = Path2D.Double().apply {
         moveTo(start)
         cubicTo(control0, control1, end)
     }

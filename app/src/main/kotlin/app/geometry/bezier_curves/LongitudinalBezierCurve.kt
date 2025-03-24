@@ -2,7 +2,10 @@ package app.geometry.bezier_curves
 
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.bezier_splines.OpenBezierSpline
+import app.geometry.cubicTo
+import app.geometry.moveTo
 import app.partitionSorted
+import java.awt.geom.Path2D
 
 sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> : BezierCurve<CurveT>() {
     abstract override fun findOffsetSpline(
@@ -100,6 +103,8 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
     }
 
     fun splitAtMidPoint() = splitAt(t = 0.5)
+
+    abstract fun toPath2D(): Path2D.Double
 
     abstract fun findOffsetSplineRecursive(
         strategy: OffsetStrategy,

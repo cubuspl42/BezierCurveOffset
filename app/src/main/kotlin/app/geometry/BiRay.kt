@@ -49,7 +49,8 @@ data class BiRay(
         )
 
     /**
-     * The unique bisecting ray, or null if the two rays point in the totally opposite directions
+     * The unique bisecting ray, or null if the two rays point in the totally
+     * opposite directions (which would indicate there are two bisecting rays)
      */
     val bisectingRay: Ray?
         get() {
@@ -64,9 +65,4 @@ data class BiRay(
                 direction = b.toDirection(),
             )
         }
-
-    /**
-     * The proper tangent line, or null if the two rays point in the totally opposite directions
-     */
-    val tangentLine: Line? = bisectingRay?.perpendicularLine
 }

@@ -1,23 +1,13 @@
 package app.geometry.bezier_splines
 
-import app.fillCircle
 import app.geometry.*
 import app.geometry.bezier_curves.ProperBezierCurve
-import java.awt.Color
-import java.awt.Graphics2D
-import java.awt.geom.Path2D
 
 /**
  * An open Bézier spline, i.e. such that its start and end nodes are not
  * connected
  */
 abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
-    class EndNode(
-        override val point: Point,
-        override val backwardControl: Point,
-    ) : BackwardNode {
-        override val forwardControl: Nothing? = null
-    }
 
     companion object : Prototype<OpenBezierSpline>() {
         fun glueSplineExposedNodes(
@@ -25,8 +15,8 @@ abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
             nextNode: ForwardNode,
         ): InnerNode {
             val startPoint = Point.midPoint(
-                prevNode.point,
-                nextNode.point,
+                prevNode.knotPoint,
+                nextNode.knotPoint,
             )
 
             val givenControl0 = prevNode.backwardControl
@@ -38,32 +28,24 @@ abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
                 directionPoint2 = givenControl1,
             )
 
-            val projectionLine = givenControlsBiRay.tangentLine
+            val projectionLine = givenControlsBiRay.bisectingRay?.perpendicularLine
 
-            return when {
-                // Control segments are not parallel, we can fix that
-                projectionLine != null -> {
-                    val projectedControl0 = givenControl0.projectOnto(projectionLine)
-                    val projectedControl1 = givenControl1.projectOnto(projectionLine)
+            val fixedControl0 = projectionLine?.let { givenControl0.projectOnto(it) } ?: givenControl0
+            val fixedControl1 = projectionLine?.let { givenControl1.projectOnto(it) } ?: givenControl1
 
-                    InnerNode(
-                        backwardControl = projectedControl0,
-                        point = startPoint,
-                        forwardControl = projectedControl1,
-                    )
-                }
-
-                // Control segments are already parallel, let's use them as they are
-                else -> InnerNode(
-                    backwardControl = givenControl0,
-                    point = startPoint,
-                    forwardControl = givenControl1,
-                )
+            if (!Point.areCollinear(fixedControl0, startPoint, fixedControl1)) {
+                throw IllegalStateException("Control points are not collinear")
             }
+
+            return InnerNode(
+                backwardControl = fixedControl0,
+                knotPoint = startPoint,
+                forwardControl = fixedControl1,
+            )
         }
 
         fun glueSplinesInnerNodes(
-            splines: List<OpenBezierSpline>
+            splines: List<OpenBezierSpline>,
         ): List<BezierSpline.InnerNode> {
             val firstSpline = splines.first()
 
@@ -105,7 +87,7 @@ abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
     fun findOffsetSpline(
         strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,
-    ): OpenBezierSpline = mergeOfNotNull {
+    ): OpenBezierSpline? = reshape {
         it.findOffsetSpline(
             strategy = strategy,
             offset = offset,
@@ -125,13 +107,13 @@ abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
 
 val BezierSpline.BackwardNode.backwardControlSegment: Segment
     get() = Segment(
-        start = point,
+        start = knotPoint,
         end = backwardControl,
     )
 
 val BezierSpline.ForwardNode.forwardControlSegment: Segment
     get() = Segment(
-        start = point,
+        start = knotPoint,
         end = forwardControl,
     )
 

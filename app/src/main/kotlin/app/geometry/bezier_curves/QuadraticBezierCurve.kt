@@ -3,6 +3,7 @@ package app.geometry.bezier_curves
 import app.algebra.Vector
 import app.algebra.bezier_binomials.BezierBinomial
 import app.geometry.Point
+import java.awt.geom.Path2D
 
 /**
  * A quadratic Bézier curve
@@ -57,6 +58,9 @@ data class QuadraticBezierCurve private constructor(
         TODO("Not yet implemented")
     }
 
+    override fun toPath2D(): Path2D.Double {
+        TODO("Not yet implemented")
+    }
 
     override fun moveInNormalDirection(
         distance: Double,

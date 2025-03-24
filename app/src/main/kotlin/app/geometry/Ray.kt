@@ -79,4 +79,8 @@ data class Ray(
             else -> null
         }
     }
+
+    fun isParallelTo(
+        other: Ray,
+    ): Boolean = d.cross(other.d) == 0.0
 }

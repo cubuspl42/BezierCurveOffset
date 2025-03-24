@@ -1,29 +1,16 @@
-@file:OptIn(ExperimentalContracts::class)
-
 package app
 
-import kotlin.contracts.ExperimentalContracts
+import kotlin.math.abs
+import kotlin.math.absoluteValue
 
-fun <T> assertEqual(a: T, b: T): T {
-    assert(a == b)
-    return a
-}
+fun Double.equalsApproximately(
+    other: Double,
+    epsilon: Double,
+): Boolean = abs(this - other) < epsilon
 
-fun <A, B> Pair<A, A>.map(
-    transform: (A) -> B,
-): Pair<B, B> = Pair(
-    first = transform(first),
-    second = transform(second),
-)
-
-fun <A> Pair<A, A>.takeIf(
-    predicate: (A) -> Boolean,
-): Pair<A?, A?> = Pair(
-    first = first.takeIf(predicate),
-    second = second.takeIf(predicate),
-)
-
-fun <A> Pair<A, A>?.toListOrEmpty(): List<A> = this?.toList() ?: emptyList()
+fun Double.equalsZeroApproximately(
+    epsilon: Double,
+): Boolean = this.absoluteValue < epsilon
 
 infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
     require(start.isFinite())
@@ -35,13 +22,6 @@ infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
         if (next > endInclusive) null else next
     }
     return sequence.asIterable()
-}
-
-fun <T> requireEqual(a: T, b: T): T {
-    if (a != b) {
-        throw IllegalArgumentException("Values were supposed to be equal: $a, $b")
-    }
-    return a
 }
 
 data class PartitioningResult<T>(
