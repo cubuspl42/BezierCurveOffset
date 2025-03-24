@@ -23,7 +23,11 @@ data class PointBezierCurve private constructor(
     override fun findOffsetSpline(
         strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,
-    ): OpenBezierSpline? = null
+    ): OpenBezierSpline? {
+        // A point is definitely too tiny to construct its offset spline, as we
+        // wouldn't know in which direction to offset
+        return null
+    }
 
     override val start: Point
         get() = point

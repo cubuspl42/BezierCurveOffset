@@ -83,13 +83,12 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
     }
 
     /**
-     * @return A reshaped spline, or null if no longitudinal sub-curves could be
-     * found (a spline is_effectively a singularity spline)
+     * @return A merged spline, or null if no sub-curves could be constructed
      */
-    fun reshape(
-        transformCurve: (LongitudinalBezierCurve<*>) -> OpenBezierSpline?,
+    fun mergeOfNonNullOrNull(
+        transformCurve: (BezierCurve<*>) -> OpenBezierSpline?,
     ): SplineT? {
-        val transformedSplines = longitudinalSubCurves.mapNotNull(transformCurve)
+        val transformedSplines = subCurves.mapNotNull(transformCurve)
 
         return when {
             transformedSplines.isEmpty() -> null
@@ -124,17 +123,6 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
      */
     val knotPoints: Set<Point> by lazy {
         nodes.map { it.knotPoint }.toSet()
-    }
-
-    /**
-     * In a corner case (a singularity spline), a spline doesn't have any
-     * longitudinal sub-curves. It is not clear whether this might also happen
-     * when a spline is _close_ to being a singularity (a _effectively_ being a
-     * singularity), i.e. when all sub-curves of a technically non-singularity
-     * spline appear to be points because of numerical errors.
-     */
-    val longitudinalSubCurves: List<LongitudinalBezierCurve<*>> by lazy {
-        subCurves.mapNotNull { it.asLongitudinal }
     }
 
     /**

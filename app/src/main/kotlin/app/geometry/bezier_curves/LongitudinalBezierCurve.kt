@@ -21,7 +21,7 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
      * sub-curves (or both of them) could be a point.
      *
      * @return The two longitudinal sub-curves split at [t], or null if [t] was
-     * too close to the edge of the domain (0 or 1).
+     * too close to the edge of the domain (0 or 1)
      */
     fun splitAtSafe(
         t: Double,
@@ -127,8 +127,8 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
      * Find the offset spline recursively, assuming this curve is theoretically
      * non-degenerate.
      *
-     * @return The best found offset spline, or null which means we couldn't
-     * construct a continuous offset spline
+     * @return The best found offset spline, or null if this curve is too tiny
+     * to construct its offset spline
      */
     abstract fun findOffsetSplineRecursive(
         strategy: OffsetStrategy,

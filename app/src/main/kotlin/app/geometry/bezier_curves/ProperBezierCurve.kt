@@ -15,9 +15,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         }
 
         /**
-         * @return The calculated deviation, or null if the deviation couldn't
-         * be calculated because all samples ended up being undefined. This is
-         * a difficult to imagine corner case.
+         * @return The calculated deviation
          */
         abstract fun calculateDeviation(): Double
     }
@@ -27,9 +25,10 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
          * Approximate the offset curve of the given curve using this strategy
          *
          * @return The approximated offset curve, or null if approximating a
-         * continuous curve using this strategy wasn't possible. If the [curve]
-         * is non-degenerate, it theoretically should always be possible to
-         * approximate a continuous offset curve.
+         * continuous curve using this strategy wasn't possible because of the
+         * missing normal directions. If the [curve] is non-degenerate, it
+         * theoretically should always be possible to approximate a continuous
+         * offset curve.
          */
         abstract fun approximateOffsetCurve(
             curve: ProperBezierCurve<*>,
@@ -74,13 +73,11 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         val initialOffsetCurveResult = findApproximatedOffsetCurve(
             strategy = strategy,
             offset = offset,
-        ) ?: return run {
-            // One of the reasons we couldn't find a single initial offset curve
-            // could be that this curve is actually a degenerate curve. After
-            // splitting at the critical points (which a degenerate curve should
-            // theoretically always have), all sub-curves should theoretically be
-            // non-degenerate.
-            splitAtCriticalPointsAndFindOffsetSplineRecursive(
+        ) ?: run {
+            // If we couldn't find a single initial offset curve, it means that
+            // this curve is degenerate. Splitting at the critical points should
+            // fix this.
+            return splitAtCriticalPointsAndFindOffsetSplineRecursive(
                 strategy = strategy,
                 offset = offset,
             )
@@ -90,8 +87,11 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         val initialDeviation = initialOffsetCurveResult.calculateDeviation()
 
         return when {
+            // The first tried curve is good enough!
             initialDeviation < findOffsetDeviationThreshold -> initialOffsetCurve.toSpline()
 
+            // We weren't lucky, let's do the actual work. Splitting at the critical
+            // points is a good start for subdividing, so let's try that.
             else -> splitAtCriticalPointsAndFindOffsetSplineRecursive(
                 strategy = strategy,
                 offset = offset,
@@ -111,7 +111,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             // If we couldn't construct a continuous offset curve approximation
             // (this curve appeared degenerate, though theoretically it isn't),
             // we just give up, as there's no reason to think that subdividing
-            // will help.
+            // will help. It's either impossible, or is an extremal corner case
+            // that could occur only for an extremely tiny curve
             return null
         }
 
@@ -126,9 +127,9 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                 subdivisionLevel = subdivisionLevel,
                 strategy = strategy,
             ) ?: run {
-                // If we couldn't find the offset curve by subdividing, let's
-                // return the best known one even if it has an unacceptable
-                // deviation.
+                // If we couldn't find the offset curve by subdividing because
+                // the results were too tiny, let's  return the best known one
+                // even if it has an unacceptable deviation.
                 return offsetCurve.toSpline()
             }
         }
@@ -138,9 +139,9 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
      * Approximate the offset curve of this curve using the given strategy
      *
      * @return The approximated offset curve, or null if approximating a
-     * continuous curve using the given strategy wasn't possible. If this curve
-     * is non-degenerate it theoretically should always be possible to generate
-     * a continuous offset curve.
+     * continuous curve using the given strategy wasn't possible because of missing
+     * normal directions. If this curve is non-degenerate it theoretically should
+     * always be possible to generate a continuous offset curve.
      */
     private fun findApproximatedOffsetCurve(
         strategy: OffsetStrategy,
@@ -179,6 +180,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                     // enough and say that it has no deviation. It's obviously
                     // not true, but no answer is good in this case, which might
                     // even be numerically impossible.
+
+                    // TODO: Figure out if the best-fit strategy shouldn't check for collinear control points
                     return 0.0
                 }
             }
@@ -192,10 +195,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
      * Split this curve at its critical points and the offset spline recursively
      * by joining the offset splines of the sub-cures.
      *
-     * @return The best found offset spline, or null which would indicate that
-     * either...
-     * a) the curve was too tiny to split at the critical points
-     * b) we couldn't construct a continuous offset curve
+     * @return The best found offset spline, or null if this curve is too tiny
+     * to construct its offset spline
      */
     private fun splitAtCriticalPointsAndFindOffsetSplineRecursive(
         strategy: OffsetStrategy,
@@ -209,17 +210,26 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                 return null
             }
 
-            return initialSplitSpline.reshape { splitCurve ->
+            val mergedSpline = initialSplitSpline.mergeOfNonNullOrNull { splitCurve: BezierCurve<*> ->
                 // After splitting at the critical points, each sub-curves should
-                // be theoretically non-degenerate, even if theis curve is degenerate.
+                // be theoretically non-degenerate, even if this curve is degenerate.
                 // The problem of gluing at the critical point is shifted onto
-                // the spline, but splines _have to_ support sharp corners on joints.
-                splitCurve.findOffsetSplineRecursive(
+                // the spline merging, but splines _have to_ support sharp corners
+                // on joints. If the given split curve is non-longitudinal (is a
+                // point), we know we can't generate an offset spline for it,
+                // so we give up for this segment. Again, let the spline
+                // merging handle that.
+                splitCurve.asLongitudinal?.findOffsetSplineRecursive(
                     strategy = strategy,
                     offset = offset,
                     subdivisionLevel = 0,
                 )
             }
+
+            // If the merged spline is null, it means that none of the split curve
+            // was even longitudinal, or all of the longitudinal sub-curves were
+            // too tiny to construct an offset spline for them
+            return mergedSpline
         } else {
             // If this curve has no critical points, it theoretically shouldn't
             // be degenerate
@@ -236,16 +246,19 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
      * offset splines of the subdivided curves, assuming this curve is
      * theoretically non-degenerate.
      *
-     * @return The best found offset spline, or null which means that either...
-     * a) the curve was too tiny to split
-     * b) we couldn't construct a continuous offset spline
+     * @return The best found offset spline, or null if this curve is too tiny
+     * to construct its offset spline
      */
     private fun subdivideAndFindOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
     ): OpenBezierSpline? {
-        val (leftSplitCurve, rightSplitCurve) = splitAtSafe(t = 0.5) ?: return null
+        val (leftSplitCurve, rightSplitCurve) = splitAtSafe(t = 0.5) ?:  run {
+            // If the t-value 0.5 is too close to 0 or 1 to even split the curve,
+            // this curve is just too tiny to generate the offset spline for it
+            return null
+        }
 
         val nextSubDivisionLevel = subdivisionLevel + 1
 

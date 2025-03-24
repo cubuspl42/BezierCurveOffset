@@ -105,12 +105,6 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
         )
     }
 
-    /**
-     * Find the offset curved timed point series for this curve
-     *
-     * @return The offset curve timed point series, or null in a corner case
-     *         where not enough samples ended up being defined
-     */
     fun findOffsetTimedSeries(
         offset: Double,
     ): TimedPointSeries? {
@@ -122,6 +116,13 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
         )
     }
 
+
+    /**
+     * Find the best offset spline of this curve.
+     *
+     * @return The best found offset spline, or null if this curve is too tiny
+     * to construct its offset spline
+     */
     abstract fun findOffsetSpline(
         strategy: OffsetStrategy,
         offset: Double,

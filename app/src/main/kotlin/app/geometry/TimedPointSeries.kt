@@ -28,17 +28,14 @@ data class TimedPointSeries(
         ): TimedPointSeries? {
             val timedPoints = curveFunction.sample(
                 strategy = SamplingStrategy.withSampleCount(sampleCount = sampleCount),
-            ).mapNotNull { pointSample ->
-                // As the function is expected to be theoretically continuous, it
-                //
-                pointSample.value?.let { point ->
-                    val t = pointSample.x
+            ).map { pointSample ->
+                val t = pointSample.x
+                val point = pointSample.value
 
-                    TimedPointSeries.TimedPoint(
-                        t = t,
-                        point = point,
-                    )
-                }
+                TimedPointSeries.TimedPoint(
+                    t = t,
+                    point = point,
+                )
             }
 
             if (timedPoints.size < 2) {

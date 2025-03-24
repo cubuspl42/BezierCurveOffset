@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
         ),
     )
 
-    val subCurve = baseSpline.longitudinalSubCurves[1]
+    val subCurve = baseSpline.subCurves[1]
 
     val subCurveOffsetSpline = subCurve.findOffsetSpline(
         strategy = ProperBezierCurve.BestFitOffsetStrategy,
@@ -88,7 +88,7 @@ fun main(args: Array<String>) {
 
     svgGraphics2D.color = Color.ORANGE
     svgGraphics2D.draw(
-        subCurve.toPath2D(),
+        subCurve.asLongitudinal!!.toPath2D(),
     )
 
 //    subCurveOffsetSpline.drawSpline(

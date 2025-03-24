@@ -1,5 +1,6 @@
 package app.geometry.bezier_splines
 
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
 
 /**
@@ -34,13 +35,26 @@ abstract class ClosedBezierSpline : BezierSpline<ClosedBezierSpline>() {
     final override val nodes: List<InnerNode>
         get() = innerNodes
 
+    /**
+     * Find the contour of this spline.
+     *
+     * @return The best found contour spline, or null if this spline is too tiny
+     * to construct its contour
+     */
     fun findContourSpline(
         strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,
-    ): ClosedBezierSpline? = reshape {
-        it.findOffsetSpline(
-            strategy = strategy,
-            offset = offset,
-        )
+    ): ClosedBezierSpline? {
+        // Merging the respective offset splines for closed splines means constructing
+        // a contour spline
+        val mergedSpline = mergeOfNonNullOrNull { subCurve: BezierCurve<*> ->
+            subCurve.findOffsetSpline(
+                strategy = strategy,
+                offset = offset,
+            )
+        }
+
+        // TODO: If this spline is too tiny to construct its contour constructively, we could just return a circle
+        return mergedSpline
     }
 }

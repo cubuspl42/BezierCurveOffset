@@ -84,16 +84,6 @@ abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
     val oneBeforeEndNode: ForwardNode
         get() = innerNodes.lastOrNull() ?: startNode
 
-    fun findOffsetSpline(
-        strategy: ProperBezierCurve.OffsetStrategy,
-        offset: Double,
-    ): OpenBezierSpline? = reshape {
-        it.findOffsetSpline(
-            strategy = strategy,
-            offset = offset,
-        )
-    }
-
     abstract val startNode: StartNode
 
     abstract val endNode: EndNode
