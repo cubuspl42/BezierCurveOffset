@@ -35,15 +35,17 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
 
         fun bindRay(
             pointFunction: TimeFunction<Point>,
-            vectorFunction: TimeFunction<Direction>,
-        ): TimeFunction<Ray> = TimeFunction.map2(
+            vectorFunction: TimeFunction<Direction?>,
+        ): TimeFunction<Ray?> = TimeFunction.map2(
             functionA = pointFunction,
             functionB = vectorFunction,
         ) { point, direction ->
-            Ray.inDirection(
-                point = point,
-                direction = direction,
-            )
+            direction?.let {
+                Ray.inDirection(
+                    point = point,
+                    direction = it,
+                )
+            }
         }
     }
 
@@ -53,43 +55,55 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
 
     fun findOffsetCurveFunction(
         offset: Double,
-    ): TimeFunction<Point> = normalRayFunction.map { normalRay ->
-        normalRay.startingPoint.moveInDirection(
+    ): TimeFunction<Point?> = normalRayFunction.map { normalRay ->
+        normalRay?.startingPoint?.moveInDirection(
             direction = normalRay.direction,
             distance = offset,
         )
     }
 
-    val tangentFunction: TimeFunction<Direction> by lazy {
+    /**
+     * The tangent direction function of the curve, based on the curve's
+     * velocity. In a corner case, the curve might "slow down" at some points to
+     * zero, so the tangent direction is non-existent (null).
+     */
+    val tangentFunction: TimeFunction<Direction?> by lazy {
         TimeFunction.wrap(basisFormula.findDerivative()).map {
-            // TODO: This might actually be zero
-            Direction(d = it)
+            Direction.of(it)
         }
     }
 
-    val tangentRayFunction: TimeFunction<Ray> by lazy {
+    val tangentRayFunction: TimeFunction<Ray?> by lazy {
         bindRay(
             pointFunction = curveFunction,
             vectorFunction = tangentFunction,
         )
     }
 
-    val normalFunction: TimeFunction<Direction> by lazy {
+    /**
+     * The normal direction of the curve, i.e. the direction perpendicular to
+     * the tangent direction.
+     */
+    val normalFunction: TimeFunction<Direction?> by lazy {
         tangentFunction.map {
-            it.perpendicular
+            it?.perpendicular
         }
     }
 
-    val normalRayFunction: TimeFunction<Ray> by lazy {
+    val normalRayFunction: TimeFunction<Ray?> by lazy {
         bindRay(
             pointFunction = curveFunction,
             vectorFunction = normalFunction,
         )
     }
 
+    /**
+     * Find the offset curved timed point series for this curve, assuming it's
+     * velocity never comes down to 0
+     */
     fun findOffsetTimedSeries(
         offset: Double,
-    ): TimedPointSeries {
+    ): TimedPointSeries? {
         val offsetCurveFunction = findOffsetCurveFunction(offset = offset)
 
         return TimedPointSeries.sample(

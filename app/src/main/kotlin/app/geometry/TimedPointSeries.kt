@@ -18,19 +18,34 @@ data class TimedPointSeries(
 ) {
     companion object {
         fun sample(
-            curveFunction: TimeFunction<Point>,
+            /**
+             * The curve function, which should be theoretically continuous in
+             * range (0, 1), yet possibly undefined for 0 and 1. For numerical
+             * reasons, the function might still end up undefined at more
+             * t-values.
+             */
+            curveFunction: TimeFunction<Point?>,
             sampleCount: Int,
-        ): TimedPointSeries {
+        ): TimedPointSeries? {
             val timedPoints = curveFunction.sample(
                 strategy = SamplingStrategy.withSampleCount(sampleCount = sampleCount),
-            ).map { pointSample ->
-                val t = pointSample.x
-                val point = pointSample.value
+            ).mapNotNull { pointSample ->
+                // As the function is expected to be theoretically continuous, it
+                //
+                pointSample.value?.let { point ->
+                    val t = pointSample.x
 
-                TimedPointSeries.TimedPoint(
-                    t = t,
-                    point = point,
-                )
+                    TimedPointSeries.TimedPoint(
+                        t = t,
+                        point = point,
+                    )
+                }
+            }
+
+            if (timedPoints.size < 2) {
+                // This is an extreme numerical corner case, where not even two
+                // samples ended up defined
+                return null
             }
 
             return TimedPointSeries(

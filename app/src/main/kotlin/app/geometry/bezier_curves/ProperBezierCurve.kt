@@ -29,6 +29,12 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             offset: Double,
         ): BezierCurve<*> {
             val offsetTimedSeries = curve.findOffsetTimedSeries(offset = offset)
+
+            // The computed timed point series could (should?) be improved using
+            // the Hoschek's method. It would likely minimize the number of
+            // control points needed to approximate the offset curve, but it's
+            // not strictly necessary.
+
             return offsetTimedSeries.bestFitCurve()
         }
     }
@@ -116,7 +122,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         }
     }
 
-    // TODO: Is this always possible numerically?
+    // TODO: Is this always possible? What if velocity = 0 at some t?
     private fun findApproximatedOffsetCurve(
         strategy: OffsetStrategy,
         offset: Double,
