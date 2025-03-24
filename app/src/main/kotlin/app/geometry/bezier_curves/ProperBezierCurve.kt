@@ -13,7 +13,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             val approximationRatingSampleCount = 16
         }
 
-        abstract fun calculateError(): Double
+        abstract fun calculateDeviation(): Double
     }
 
     sealed class OffsetStrategy {
@@ -43,7 +43,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
     }
 
     companion object {
-        private const val findOffsetErrorThreshold = 0.0001
+        private const val findOffsetDeviationThreshold = 0.01
         private const val findOffsetMaxSubdivisionLevel = 8
     }
 
@@ -57,9 +57,9 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         )
 
         val initialOffsetCurve = initialOffsetCurveResult.offsetCurve
-        val initialError = initialOffsetCurveResult.calculateError()
+        val initialError = initialOffsetCurveResult.calculateDeviation()
 
-        if (initialError < findOffsetErrorThreshold) {
+        if (initialError < findOffsetDeviationThreshold) {
             return initialOffsetCurve.toSpline()
         } else {
             val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
@@ -103,10 +103,10 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         )
 
         val offsetCurve = offsetResult.offsetCurve
-        val error = offsetResult.calculateError()
+        val error = offsetResult.calculateDeviation()
 
         return when {
-            error < findOffsetErrorThreshold || subdivisionLevel >= findOffsetMaxSubdivisionLevel -> offsetCurve.toSpline()
+            error < findOffsetDeviationThreshold || subdivisionLevel >= findOffsetMaxSubdivisionLevel -> offsetCurve.toSpline()
 
             else -> subdivideAndFindOffsetSplineRecursive(
                 offset = offset,
@@ -129,7 +129,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         return object : OffsetCurveApproximationResult(
             offsetCurve = approximatedOffsetCurve,
         ) {
-            override fun calculateError(): Double {
+            override fun calculateDeviation(): Double {
                 val offsetCurveFunction = findOffsetCurveFunction(offset = offset)
 
                 val samples = offsetCurveFunction.sample(
@@ -138,14 +138,14 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                     ),
                 )
 
-                return samples.map { sample ->
+                return samples.maxOf { sample ->
                     val t = sample.x
 
                     val offsetPoint = sample.value
                     val approximatedOffsetPoint = approximatedOffsetCurve.curveFunction.evaluate(t = t)
 
-                    offsetPoint.distanceSquaredTo(approximatedOffsetPoint)
-                }.average()
+                    offsetPoint.distanceTo(approximatedOffsetPoint)
+                }
             }
         }
     }
