@@ -2,6 +2,7 @@ package app.algebra.bezier_binomials
 
 import app.algebra.Vector
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
+import app.geometry.TimedPointSeries.Companion.sample
 import app.geometry.lineTo
 import app.geometry.moveTo
 import app.step
@@ -9,7 +10,7 @@ import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
 import java.awt.geom.Path2D
 
-abstract class RealFunction<V> {
+abstract class RealFunction<out V> {
     data class SamplingStrategy(
         val x0: Double,
         val x1: Double,
@@ -29,14 +30,6 @@ abstract class RealFunction<V> {
             require(x1 >= x0)
         }
 
-        fun <V> sample(
-            formula: RealFunction<V>,
-        ): List<Sample<V>> = (x0..x1 step xInterval).map { x ->
-            Sample(
-                x = x,
-                value = formula.apply(x = x),
-            )
-        }
     }
 
     data class Sample<V>(
@@ -44,15 +37,27 @@ abstract class RealFunction<V> {
         val value: V,
     )
 
-    fun sample(
-        strategy: SamplingStrategy,
-    ): List<Sample<V>> = strategy.sample(this)
-
-    fun sampleValues(
-        strategy: SamplingStrategy,
-    ): List<V> = sample(strategy).map { it.value }
-
     abstract fun apply(x: Double): V
+}
+
+fun <V: Any> RealFunction<V?>.sampleValues(
+    strategy: SamplingStrategy,
+): List<V> = sample(strategy).map { it.value }
+
+fun <V : Any> RealFunction<V?>.sample(
+    strategy: SamplingStrategy,
+): List<RealFunction.Sample<V>> = strategy.sample(this)
+
+fun <V : Any> SamplingStrategy.sample(
+    formula: RealFunction<V?>,
+): List<RealFunction.Sample<V>> = (x0..x1 step xInterval).mapNotNull { x ->
+    formula.apply(x = x)?.let {
+        RealFunction.Sample(
+            x = x,
+            value = it,
+        )
+    }
+
 }
 
 fun RealFunction<Double>.toDataset(

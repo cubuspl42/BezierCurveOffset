@@ -12,6 +12,11 @@ import app.geometry.bezier_splines.BezierSpline
 import app.geometry.bezier_splines.MonoBezierCurve
 import app.geometry.bezier_splines.OpenBezierSpline
 
+/**
+ * A Bézier curve of order N, depending on the specific subclass. Ideally, each
+ * subclass should model non-degenerate curves of the given level, but this is
+ * not strictly required for practical reasons.
+ */
 sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
     companion object {
         fun interConnect(
@@ -64,8 +69,11 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
 
     /**
      * The tangent direction function of the curve, based on the curve's
-     * velocity. In a corner case, the curve might "slow down" at some points to
-     * zero, so the tangent direction is non-existent (null).
+     * velocity. If this curve is degenerate, it might "slow down" at some point
+     * to zero, so the tangent direction is non-existent (null). Theoretically,
+     * for longitudinal (non-point) curves (even the otherwise degenerate ones),
+     * the tangent should always be defined for t=0 and t=1, but even that is
+     * difficult to guarantee from the numerical perspective.
      */
     val tangentFunction: TimeFunction<Direction?> by lazy {
         TimeFunction.wrap(basisFormula.findDerivative()).map {
@@ -98,8 +106,10 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
     }
 
     /**
-     * Find the offset curved timed point series for this curve, assuming it's
-     * velocity never comes down to 0
+     * Find the offset curved timed point series for this curve
+     *
+     * @return The offset curve timed point series, or null in a corner case
+     *         where not enough samples ended up being defined
      */
     fun findOffsetTimedSeries(
         offset: Double,

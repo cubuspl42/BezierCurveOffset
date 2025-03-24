@@ -12,7 +12,7 @@ import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
 /**
- * A cubic Bézier curve
+ * A non-degenerate cubic Bézier curve
  */
 @Suppress("DataClassPrivateConstructor")
 data class CubicBezierCurve private constructor(
@@ -22,6 +22,10 @@ data class CubicBezierCurve private constructor(
     override val end: Point,
 ) : ProperBezierCurve<CubicBezierCurve>() {
     companion object {
+        /**
+         * @return A non-degenerate cubic Bézier curve with the given points, or
+         * a respective lower-level Bézier curve
+         */
         fun of(
             start: Point,
             control0: Point,
@@ -183,15 +187,18 @@ data class CubicBezierCurve private constructor(
     fun isSingularity(): Boolean = setOf(start, control0, control1, end).size == 1
 
     // FIXME: Use two origin points
-    // TODO: Is this always possible numerically?
     override fun moveInNormalDirection(
         distance: Double,
-    ): CubicBezierCurve {
+    ): CubicBezierCurve? {
+        // For proper cubic Bézier curves, the normals should theoretically be
+        // defined for the whole range [0, 1], but it's difficult to guarantee
+        // in the numerical sense
+
         val startNormalRay = normalRayFunction.startValue
-        val startNormalLine = startNormalRay.containingLine
+        val startNormalLine = startNormalRay?.containingLine ?: return null
 
         val endNormalRay = normalRayFunction.endValue
-        val endNormalLine = endNormalRay.containingLine
+        val endNormalLine = endNormalRay?.containingLine ?: return null
 
         val normalIntersectionPoint =
             startNormalLine.findIntersectionPoint(endNormalLine) ?: return moveInDirectionPointWise(

@@ -87,9 +87,9 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
      * found (a spline is_effectively a singularity spline)
      */
     fun reshape(
-        transformCurve: (LongitudinalBezierCurve<*>) -> OpenBezierSpline,
+        transformCurve: (LongitudinalBezierCurve<*>) -> OpenBezierSpline?,
     ): SplineT? {
-        val transformedSplines = longitudinalSubCurves.map(transformCurve)
+        val transformedSplines = longitudinalSubCurves.mapNotNull(transformCurve)
 
         return when {
             transformedSplines.isEmpty() -> null

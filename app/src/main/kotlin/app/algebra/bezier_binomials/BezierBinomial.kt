@@ -4,6 +4,7 @@ import app.algebra.Vector
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.polynomials.Polynomial
 import app.geometry.Segment
+import app.geometry.TimedPointSeries.Companion.sample
 import app.geometry.bezier_curves.TimeFunction
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
@@ -11,7 +12,7 @@ import org.jfree.data.xy.XYSeriesCollection
 /**
  * @param V - the type of the weights and the result
  */
-sealed class BezierBinomial<V> : RealFunction<V>() {
+sealed class BezierBinomial<out V> : RealFunction<V>() {
     data class CriticalPointSet(
         val criticalPointsX: Set<Double>,
         val criticalPointsY: Set<Double>,
@@ -60,7 +61,7 @@ fun BezierBinomial<Vector>.findSkeleton(
 fun BezierBinomial<Vector>.toDataset(
     samplingStrategy: SamplingStrategy,
 ): XYSeriesCollection {
-    val samples = sample(strategy = samplingStrategy)
+    val samples = this.sample(strategy = samplingStrategy)
 
     val xSeries = XYSeries("X")
     val ySeries = XYSeries("Y")

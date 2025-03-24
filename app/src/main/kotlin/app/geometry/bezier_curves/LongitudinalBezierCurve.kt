@@ -7,12 +7,10 @@ import app.geometry.moveTo
 import app.partitionSorted
 import java.awt.geom.Path2D
 
+/**
+ * A Bézier curve of order >= 1, i.e. a curve of non-zero length (not a point).
+ */
 sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> : BezierCurve<CurveT>() {
-    abstract override fun findOffsetSpline(
-        strategy: ProperBezierCurve.OffsetStrategy,
-        offset: Double,
-    ): OpenBezierSpline
-
     // TODO: Move here?
     abstract override fun splitAt(
         t: Double,
@@ -106,9 +104,17 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
 
     abstract fun toPath2D(): Path2D.Double
 
+    /**
+     * Find the offset spline recursively, assuming this curve is theoretically
+     * non-degenerate.
+     *
+     * @return The best found offset spline, or null which would indicate that
+     * this curve numerically appeared degenerate and some normal directions were
+     * missing.
+     */
     abstract fun findOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenBezierSpline
+    ): OpenBezierSpline?
 }

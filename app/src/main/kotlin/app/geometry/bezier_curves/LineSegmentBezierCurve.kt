@@ -14,6 +14,10 @@ data class LineSegmentBezierCurve private constructor(
     val segment: Segment,
 ) : LongitudinalBezierCurve<LineSegmentBezierCurve>() {
     companion object {
+        /**
+         * @return A non-degenerate cubic linear curve with the given points, or
+         * a constant Bézier curve (a point) if they are the same point
+         */
         fun of(
             start: Point,
             end: Point,

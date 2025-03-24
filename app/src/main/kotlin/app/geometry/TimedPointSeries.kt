@@ -2,6 +2,7 @@ package app.geometry
 
 import app.algebra.bezier_binomials.CubicBezierBinomial
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
+import app.algebra.bezier_binomials.sample
 import app.fillColumnFrom
 import app.fillFrom
 import app.geometry.bezier_curves.CubicBezierCurve
@@ -19,10 +20,8 @@ data class TimedPointSeries(
     companion object {
         fun sample(
             /**
-             * The curve function, which should be theoretically continuous in
-             * range (0, 1), yet possibly undefined for 0 and 1. For numerical
-             * reasons, the function might still end up undefined at more
-             * t-values.
+             * The curve function, where null indicates that the function is not
+             * defined at this place.
              */
             curveFunction: TimeFunction<Point?>,
             sampleCount: Int,
