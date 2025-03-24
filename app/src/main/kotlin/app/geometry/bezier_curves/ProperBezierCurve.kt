@@ -19,7 +19,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
          * be calculated because all samples ended up being undefined. This is
          * a difficult to imagine corner case.
          */
-        abstract fun calculateDeviation(): Double?
+        abstract fun calculateDeviation(): Double
     }
 
     sealed class OffsetStrategy {
@@ -87,15 +87,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         }
 
         val initialOffsetCurve = initialOffsetCurveResult.offsetCurve
-        val initialDeviation = initialOffsetCurveResult.calculateDeviation() ?: run {
-            // This case would indicate a situation when the curve is (or appeared
-            // to be) degenerate during deviation calculation, though the offset
-            // approximation strategy happily generated an approximated offset
-            // curve. Maybe this is possible in the craziest of the corner cases,
-            // but it doesn't seem to be reasonable to even consider trying
-            // splitting at the critical points. Just give up.
-            return null
-        }
+        val initialDeviation = initialOffsetCurveResult.calculateDeviation()
 
         return when {
             initialDeviation < findOffsetDeviationThreshold -> initialOffsetCurve.toSpline()
@@ -124,11 +116,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         }
 
         val offsetCurve = offsetResult.offsetCurve
-        val deviation = offsetResult.calculateDeviation() ?: run {
-            // If we couldn't calculate the deviation, let's just give up. Again,
-            // splitting won't help.
-            return null
-        }
+        val deviation = offsetResult.calculateDeviation()
 
         return when {
             deviation < findOffsetDeviationThreshold || subdivisionLevel >= findOffsetMaxSubdivisionLevel -> offsetCurve.toSpline()
@@ -166,7 +154,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         return object : OffsetCurveApproximationResult(
             offsetCurve = approximatedOffsetCurve,
         ) {
-            override fun calculateDeviation(): Double? {
+            override fun calculateDeviation(): Double {
                 val offsetCurveFunction = findOffsetCurveFunction(offset = offset)
 
                 val samples = offsetCurveFunction.sample(
@@ -175,9 +163,6 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                     ),
                 )
 
-                // It's difficult to imagine a case when all samples end up to be
-                // undefined, but even theoretically _at least one_ of them might
-                // be (in the case of a degenerate curve).
                 return samples.maxOfOrNull { sample: RealFunction.Sample<Point> ->
                     val t = sample.x
 
@@ -185,6 +170,16 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                     val approximatedOffsetPoint = approximatedOffsetCurve.curveFunction.evaluate(t = t)
 
                     offsetPoint.distanceTo(approximatedOffsetPoint)
+                } ?: run {
+                    // It's difficult to imagine a case when all samples end up
+                    // to be undefined, as theoretically _at most one_ of them
+                    // could be undefined (the critical points of a degenerate
+                    // curve). As we know that we managed to approximate the
+                    // offset curve _somehow_, let's consider that curve good
+                    // enough and say that it has no deviation. It's obviously
+                    // not true, but no answer is good in this case, which might
+                    // even be numerically impossible.
+                    return 0.0
                 }
             }
         }
@@ -209,14 +204,16 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
 
         if (criticalPoints.isNotEmpty()) {
-            // After splitting at the critical points, the sub-curves should be
-            // theoretically non-degenerate, even if theis curve is degenerate
             val initialSplitSpline = splitAtMultiple(criticalPoints) ?: run {
                 // The curve was too tiny to split
                 return null
             }
 
             return initialSplitSpline.reshape { splitCurve ->
+                // After splitting at the critical points, each sub-curves should
+                // be theoretically non-degenerate, even if theis curve is degenerate.
+                // The problem of gluing at the critical point is shifted onto
+                // the spline, but splines _have to_ support sharp corners on joints.
                 splitCurve.findOffsetSplineRecursive(
                     strategy = strategy,
                     offset = offset,
