@@ -6,6 +6,16 @@ import app.geometry.Point
 import app.geometry.bezier_splines.OpenBezierSpline
 import app.geometry.bezier_splines.mergeWith
 
+/**
+ * A best-effort non-degenerate Bézier of order >= 2, where all the control
+ * points are different from each other and from the start/end points.
+ *
+ * This model allows a specific case that could be considered a degenerate curve,
+ * i.e. when the start point, the end point and all the control points are
+ * different, but collinear. Mathematically, this is a line segment, but lowering
+ * such a curve to a linear Bézier curve is non-trivial. At the tip(s), such a
+ * curve has its velocity equal to zero, which causes unfortunate corner cases.
+ */
 sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : LongitudinalBezierCurve<CurveT>() {
     abstract class OffsetCurveApproximationResult(
         val offsetCurve: BezierCurve<*>,

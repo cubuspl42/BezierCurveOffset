@@ -5,14 +5,13 @@ import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.fillCircle
 import app.geometry.*
-import app.geometry.bezier_splines.OpenBezierSpline
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
 /**
- * A non-degenerate cubic Bézier curve
+ * A cubic Bézier curve
  */
 @Suppress("DataClassPrivateConstructor")
 data class CubicBezierCurve private constructor(
@@ -23,8 +22,8 @@ data class CubicBezierCurve private constructor(
 ) : ProperBezierCurve<CubicBezierCurve>() {
     companion object {
         /**
-         * @return A non-degenerate cubic Bézier curve with the given points, or
-         * a respective lower-level Bézier curve
+         * @return A best-effort non-degenerate cubic Bézier curve with the
+         * given points, or a respective lower-level Bézier curve
          */
         fun of(
             start: Point,

@@ -20,7 +20,7 @@ fun main(args: Array<String>) {
     val baseSpline = ClosedPolyBezierCurve(
         innerNodes = listOf(
             BezierSpline.InnerNode(
-                backwardControl = Point(300.0, 400.0),
+                backwardControl = Point(250.0, 400.0),
                 knotPoint = Point(400.0, 400.0),
                 forwardControl = Point(500.0, 400.0),
             ),

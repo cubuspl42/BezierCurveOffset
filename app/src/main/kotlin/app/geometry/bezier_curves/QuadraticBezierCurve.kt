@@ -6,11 +6,7 @@ import app.geometry.Point
 import java.awt.geom.Path2D
 
 /**
- * A quadratic Bézier curve. This model allows a specific case that could be
- * considered a degenerate curve, i.e. when the start point is the same as the
- * end point. Mathematically, this is a line segment, but lowering such a curve
- * to a linear Bézier curve is non-trivial. At the tip, such a curve has its
- * velocity equal to zero, which causes unfortunate corner cases.
+ * A quadratic Bézier curve
  */
 @Suppress("DataClassPrivateConstructor")
 data class QuadraticBezierCurve private constructor(
@@ -27,16 +23,9 @@ data class QuadraticBezierCurve private constructor(
             start: Point,
             control: Point,
             end: Point,
-        ): QuadraticBezierCurve = when {
-            start == control -> QuadraticBezierCurve.of(
+        ): BezierCurve<*> = when {
+            start == control || control == end -> LineSegmentBezierCurve.of(
                 start = start,
-                control = control,
-                end = end,
-            )
-
-            control == end -> QuadraticBezierCurve.of(
-                start = start,
-                control = control,
                 end = end,
             )
 
