@@ -141,10 +141,6 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
 
     abstract val asLongitudinal: LongitudinalBezierCurve<*>?
 
-    abstract fun splitAtMultiple(
-        tValues: Set<Double>,
-    ): OpenBezierSpline?
-
     fun toSpline(): OpenBezierSpline = MonoBezierCurve(
         curve = this,
     )

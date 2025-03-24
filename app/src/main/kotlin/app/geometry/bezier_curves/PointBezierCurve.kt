@@ -20,10 +20,6 @@ data class PointBezierCurve private constructor(
         )
     }
 
-    override fun splitAtMultiple(
-        tValues: Set<Double>,
-    ): OpenBezierSpline? = null
-
     override fun findOffsetSpline(
         strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,

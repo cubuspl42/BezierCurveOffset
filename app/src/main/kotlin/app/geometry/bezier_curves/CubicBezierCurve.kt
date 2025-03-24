@@ -256,16 +256,6 @@ data class CubicBezierCurve private constructor(
         )
     }
 
-    fun splitAtCriticalPoints(): OpenBezierSpline {
-        val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
-
-        val splitSpline = splitAtMultiple(
-            tValues = criticalPoints,
-        )
-
-        return splitSpline
-    }
-
     override fun toPath2D(): Path2D.Double = Path2D.Double().apply {
         moveTo(start)
         cubicTo(control0, control1, end)

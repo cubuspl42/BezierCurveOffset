@@ -16,7 +16,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
 
         /**
          * @return The calculated deviation, or null if the deviation couldn't
-         * be calculated because of samples ended up being undefined
+         * be calculated because all samples ended up being undefined. This is
+         * a difficult to imagine corner case.
          */
         abstract fun calculateDeviation(): Double?
     }
@@ -25,10 +26,10 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         /**
          * Approximate the offset curve of the given curve using this strategy
          *
-         * @return The approximated offset curve, or null if the approximation
-         * was using this strategy wasn't possible. If the [curve] is
-         * non-degenerate, it theoretically should always be possible to
-         * generate the offset curve.
+         * @return The approximated offset curve, or null if approximating a
+         * continuous curve using this strategy wasn't possible. If the [curve]
+         * is non-degenerate, it theoretically should always be possible to
+         * approximate a continuous offset curve.
          */
         abstract fun approximateOffsetCurve(
             curve: ProperBezierCurve<*>,
@@ -114,10 +115,20 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         val offsetResult = findApproximatedOffsetCurve(
             strategy = strategy,
             offset = offset,
-        ) ?: return null
+        ) ?: run {
+            // If we couldn't construct a continuous offset curve approximation
+            // (this curve appeared degenerate, though theoretically it isn't),
+            // we just give up, as there's no reason to think that subdividing
+            // will help.
+            return null
+        }
 
         val offsetCurve = offsetResult.offsetCurve
-        val deviation = offsetResult.calculateDeviation() ?: return null
+        val deviation = offsetResult.calculateDeviation() ?: run {
+            // If we couldn't calculate the deviation, let's just give up. Again,
+            // splitting won't help.
+            return null
+        }
 
         return when {
             deviation < findOffsetDeviationThreshold || subdivisionLevel >= findOffsetMaxSubdivisionLevel -> offsetCurve.toSpline()
@@ -126,16 +137,22 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                 offset = offset,
                 subdivisionLevel = subdivisionLevel,
                 strategy = strategy,
-            )
+            ) ?: run {
+                // If we couldn't find the offset curve by subdividing, let's
+                // return the best known one even if it has an unacceptable
+                // deviation.
+                return offsetCurve.toSpline()
+            }
         }
     }
 
     /**
      * Approximate the offset curve of this curve using the given strategy
      *
-     * @return The approximated offset curve, or null if the approximation
-     * using the given strategy wasn't possible. If this curve is non-degenerate,
-     * it theoretically should always be possible to generate the offset curve.
+     * @return The approximated offset curve, or null if approximating a
+     * continuous curve using the given strategy wasn't possible. If this curve
+     * is non-degenerate it theoretically should always be possible to generate
+     * a continuous offset curve.
      */
     private fun findApproximatedOffsetCurve(
         strategy: OffsetStrategy,
@@ -159,8 +176,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                 )
 
                 // It's difficult to imagine a case when all samples end up to be
-                // undefined, but even theoretically _some_ of them might be (in
-                // the case of a degenerate curve).
+                // undefined, but even theoretically _at least one_ of them might
+                // be (in the case of a degenerate curve).
                 return samples.maxOfOrNull { sample: RealFunction.Sample<Point> ->
                     val t = sample.x
 
@@ -181,7 +198,9 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
      * by joining the offset splines of the sub-cures.
      *
      * @return The best found offset spline, or null which would indicate that
-     * one of the sub-curves numerically appeared degenerate
+     * either...
+     * a) the curve was too tiny to split at the critical points
+     * b) we couldn't construct a continuous offset curve
      */
     private fun splitAtCriticalPointsAndFindOffsetSplineRecursive(
         strategy: OffsetStrategy,
@@ -192,7 +211,10 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         if (criticalPoints.isNotEmpty()) {
             // After splitting at the critical points, the sub-curves should be
             // theoretically non-degenerate, even if theis curve is degenerate
-            val initialSplitSpline = splitAtMultiple(criticalPoints)
+            val initialSplitSpline = splitAtMultiple(criticalPoints) ?: run {
+                // The curve was too tiny to split
+                return null
+            }
 
             return initialSplitSpline.reshape { splitCurve ->
                 splitCurve.findOffsetSplineRecursive(
@@ -217,15 +239,16 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
      * offset splines of the subdivided curves, assuming this curve is
      * theoretically non-degenerate.
      *
-     * @return The best found offset spline, or null which would indicate that
-     * one of the sub-curves numerically appeared degenerate
+     * @return The best found offset spline, or null which means that either...
+     * a) the curve was too tiny to split
+     * b) we couldn't construct a continuous offset spline
      */
     private fun subdivideAndFindOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
     ): OpenBezierSpline? {
-        val (leftSplitCurve, rightSplitCurve) = splitAtSafe(t = 0.5)
+        val (leftSplitCurve, rightSplitCurve) = splitAtSafe(t = 0.5) ?: return null
 
         val nextSubDivisionLevel = subdivisionLevel + 1
 
@@ -236,12 +259,6 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             offset = offset,
             subdivisionLevel = nextSubDivisionLevel,
         ) ?: return null
-
-        if (rightSplitCurve == null) {
-            // This is a crazy numerical corner case when a line splits at t=0.5
-            // to a line and a point (or two points...)
-            return firstSubSplitCurve
-        }
 
         val secondSubSplitCurve = rightSplitCurve.findOffsetSplineRecursive(
             strategy = strategy,

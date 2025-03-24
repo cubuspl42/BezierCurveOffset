@@ -57,7 +57,6 @@ fun <V : Any> SamplingStrategy.sample(
             value = it,
         )
     }
-
 }
 
 fun RealFunction<Double>.toDataset(
