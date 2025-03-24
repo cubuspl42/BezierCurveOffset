@@ -2,8 +2,6 @@ package app.geometry.bezier_curves
 
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.bezier_splines.OpenBezierSpline
-import app.geometry.cubicTo
-import app.geometry.moveTo
 import app.partitionSorted
 import java.awt.geom.Path2D
 
@@ -11,8 +9,7 @@ import java.awt.geom.Path2D
  * A Bézier curve of order >= 1, i.e. a curve of non-zero length (not a point).
  */
 sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> : BezierCurve<CurveT>() {
-    // TODO: Move here?
-    abstract override fun splitAt(
+    abstract fun splitAt(
         t: Double,
     ): Pair<BezierCurve<*>, BezierCurve<*>>
 

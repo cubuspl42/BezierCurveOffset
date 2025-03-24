@@ -20,10 +20,6 @@ data class PointBezierCurve private constructor(
         )
     }
 
-    override fun splitAt(
-        t: Double,
-    ): Pair<PointBezierCurve, PointBezierCurve> = Pair(this, this)
-
     override fun splitAtMultiple(
         tValues: Set<Double>,
     ): OpenBezierSpline? = null
