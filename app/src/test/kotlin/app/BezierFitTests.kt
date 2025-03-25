@@ -2,8 +2,10 @@ package app
 
 import app.geometry.Point
 import app.geometry.Polyline
+import app.geometry.bezier_curves.CubicBezierCurve
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 
 class BezierFitTests {
     private val eps = 1e-5
@@ -23,10 +25,12 @@ class BezierFitTests {
         val bezierCurve = timedPointSeries.bestFitCurve()
         val error = timedPointSeries.calculateFitError(bezierCurve)
 
-        val c0 = bezierCurve.start
-        val c1 = bezierCurve.control0
-        val c2 = bezierCurve.control1
-        val c3 = bezierCurve.end
+        val cubicBezierCurve = assertIs<CubicBezierCurve>(bezierCurve)
+
+        val c0 = cubicBezierCurve.start
+        val c1 = cubicBezierCurve.control0
+        val c2 = cubicBezierCurve.control1
+        val c3 = cubicBezierCurve.end
 
         assertEquals(
             actual = c0.x,

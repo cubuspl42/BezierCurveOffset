@@ -111,6 +111,11 @@ data class Vector(
     val length: Double
         get() = sqrt(lengthSquared)
 
+    fun projectOnto(other: Vector): Vector {
+        require(other != Vector.zero)
+        return (this.dot(other) / other.lengthSquared) * other
+    }
+
     fun toPoint(): Point = Point(pv = this)
 }
 

@@ -242,7 +242,7 @@ data class CubicBezierCurve private constructor(
         it.moveAway(
             origin = origin,
             distance = distance,
-        )
+        )!! // TODO: Is this actually safe?
     }
 
     fun moveInDirectionPointWise(

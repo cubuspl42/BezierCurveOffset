@@ -20,18 +20,21 @@ data class BiRay(
     val secondDirection: Direction,
 ) {
     companion object {
+        /**
+         * @return a bi-ray, or null if (at least) one of the given points is the
+         * same as the base point
+         */
         fun fromPoints(
             basePoint: Point,
             directionPoint1: Point,
             directionPoint2: Point,
-        ): BiRay {
-            require(directionPoint1 != basePoint)
-            require(directionPoint2 != basePoint)
-
+        ): BiRay? {
+            val firstDirection = basePoint.directionTo(directionPoint1) ?: return null
+            val secondDirection = basePoint.directionTo(directionPoint2) ?: return null
             return BiRay(
                 point = basePoint,
-                firstDirection = basePoint.directionTo(directionPoint1),
-                secondDirection = basePoint.directionTo(directionPoint2),
+                firstDirection = firstDirection,
+                secondDirection = secondDirection,
             )
         }
     }

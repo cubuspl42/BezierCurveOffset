@@ -27,6 +27,35 @@ data class Point(
             val ac = c.pv - a.pv
             return ab.cross(ac).equalsZeroApproximately(epsilon = epsilon)
         }
+
+        fun makeCollinear(
+            a: Point,
+            b: Point,
+            base: Point,
+        ): Pair<Point, Point> {
+            val biRay = BiRay.fromPoints(
+                basePoint = base,
+                directionPoint1 = a,
+                directionPoint2 = b,
+            ) ?: run {
+                // If one of the points is the same as the base point, these
+                // are essentially two points. Two points are always collinear.
+                return Pair(a, b)
+            }
+
+            val bisectingRay = biRay.bisectingRay ?: run {
+                // If both rays (BA and AB) point in the opposite directions,
+                // A and B are definitely collinear
+                return Pair(a, b)
+            }
+
+            val projectionLine = bisectingRay.perpendicularLine
+
+            return Pair(
+                a.projectOnto(projectionLine),
+                b.projectOnto(projectionLine),
+            )
+        }
     }
 
     constructor(
@@ -62,12 +91,15 @@ data class Point(
     ): Double = (other.pv - this.pv).lengthSquared
 
     /**
-     * @param other - point to find the direction to, must be a different point
+     * @param other - point to find the direction to
+     * @return direction, or null if this point is the same as the other point
      */
     fun directionTo(
         other: Point,
-    ): Direction {
-        if (this == other) throw IllegalArgumentException("Points must be different")
+    ): Direction? {
+        if (this == other) {
+            return null
+        }
         return Direction(
             d = other.pv - this.pv,
         )
@@ -97,15 +129,16 @@ data class Point(
     /**
      * @param origin - point to move away from, must be a different point
      * @param distance - distance to move away from the origin
+     * @return the moved point, or null if [origin] was the same as this point
      */
     fun moveAway(
         origin: Point,
         distance: Double,
-    ): Point {
-        if (origin == this) throw IllegalArgumentException("Origin point must be different from this point")
+    ): Point? {
+        val direction = directionTo(origin) ?: return null
 
         return moveInDirection(
-            direction = directionTo(origin),
+            direction = direction,
             distance = distance,
         )
     }
@@ -114,10 +147,7 @@ data class Point(
 
     fun projectOnto(line: Line): Point {
         val s = line.s
-        val d = line.d
-        val v = pv - s
-        val t = v.dot(d) / d.lengthSquared
-        return Point(s + d.scale(t))
+        return Point(s + (pv - s).projectOnto(line.d))
     }
 }
 

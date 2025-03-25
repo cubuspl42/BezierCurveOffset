@@ -14,4 +14,10 @@ data class Translation(
             y = ty,
         ),
     )
+
+    fun projectOnto(
+        direction: Direction,
+    ): Translation = Translation(
+        tv = tv.projectOnto(direction.d),
+    )
 }

@@ -119,7 +119,7 @@ data class TimedPointSeries(
     }
 
     fun calculateFitError(
-        bezierCurve: CubicBezierCurve,
+        bezierCurve: BezierCurve<*>,
     ): Double = timedPoints.sumOf { timedPoint ->
         val t = timedPoint.t
         val point = timedPoint.point

@@ -8,7 +8,6 @@ import app.geometry.bezier_curves.ProperBezierCurve
  * connected
  */
 abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
-
     companion object : Prototype<OpenBezierSpline>() {
         fun glueSplineExposedNodes(
             prevNode: BackwardNode,
@@ -19,23 +18,12 @@ abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
                 nextNode.knotPoint,
             )
 
-            val givenControl0 = prevNode.backwardControl
-            val givenControl1 = nextNode.forwardControl
+            val (fixedControl0, fixedControl1) = Point.makeCollinear(
+                prevNode.backwardControl,
+                nextNode.forwardControl,
+                base = startPoint,
 
-            val givenControlsBiRay = BiRay.fromPoints(
-                basePoint = startPoint,
-                directionPoint1 = givenControl0,
-                directionPoint2 = givenControl1,
             )
-
-            val projectionLine = givenControlsBiRay.bisectingRay?.perpendicularLine
-
-            val fixedControl0 = projectionLine?.let { givenControl0.projectOnto(it) } ?: givenControl0
-            val fixedControl1 = projectionLine?.let { givenControl1.projectOnto(it) } ?: givenControl1
-
-            if (!Point.areCollinear(fixedControl0, startPoint, fixedControl1)) {
-                throw IllegalStateException("Control points are not collinear")
-            }
 
             return InnerNode(
                 backwardControl = fixedControl0,
