@@ -51,14 +51,14 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             curve: ProperBezierCurve<*>,
             offset: Double,
         ): BezierCurve<*>? {
-            val offsetTimedSeries = curve.findOffsetTimedSeries(offset = offset)
+            val offsetTimedSeries = curve.findOffsetTimedSeries(offset = offset) ?: return null
 
             // The computed timed point series could (should?) be improved using
             // the Hoschek's method. It would likely minimize the number of
             // control points needed to approximate the offset curve, but it's
             // not strictly necessary.
 
-            return offsetTimedSeries?.bestFitCurve()
+            return offsetTimedSeries.bestFitCurve()
         }
     }
 
@@ -157,6 +157,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         strategy: OffsetStrategy,
         offset: Double,
     ): OffsetCurveApproximationResult? {
+        // TODO: Check for collinear control points up front?
+
         val approximatedOffsetCurve = strategy.approximateOffsetCurve(
             curve = this,
             offset = offset,
@@ -183,16 +185,11 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                     offsetPoint.distanceTo(approximatedOffsetPoint)
                 } ?: run {
                     // It's difficult to imagine a case when all samples end up
-                    // to be undefined, as theoretically _at most one_ of them
+                    // to be undefined, as theoretically _at most two of them_
                     // could be undefined (the critical points of a degenerate
-                    // curve). As we know that we managed to approximate the
-                    // offset curve _somehow_, let's consider that curve good
-                    // enough and say that it has no deviation. It's obviously
-                    // not true, but no answer is good in this case, which might
-                    // even be numerically impossible.
-
-                    // TODO: Figure out if the best-fit strategy shouldn't check for collinear control points
-                    return 0.0
+                    // curve). We know that we managed to approximate the
+                    // offset curve _somehow_...
+                    return Double.POSITIVE_INFINITY
                 }
             }
         }
