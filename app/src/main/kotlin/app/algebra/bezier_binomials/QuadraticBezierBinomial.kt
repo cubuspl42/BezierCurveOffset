@@ -13,16 +13,6 @@ class QuadraticBezierBinomial<V>(
     val weight1: V,
     val weight2: V,
 ) : BezierBinomial<V>() {
-    override fun findDerivative(): LinearBezierBinomial<V> {
-        fun scale2(v: V) = vectorSpace.scale(2.0, v)
-
-        return LinearBezierBinomial(
-            vectorSpace = vectorSpace,
-            weight0 = scale2(vectorSpace.subtract(weight1, weight0)),
-            weight1 = scale2(vectorSpace.subtract(weight2, weight1)),
-        )
-    }
-
     override fun evaluate(t: Double): V {
         val u = 1.0 - t
         val c1 = vectorSpace.scale(u * u, weight0)

@@ -12,8 +12,6 @@ data class LinearBezierBinomial<V>(
     val weight0: V,
     val weight1: V,
 ) : BezierBinomial<V>() {
-    override fun findDerivative(): BezierBinomial<V> = throw NotImplementedError()
-
     override fun evaluate(t: Double): V = evaluateLinear(t = t)
 
     fun evaluateLinear(t: Double): V {

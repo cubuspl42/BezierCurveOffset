@@ -4,7 +4,6 @@ import app.algebra.Vector
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.polynomials.Polynomial
 import app.geometry.Segment
-import app.geometry.TimedPointSeries.Companion.sample
 import app.geometry.bezier_curves.TimeFunction
 import org.jfree.data.xy.XYSeries
 import org.jfree.data.xy.XYSeriesCollection
@@ -33,8 +32,6 @@ sealed class BezierBinomial<out V> : RealFunction<V>() {
 
         private fun isInteresting(t: Double): Boolean = t > (0.0 + eps) && t < (1.0 - eps)
     }
-
-    abstract fun findDerivative(): BezierBinomial<V>
 
     final override fun apply(x: Double): V = evaluate(t = x)
 
@@ -119,7 +116,7 @@ val BezierBinomial<Vector>.componentY: BezierBinomial<Double>
 
 fun BezierBinomial<Double>.findRoots(): Set<Double> = toPolynomialFormula().findRoots()
 
-fun BezierBinomial<Vector>.findAllCriticalPoints(): BezierBinomial.CriticalPointSet {
+fun DifferentiableBezierBinomial<Vector>.findAllCriticalPoints(): BezierBinomial.CriticalPointSet {
     val derivative = findDerivative()
     return BezierBinomial.CriticalPointSet(
         criticalPointsX = derivative.componentX.findRoots(),
@@ -127,5 +124,5 @@ fun BezierBinomial<Vector>.findAllCriticalPoints(): BezierBinomial.CriticalPoint
     )
 }
 
-fun BezierBinomial<Vector>.findInterestingCriticalPoints(): BezierBinomial.CriticalPointSet =
+fun DifferentiableBezierBinomial<Vector>.findInterestingCriticalPoints(): BezierBinomial.CriticalPointSet =
     findAllCriticalPoints().filterInteresting()

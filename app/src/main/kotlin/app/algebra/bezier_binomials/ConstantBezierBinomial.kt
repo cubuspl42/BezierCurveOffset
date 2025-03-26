@@ -16,8 +16,6 @@ data class ConstantBezierBinomial<V>(
             weight0 = vectorSpace.zero,
         )
 
-    override fun findDerivative(): BezierBinomial<V> = zero
-
     override fun evaluate(t: Double): V = evaluateConstant(t = t)
 
     fun evaluateConstant(t: Double): V = weight0

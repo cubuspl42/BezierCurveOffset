@@ -2,6 +2,7 @@ package app.geometry.bezier_curves
 
 import app.algebra.Vector
 import app.algebra.bezier_binomials.BezierBinomial
+import app.algebra.bezier_binomials.DifferentiableBezierBinomial
 import app.algebra.bezier_binomials.findFaster
 import app.geometry.Direction
 import app.geometry.Point
@@ -92,7 +93,6 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> : Curve() {
         )
     }
 
-
     /**
      * Find the best offset spline of this curve.
      *
@@ -108,7 +108,7 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> : Curve() {
 
     abstract val lastControl: Point
 
-    abstract val basisFormula: BezierBinomial<Vector>
+    abstract val basisFormula: DifferentiableBezierBinomial<Vector>
 
     abstract val asProper: ProperBezierCurve<*>?
 

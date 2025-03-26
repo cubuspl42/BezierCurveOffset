@@ -13,7 +13,7 @@ data class CubicBezierBinomial<V>(
     val weight1: V,
     val weight2: V,
     val weight3: V,
-) : BezierBinomial<V>() {
+) : DifferentiableBezierBinomial<V>() {
     companion object {
         /**
          * The characteristic matrix of the cubic Bézier curve.
