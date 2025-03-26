@@ -4,7 +4,7 @@ import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
 
 /**
- * A closed Bézier spline, i.e. such that forms a loops
+ * A closed Bézier spline, i.e. such that forms a loop
  */
 abstract class ClosedBezierSpline : BezierSpline<ClosedBezierSpline>() {
     companion object : Prototype<ClosedBezierSpline>() {
@@ -13,17 +13,17 @@ abstract class ClosedBezierSpline : BezierSpline<ClosedBezierSpline>() {
         ): ClosedBezierSpline {
             require(splines.isNotEmpty())
 
-            val gluedExposedNodes = OpenBezierSpline.glueSplineEdgeNodes(
+            val linkNode = fuseEdgeNodes(
                 prevNode = splines.last().endNode,
                 nextNode = splines.first().startNode,
             )
 
-            val gluedInnerNodes = OpenBezierSpline.glueSplinesInnerNodes(
+            val innerNodes = interconnectSplines(
                 splines = splines,
             )
 
             val mergedSpline = ClosedPolyBezierCurve(
-                innerNodes = gluedInnerNodes + gluedExposedNodes,
+                innerNodes = innerNodes + linkNode,
             )
 
             return mergedSpline

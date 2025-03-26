@@ -8,43 +8,6 @@ import app.geometry.*
  */
 abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
     companion object : Prototype<OpenBezierSpline>() {
-        fun glueSplineEdgeNodes(
-            prevNode: BackwardNode,
-            nextNode: ForwardNode,
-        ): InnerNode {
-            val startPoint = Point.midPoint(
-                prevNode.knotPoint,
-                nextNode.knotPoint,
-            )
-
-            val (fixedControl0, fixedControl1) = Point.makeCollinear(
-                prevNode.backwardControl,
-                nextNode.forwardControl,
-                base = startPoint,
-
-            )
-
-            return InnerNode(
-                backwardControl = fixedControl0,
-                knotPoint = startPoint,
-                forwardControl = fixedControl1,
-            )
-        }
-
-        fun glueSplinesInnerNodes(
-            splines: List<OpenBezierSpline>,
-        ): List<BezierSpline.InnerNode> {
-            val firstSpline = splines.first()
-
-            return firstSpline.innerNodes + splines.zipWithNext().flatMap { (prevSpline, nextSpline) ->
-                val jointNode = OpenBezierSpline.glueSplineEdgeNodes(
-                    prevNode = prevSpline.endNode,
-                    nextNode = nextSpline.startNode,
-                )
-
-                listOf(jointNode) + nextSpline.innerNodes
-            }
-        }
 
         override fun merge(
             splines: List<OpenBezierSpline>,
@@ -53,11 +16,11 @@ abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
 
             if (splines.size == 1) return splines.single()
 
-            val gluedInnerNodes = glueSplinesInnerNodes(splines = splines)
+            val innerNodes = interconnectSplines(splines = splines)
 
             val mergedSpline = OpenPolyBezierCurve(
                 startNode = splines.first().startNode,
-                innerNodes = gluedInnerNodes,
+                innerNodes = innerNodes,
                 endNode = splines.last().endNode,
             )
 

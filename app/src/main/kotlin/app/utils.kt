@@ -196,3 +196,48 @@ inline fun <T : Any, U : T, R> Iterable<U>.mapWithNeighbours(
 
     return result
 }
+
+/**
+ * Returns a list containing the results of applying the given [transform] function to each element
+ * in this collection, interleaved with the results of applying the [separate] function to each pair
+ * of adjacent elements in this collection.
+ *
+ * The returned list is empty if this collection is empty.
+ *
+ * @param transform A function that takes an element of the collection and returns a result value.
+ * @param separate A function that takes two adjacent elements of the collection and returns a result value.
+ * @return A list of transformed values produced by applying the [transform] function to each element
+ * in this collection, interleaved with the results of applying the [separate] function to each pair
+ * of adjacent elements.
+ *
+ * Example:
+ * ```
+ * val numbers = listOf(1, 2, 3)
+ * val result = numbers.interleave(
+ *     transform = { it * 2 },
+ *     separate = { a, b -> a + b }
+ * )
+ * // result is [2, 3, 4, 5, 6]
+ * ```
+ */
+inline fun <E, R> Iterable<E>.interleave(
+    transform: (element: E) -> R,
+    separate: (prev: E, next: E) -> R,
+): List<R> {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return emptyList()
+
+    val result = mutableListOf<R>()
+    var prev = iterator.next()
+
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        result.add(transform(prev))
+        result.add(separate(prev, next))
+        prev = next
+    }
+
+    result.add(transform(prev))
+
+    return result
+}

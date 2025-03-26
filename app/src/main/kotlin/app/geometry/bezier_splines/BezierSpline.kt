@@ -6,6 +6,7 @@ import app.geometry.Segment
 import app.geometry.bezier_curves.*
 import app.geometry.cubicTo
 import app.geometry.moveTo
+import app.interleave
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
@@ -15,6 +16,45 @@ import java.awt.geom.Path2D
  * (a spline formed of cubic Bézier curves)
  */
 abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
+    companion object {
+        fun fuseEdgeNodes(
+            prevNode: BackwardNode,
+            nextNode: ForwardNode,
+        ): InnerNode {
+            val startPoint = Point.midPoint(
+                prevNode.knotPoint,
+                nextNode.knotPoint,
+            )
+
+            val (fixedControl0, fixedControl1) = Point.makeCollinear(
+                prevNode.backwardControl,
+                nextNode.forwardControl,
+                base = startPoint,
+
+                )
+
+            return InnerNode(
+                backwardControl = fixedControl0,
+                knotPoint = startPoint,
+                forwardControl = fixedControl1,
+            )
+        }
+
+        fun interconnectSplines(
+            splines: List<OpenBezierSpline>,
+        ): List<BezierSpline.InnerNode> = splines.interleave(
+            transform = { it.innerNodes },
+            separate = { prevSpline, nextSpline ->
+                listOf(
+                    fuseEdgeNodes(
+                        prevNode = prevSpline.endNode,
+                        nextNode = nextSpline.startNode,
+                    ),
+                )
+            },
+        ).flatten()
+    }
+
     abstract class Prototype<SplineT : BezierSpline<SplineT>> {
         abstract fun merge(
             splines: List<OpenBezierSpline>,

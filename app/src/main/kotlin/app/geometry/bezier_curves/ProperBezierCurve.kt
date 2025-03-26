@@ -72,7 +72,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
     }
 
     companion object {
-        private const val findOffsetDeviationThreshold = 0.01
+        private const val findOffsetDeviationThreshold = 0.1
         private const val findOffsetMaxSubdivisionLevel = 8
     }
 
