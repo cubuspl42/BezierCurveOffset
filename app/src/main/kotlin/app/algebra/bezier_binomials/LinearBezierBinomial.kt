@@ -34,7 +34,7 @@ val LinearBezierBinomial<Vector>.segment0: Segment
 val LinearBezierBinomial<Vector>.segmentsLinear: List<Segment>
     get() = listOf(segment0)
 
-fun LinearBezierBinomial<Double>.toPolynomialFormulaLinear(): Polynomial = LinearPolynomial.of(
+fun LinearBezierBinomial<Double>.toPolynomialFormulaLinear(): Polynomial? = LinearPolynomial.of(
     a = weight1 - weight0,
     b = weight0,
 )

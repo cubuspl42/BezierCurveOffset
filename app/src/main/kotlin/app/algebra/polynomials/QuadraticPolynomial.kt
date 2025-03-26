@@ -12,7 +12,7 @@ class QuadraticPolynomial private constructor(
             a: Double,
             b: Double,
             c: Double,
-        ): Polynomial = when {
+        ): Polynomial? = when {
             a == 0.0 -> LinearPolynomial.of(a = b, b = c)
             else -> QuadraticPolynomial(a = a, b = b, c = c)
         }

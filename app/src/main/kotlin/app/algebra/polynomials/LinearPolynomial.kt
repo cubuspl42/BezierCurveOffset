@@ -8,8 +8,8 @@ class LinearPolynomial private constructor(
         fun of(
             a: Double,
             b: Double,
-        ): Polynomial = when {
-            a == 0.0 -> ConstantPolynomial.of(a = b)
+        ): Polynomial? = when {
+            a == 0.0 -> null
             else -> LinearPolynomial(a = a, b = b)
         }
     }

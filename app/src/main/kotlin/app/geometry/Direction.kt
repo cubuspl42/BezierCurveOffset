@@ -3,7 +3,8 @@ package app.geometry
 import app.algebra.Vector
 
 /**
- * A direction in 2D Euclidean space, i.e. an infinite set of vectors with cross product equal to zero
+ * A direction in 2D Euclidean space, i.e. an infinite set of vectors with cross
+ * product equal to zero
  */
 @Suppress("DataClassPrivateConstructor")
 data class Direction private constructor(
@@ -15,8 +16,8 @@ data class Direction private constructor(
 ) {
     companion object {
         /**
-         * @return A direction described by [dv], or null if d is effectively a
-         * zero vector
+         * @return A direction described by [dv], or null if [dv] is effectively
+         * a zero vector
          */
         fun of(
             dv: Vector,

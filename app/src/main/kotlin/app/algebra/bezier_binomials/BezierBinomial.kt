@@ -65,7 +65,7 @@ fun BezierBinomial<Vector>.toDataset(
     }
 }
 
-fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial = when (this) {
+fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial? = when (this) {
     is LinearBezierBinomial<Double> -> this.toPolynomialFormulaLinear()
     is QuadraticBezierBinomial<Double> -> this.toPolynomialFormulaQuadratic()
     // We shouldn't need cubic polynomials
@@ -100,7 +100,7 @@ val BezierBinomial<Vector>.componentY: BezierBinomial<Double>
         is CubicBezierBinomial<Vector> -> this.componentYCubic
     }
 
-fun BezierBinomial<Double>.findRoots(): Set<Double> = toPolynomialFormula().findRoots()
+fun BezierBinomial<Double>.findRoots(): Set<Double> = toPolynomialFormula()?.findRoots() ?: emptySet()
 
 fun DifferentiableBezierBinomial<Vector>.findAllCriticalPoints(): BezierBinomial.CriticalPointSet {
     val derivative = findDerivative()
