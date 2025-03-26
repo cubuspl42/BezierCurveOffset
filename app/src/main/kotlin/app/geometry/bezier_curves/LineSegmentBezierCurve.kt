@@ -99,7 +99,7 @@ data class LineSegmentBezierCurve private constructor(
         val offsetSegment = segment.moveInDirection(
             direction = segment.direction!!.perpendicular,
             distance = offset,
-        )
+        )!!
 
         return LineSegmentBezierCurve(
             segment = offsetSegment,

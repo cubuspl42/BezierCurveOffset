@@ -54,14 +54,16 @@ data class Segment(
     fun moveInDirection(
         direction: Direction,
         distance: Double,
-    ): Segment = Segment(
-        start = start.moveInDirection(
-            direction = direction,
-            distance = distance,
-        ),
-        end = end.moveInDirection(
-            direction = direction,
-            distance = distance,
-        ),
-    )
+    ): Segment? {
+        return Segment(
+            start = start.moveInDirection(
+                direction = direction,
+                distance = distance,
+            ) ?: return null,
+            end = end.moveInDirection(
+                direction = direction,
+                distance = distance,
+            ) ?: return null,
+        )
+    }
 }

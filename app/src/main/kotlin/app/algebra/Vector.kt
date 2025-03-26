@@ -71,10 +71,13 @@ data class Vector(
 
     fun scale(
         factor: Double,
-    ): Vector = Vector(
-        x = x * factor,
-        y = y * factor,
-    )
+    ): Vector {
+        require(factor.isFinite())
+        return Vector(
+            x = x * factor,
+            y = y * factor,
+        )
+    }
 
     /**
      * The direction of this vector or null if this vector doesn't have a direction (is a zero vector)

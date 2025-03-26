@@ -114,15 +114,22 @@ data class Point(
     /**
      * @param direction - direction to move in, must not be a zero vector
      * @param distance - distance to move in the direction
+     * @return point moved in the given direction, or null if the direction was
+     * numerically
      */
     fun moveInDirection(
         direction: Direction,
         distance: Double,
-    ): Point {
-        val v = direction.d
-        val d = v.length
+    ): Point? {
+        val d = direction.d
+        val dl = d.length
+
+        if (dl == 0.0) {
+            return null
+        }
+
         return Point(
-            pv = pv + v.scale(distance / d),
+            pv = pv + d.scale(distance / dl),
         )
     }
 

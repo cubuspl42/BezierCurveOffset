@@ -252,7 +252,7 @@ data class CubicBezierCurve private constructor(
         it.moveInDirection(
             direction = direction,
             distance = distance,
-        )
+        )!!
     }
 
     override fun toPath2D(): Path2D.Double = Path2D.Double().apply {
