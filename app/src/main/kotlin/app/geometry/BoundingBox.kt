@@ -21,7 +21,7 @@ data class BoundingBox(
             require(yMin <= yMax)
 
             return BoundingBox(
-                topLeft = Point(px = xMin, py = yMin),
+                topLeft = Point.of(px = xMin, py = yMin),
                 width = xMax - xMin,
                 height = yMax - yMin,
             )

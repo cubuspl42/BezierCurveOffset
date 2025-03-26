@@ -2,18 +2,27 @@ package app.geometry
 
 import app.algebra.Vector
 
-data class Translation(
+@Suppress("DataClassPrivateConstructor")
+data class Translation private constructor(
     val tv: Vector,
 ) {
-    constructor(
-        tx: Double,
-        ty: Double,
-    ) : this(
-        tv = Vector(
-            x = tx,
-            y = ty,
-        ),
-    )
+    companion object {
+        fun of(
+            tv: Vector,
+        ): Translation = Translation(
+            tv = tv,
+        )
+
+        fun of(
+            tx: Double,
+            ty: Double,
+        ): Translation = of(
+            tv = Vector(
+                x = tx,
+                y = ty,
+            ),
+        )
+    }
 
     fun projectOnto(
         direction: Direction,

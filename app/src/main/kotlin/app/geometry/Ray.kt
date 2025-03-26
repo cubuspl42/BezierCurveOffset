@@ -65,7 +65,7 @@ data class Ray(
         val v = d.cross(this.d) / det
 
         return when {
-            u > 0.0 && v > 0.0 -> Point(
+            u > 0.0 && v > 0.0 -> Point.of(
                 pv = evaluate(t = u),
             )
 

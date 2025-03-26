@@ -1,7 +1,6 @@
 package app
 
 import app.geometry.Point
-import app.geometry.Segment
 import java.awt.Graphics2D
 import kotlin.math.roundToInt
 

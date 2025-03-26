@@ -42,7 +42,7 @@ data class Line(
         val ds = other.s - s
         val u = ds.cross(other.d) / det
 
-        return Point(
+        return Point.of(
             pv = evaluate(u)
         )
     }

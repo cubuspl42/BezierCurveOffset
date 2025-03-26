@@ -7,10 +7,10 @@ class CubicBezierCurveTests {
     @Test
     fun testFindOffsetSpline_micro() {
         val bezierCurve = CubicBezierCurve.of(
-            start = Point(0.0, 0.0),
-            control0 = Point(Double.MIN_VALUE, Double.MIN_VALUE),
-            control1 = Point(2 * Double.MIN_VALUE, Double.MIN_VALUE),
-            end = Point(3.0 * Double.MIN_VALUE, 0.0),
+            start = Point.of(0.0, 0.0),
+            control0 = Point.of(Double.MIN_VALUE, Double.MIN_VALUE),
+            control1 = Point.of(2 * Double.MIN_VALUE, Double.MIN_VALUE),
+            end = Point.of(3.0 * Double.MIN_VALUE, 0.0),
         ) as CubicBezierCurve
 
         assertNull(
@@ -24,10 +24,10 @@ class CubicBezierCurveTests {
     @Test
     fun testFindOffsetSpline_micro_degenerate() {
         val bezierCurve = CubicBezierCurve.of(
-            start = Point(0.0, 0.0),
-            control0 = Point(-Double.MIN_VALUE, 0.0),
-            control1 = Point(Double.MIN_VALUE, 0.0),
-            end = Point(0.0, 0.0),
+            start = Point.of(0.0, 0.0),
+            control0 = Point.of(-Double.MIN_VALUE, 0.0),
+            control1 = Point.of(Double.MIN_VALUE, 0.0),
+            end = Point.of(0.0, 0.0),
         ) as CubicBezierCurve
 
         assertNull(
@@ -41,10 +41,10 @@ class CubicBezierCurveTests {
     @Test
     fun testFindOffsetSpline_simple() {
         val bezierCurve = CubicBezierCurve.of(
-            start = Point(0.0, 0.0),
-            control0 = Point(1.0, 1.0),
-            control1 = Point(2.0, 1.0),
-            end = Point(3.0, 0.0),
+            start = Point.of(0.0, 0.0),
+            control0 = Point.of(1.0, 1.0),
+            control1 = Point.of(2.0, 1.0),
+            end = Point.of(3.0, 0.0),
         ) as CubicBezierCurve
 
         val offsetSplineResult = assertNotNull(
@@ -64,10 +64,10 @@ class CubicBezierCurveTests {
     @Test
     fun testFindOffsetSpline_degenerate() {
         val bezierCurve = CubicBezierCurve.of(
-            start = Point(0.0, 0.0),
-            control0 = Point(-1.0, 0.0),
-            control1 = Point(1.0, 0.0),
-            end = Point(0.0, 0.0),
+            start = Point.of(0.0, 0.0),
+            control0 = Point.of(-1.0, 0.0),
+            control1 = Point.of(1.0, 0.0),
+            end = Point.of(0.0, 0.0),
         ) as CubicBezierCurve
 
         val offsetSplineResult = assertNotNull(

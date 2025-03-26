@@ -3,12 +3,12 @@ package app.geometry
 import app.algebra.bezier_binomials.CubicBezierBinomial
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.sample
+import app.fillCircle
 import app.fillColumnFrom
 import app.fillFrom
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.TimeFunction
-import app.fillCircle
-import app.geometry.bezier_curves.BezierCurve
 import app.invSafe
 import org.ujmp.core.Matrix
 import java.awt.Color
@@ -107,7 +107,7 @@ data class TimedPointSeries(
             val x = weightXVector.getAsDouble(i, 0)
             val y = weightYVector.getAsDouble(i, 0)
 
-            return Point(x, y)
+            return Point.of(x, y)
         }
 
         return CubicBezierCurve.of(

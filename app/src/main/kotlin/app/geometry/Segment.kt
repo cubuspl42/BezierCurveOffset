@@ -17,7 +17,7 @@ data class Segment(
         if (t < 0 || t > 1) throw IllegalArgumentException("t must be in [0, 1], was: $t")
 
         return start.translate(
-            translation = Translation(
+            translation = Translation.of(
                 tv = (end.pv - start.pv).scale(t),
             ),
         )

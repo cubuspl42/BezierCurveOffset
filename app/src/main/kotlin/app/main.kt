@@ -4,7 +4,6 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.findInterestingCriticalPoints
 import app.geometry.*
 import app.geometry.bezier_curves.CubicBezierCurve
-import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_splines.*
 import org.jfree.svg.SVGGraphics2D
 import org.jfree.svg.SVGUtils
@@ -20,10 +19,10 @@ val outerSamplingStrategy = SamplingStrategy(
 
 fun main(args: Array<String>) {
     val bezierCurve = CubicBezierCurve.of(
-        start = Point(300.0, 100.0),
-        control0 = Point(200.0, 100.0),
-        control1 = Point(400.0, 100.0),
-        end = Point(300.0, 100.0),
+        start = Point.of(300.0, 100.0),
+        control0 = Point.of(200.0, 100.0),
+        control1 = Point.of(400.0, 100.0),
+        end = Point.of(300.0, 100.0),
     ) as CubicBezierCurve
 
    val splitSpline = bezierCurve.splitAtMultiple(

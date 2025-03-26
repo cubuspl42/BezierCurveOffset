@@ -13,16 +13,16 @@ class OpenSplineTests {
     fun testMerge_singleSpline_singleLink() {
         val links = listOf(
             InnerLink(
-                startKnot = Point(0.0, 0.0),
+                startKnot = Point.of(0.0, 0.0),
                 edge = BezierSplineEdge(
-                    startControl = Point(1.0, 1.0),
-                    endControl = Point(2.0, 1.0)
+                    startControl = Point.of(1.0, 1.0),
+                    endControl = Point.of(2.0, 1.0)
                 ),
             ),
         )
 
         val terminalLink = TerminalLink(
-            endKnot = Point(3.0, 0.0),
+            endKnot = Point.of(3.0, 0.0),
         )
 
         val spline = OpenSpline(
@@ -47,23 +47,23 @@ class OpenSplineTests {
     fun testMerge_singleSpline_multipleLinks() {
         val links = listOf(
             InnerLink(
-                startKnot = Point(0.0, 0.0),
+                startKnot = Point.of(0.0, 0.0),
                 edge = BezierSplineEdge(
-                    startControl = Point(1.0, 1.0),
-                    endControl = Point(2.0, 1.0),
+                    startControl = Point.of(1.0, 1.0),
+                    endControl = Point.of(2.0, 1.0),
                 ),
             ),
             InnerLink(
-                startKnot = Point(3.0, 0.0),
+                startKnot = Point.of(3.0, 0.0),
                 edge = BezierSplineEdge(
-                    startControl = Point(4.0, 1.0),
-                    endControl = Point(5.0, 1.0)
+                    startControl = Point.of(4.0, 1.0),
+                    endControl = Point.of(5.0, 1.0)
                 ),
             ),
         )
 
         val terminalLink = TerminalLink(
-            endKnot = Point(6.0, 0.0),
+            endKnot = Point.of(6.0, 0.0),
         )
 
         val spline = OpenSpline(
@@ -87,22 +87,22 @@ class OpenSplineTests {
     @Test
     fun testMerge_multipleSplines() {
         val link1 = InnerLink(
-            startKnot = Point(0.0, 0.0),
+            startKnot = Point.of(0.0, 0.0),
             edge = BezierSplineEdge(
-                startControl = Point(1.0, 1.0),
-                endControl = Point(2.0, 1.0)
+                startControl = Point.of(1.0, 1.0),
+                endControl = Point.of(2.0, 1.0)
             ),
         )
 
         val link2 = InnerLink(
-            startKnot = Point(3.0, 0.0),
+            startKnot = Point.of(3.0, 0.0),
             edge = BezierSplineEdge(
-                startControl = Point(4.0, 1.0),
-                endControl = Point(5.0, 1.0)
+                startControl = Point.of(4.0, 1.0),
+                endControl = Point.of(5.0, 1.0)
             ),
         )
 
-        val plug1 = TerminalLink(endKnot = Point(6.0, 0.0))
+        val plug1 = TerminalLink(endKnot = Point.of(6.0, 0.0))
 
         val spline1 = OpenSpline(
             links = listOf(link1, link2),
@@ -110,22 +110,22 @@ class OpenSplineTests {
         )
 
         val link3 = InnerLink(
-            startKnot = Point(6.0, 0.0),
+            startKnot = Point.of(6.0, 0.0),
             edge = BezierSplineEdge(
-                startControl = Point(7.0, -1.0),
-                endControl = Point(8.0, -1.0)
+                startControl = Point.of(7.0, -1.0),
+                endControl = Point.of(8.0, -1.0)
             ),
         )
 
         val link4 = InnerLink(
-            startKnot = Point(9.0, 0.0),
+            startKnot = Point.of(9.0, 0.0),
             edge = BezierSplineEdge(
-                startControl = Point(10.0, 1.0),
-                endControl = Point(11.0, 1.0)
+                startControl = Point.of(10.0, 1.0),
+                endControl = Point.of(11.0, 1.0)
             ),
         )
 
-        val plug2 = TerminalLink(endKnot = Point(12.0, 0.0))
+        val plug2 = TerminalLink(endKnot = Point.of(12.0, 0.0))
 
         val spline2 = OpenSpline(
             links = listOf(link3, link4),

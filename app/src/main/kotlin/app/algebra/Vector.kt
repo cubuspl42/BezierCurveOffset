@@ -111,7 +111,7 @@ data class Vector(
         return (this.dot(other) / other.lengthSquared) * other
     }
 
-    fun toPoint(): Point = Point(pv = this)
+    fun toPoint(): Point = Point.of(pv = this)
 }
 
 operator fun Double.times(

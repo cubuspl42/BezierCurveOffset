@@ -14,10 +14,10 @@ class BezierFitTests {
     fun testBasic() {
         val polyline = Polyline(
             points = listOf(
-                Point(0.0, 0.0),
-                Point(1.0, 1.0),
-                Point(2.0, 0.0),
-                Point(3.0, 2.0),
+                Point.of(0.0, 0.0),
+                Point.of(1.0, 1.0),
+                Point.of(2.0, 0.0),
+                Point.of(3.0, 2.0),
             ),
         )
 

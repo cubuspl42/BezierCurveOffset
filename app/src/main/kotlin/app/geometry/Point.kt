@@ -5,14 +5,31 @@ import app.algebra.div
 import app.equalsZeroApproximately
 import java.awt.geom.Path2D
 
-data class Point(
+@Suppress("DataClassPrivateConstructor")
+data class Point private constructor(
     val pv: Vector,
 ) {
     companion object {
+        fun of(
+            pv: Vector,
+        ): Point = Point(
+            pv = pv,
+        )
+
+        fun of(
+            px: Double,
+            py: Double,
+        ): Point = of(
+            pv = Vector(
+                x = px,
+                y = py,
+            ),
+        )
+
         fun midPoint(
             a: Point,
             b: Point,
-        ): Point = Point(
+        ): Point = Point.of(
             pv = a.pv + (b.pv - a.pv) / 2.0,
         )
 
@@ -97,12 +114,12 @@ data class Point(
     fun directionTo(
         other: Point,
     ): Direction? = Direction.of(
-        d = other.pv - this.pv,
+        dv = other.pv - this.pv,
     )
 
     fun translate(
         translation: Translation,
-    ): Point = Point(
+    ): Point = Point.of(
         pv = pv + translation.tv,
     )
 
@@ -117,13 +134,14 @@ data class Point(
         distance: Double,
     ): Point? {
         val dv = direction.dv
+        val dls = dv.lengthSquared
         val dl = dv.length
 
         if (dl == 0.0) {
             return null
         }
 
-        return Point(
+        return Point.of(
             pv = pv + dv.scale(distance / dl),
         )
     }
@@ -150,7 +168,7 @@ data class Point(
 
     fun projectOnto(line: Line): Point {
         val s = line.s
-        return Point(s + (pv - s).projectOnto(line.d))
+        return Point.of(s + (pv - s).projectOnto(line.d))
     }
 }
 

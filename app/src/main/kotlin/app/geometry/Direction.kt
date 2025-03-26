@@ -15,14 +15,14 @@ data class Direction private constructor(
 ) {
     companion object {
         /**
-         * @return A direction described by [d], or null if d is effectively a
+         * @return A direction described by [dv], or null if d is effectively a
          * zero vector
          */
         fun of(
-            d: Vector,
+            dv: Vector,
         ): Direction? = when {
-            d.lengthSquared < java.lang.Double.MIN_NORMAL -> null
-            else -> Direction(dv = d)
+            dv.lengthSquared < java.lang.Double.MIN_NORMAL -> null
+            else -> Direction(dv = dv)
         }
     }
 
@@ -39,4 +39,4 @@ data class Direction private constructor(
         get() = Direction(dv = dv.perpendicular)
 }
 
-internal fun Vector.toDirection(): Direction? = Direction.of(d = this)
+internal fun Vector.toDirection(): Direction? = Direction.of(dv = this)
