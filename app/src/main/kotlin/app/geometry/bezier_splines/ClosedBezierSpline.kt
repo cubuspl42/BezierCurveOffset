@@ -13,7 +13,7 @@ abstract class ClosedBezierSpline : BezierSpline<ClosedBezierSpline>() {
         ): ClosedBezierSpline {
             require(splines.isNotEmpty())
 
-            val gluedExposedNodes = OpenBezierSpline.glueSplineExposedNodes(
+            val gluedExposedNodes = OpenBezierSpline.glueSplineEdgeNodes(
                 prevNode = splines.last().endNode,
                 nextNode = splines.first().startNode,
             )

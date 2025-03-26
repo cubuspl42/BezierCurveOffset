@@ -1,7 +1,6 @@
 package app.geometry.bezier_splines
 
 import app.geometry.*
-import app.geometry.bezier_curves.ProperBezierCurve
 
 /**
  * An open Bézier spline, i.e. such that its start and end nodes are not
@@ -9,7 +8,7 @@ import app.geometry.bezier_curves.ProperBezierCurve
  */
 abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
     companion object : Prototype<OpenBezierSpline>() {
-        fun glueSplineExposedNodes(
+        fun glueSplineEdgeNodes(
             prevNode: BackwardNode,
             nextNode: ForwardNode,
         ): InnerNode {
@@ -38,7 +37,7 @@ abstract class OpenBezierSpline : BezierSpline<OpenBezierSpline>() {
             val firstSpline = splines.first()
 
             return firstSpline.innerNodes + splines.zipWithNext().flatMap { (prevSpline, nextSpline) ->
-                val jointNode = OpenBezierSpline.glueSplineExposedNodes(
+                val jointNode = OpenBezierSpline.glueSplineEdgeNodes(
                     prevNode = prevSpline.endNode,
                     nextNode = nextSpline.startNode,
                 )

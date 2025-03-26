@@ -125,18 +125,23 @@ inline fun <T, U : T, R> Iterable<U>.mapWithNext(
     return result
 }
 
-data class WithNeighbours<T : Any>(
-    val prev: T?,
-    val a: T,
-    val next: T?,
-)
+@Suppress("BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER")
+data class WithNeighbours<L, M, R>(
+    val prevElement: L,
+    val element: M,
+    val nextElement: R,
+) where M : L, M : R
 
-fun <T : Any> Iterable<T>.withNeighbours(): List<WithNeighbours<T>> {
+@Suppress("BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER")
+fun <L, M, R> Iterable<M>.withNeighbours(
+    outerLeft: L,
+    outerRight: R,
+): List<WithNeighbours<L, M, R>> where M : L, M : R {
     val iterator = iterator()
     if (!iterator.hasNext()) return emptyList()
 
-    val result = mutableListOf<WithNeighbours<T>>()
-    var prev: T? = null
+    val result = mutableListOf<WithNeighbours<L, M, R>>()
+    var prev: L = outerLeft
     var current = iterator.next()
 
     while (iterator.hasNext()) {
@@ -144,9 +149,9 @@ fun <T : Any> Iterable<T>.withNeighbours(): List<WithNeighbours<T>> {
 
         result.add(
             WithNeighbours(
-                prev = prev,
-                a = current,
-                next = next
+                prevElement = prev,
+                element = current,
+                nextElement = next
             ),
         )
 
@@ -156,14 +161,19 @@ fun <T : Any> Iterable<T>.withNeighbours(): List<WithNeighbours<T>> {
 
     result.add(
         WithNeighbours(
-            prev = prev,
-            a = current,
-            next = null
+            prevElement = prev,
+            element = current,
+            nextElement = outerRight,
         ),
     )
 
     return result
 }
+
+fun <T : Any> Iterable<T>.withNeighboursOrNull(): List<WithNeighbours<T?, T, T?>> = withNeighbours(
+    outerLeft = null,
+    outerRight = null,
+)
 
 inline fun <T : Any, U : T, R> Iterable<U>.mapWithNeighbours(
     transform: (prev: T?, a: U, next: T?) -> R,

@@ -4,6 +4,27 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class UtilsTests {
+    sealed interface DominoBlockRed {
+        val redNumber: Int
+    }
+
+    sealed interface DominoBlockBlue {
+        val blueNumber: Int
+    }
+
+    data class RedHalfDominoBlock(
+        override val redNumber: Int,
+    ) : DominoBlockRed
+
+    data class FullDominoBlock(
+        override val redNumber: Int,
+        override val blueNumber: Int,
+    ) : DominoBlockRed, DominoBlockBlue
+
+    data class BlueHalfDominoBlock(
+        override val blueNumber: Int,
+    ) : DominoBlockBlue
+
     @Test
     fun testMapWithNextEdge_emptyList() {
         val numbers = emptyList<Int>()
@@ -51,55 +72,127 @@ class UtilsTests {
         )
     }
 
+
     @Test
-    fun testMapWithNeighbours_standardCase() {
-        val numbers = listOf(1, 2, 3, 4)
-        val result = numbers.mapWithNeighbours { prev, current, next ->
-            (prev ?: 0) + current + (next ?: 0)
-        }
+    fun testWithNeighbours_standardCase() {
+        val actual = listOf(
+            FullDominoBlock(
+                redNumber = 1,
+                blueNumber = 6,
+            ),
+            FullDominoBlock(
+                redNumber = 6,
+                blueNumber = 2,
+            ),
+            FullDominoBlock(
+                redNumber = 2,
+                blueNumber = 5,
+            ),
+        ).withNeighbours(
+            outerLeft = BlueHalfDominoBlock(
+                blueNumber = 1,
+            ),
+            outerRight = RedHalfDominoBlock(
+                redNumber = 5,
+            ),
+        )
 
         assertEquals(
-            expected = listOf(3, 6, 9, 7),
-            actual = result,
+            expected = listOf(
+                WithNeighbours(
+                    prevElement = BlueHalfDominoBlock(
+                        blueNumber = 1,
+                    ),
+                    element = FullDominoBlock(
+                        redNumber = 1,
+                        blueNumber = 6,
+                    ),
+                    nextElement = FullDominoBlock(
+                        redNumber = 6,
+                        blueNumber = 2,
+                    ),
+                ),
+                WithNeighbours(
+                    prevElement = FullDominoBlock(
+                        redNumber = 1,
+                        blueNumber = 6,
+                    ),
+                    element = FullDominoBlock(
+                        redNumber = 6,
+                        blueNumber = 2,
+                    ),
+                    nextElement = FullDominoBlock(
+                        redNumber = 2,
+                        blueNumber = 5,
+                    ),
+                ),
+                WithNeighbours(
+                    prevElement = FullDominoBlock(
+                        redNumber = 6,
+                        blueNumber = 2,
+                    ),
+                    element = FullDominoBlock(
+                        redNumber = 2,
+                        blueNumber = 5,
+                    ),
+                    nextElement = RedHalfDominoBlock(
+                        redNumber = 5,
+                    ),
+                ),
+            ),
+            actual = actual,
         )
     }
 
     @Test
-    fun testMapWithNeighbours_singleElement() {
-        val numbers = listOf(5)
-        val result = numbers.mapWithNeighbours { prev, current, next ->
-            (prev ?: 0) + current + (next ?: 0)
-        }
+    fun testWithNeighbours_singleElement() {
+        val actual = listOf(
+            FullDominoBlock(
+                redNumber = 1,
+                blueNumber = 6,
+            ),
+        ).withNeighbours(
+            outerLeft = BlueHalfDominoBlock(
+                blueNumber = 1,
+            ),
+            outerRight = RedHalfDominoBlock(
+                redNumber = 5,
+            ),
+        )
 
         assertEquals(
-            expected = listOf(5),
-            actual = result,
+            expected = listOf(
+                WithNeighbours(
+                    prevElement = BlueHalfDominoBlock(
+                        blueNumber = 1,
+                    ),
+                    element = FullDominoBlock(
+                        redNumber = 1,
+                        blueNumber = 6,
+                    ),
+                    nextElement = RedHalfDominoBlock(
+                        redNumber = 5,
+                    ),
+                ),
+            ),
+            actual = actual,
         )
     }
 
     @Test
-    fun testMapWithNeighbours_emptyList() {
-        val numbers = emptyList<Int>()
-        val result = numbers.mapWithNeighbours { prev, current, next ->
-            (prev ?: 0) + current + (next ?: 0)
-        }
+    fun testWithNeighbours_emptyList() {
+        val actual = emptyList<FullDominoBlock>().withNeighbours(
+            outerLeft = BlueHalfDominoBlock(
+                blueNumber = 1,
+            ),
+            outerRight = RedHalfDominoBlock(
+                redNumber = 5,
+            ),
+        )
 
         assertEquals(
             expected = emptyList(),
-            actual = result,
-        )
-    }
-
-    @Test
-    fun testMapWithNeighbours_stringConcatenation() {
-        val words = listOf("a", "b", "c")
-        val result = words.mapWithNeighbours { prev, current, next ->
-            "${prev ?: ""}${current}${next ?: ""}"
-        }
-
-        assertEquals(
-            expected = listOf("ab", "abc", "bc"),
-            actual = result,
+            actual = actual,
         )
     }
 }
