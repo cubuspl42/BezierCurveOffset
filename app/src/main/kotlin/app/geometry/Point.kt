@@ -132,17 +132,11 @@ data class Point private constructor(
     fun moveInDirection(
         direction: Direction,
         distance: Double,
-    ): Point? {
-        val dv = direction.dv
-        val dls = dv.lengthSquared
-        val dl = dv.length
-
-        if (dl == 0.0) {
-            return null
-        }
+    ): Point {
+        require(distance.isFinite())
 
         return Point.of(
-            pv = pv + dv.scale(distance / dl),
+            pv = pv + direction.dv.resize(newLength = distance)
         )
     }
 
@@ -155,6 +149,8 @@ data class Point private constructor(
         origin: Point,
         distance: Double,
     ): Point? {
+        require(distance.isFinite())
+
         val direction = directionTo(origin) ?: return null
 
         return moveInDirection(

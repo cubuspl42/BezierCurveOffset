@@ -80,6 +80,13 @@ data class Vector(
         )
     }
 
+    fun resize(
+        newLength: Double,
+    ): Vector {
+        require(newLength.isFinite())
+        return scale(newLength / length)
+    }
+
     /**
      * The direction of this vector
      *

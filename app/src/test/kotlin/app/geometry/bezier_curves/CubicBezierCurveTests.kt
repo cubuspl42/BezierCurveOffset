@@ -1,7 +1,10 @@
 package app.geometry.bezier_curves
 
 import app.geometry.Point
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class CubicBezierCurveTests {
     @Test

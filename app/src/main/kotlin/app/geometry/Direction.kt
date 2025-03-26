@@ -21,17 +21,13 @@ data class Direction private constructor(
         fun of(
             dv: Vector,
         ): Direction? = when {
-            dv.lengthSquared < java.lang.Double.MIN_NORMAL -> null
+            dv.lengthSquared == 0.0 -> null
             else -> Direction(dv = dv)
         }
     }
 
     init {
-        // For tiny subnormal values, the length of the underlying vector could
-        // be 0.0 (even though x > 0 or y > 0), which is not acceptable for a
-        // direction. For simplicity, let's just require that the squared length
-        // is at least the smallest positive normal value.
-        require(dv.lengthSquared >= java.lang.Double.MIN_NORMAL)
+        require(dv.lengthSquared != 0.0)
     }
 
     val perpendicular: Direction
