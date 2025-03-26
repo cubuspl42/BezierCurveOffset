@@ -34,17 +34,6 @@ val LinearBezierBinomial<Vector>.segment0: Segment
 val LinearBezierBinomial<Vector>.segmentsLinear: List<Segment>
     get() = listOf(segment0)
 
-fun LinearBezierBinomial<Vector>.findSkeletonLinear(
-    t: Double,
-): ConstantBezierBinomial<Vector> {
-    val subPoint0 = segment0.linearlyInterpolate(t = t)
-
-    return ConstantBezierBinomial(
-        vectorSpace = vectorSpace,
-        weight0 = subPoint0.pv,
-    )
-}
-
 fun LinearBezierBinomial<Double>.toPolynomialFormulaLinear(): Polynomial = LinearPolynomial.of(
     a = weight1 - weight0,
     b = weight0,

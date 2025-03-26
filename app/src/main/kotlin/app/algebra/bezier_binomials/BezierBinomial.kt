@@ -40,20 +40,10 @@ sealed class BezierBinomial<out V> : RealFunction<V>() {
 
 val BezierBinomial<Vector>.segments: List<Segment>
     get() = when (this) {
-        is ConstantBezierBinomial<Vector> -> this.segmentsConstant
         is LinearBezierBinomial<Vector> -> this.segmentsLinear
         is QuadraticBezierBinomial<Vector> -> this.segmentsQuadratic
         is CubicBezierBinomial<Vector> -> this.segmentsCubic
     }
-
-fun BezierBinomial<Vector>.findSkeleton(
-    t: Double,
-): BezierBinomial<Vector> = when (this) {
-    is ConstantBezierBinomial<*> -> TODO("Move this logic to curves")
-    is LinearBezierBinomial<Vector> ->  this.findSkeletonLinear(t = t)
-    is QuadraticBezierBinomial<Vector> -> this.findSkeletonQuadratic(t = t)
-    is CubicBezierBinomial<Vector> -> this.findSkeletonCubic(t = t)
-}
 
 fun BezierBinomial<Vector>.toDataset(
     samplingStrategy: SamplingStrategy,
@@ -76,7 +66,6 @@ fun BezierBinomial<Vector>.toDataset(
 }
 
 fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial = when (this) {
-    is ConstantBezierBinomial<Double> -> this.toPolynomialFormulaConstant()
     is LinearBezierBinomial<Double> -> this.toPolynomialFormulaLinear()
     is QuadraticBezierBinomial<Double> -> this.toPolynomialFormulaQuadratic()
     // We shouldn't need cubic polynomials
@@ -92,7 +81,6 @@ fun BezierBinomial<Vector>.findFaster(): TimeFunction<Vector> {
 fun BezierBinomial<Vector>.evaluateFast(
     t: Double,
 ): Vector = when (this) {
-    is ConstantBezierBinomial<Vector> -> TODO("Move this to curves")
     is LinearBezierBinomial<Vector> -> this.evaluateLinear(t = t)
     is QuadraticBezierBinomial<Vector> -> this.evaluateFastQuadratic(t = t)
     is CubicBezierBinomial<Vector> -> this.evaluateFastCubic(t = t)
@@ -100,7 +88,6 @@ fun BezierBinomial<Vector>.evaluateFast(
 
 val BezierBinomial<Vector>.componentX: BezierBinomial<Double>
     get() = when (this) {
-        is ConstantBezierBinomial<Vector> -> TODO("Move this to curves")
         is LinearBezierBinomial<Vector> -> this.componentXLinear
         is QuadraticBezierBinomial<Vector> -> this.componentXQuadratic
         is CubicBezierBinomial<Vector> -> this.componentXCubic
@@ -108,7 +95,6 @@ val BezierBinomial<Vector>.componentX: BezierBinomial<Double>
 
 val BezierBinomial<Vector>.componentY: BezierBinomial<Double>
     get() = when (this) {
-        is ConstantBezierBinomial<Vector> -> TODO("Move this to curves")
         is LinearBezierBinomial<Vector> -> this.componentYLinear
         is QuadraticBezierBinomial<Vector> -> this.componentYQuadratic
         is CubicBezierBinomial<Vector> -> this.componentYCubic
