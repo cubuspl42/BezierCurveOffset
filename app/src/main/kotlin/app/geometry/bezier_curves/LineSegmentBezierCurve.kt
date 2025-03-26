@@ -3,6 +3,7 @@ package app.geometry.bezier_curves
 import app.algebra.Vector
 import app.algebra.bezier_binomials.BezierBinomial
 import app.geometry.*
+import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
 import app.geometry.bezier_splines.OpenBezierSpline
 import java.awt.geom.Path2D
 
@@ -54,17 +55,26 @@ data class LineSegmentBezierCurve private constructor(
     override fun findOffsetSpline(
         strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,
-    ): OpenBezierSpline = findOffsetLineSegmentCurve(
+    ): OffsetSplineApproximationResult = findOffsetSpline(
         offset = offset,
-    ).toSpline()
+    )
 
     override fun findOffsetSplineRecursive(
         strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenBezierSpline = findOffsetLineSegmentCurve(
+    ): OffsetSplineApproximationResult = findOffsetSpline(
         offset = offset,
-    ).toSpline()
+    )
+
+    private fun findOffsetSpline(
+        offset: Double,
+    ): OffsetSplineApproximationResult = OffsetSplineApproximationResult.precise(
+        findOffsetLineSegmentCurve(
+            offset = offset,
+        ),
+    )
+
 
     override fun splitAt(
         t: Double,

@@ -7,6 +7,7 @@ import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.TimedPointSeries
+import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.bezier_splines.BezierSpline
 import app.geometry.bezier_splines.MonoBezierCurve
@@ -126,7 +127,7 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
     abstract fun findOffsetSpline(
         strategy: OffsetStrategy,
         offset: Double,
-    ): OpenBezierSpline?
+    ): OffsetSplineApproximationResult?
 
     abstract val start: Point
 

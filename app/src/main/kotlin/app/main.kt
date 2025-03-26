@@ -65,7 +65,7 @@ fun main(args: Array<String>) {
     val contourSplineBestFit = baseSpline.findContourSpline(
         ProperBezierCurve.BestFitOffsetStrategy,
         offset = offset,
-    )!!
+    )!!.contourSpline
 
 //    val offsetSplineNormal = baseSpline.findOffsetSplineNormal(offset = offset)
 //    val splitSpline = baseCurve.splitAtCriticalPoints()

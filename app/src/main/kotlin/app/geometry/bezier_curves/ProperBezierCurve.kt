@@ -4,7 +4,6 @@ import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.geometry.Point
 import app.geometry.bezier_splines.OpenBezierSpline
-import app.geometry.bezier_splines.mergeWith
 
 /**
  * A best-effort non-degenerate Bézier of order >= 2, where all the control
@@ -24,10 +23,62 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             val approximationRatingSampleCount = 16
         }
 
+        fun toOffsetSplineApproximationResult(): OffsetSplineApproximationResult =
+            object : OffsetSplineApproximationResult(
+                offsetSpline = offsetCurve.toSpline(),
+            ) {
+                override val globalDeviation: Double
+                    get() = deviation
+            }
+
         /**
          * @return The calculated deviation
          */
-        abstract fun calculateDeviation(): Double
+        abstract val deviation: Double
+    }
+
+    abstract class OffsetSplineApproximationResult(
+        val offsetSpline: OpenBezierSpline,
+    ) {
+        companion object {
+            fun precise(
+                offsetCurve: BezierCurve<*>,
+            ): OffsetSplineApproximationResult = object : OffsetSplineApproximationResult(
+                offsetSpline = offsetCurve.toSpline(),
+            ) {
+                override val globalDeviation: Double
+                    get() = 0.0
+            }
+
+            fun merge(
+                subResults: List<OffsetSplineApproximationResult>,
+            ): OffsetSplineApproximationResult {
+                require(subResults.isNotEmpty())
+
+                val mergedOffsetSpline = OpenBezierSpline.merge(
+                    splines = subResults.map { it.offsetSpline },
+                )
+
+                return object : OffsetSplineApproximationResult(
+                    offsetSpline = mergedOffsetSpline,
+                ) {
+                    override val globalDeviation: Double by lazy {
+                        subResults.maxOf { it.globalDeviation }
+                    }
+                }
+            }
+        }
+
+        fun mergeWith(
+            rightResult: OffsetSplineApproximationResult,
+        ): OffsetSplineApproximationResult = merge(
+            subResults = listOf(this, rightResult),
+        )
+
+        /**
+         * @return The calculated global deviation
+         */
+        abstract val globalDeviation: Double
     }
 
     sealed class OffsetStrategy {
@@ -79,7 +130,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
     final override fun findOffsetSpline(
         strategy: OffsetStrategy,
         offset: Double,
-    ): OpenBezierSpline? {
+    ): OffsetSplineApproximationResult? {
         val initialOffsetCurveResult = findApproximatedOffsetCurve(
             strategy = strategy,
             offset = offset,
@@ -93,19 +144,20 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             )
         }
 
-        val initialOffsetCurve = initialOffsetCurveResult.offsetCurve
-        val initialDeviation = initialOffsetCurveResult.calculateDeviation()
-
         return when {
-            // The first tried curve is good enough!
-            initialDeviation < findOffsetDeviationThreshold -> initialOffsetCurve.toSpline()
+            initialOffsetCurveResult.deviation < findOffsetDeviationThreshold -> {
+                // The first tried curve is good enough!
+                initialOffsetCurveResult.toOffsetSplineApproximationResult()
+            }
 
-            // We weren't lucky, let's do the actual work. Splitting at the critical
-            // points is a good start for subdividing, so let's try that.
-            else -> splitAtCriticalPointsAndFindOffsetSplineRecursive(
-                strategy = strategy,
-                offset = offset,
-            )
+            else -> {
+                // We weren't lucky, let's do the actual work. Splitting at the critical
+                // points is a good start for subdividing, so let's try that.
+                splitAtCriticalPointsAndFindOffsetSplineRecursive(
+                    strategy = strategy,
+                    offset = offset,
+                )
+            }
         }
     }
 
@@ -113,8 +165,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenBezierSpline? {
-        val offsetResult = findApproximatedOffsetCurve(
+    ): OffsetSplineApproximationResult? {
+        val offsetCurveResult = findApproximatedOffsetCurve(
             strategy = strategy,
             offset = offset,
         ) ?: run {
@@ -126,11 +178,15 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             return null
         }
 
-        val offsetCurve = offsetResult.offsetCurve
-        val deviation = offsetResult.calculateDeviation()
+        fun isDeviationAcceptable() = offsetCurveResult.deviation < findOffsetDeviationThreshold
+        fun wasSubdivisionLimitReached() = subdivisionLevel >= findOffsetMaxSubdivisionLevel
 
         return when {
-            deviation < findOffsetDeviationThreshold || subdivisionLevel >= findOffsetMaxSubdivisionLevel -> offsetCurve.toSpline()
+            isDeviationAcceptable() || wasSubdivisionLimitReached() -> {
+                // We found a curve that's good enough (or we have to assume it's
+                // good enough, because we've subdivided too many times)
+                offsetCurveResult.toOffsetSplineApproximationResult()
+            }
 
             else -> subdivideAndFindOffsetSplineRecursive(
                 offset = offset,
@@ -140,7 +196,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                 // If we couldn't find the offset curve by subdividing because
                 // the results were too tiny, let's  return the best known one
                 // even if it has an unacceptable deviation.
-                return offsetCurve.toSpline()
+                return offsetCurveResult.toOffsetSplineApproximationResult()
             }
         }
     }
@@ -167,7 +223,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         return object : OffsetCurveApproximationResult(
             offsetCurve = approximatedOffsetCurve,
         ) {
-            override fun calculateDeviation(): Double {
+            override val deviation: Double by lazy {
                 val offsetCurveFunction = findOffsetCurveFunction(offset = offset)
 
                 val samples = offsetCurveFunction.sample(
@@ -176,7 +232,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                     ),
                 )
 
-                return samples.maxOfOrNull { sample: RealFunction.Sample<Point> ->
+                return@lazy samples.maxOfOrNull { sample: RealFunction.Sample<Point> ->
                     val t = sample.x
 
                     val offsetPoint = sample.value
@@ -189,7 +245,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                     // could be undefined (the critical points of a degenerate
                     // curve). We know that we managed to approximate the
                     // offset curve _somehow_...
-                    return Double.POSITIVE_INFINITY
+                    return@lazy Double.POSITIVE_INFINITY
                 }
             }
         }
@@ -208,7 +264,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
     private fun splitAtCriticalPointsAndFindOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
-    ): OpenBezierSpline? {
+    ): OffsetSplineApproximationResult? {
         val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
 
         if (criticalPoints.isNotEmpty()) {
@@ -217,7 +273,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                 return null
             }
 
-            val mergedSpline = initialSplitSpline.mergeOfNonNullOrNull { splitCurve: BezierCurve<*> ->
+            val subResults = initialSplitSpline.subCurves.mapNotNull { splitCurve ->
                 // After splitting at the critical points, each sub-curves should
                 // be theoretically non-degenerate, even if this curve is degenerate.
                 // The problem of gluing at the critical point is shifted onto
@@ -233,10 +289,17 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                 )
             }
 
-            // If the merged spline is null, it means that none of the split curve
-            // was even longitudinal, or all of the longitudinal sub-curves were
-            // too tiny to construct an offset spline for them
-            return mergedSpline
+            if (subResults.isEmpty()) {
+                // None of the split curve was even longitudinal, or all of the
+                // longitudinal sub-curves were too tiny to construct an offset
+                // spline for them
+                return null
+            }
+
+            return OffsetSplineApproximationResult.merge(
+                subResults = subResults
+            )
+
         } else {
             // If this curve has no critical points, it theoretically shouldn't
             // be degenerate
@@ -260,8 +323,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenBezierSpline? {
-        val (leftSplitCurve, rightSplitCurve) = splitAtSafe(t = 0.5) ?:  run {
+    ): OffsetSplineApproximationResult? {
+        val (leftSplitCurve, rightSplitCurve) = splitAtSafe(t = 0.5) ?: run {
             // If the t-value 0.5 is too close to 0 or 1 to even split the curve,
             // this curve is just too tiny to generate the offset spline for it
             return null

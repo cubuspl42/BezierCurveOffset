@@ -91,6 +91,7 @@ abstract class BezierSpline<SplineT : BezierSpline<SplineT>> {
         override val backwardControl: Point,
     ) : BackwardNode {
         override val forwardControl: Nothing? = null
+
         override fun isLoose(): Boolean {
             TODO("Not yet implemented")
         }

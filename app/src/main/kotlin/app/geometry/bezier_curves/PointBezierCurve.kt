@@ -3,6 +3,7 @@ package app.geometry.bezier_curves
 import app.algebra.Vector
 import app.algebra.bezier_binomials.ConstantBezierBinomial
 import app.geometry.Point
+import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
 import app.geometry.bezier_splines.OpenBezierSpline
 
 /**
@@ -23,7 +24,7 @@ data class PointBezierCurve private constructor(
     override fun findOffsetSpline(
         strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,
-    ): OpenBezierSpline? {
+    ): OffsetSplineApproximationResult? {
         // A point is definitely too tiny to construct its offset spline, as we
         // wouldn't know in which direction to offset
         return null
