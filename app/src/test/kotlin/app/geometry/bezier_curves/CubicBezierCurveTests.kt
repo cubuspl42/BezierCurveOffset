@@ -1,12 +1,43 @@
 package app.geometry.bezier_curves
 
 import app.geometry.Point
-import kotlin.test.Ignore
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
+import kotlin.test.*
 
 class CubicBezierCurveTests {
+    @Test
+    fun testFindOffsetSpline_micro() {
+        val bezierCurve = CubicBezierCurve.of(
+            start = Point(0.0, 0.0),
+            control0 = Point(Double.MIN_VALUE, Double.MIN_VALUE),
+            control1 = Point(2 * Double.MIN_VALUE, Double.MIN_VALUE),
+            end = Point(3.0 * Double.MIN_VALUE, 0.0),
+        ) as CubicBezierCurve
+
+        assertNull(
+            bezierCurve.findOffsetSpline(
+                strategy = ProperBezierCurve.BestFitOffsetStrategy,
+                offset = Double.MIN_VALUE,
+            ),
+        )
+    }
+
+    @Test
+    fun testFindOffsetSpline_micro_degenerate() {
+        val bezierCurve = CubicBezierCurve.of(
+            start = Point(0.0, 0.0),
+            control0 = Point(-Double.MIN_VALUE, 0.0),
+            control1 = Point(Double.MIN_VALUE, 0.0),
+            end = Point(0.0, 0.0),
+        ) as CubicBezierCurve
+
+        assertNull(
+            bezierCurve.findOffsetSpline(
+                strategy = ProperBezierCurve.BestFitOffsetStrategy,
+                offset = Double.MIN_VALUE,
+            ),
+        )
+    }
+
     @Test
     fun testFindOffsetSpline_simple() {
         val bezierCurve = CubicBezierCurve.of(
@@ -30,15 +61,13 @@ class CubicBezierCurveTests {
         )
     }
 
-
     @Test
-    @Ignore
-    fun testFindOffsetSpline_micro() {
+    fun testFindOffsetSpline_degenerate() {
         val bezierCurve = CubicBezierCurve.of(
             start = Point(0.0, 0.0),
-            control0 = Point(Double.MIN_VALUE, Double.MIN_VALUE),
-            control1 = Point(2 * Double.MIN_VALUE, Double.MIN_VALUE),
-            end = Point(3.0 * Double.MIN_VALUE, 0.0),
+            control0 = Point(-1.0, 0.0),
+            control1 = Point(1.0, 0.0),
+            end = Point(0.0, 0.0),
         ) as CubicBezierCurve
 
         val offsetSplineResult = assertNotNull(
@@ -49,9 +78,10 @@ class CubicBezierCurveTests {
         )
 
         assertEquals(
-            expected = 0.02,
+            expected = 0.0,
             actual = offsetSplineResult.globalDeviation,
-            absoluteTolerance = 0.01,
+            absoluteTolerance = 0.00001,
         )
     }
+
 }

@@ -2,6 +2,7 @@ package app.algebra
 
 import app.geometry.Direction
 import app.geometry.Point
+import app.geometry.toDirection
 import kotlin.math.sqrt
 
 /**
@@ -43,8 +44,8 @@ data class Vector(
     }
 
     init {
-        require(!x.isNaN())
-        require(!y.isNaN())
+        require(x.isFinite())
+        require(y.isFinite())
     }
 
     operator fun minus(
@@ -80,21 +81,12 @@ data class Vector(
     }
 
     /**
-     * The direction of this vector or null if this vector doesn't have a direction (is a zero vector)
-     */
-    val directionOrNull: Direction?
-        get() = when {
-            this == zero -> null
-            else -> Direction(d = this)
-        }
-
-    /**
      * The direction of this vector
      *
      * @throws IllegalStateException if this vector doesn't have a direction (is a zero vector)
      */
     val direction: Direction
-        get() = directionOrNull ?: throw IllegalStateException("Zero vectors don't have a direction")
+        get() = toDirection() ?: throw IllegalStateException("Zero vectors don't have a direction")
 
     /**
      * The counterclockwise perpendicular vector

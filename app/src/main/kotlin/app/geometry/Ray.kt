@@ -9,16 +9,12 @@ data class Ray(
     /**
      * The initial point of the ray
      */
-    val s: Vector,
+    val startingPoint: Point,
     /**
-     * One of the infinitely many vectors that give this ray a direction
+     * The direction of this ray
      */
-    val d: Vector,
+    val direction: Direction,
 ) {
-    init {
-        require(d != Vector.zero)
-    }
-
     private fun evaluate(
         t: Double,
     ): Vector {
@@ -26,7 +22,7 @@ data class Ray(
             throw IllegalArgumentException("t must be non-negative")
         }
 
-        return s + d.scale(t)
+        return s + direction.dv.scale(t)
     }
 
     companion object {
@@ -34,18 +30,16 @@ data class Ray(
             point: Point,
             direction: Direction,
         ): Ray = Ray(
-            s = point.pv,
-            d = direction.d,
+            startingPoint = point,
+            direction = direction,
         )
     }
 
-    val startingPoint: Point
-        get() = s.toPoint()
+    internal val s: Vector
+        get() = startingPoint.pv
 
-    val direction: Direction
-        get() = Direction(
-            d = d,
-        )
+    internal val d: Vector
+        get() = direction.dv
 
     val containingLine: Line
         get() = Line(

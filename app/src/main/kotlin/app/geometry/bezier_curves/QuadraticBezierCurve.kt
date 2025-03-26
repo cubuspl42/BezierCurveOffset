@@ -1,7 +1,7 @@
 package app.geometry.bezier_curves
 
 import app.algebra.Vector
-import app.algebra.bezier_binomials.BezierBinomial
+import app.algebra.bezier_binomials.*
 import app.geometry.Point
 import java.awt.geom.Path2D
 
@@ -49,11 +49,31 @@ data class QuadraticBezierCurve private constructor(
     override val lastControl: Point
         get() = control
 
-    override val basisFormula: BezierBinomial<Vector>
-        get() = TODO("Not yet implemented")
+    override val basisFormula = QuadraticBezierBinomial(
+        vectorSpace = Vector.VectorVectorSpace,
+        weight0 = start.toVector(),
+        weight1 = control.toVector(),
+        weight2 = end.toVector(),
+    )
 
-    override fun splitAt(t: Double): Pair<BezierCurve<*>, BezierCurve<*>> {
-        TODO("Not yet implemented")
+    override fun splitAt(
+        t: Double,
+    ): Pair<BezierCurve<*>, BezierCurve<*>> {
+        val skeleton = basisFormula.findSkeletonQuadratic(t = t)
+        val midPoint = skeleton.evaluateLinear(t = t).toPoint()
+
+        return Pair(
+            QuadraticBezierCurve.of(
+                start = start,
+                control = skeleton.point0,
+                end = midPoint,
+            ),
+            QuadraticBezierCurve.of(
+                start = midPoint,
+                control = skeleton.point1,
+                end = end,
+            ),
+        )
     }
 
     override fun toPath2D(): Path2D.Double {

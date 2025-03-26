@@ -2,7 +2,6 @@ package app.geometry
 
 import app.algebra.Vector
 import app.algebra.div
-import app.equalsApproximately
 import app.equalsZeroApproximately
 import java.awt.geom.Path2D
 
@@ -92,18 +91,14 @@ data class Point(
 
     /**
      * @param other - point to find the direction to
-     * @return direction, or null if this point is the same as the other point
+     * @return direction, or null if this point is effectively the same as the
+     * other point
      */
     fun directionTo(
         other: Point,
-    ): Direction? {
-        if (this == other) {
-            return null
-        }
-        return Direction(
-            d = other.pv - this.pv,
-        )
-    }
+    ): Direction? = Direction.of(
+        d = other.pv - this.pv,
+    )
 
     fun translate(
         translation: Translation,
@@ -121,15 +116,15 @@ data class Point(
         direction: Direction,
         distance: Double,
     ): Point? {
-        val d = direction.d
-        val dl = d.length
+        val dv = direction.dv
+        val dl = dv.length
 
         if (dl == 0.0) {
             return null
         }
 
         return Point(
-            pv = pv + d.scale(distance / dl),
+            pv = pv + dv.scale(distance / dl),
         )
     }
 
@@ -150,6 +145,7 @@ data class Point(
         )
     }
 
+    // TODO: Nuke?
     fun toVector(): Vector = Vector(x, y)
 
     fun projectOnto(line: Line): Point {
@@ -162,8 +158,8 @@ fun Path2D.moveTo(point: Point) {
     moveTo(point.x, point.y)
 }
 
-fun Path2D.lineTo(point: Point) {
-    lineTo(point.x, point.y)
+fun Path2D.lineTo(end: Point) {
+    lineTo(end.x, end.y)
 }
 
 fun Path2D.quadTo(control: Point, end: Point) {

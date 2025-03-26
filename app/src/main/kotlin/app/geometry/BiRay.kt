@@ -57,15 +57,13 @@ data class BiRay(
      */
     val bisectingRay: Ray?
         get() {
-            val b = Vector.bisector(firstDirection.d, secondDirection.d)
+            val b = Vector.bisector(firstDirection.dv, secondDirection.dv)
 
-            if (b == Vector.zero) {
-                return null
-            }
+            val d = b.toDirection() ?: return null
 
             return Ray.inDirection(
                 point = point,
-                direction = b.toDirection(),
+                direction = d,
             )
         }
 }

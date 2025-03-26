@@ -18,6 +18,6 @@ data class Translation(
     fun projectOnto(
         direction: Direction,
     ): Translation = Translation(
-        tv = tv.projectOnto(direction.d),
+        tv = tv.projectOnto(direction.dv),
     )
 }

@@ -1,11 +1,8 @@
 package app.geometry.bezier_splines
 
 import app.fillCircle
-import app.geometry.Point
-import app.geometry.Segment
+import app.geometry.*
 import app.geometry.bezier_curves.*
-import app.geometry.cubicTo
-import app.geometry.moveTo
 import app.interleave
 import java.awt.Color
 import java.awt.Graphics2D
@@ -177,9 +174,17 @@ fun Path2D.pathTo(
     subCurve: BezierCurve<*>,
 ) {
     when (subCurve) {
-        is PointBezierCurve -> TODO()
-        is LineSegmentBezierCurve -> TODO()
-        is QuadraticBezierCurve -> TODO()
+        is PointBezierCurve -> {}
+
+        is LineSegmentBezierCurve -> lineTo(
+            end = subCurve.end,
+        )
+
+        is QuadraticBezierCurve -> quadTo(
+            control = subCurve.control,
+            end = subCurve.end,
+        )
+
         is CubicBezierCurve -> cubicTo(
             control1 = subCurve.control0,
             control2 = subCurve.control1,
