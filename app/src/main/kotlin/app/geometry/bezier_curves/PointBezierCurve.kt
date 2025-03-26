@@ -4,7 +4,6 @@ import app.algebra.Vector
 import app.algebra.bezier_binomials.ConstantBezierBinomial
 import app.geometry.Point
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
-import app.geometry.bezier_splines.OpenBezierSpline
 
 /**
  * A constant Bézier curve (a point)

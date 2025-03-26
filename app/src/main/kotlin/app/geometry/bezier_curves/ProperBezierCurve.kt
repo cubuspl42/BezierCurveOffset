@@ -1,9 +1,11 @@
 package app.geometry.bezier_curves
 
-import app.algebra.bezier_binomials.*
+import app.algebra.bezier_binomials.RealFunction
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
+import app.algebra.bezier_binomials.findInterestingCriticalPoints
+import app.algebra.bezier_binomials.sample
 import app.geometry.Point
-import app.geometry.bezier_splines.OpenBezierSpline
+import app.geometry.bezier_splines.OpenSpline
 
 /**
  * A best-effort non-degenerate Bézier of order >= 2, where all the control
@@ -38,7 +40,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
     }
 
     abstract class OffsetSplineApproximationResult(
-        val offsetSpline: OpenBezierSpline,
+        val offsetSpline: OpenSpline,
     ) {
         companion object {
             fun precise(
@@ -46,8 +48,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             ): OffsetSplineApproximationResult = object : OffsetSplineApproximationResult(
                 offsetSpline = offsetCurve.toSpline(),
             ) {
-                override val globalDeviation: Double
-                    get() = 0.0
+                override val globalDeviation: Double = 0.0
             }
 
             fun merge(
@@ -55,7 +56,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             ): OffsetSplineApproximationResult {
                 require(subResults.isNotEmpty())
 
-                val mergedOffsetSpline = OpenBezierSpline.merge(
+                val mergedOffsetSpline = OpenSpline.merge(
                     splines = subResults.map { it.offsetSpline },
                 )
 
@@ -209,7 +210,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
      * normal directions. If this curve is non-degenerate it theoretically should
      * always be possible to generate a continuous offset curve.
      */
-    private fun findApproximatedOffsetCurve(
+    fun findApproximatedOffsetCurve(
         strategy: OffsetStrategy,
         offset: Double,
     ): OffsetCurveApproximationResult? {
@@ -274,6 +275,8 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
             }
 
             val subResults = initialSplitSpline.subCurves.mapNotNull { splitCurve ->
+                val splitBezierCurve = splitCurve as BezierCurve<*>
+
                 // After splitting at the critical points, each sub-curves should
                 // be theoretically non-degenerate, even if this curve is degenerate.
                 // The problem of gluing at the critical point is shifted onto

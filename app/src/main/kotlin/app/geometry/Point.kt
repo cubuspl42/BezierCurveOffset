@@ -154,18 +154,18 @@ data class Point(
     }
 }
 
-fun Path2D.moveTo(point: Point) {
-    moveTo(point.x, point.y)
+fun Path2D.moveTo(p: Point) {
+    moveTo(p.x, p.y)
 }
 
-fun Path2D.lineTo(end: Point) {
-    lineTo(end.x, end.y)
+fun Path2D.lineTo(p: Point) {
+    lineTo(p.x, p.y)
 }
 
-fun Path2D.quadTo(control: Point, end: Point) {
-    quadTo(control.x, control.y, end.x, end.y)
+fun Path2D.quadTo(p1: Point, p2: Point) {
+    quadTo(p1.x, p1.y, p2.x, p2.y)
 }
 
-fun Path2D.cubicTo(control1: Point, control2: Point, end: Point) {
-    curveTo(control1.x, control1.y, control2.x, control2.y, end.x, end.y)
+fun Path2D.cubicTo(p1: Point, p2: Point, p3: Point) {
+    curveTo(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
 }

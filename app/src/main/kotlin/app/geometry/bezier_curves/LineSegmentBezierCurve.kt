@@ -4,7 +4,6 @@ import app.algebra.Vector
 import app.algebra.bezier_binomials.BezierBinomial
 import app.geometry.*
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
-import app.geometry.bezier_splines.OpenBezierSpline
 import java.awt.geom.Path2D
 
 /**
@@ -74,7 +73,6 @@ data class LineSegmentBezierCurve private constructor(
             offset = offset,
         ),
     )
-
 
     override fun splitAt(
         t: Double,

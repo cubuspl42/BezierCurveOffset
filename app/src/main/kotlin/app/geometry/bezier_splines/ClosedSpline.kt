@@ -1,13 +1,17 @@
 package app.geometry.bezier_splines
 
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
+import app.geometry.bezier_splines.OpenSpline.Companion.fastenLinksSmoothly
 
-/**
- * A closed Bézier spline, i.e. such that forms a loop
- */
-abstract class ClosedBezierSpline : BezierSpline<ClosedBezierSpline>() {
+class ClosedSpline(
+    /**
+     * The cyclic chain of links, must not be empty
+     */
+    override val links: List<InnerLink>,
+) : BezierSpline<ClosedSpline>() {
     abstract class ContourSplineApproximationResult(
-        val contourSpline: ClosedBezierSpline,
+        val contourSpline: ClosedSpline,
     ) {
         companion object {
             fun wrap(
@@ -15,7 +19,7 @@ abstract class ClosedBezierSpline : BezierSpline<ClosedBezierSpline>() {
             ): ContourSplineApproximationResult {
                 require(subResults.isNotEmpty())
 
-                val mergedContourSpline = ClosedBezierSpline.merge(
+                val mergedContourSpline = ClosedSpline.merge(
                     splines = subResults.map { it.offsetSpline },
                 )
 
@@ -35,33 +39,40 @@ abstract class ClosedBezierSpline : BezierSpline<ClosedBezierSpline>() {
         abstract val globalDeviation: Double
     }
 
-    companion object : Prototype<ClosedBezierSpline>() {
+    companion object : Prototype<ClosedSpline>() {
         override fun merge(
-            splines: List<OpenBezierSpline>,
-        ): ClosedBezierSpline {
+            splines: List<OpenSpline>,
+        ): ClosedSpline {
             require(splines.isNotEmpty())
 
-            val linkNode = fuseEdgeNodes(
-                prevNode = splines.last().endNode,
-                nextNode = splines.first().startNode,
+            val firstSpline = splines.first()
+            val lastSpline = splines.last()
+
+            val (lastLink, firstLink) = fastenLinksSmoothly(
+                prevSpline = lastSpline,
+                nextSpline = firstSpline,
             )
 
-            val innerNodes = interconnectSplines(
-                splines = splines,
+            val insideLinks = OpenSpline.fastenSplines(
+                splines = splines
             )
 
-            val mergedSpline = ClosedPolyBezierCurve(
-                innerNodes = innerNodes + linkNode,
+            return ClosedSpline(
+                links = listOf(firstLink) + insideLinks + lastLink,
             )
-
-            return mergedSpline
         }
     }
 
-    final override val prototype = ClosedBezierSpline
+    init {
+        require(links.isNotEmpty())
+    }
 
-    final override val nodes: List<InnerNode>
-        get() = innerNodes
+    override val prototype = ClosedSpline
+
+    override val nodes: List<Link> = links
+
+    override val rightEdgeNode: Link
+        get() = links.first()
 
     /**
      * Find the contour of this spline.
@@ -74,7 +85,9 @@ abstract class ClosedBezierSpline : BezierSpline<ClosedBezierSpline>() {
         offset: Double,
     ): ContourSplineApproximationResult? {
         val subResults = subCurves.mapNotNull { subCurve ->
-            subCurve.findOffsetSpline(
+            val subBezierCurve = subCurve as BezierCurve<*>
+
+            subBezierCurve.findOffsetSpline(
                 strategy = strategy,
                 offset = offset,
             )

@@ -9,36 +9,16 @@ import app.geometry.Ray
 import app.geometry.TimedPointSeries
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
-import app.geometry.bezier_splines.BezierSpline
-import app.geometry.bezier_splines.MonoBezierCurve
-import app.geometry.bezier_splines.OpenBezierSpline
+import app.geometry.bezier_splines.BezierSplineEdge
+import app.geometry.bezier_splines.OpenSpline
 
 /**
  * A Bézier curve of order N, depending on the specific subclass. Ideally, each
  * subclass should model non-degenerate curves of the given level, but this is
  * not strictly required for practical reasons.
  */
-sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
+sealed class BezierCurve<CurveT : BezierCurve<CurveT>> : Curve() {
     companion object {
-        fun interConnect(
-            prevNode: BezierSpline.InnerNode,
-            nextNode: BezierSpline.InnerNode,
-        ): BezierCurve<*> = CubicBezierCurve.of(
-            start = prevNode.knotPoint,
-            control0 = prevNode.forwardControl,
-            control1 = nextNode.backwardControl,
-            end = nextNode.knotPoint,
-        )
-
-        fun interConnectAll(
-            innerNodes: List<BezierSpline.InnerNode>,
-        ): List<BezierCurve<*>> = innerNodes.zipWithNext { prevNode, nextNode ->
-            interConnect(
-                prevNode = prevNode,
-                nextNode = nextNode,
-            )
-        }
-
         fun bindRay(
             pointFunction: TimeFunction<Point>,
             vectorFunction: TimeFunction<Direction?>,
@@ -129,10 +109,6 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
         offset: Double,
     ): OffsetSplineApproximationResult?
 
-    abstract val start: Point
-
-    abstract val end: Point
-
     abstract val firstControl: Point
 
     abstract val lastControl: Point
@@ -143,7 +119,13 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> {
 
     abstract val asLongitudinal: LongitudinalBezierCurve<*>?
 
-    fun toSpline(): OpenBezierSpline = MonoBezierCurve(
-        curve = this,
+    fun toSpline(): OpenSpline = OpenSpline.ofEdge(
+        startKnot = start,
+        edge = BezierSplineEdge(
+            startControl = firstControl,
+            endControl = lastControl,
+        ),
+
+        endKnot = end,
     )
 }

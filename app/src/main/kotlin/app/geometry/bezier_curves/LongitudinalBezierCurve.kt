@@ -2,7 +2,7 @@ package app.geometry.bezier_curves
 
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
-import app.geometry.bezier_splines.OpenBezierSpline
+import app.geometry.bezier_splines.OpenSpline
 import app.partitionSorted
 import java.awt.geom.Path2D
 
@@ -49,7 +49,7 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
      */
     fun splitAtMultiple(
         tValues: Set<Double>,
-    ): OpenBezierSpline? {
+    ): OpenSpline? {
         if (tValues.isEmpty()) {
             return this.toSpline()
         }
@@ -71,7 +71,7 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
      */
     private fun splitAtMultipleSorted(
         tValuesSorted: List<Double>,
-    ): OpenBezierSpline? {
+    ): OpenSpline? {
         val partitioningResult =
             tValuesSorted.partitionSorted() ?: return this.toSpline() // We're done, no more places to split
 
@@ -115,7 +115,7 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
             return null
         }
 
-        return OpenBezierSpline.merge(
+        return OpenSpline.merge(
             splines = subSplines,
         )
     }
