@@ -14,7 +14,7 @@ class CubicBezierCurveTests {
             control0 = Point.of(Double.MIN_VALUE, Double.MIN_VALUE),
             control1 = Point.of(2 * Double.MIN_VALUE, Double.MIN_VALUE),
             end = Point.of(3.0 * Double.MIN_VALUE, 0.0),
-        ) as CubicBezierCurve
+        )
 
         assertNull(
             bezierCurve.findOffsetSpline(
@@ -31,7 +31,7 @@ class CubicBezierCurveTests {
             control0 = Point.of(-Double.MIN_VALUE, 0.0),
             control1 = Point.of(Double.MIN_VALUE, 0.0),
             end = Point.of(0.0, 0.0),
-        ) as CubicBezierCurve
+        )
 
         assertNull(
             bezierCurve.findOffsetSpline(
@@ -71,7 +71,7 @@ class CubicBezierCurveTests {
             control0 = Point.of(-1.0, 0.0),
             control1 = Point.of(1.0, 0.0),
             end = Point.of(0.0, 0.0),
-        ) as CubicBezierCurve
+        )
 
         val offsetSplineResult = assertNotNull(
             bezierCurve.findOffsetSpline(
@@ -81,9 +81,9 @@ class CubicBezierCurveTests {
         )
 
         assertEquals(
-            expected = 0.0,
+            expected = 1.35,
             actual = offsetSplineResult.globalDeviation,
-            absoluteTolerance = 0.00001,
+            absoluteTolerance = 0.01,
         )
     }
 

@@ -21,49 +21,18 @@ data class CubicBezierCurve private constructor(
     override val end: Point,
 ) : ProperBezierCurve<CubicBezierCurve>() {
     companion object {
-        /**
-         * @return A best-effort non-degenerate cubic Bézier curve with the
-         * given points, or a respective lower-level Bézier curve
-         */
         fun of(
             start: Point,
             control0: Point,
             control1: Point,
             end: Point,
-        ): BezierCurve<*> = when {
-            start == control0 -> QuadraticBezierCurve.of(
-                start = start,
-                control = control1,
-                end = end,
-            )
-
-            control0 == control1 -> QuadraticBezierCurve.of(
-                start = start,
-                control = control0,
-                end = end,
-            )
-
-            control1 == end -> QuadraticBezierCurve.of(
-                start = start,
-                control = control0,
-                end = end,
-            )
-
-            else -> CubicBezierCurve(
-                start = start,
-                control0 = control0,
-                control1 = control1,
-                end = end,
-            )
-        }
+        ): CubicBezierCurve = CubicBezierCurve(
+            start = start,
+            control0 = control0,
+            control1 = control1,
+            end = end,
+        )
     }
-
-    init {
-        require(start != control0)
-        require(control0 != control1)
-        require(control1 != end)
-    }
-
 
     fun findBoundingBox(): BoundingBox {
         val startPoint = curveFunction.startValue
@@ -185,33 +154,6 @@ data class CubicBezierCurve private constructor(
 
     fun isSingularity(): Boolean = setOf(start, control0, control1, end).size == 1
 
-    // FIXME: Use two origin points
-    override fun moveInNormalDirection(
-        distance: Double,
-    ): CubicBezierCurve? {
-        // For proper cubic Bézier curves, the normals should theoretically be
-        // defined for the whole range [0, 1], but it's difficult to guarantee
-        // in the numerical sense
-
-        val startNormalRay = normalRayFunction.startValue
-        val startNormalLine = startNormalRay?.containingLine ?: return null
-
-        val endNormalRay = normalRayFunction.endValue
-        val endNormalLine = endNormalRay?.containingLine ?: return null
-
-        val normalIntersectionPoint =
-            startNormalLine.findIntersectionPoint(endNormalLine) ?: return moveInDirectionPointWise(
-                // If there's no intersection point, the start and end vectors are parallel. We could choose either.
-                direction = startNormalRay.direction,
-                distance = distance,
-            )
-
-        return moveAwayPointWise(
-            origin = normalIntersectionPoint,
-            distance = distance,
-        )
-    }
-
     override val firstControl: Point
         get() = control0
 
@@ -235,24 +177,39 @@ data class CubicBezierCurve private constructor(
         end = transform(end),
     )
 
+    fun mapPointWiseOrNull(
+        transform: (Point) -> Point?,
+    ): CubicBezierCurve? {
+        return CubicBezierCurve(
+            start = transform(start) ?: return null,
+            control0 = transform(control0) ?: return null,
+            control1 = transform(control1) ?: return null,
+            end = transform(end) ?: return null,
+        )
+    }
+
+    /**
+     * The curve point-wise moved away from [origin] or null if [origin] was
+     * one of the control points
+     */
     fun moveAwayPointWise(
         origin: Point,
         distance: Double,
-    ): CubicBezierCurve = mapPointWise {
+    ): CubicBezierCurve? = mapPointWiseOrNull {
         it.moveAway(
             origin = origin,
             distance = distance,
-        )!! // TODO: Is this actually safe?
+        )
     }
 
     fun moveInDirectionPointWise(
         direction: Direction,
         distance: Double,
-    ): CubicBezierCurve = mapPointWise {
+    ): CubicBezierCurve? = mapPointWise {
         it.moveInDirection(
             direction = direction,
             distance = distance,
-        )!!
+        )
     }
 
     override fun toPath2D(): Path2D.Double = Path2D.Double().apply {

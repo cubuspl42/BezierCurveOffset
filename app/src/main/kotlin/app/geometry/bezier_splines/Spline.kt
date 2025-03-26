@@ -130,15 +130,6 @@ fun ClosedSpline.toPathClosed(): Path2D.Double = Path2D.Double().apply {
 
 fun Path2D.pathToControl(curve: Curve) {
     when (curve) {
-        is LineSegmentBezierCurve -> {
-            lineTo(p = curve.end)
-        }
-
-        is QuadraticBezierCurve -> {
-            lineTo(p = curve.control)
-            lineTo(p = curve.end)
-        }
-
         is CubicBezierCurve -> {
             lineTo(p = curve.control0)
             lineTo(p = curve.control1)
@@ -149,14 +140,6 @@ fun Path2D.pathToControl(curve: Curve) {
 
 fun Path2D.pathTo(curve: Curve) {
     when (curve) {
-        is LineSegmentBezierCurve -> {
-            lineTo(p = curve.end)
-        }
-
-        is QuadraticBezierCurve -> {
-            quadTo(p1 = curve.control, p2 = curve.end)
-        }
-
         is CubicBezierCurve -> {
             cubicTo(p1 = curve.control0, p2 = curve.control1, p3 = curve.end)
         }

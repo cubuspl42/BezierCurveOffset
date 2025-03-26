@@ -41,6 +41,7 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
         get() = this
 
 
+    // TODO: Move to ProperBezierCurve?
     /**
      * @param tValues - a set of t-values to split at
      *

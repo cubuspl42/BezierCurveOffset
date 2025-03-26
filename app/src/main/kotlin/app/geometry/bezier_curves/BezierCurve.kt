@@ -12,11 +12,6 @@ import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.bezier_splines.BezierSplineEdge
 import app.geometry.bezier_splines.OpenSpline
 
-/**
- * A Bézier curve of order N, depending on the specific subclass. Ideally, each
- * subclass should model non-degenerate curves of the given level, but this is
- * not strictly required for practical reasons.
- */
 sealed class BezierCurve<CurveT : BezierCurve<CurveT>> : Curve() {
     companion object {
         fun bindRay(

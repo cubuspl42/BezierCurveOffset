@@ -114,15 +114,6 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         }
     }
 
-    data object NormalOffsetStrategy : OffsetStrategy() {
-        override fun approximateOffsetCurve(
-            curve: ProperBezierCurve<*>,
-            offset: Double,
-        ): BezierCurve<*>? = curve.moveInNormalDirection(
-            distance = offset,
-        )
-    }
-
     companion object {
         private const val findOffsetDeviationThreshold = 0.1
         private const val findOffsetMaxSubdivisionLevel = 8
@@ -351,14 +342,4 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
 
         return firstSubSplitCurve.mergeWith(secondSubSplitCurve)
     }
-
-    /**
-     * Move the curve point-wise in the normal direction
-     *
-     * @return The moved curve, or null if one of the required normal directions
-     * was missing
-     */
-    abstract fun moveInNormalDirection(
-        distance: Double,
-    ): CurveT?
 }

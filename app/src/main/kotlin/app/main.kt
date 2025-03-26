@@ -23,11 +23,11 @@ fun main(args: Array<String>) {
         control0 = Point.of(200.0, 100.0),
         control1 = Point.of(400.0, 100.0),
         end = Point.of(300.0, 100.0),
-    ) as CubicBezierCurve
+    )
 
-   val splitSpline = bezierCurve.splitAtMultiple(
-       bezierCurve.basisFormula.findInterestingCriticalPoints().criticalPointsXY,
-   )!!
+    val splitSpline = bezierCurve.splitAtMultiple(
+        bezierCurve.basisFormula.findInterestingCriticalPoints().criticalPointsXY,
+    )!!
 
     val width = 1024
     val height = 768
