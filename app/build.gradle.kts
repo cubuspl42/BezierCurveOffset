@@ -31,6 +31,8 @@ dependencies {
     implementation(libs.jfree.svg)
     implementation(libs.jfree.chart)
     implementation(libs.ujmp)
+    implementation(libs.batik.anim)
+    implementation(libs.batik.svg.dom)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
