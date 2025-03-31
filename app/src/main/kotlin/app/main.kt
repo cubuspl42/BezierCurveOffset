@@ -1,24 +1,23 @@
 package app
 
 import app.geometry.Point
-import app.geometry.bezier_splines.BezierSpline
-import app.geometry.bezier_splines.BezierSplineEdge
-import app.geometry.bezier_splines.ClosedSpline
-import app.geometry.bezier_splines.drawSpline
+import app.geometry.bezier_splines.*
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory
-import org.apache.batik.anim.dom.SVGOMPathElement
 import org.jfree.svg.SVGGraphics2D
 import org.jfree.svg.SVGUtils
-import org.w3c.dom.svg.SVGElement
-import org.w3c.dom.svg.SVGPathSeg
-import org.w3c.dom.svg.SVGPathSegCurvetoCubicAbs
-import org.w3c.dom.svg.SVGPathSegMovetoAbs
+import org.w3c.dom.svg.*
 import java.awt.BasicStroke
 import java.awt.Color
 import java.io.File
 import java.io.IOException
+import java.nio.file.Path
+import javax.xml.transform.Source
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 import kotlin.io.path.Path
 import kotlin.io.path.reader
+
 
 val documentFactory: SAXSVGDocumentFactory = SAXSVGDocumentFactory(null)
 
@@ -76,7 +75,7 @@ sealed class PathSeg {
     abstract val finalPoint: Point
 }
 
-fun SVGOMPathElement.toSpline(): ClosedSpline {
+fun SVGPathElement.toSpline(): ClosedSpline {
     val svgPathSegs = pathSegList.asList()
 
     require(svgPathSegs.last().pathSegType == SVGPathSeg.PATHSEG_CLOSEPATH)
@@ -86,7 +85,6 @@ fun SVGOMPathElement.toSpline(): ClosedSpline {
     }
 
     val (firstPathSeg, tailPathSegs) = pathSegs.uncons()!!
-
 
     val originPathSeg = firstPathSeg as PathSeg.MoveTo
     val edgePathSegs = tailPathSegs.elementWiseAs<PathSeg.CubicTo>()
@@ -108,32 +106,45 @@ fun SVGOMPathElement.toSpline(): ClosedSpline {
     )
 }
 
+fun extractSplineFromFile(
+    filePath: Path,
+): BezierSpline<*> {
+    val reader = filePath.reader()
+    val uri = "file://Bezier.svg"
+
+    val document = documentFactory.createDocument(uri, reader) as SVGDocument
+    val svgElement = document.documentElement as SVGElement
+
+    val pathElement = svgElement.childElements.single() as SVGPathElement
+
+    return pathElement.toSpline()
+}
+
+fun dumpSplineToFile(
+    spline: BezierSpline<*>,
+    filePath: Path,
+) {
+    val document = spline.toSvgDocument(
+        width = 100,
+        height = 100,
+    )
+
+    val transformer = TransformerFactory.newInstance().newTransformer()
+
+    val input: Source = DOMSource(document)
+    val output = StreamResult(filePath.toFile())
+
+    transformer.transform(input, output);
+}
+
+
 fun main() {
-    try {
-        val reader = Path("/Users/jakub/Temporary/Shape.svg").reader()
-        val uri = "file://Bezier.svg"
+    val spline = extractSplineFromFile(
+        filePath = Path("/Users/jakub/Temporary/Shape.svg"),
+    )
 
-        val document = documentFactory.createDocument(uri, reader)
-        val svgElement = document.documentElement as SVGElement
-
-        val pathElement = svgElement.childElements.single() as SVGOMPathElement
-
-        val spline = pathElement.toSpline()
-
-        val width = 100
-        val height = width
-        val svgGraphics2D = SVGGraphics2D(width.toDouble(), height.toDouble())
-
-        svgGraphics2D.stroke = BasicStroke(1.0f)
-
-        spline.drawSpline(
-            graphics2D = svgGraphics2D,
-            color = Color.RED,
-        )
-
-        val file = File("/Users/jakub/Temporary/Shape2.svg")
-        SVGUtils.writeToSVG(file, svgGraphics2D.svgElement)
-    } catch (ex: IOException) {
-        println(ex)
-    }
+    dumpSplineToFile(
+        spline = spline,
+        filePath = Path("/Users/jakub/Temporary/Shape2.svg"),
+    )
 }

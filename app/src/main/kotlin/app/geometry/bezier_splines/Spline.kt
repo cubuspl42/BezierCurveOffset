@@ -1,11 +1,16 @@
 package app.geometry.bezier_splines
 
+import app.*
 import app.geometry.*
 import app.geometry.bezier_curves.*
-import app.mapWithNext
+import org.w3c.dom.svg.SVGDocument
+import org.w3c.dom.svg.SVGPathElement
+import org.w3c.dom.svg.SVGPathSeg
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
+
+
 
 /**
  * A Bézier spline, also called "poly-Bézier curve", or "composite Bézier curve"
@@ -90,6 +95,128 @@ sealed class BezierSpline<SplineT : BezierSpline<SplineT>> {
             )
         }
     }
+}
+
+fun BezierSpline<*>.toSvgDocument(
+    width: Int,
+    height: Int,
+): SVGDocument = createSvgDocument().apply {
+    val svgElement = documentSvgElement
+
+    svgElement.width = width
+    svgElement.height = height
+
+    svgElement.appendChild(
+        toSvgPath(document = this).apply {
+            setAttributeNS(null, "fill", "none")
+            setAttributeNS(null, "stroke", "red")
+        },
+    )
+
+    svgElement.appendChild(
+        toControlSvgPath(document = this).apply {
+            setAttributeNS(null, "fill", "none")
+            setAttributeNS(null, "stroke", "lightGray")
+        },
+    )
+}
+
+fun BezierSpline<*>.toSvgPath(
+    document: SVGDocument,
+): SVGPathElement {
+    val spline = this
+
+    return document.createPathElement().apply {
+        val start = subCurves.first().start
+
+        pathSegList.appendItem(
+            createSVGPathSegMovetoAbs(
+                start.x.toFloat(),
+                start.y.toFloat(),
+            ),
+        )
+
+        subCurves.forEach { subCurve ->
+            pathSegList.appendItem(
+                subCurve.toSvgPathSeg(
+                    pathElement = this,
+                )
+            )
+        }
+
+        if (spline is ClosedSpline) {
+            pathSegList.appendItem(
+                createSVGPathSegClosePath(),
+            )
+        }
+    }
+}
+
+fun BezierSpline<*>.toControlSvgPath(
+    document: SVGDocument,
+): SVGPathElement {
+    val spline = this
+
+    return document.createPathElement().apply {
+        val startKnot = firstLink.startKnot
+
+        pathSegList.appendItem(
+            createSVGPathSegMovetoAbs(
+                startKnot.x.toFloat(),
+                startKnot.y.toFloat(),
+            ),
+        )
+
+        subCurves.forEach { subCurve ->
+            pathSegList.appendAllItems(
+                subCurve.toControlSvgPathSegs(
+                    pathElement = this,
+                )
+            )
+        }
+
+        if (spline is ClosedSpline) {
+            pathSegList.appendItem(
+                createSVGPathSegClosePath(),
+            )
+        }
+    }
+}
+
+private fun Curve.toSvgPathSeg(
+    pathElement: SVGPathElement,
+): SVGPathSeg = when (this) {
+    is CubicBezierCurve -> pathElement.createSVGPathSegCurvetoCubicAbs(
+        end.x.toFloat(),
+        end.y.toFloat(),
+        control0.x.toFloat(),
+        control0.y.toFloat(),
+        control1.x.toFloat(),
+        control1.y.toFloat(),
+    )
+
+    else -> throw UnsupportedOperationException()
+}
+
+private fun Curve.toControlSvgPathSegs(
+    pathElement: SVGPathElement,
+): List<SVGPathSeg> = when (this) {
+    is CubicBezierCurve -> listOf(
+        pathElement.createSVGPathSegLinetoAbs(
+            control0.x.toFloat(),
+            control0.y.toFloat(),
+        ),
+        pathElement.createSVGPathSegLinetoAbs(
+            control1.x.toFloat(),
+            control1.y.toFloat(),
+        ),
+        pathElement.createSVGPathSegLinetoAbs(
+            end.x.toFloat(),
+            end.y.toFloat(),
+        ),
+    )
+
+    else -> throw UnsupportedOperationException()
 }
 
 fun OpenSpline.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {
