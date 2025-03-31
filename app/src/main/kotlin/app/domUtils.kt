@@ -1,9 +1,14 @@
 package app
 
 import org.apache.batik.anim.dom.SVGDOMImplementation
+import org.apache.batik.anim.dom.SVGGraphicsElement
 import org.w3c.dom.*
 import org.w3c.dom.css.CSSStyleDeclaration
 import org.w3c.dom.svg.*
+import java.nio.file.Path
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 
 fun NodeList.asList(): List<Node> = object : AbstractList<Node>() {
     override val size: Int
@@ -30,6 +35,49 @@ var SVGElement.height: Int
     get() = getAttribute("height").toInt()
     set(value) {
         setAttribute("height", value.toString())
+    }
+
+
+/**
+ * The SVG presentational fill attribute and the CSS fill property can be used
+ * with the following SVG elements:
+ *
+ *     <circle>
+ *     <ellipse>
+ *     <path>
+ *     <polygon>
+ *     <polyline>
+ *     <rect>
+ *     <text>
+ *     <textPath>
+ *     <tref>
+ *     <tspan>
+ */
+var SVGElement.fill: String
+    get() = getAttribute("fill")
+    set(value) {
+        setAttribute("fill", value)
+    }
+
+/**
+ * You can use this attribute with the following SVG elements:
+ *
+ *     <circle>
+ *     <ellipse>
+ *     <line>
+ *     <path>
+ *     <polygon>
+ *     <polyline>
+ *     <rect>
+ *     <text>
+ *     <textPath>
+ *     <tref>
+ *     <tspan>
+ */
+var SVGElement.stroke: String
+    get() = getAttribute("stroke")
+    set(value) {
+        setAttribute("stroke", value)
     }
 
 val SVGDocument.documentSvgElement: SVGElement
@@ -68,4 +116,13 @@ val Element.childElements: List<Element>
 
 fun CSSStyleDeclaration.setProperty(propertyName: String, value: String) {
     setProperty(propertyName, value, "")
+}
+
+fun Document.writeToFile(filePath: Path) {
+    val transformer = TransformerFactory.newInstance().newTransformer()
+
+    val source = DOMSource(this)
+    val result = StreamResult(filePath.toFile())
+
+    transformer.transform(source, result);
 }

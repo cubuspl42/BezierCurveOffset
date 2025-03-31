@@ -116,31 +116,17 @@ fun extractSplineFromFile(
     return pathElement.toSpline()
 }
 
-fun dumpSplineToFile(
-    spline: BezierSpline<*>,
-    filePath: Path,
-) {
-    val document = spline.toSvgDocument(
-        width = 100,
-        height = 100,
-    )
-
-    val transformer = TransformerFactory.newInstance().newTransformer()
-
-    val input: Source = DOMSource(document)
-    val output = StreamResult(filePath.toFile())
-
-    transformer.transform(input, output);
-}
-
-
 fun main() {
     val spline = extractSplineFromFile(
         filePath = Path("/Users/jakub/Temporary/Shape.svg"),
     )
 
-    dumpSplineToFile(
-        spline = spline,
+    val document = spline.toSvgDocument(
+        width = 100,
+        height = 100,
+    )
+
+    document.writeToFile(
         filePath = Path("/Users/jakub/Temporary/Shape2.svg"),
     )
 }

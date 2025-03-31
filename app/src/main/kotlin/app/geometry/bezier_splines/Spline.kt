@@ -107,16 +107,16 @@ fun BezierSpline<*>.toSvgDocument(
     svgElement.height = height
 
     svgElement.appendChild(
-        toSvgPath(document = this).apply {
-            setAttributeNS(null, "fill", "none")
-            setAttributeNS(null, "stroke", "red")
+        toControlSvgPath(document = this).apply {
+            fill = "none"
+            stroke = "lightGray"
         },
     )
 
     svgElement.appendChild(
-        toControlSvgPath(document = this).apply {
-            setAttributeNS(null, "fill", "none")
-            setAttributeNS(null, "stroke", "lightGray")
+        toSvgPath(document = this).apply {
+            fill = "none"
+            stroke = "red"
         },
     )
 }
