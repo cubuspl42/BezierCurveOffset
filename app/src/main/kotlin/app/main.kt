@@ -1,15 +1,12 @@
 package app
 
 import app.geometry.Point
-import app.geometry.bezier_splines.*
+import app.geometry.bezier_splines.BezierSpline
+import app.geometry.bezier_splines.BezierSplineEdge
+import app.geometry.bezier_splines.ClosedSpline
+import app.geometry.bezier_splines.toSvgDocument
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory
-import org.jfree.svg.SVGGraphics2D
-import org.jfree.svg.SVGUtils
 import org.w3c.dom.svg.*
-import java.awt.BasicStroke
-import java.awt.Color
-import java.io.File
-import java.io.IOException
 import java.nio.file.Path
 import javax.xml.transform.Source
 import javax.xml.transform.TransformerFactory
@@ -17,7 +14,6 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 import kotlin.io.path.Path
 import kotlin.io.path.reader
-
 
 val documentFactory: SAXSVGDocumentFactory = SAXSVGDocumentFactory(null)
 

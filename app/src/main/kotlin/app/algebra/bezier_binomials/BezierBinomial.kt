@@ -5,8 +5,6 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.polynomials.Polynomial
 import app.geometry.Segment
 import app.geometry.bezier_curves.TimeFunction
-import org.jfree.data.xy.XYSeries
-import org.jfree.data.xy.XYSeriesCollection
 
 /**
  * @param V - the type of the weights and the result
@@ -44,26 +42,6 @@ val BezierBinomial<Vector>.segments: List<Segment>
         is QuadraticBezierBinomial<Vector> -> this.segmentsQuadratic
         is CubicBezierBinomial<Vector> -> this.segmentsCubic
     }
-
-fun BezierBinomial<Vector>.toDataset(
-    samplingStrategy: SamplingStrategy,
-): XYSeriesCollection {
-    val samples = this.sample(strategy = samplingStrategy)
-
-    val xSeries = XYSeries("X")
-    val ySeries = XYSeries("Y")
-
-    samples.forEach { sample ->
-        val t = sample.x
-        xSeries.add(t, sample.value.x)
-        ySeries.add(t, sample.value.y)
-    }
-
-    return XYSeriesCollection().apply {
-        addSeries(xSeries)
-        addSeries(ySeries)
-    }
-}
 
 fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial? = when (this) {
     is LinearBezierBinomial<Double> -> this.toPolynomialFormulaLinear()

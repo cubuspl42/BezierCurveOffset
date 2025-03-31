@@ -2,12 +2,9 @@ package app.algebra.bezier_binomials
 
 import app.algebra.Vector
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
-import app.geometry.TimedPointSeries.Companion.sample
 import app.geometry.lineTo
 import app.geometry.moveTo
 import app.step
-import org.jfree.data.xy.XYSeries
-import org.jfree.data.xy.XYSeriesCollection
 import java.awt.geom.Path2D
 
 abstract class RealFunction<out V> {
@@ -56,23 +53,6 @@ fun <V : Any> SamplingStrategy.sample(
             x = x,
             value = it,
         )
-    }
-}
-
-fun RealFunction<Double>.toDataset(
-    samplingStrategy: SamplingStrategy,
-    name: String,
-): XYSeriesCollection {
-    val samples = sample(strategy = samplingStrategy)
-
-    val series = XYSeries(name)
-
-    samples.forEach { sample ->
-        series.add(sample.x, sample.value)
-    }
-
-    return XYSeriesCollection().apply {
-        addSeries(series)
     }
 }
 
