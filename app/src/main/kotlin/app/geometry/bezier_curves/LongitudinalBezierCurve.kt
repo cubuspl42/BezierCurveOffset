@@ -50,7 +50,7 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
      */
     fun splitAtMultiple(
         tValues: Set<Double>,
-    ): OpenSpline? {
+    ): OpenSpline<BezierCurve<*>>? {
         if (tValues.isEmpty()) {
             return this.toSpline()
         }
@@ -72,7 +72,7 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
      */
     private fun splitAtMultipleSorted(
         tValuesSorted: List<Double>,
-    ): OpenSpline? {
+    ): OpenSpline<BezierCurve<*>>? {
         val partitioningResult =
             tValuesSorted.partitionSorted() ?: return this.toSpline() // We're done, no more places to split
 

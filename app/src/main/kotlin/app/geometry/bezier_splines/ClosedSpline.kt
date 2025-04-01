@@ -2,15 +2,16 @@ package app.geometry.bezier_splines
 
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
+import app.geometry.bezier_curves.SegmentCurve
 
-class ClosedSpline(
+class ClosedSpline<CurveT: SegmentCurve>(
     /**
      * The cyclic chain of links, must not be empty
      */
-    override val segments: List<Segment<*>>,
-) : Spline() {
+    override val segments: List<Segment<CurveT>>,
+) : Spline<CurveT>() {
     abstract class ContourSplineApproximationResult(
-        val contourSpline: ClosedSpline,
+        val contourSpline: ClosedSpline<*>,
     ) {
         companion object {
             fun wrap(
@@ -18,12 +19,12 @@ class ClosedSpline(
             ): ContourSplineApproximationResult {
                 require(subResults.isNotEmpty())
 
-                val mergedContourSpline = ClosedSpline.interconnect(
+                val interconnectedContourSpline = ClosedSpline.interconnect(
                     splines = subResults.map { it.offsetSpline },
                 )
 
                 return object : ContourSplineApproximationResult(
-                    contourSpline = mergedContourSpline,
+                    contourSpline = interconnectedContourSpline,
                 ) {
                     override val globalDeviation: Double by lazy {
                         subResults.maxOf { it.globalDeviation }
@@ -40,13 +41,12 @@ class ClosedSpline(
 
     companion object {
         fun interconnect(
-            splines: List<OpenSpline>,
-        ): ClosedSpline {
+            splines: List<OpenSpline<BezierCurve<*>>>,
+        ): ClosedSpline<*> {
             require(splines.size >= 2)
 
-            TODO()
-
-            return ClosedSpline(
+            // TODO
+            return ClosedSpline<SegmentCurve>(
                 segments = emptyList(),
             )
         }

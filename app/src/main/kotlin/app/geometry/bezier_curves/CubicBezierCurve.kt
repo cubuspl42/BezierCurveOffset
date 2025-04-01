@@ -154,7 +154,7 @@ data class CubicBezierCurve private constructor(
         )
     }
 
-    override fun toSpline(): OpenSpline = OpenSpline(
+    override fun toSpline(): OpenSpline<BezierCurve<*>> = OpenSpline(
         segments = listOf(
             Spline.Segment.bezier(
                 startKnot = start,

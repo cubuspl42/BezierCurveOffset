@@ -22,7 +22,7 @@ import java.awt.geom.Path2D
  * A Bézier spline, also called "poly-Bézier curve", or "composite Bézier curve"
  * (a spline formed of cubic Bézier curves)
  */
-sealed class Spline {
+sealed class Spline<out CurveT: SegmentCurve> {
     sealed interface Node {
         /**
          * The "front" knot, i.e. the next knot when looked from the perspective
@@ -31,7 +31,7 @@ sealed class Spline {
         val frontKnot: Point
     }
 
-    data class Segment<CurveT: SegmentCurve>(
+    data class Segment<out CurveT: SegmentCurve>(
         val startKnot: Point,
         val edge: SegmentCurve.Edge<CurveT>,
     ) : Node {
@@ -67,10 +67,10 @@ sealed class Spline {
             get() = endKnot
     }
 
-    val firstSegment: Segment<*>
+    val firstSegment: Segment<CurveT>
         get() = segments.first()
 
-    val lastSegment: Segment<*>
+    val lastSegment: Segment<CurveT>
         get() = segments.last()
 
     /**
@@ -78,7 +78,7 @@ sealed class Spline {
      */
     abstract val nodes: Iterable<Node>
 
-    abstract val segments: Iterable<Segment<*>>
+    abstract val segments: Iterable<Segment<CurveT>>
 
     abstract val rightEdgeNode: Node
 
@@ -96,7 +96,7 @@ sealed class Spline {
     }
 }
 
-fun Spline.toSvgPath(
+fun Spline<*>.toSvgPath(
     document: SVGDocument,
 ): SVGPathElement {
     val spline = this
@@ -127,7 +127,7 @@ fun Spline.toSvgPath(
     }
 }
 
-fun Spline.toControlSvgPath(
+fun Spline<*>.toControlSvgPath(
     document: SVGDocument,
 ): SVGPathElement {
     val spline = this
@@ -194,7 +194,7 @@ private fun SegmentCurve.toControlSvgPathSegs(
     else -> throw UnsupportedOperationException()
 }
 
-fun OpenSpline.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {
+fun OpenSpline<*>.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {
     moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
@@ -202,7 +202,7 @@ fun OpenSpline.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {
     }
 }
 
-fun OpenSpline.toPathOpen(): Path2D.Double = Path2D.Double().apply {
+fun OpenSpline<*>.toPathOpen(): Path2D.Double = Path2D.Double().apply {
     moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
@@ -210,7 +210,7 @@ fun OpenSpline.toPathOpen(): Path2D.Double = Path2D.Double().apply {
     }
 }
 
-fun ClosedSpline.toControlPathClosed(): Path2D.Double = Path2D.Double().apply {
+fun ClosedSpline<*>.toControlPathClosed(): Path2D.Double = Path2D.Double().apply {
     moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
@@ -220,7 +220,7 @@ fun ClosedSpline.toControlPathClosed(): Path2D.Double = Path2D.Double().apply {
     closePath()
 }
 
-fun ClosedSpline.toPathClosed(): Path2D.Double = Path2D.Double().apply {
+fun ClosedSpline<*>.toPathClosed(): Path2D.Double = Path2D.Double().apply {
     moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
@@ -248,17 +248,17 @@ fun Path2D.pathTo(curve: SegmentCurve) {
     }
 }
 
-fun Spline.toControlPath(): Path2D.Double = when (this) {
+fun Spline<*>.toControlPath(): Path2D.Double = when (this) {
     is ClosedSpline -> toControlPathClosed()
     is OpenSpline -> toControlPathOpen()
 }
 
-fun Spline.toPath(): Path2D.Double = when (this) {
+fun Spline<*>.toPath(): Path2D.Double = when (this) {
     is ClosedSpline -> toPathClosed()
     is OpenSpline -> toPathOpen()
 }
 
-fun Spline.drawSpline(
+fun Spline<*>.drawSpline(
     graphics2D: Graphics2D,
     color: Color = Color.BLACK,
 ) {

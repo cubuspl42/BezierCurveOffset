@@ -40,7 +40,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
     }
 
     abstract class OffsetSplineApproximationResult(
-        val offsetSpline: OpenSpline,
+        val offsetSpline: OpenSpline<BezierCurve<*>>,
     ) {
         companion object {
             fun precise(

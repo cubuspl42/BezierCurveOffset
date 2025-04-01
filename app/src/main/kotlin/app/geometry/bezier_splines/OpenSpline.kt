@@ -1,24 +1,25 @@
 package app.geometry.bezier_splines
 
 import app.geometry.Point
+import app.geometry.bezier_curves.SegmentCurve
 import app.interleave
 import app.mapFirst
 import app.withPreviousOrNull
 
-class OpenSpline(
+class OpenSpline<CurveT: SegmentCurve>(
     /**
      * The path of links, must not be empty
      */
-    override val segments: List<Segment<*>>,
+    override val segments: List<Segment<CurveT>>,
     /**
      * The plug node that terminates the path of links
      */
     val terminator: Terminator,
-) : Spline() {
+) : Spline<CurveT>() {
     companion object {
-        fun merge(
-            splines: List<OpenSpline>,
-        ): OpenSpline {
+        fun <CurveT : SegmentCurve> merge(
+            splines: List<OpenSpline<CurveT>>,
+        ): OpenSpline<CurveT> {
             require(splines.isNotEmpty())
 
             if (splines.size == 1) {
@@ -34,7 +35,6 @@ class OpenSpline(
                         firstNode.copy(
                             startKnot = Point.midPoint(prevSplineEndEndKnot, splineStartKnot),
                         )
-
                     }
 
                     else -> spline.segments
@@ -56,8 +56,8 @@ class OpenSpline(
     }
 
     fun mergeWith(
-        rightSubSplitCurve: OpenSpline,
-    ): OpenSpline = OpenSpline.merge(
+        rightSubSplitCurve: OpenSpline<CurveT>,
+    ): OpenSpline<CurveT> = OpenSpline.merge(
         splines = listOf(this, rightSubSplitCurve),
     )
 

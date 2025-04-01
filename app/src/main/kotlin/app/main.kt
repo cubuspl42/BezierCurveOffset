@@ -67,7 +67,7 @@ sealed class PathSeg {
     abstract val finalPoint: Point
 }
 
-fun SVGPathElement.toSpline(): ClosedSpline {
+fun SVGPathElement.toSpline(): ClosedSpline<*> {
     val svgPathSegs = pathSegList.asList()
 
     require(svgPathSegs.last().pathSegType == SVGPathSeg.PATHSEG_CLOSEPATH)
@@ -98,7 +98,7 @@ fun SVGPathElement.toSpline(): ClosedSpline {
 
 fun extractSplineFromFile(
     filePath: Path,
-): ClosedSpline {
+): ClosedSpline<*> {
     val reader = filePath.reader()
     val uri = "file://Bezier.svg"
 
