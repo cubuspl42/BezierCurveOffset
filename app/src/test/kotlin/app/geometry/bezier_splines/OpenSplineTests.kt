@@ -3,13 +3,12 @@ package app.geometry.bezier_splines
 import app.geometry.Point
 import app.geometry.bezier_splines.Spline.InnerLink
 import app.geometry.bezier_splines.Spline.TerminalLink
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class OpenSplineTests {
     @Test
-    fun testMerge_singleSpline_singleLink() {
+    fun testMerge_singleSpline_singleSubCurve() {
         val links = listOf(
             InnerLink(
                 startKnot = Point.of(0.0, 0.0),
@@ -43,7 +42,7 @@ class OpenSplineTests {
     }
 
     @Test
-    fun testMerge_singleSpline_multipleLinks() {
+    fun testMerge_singleSpline_multipleSubCurves() {
         val links = listOf(
             InnerLink(
                 startKnot = Point.of(0.0, 0.0),
@@ -84,7 +83,7 @@ class OpenSplineTests {
     }
 
     @Test
-    fun testMerge_twoSplines() {
+    fun testMerge_twoSplines_singleSubCurve() {
         val start = Point.of(0.0, 0.0)
         val control0 = Point.of(1.0, 1.0)
         val control1 = Point.of(2.0, 1.0)
@@ -148,7 +147,7 @@ class OpenSplineTests {
     }
 
     @Test
-    fun testMerge_multipleSplines() {
+    fun testMerge_multipleSplines_multipleSubCurves() {
         val link1 = InnerLink(
             startKnot = Point.of(0.0, 0.0),
             edge = BezierSplineEdge(
@@ -195,15 +194,38 @@ class OpenSplineTests {
             terminalLink = terminalLink2,
         )
 
-        val mergedSpline = OpenSpline.merge(listOf(spline1, spline2))
+        val link5 = InnerLink(
+            startKnot = Point.of(12.0, 0.0),
+            edge = BezierSplineEdge(
+                startControl = Point.of(13.0, -1.0),
+                endControl = Point.of(14.0, -1.0)
+            ),
+        )
+
+        val link6 = InnerLink(
+            startKnot = Point.of(15.0, 0.0),
+            edge = BezierSplineEdge(
+                startControl = Point.of(16.0, 1.0),
+                endControl = Point.of(17.0, 1.0)
+            ),
+        )
+
+        val terminalLink3 = TerminalLink(endKnot = Point.of(18.0, 0.0))
+
+        val spline3 = OpenSpline(
+            innerLinks = listOf(link5, link6),
+            terminalLink = terminalLink3,
+        )
+
+        val mergedSpline = OpenSpline.merge(listOf(spline1, spline2, spline3))
 
         assertEquals(
-            expected = listOf(link1, link2, link3, link4),
+            expected = listOf(link1, link2, link3, link4, link5, link6),
             actual = mergedSpline.innerLinks,
         )
 
         assertEquals(
-            expected = terminalLink2,
+            expected = terminalLink3,
             actual = mergedSpline.terminalLink,
         )
     }
