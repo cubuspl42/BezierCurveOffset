@@ -24,7 +24,11 @@ import java.awt.geom.Path2D
  */
 sealed class Spline {
     sealed interface Node {
-        val knot: Point
+        /**
+         * The "front" knot, i.e. the next knot when looked from the perspective
+         * of the previous node.
+         */
+        val frontKnot: Point
     }
 
     data class Segment(
@@ -52,14 +56,14 @@ sealed class Spline {
             )
         }
 
-        override val knot: Point
+        override val frontKnot: Point
             get() = startKnot
     }
 
     data class Terminator(
         val endKnot: Point,
     ) : Node {
-        override val knot: Point
+        override val frontKnot: Point
             get() = endKnot
     }
 
@@ -81,7 +85,7 @@ sealed class Spline {
     val subCurves: List<SegmentCurve> by lazy {
         segments.mapWithNext(rightEdge = rightEdgeNode) { segment, nextLink ->
             val startKnot = segment.startKnot
-            val endKnot = nextLink.knot
+            val endKnot = nextLink.frontKnot
             val edge = segment.edge
 
             edge.bind(
