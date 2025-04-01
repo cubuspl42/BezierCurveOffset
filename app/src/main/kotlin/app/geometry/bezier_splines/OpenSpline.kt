@@ -12,7 +12,7 @@ class OpenSpline(
      * The plug node that terminates the path of links
      */
     val terminalLink: TerminalLink,
-) : Spline<OpenSpline>() {
+) : Spline() {
     companion object {
         fun ofEdge(
             startKnot: Point,

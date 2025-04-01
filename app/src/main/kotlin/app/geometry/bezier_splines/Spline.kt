@@ -20,7 +20,7 @@ import java.awt.geom.Path2D
  * A Bézier spline, also called "poly-Bézier curve", or "composite Bézier curve"
  * (a spline formed of cubic Bézier curves)
  */
-sealed class Spline<SplineT : Spline<SplineT>> {
+sealed class Spline {
     sealed interface Link {
         val knot: Point
     }
@@ -91,7 +91,7 @@ sealed class Spline<SplineT : Spline<SplineT>> {
 }
 
 
-fun Spline<*>.toSvgPath(
+fun Spline.toSvgPath(
     document: SVGDocument,
 ): SVGPathElement {
     val spline = this
@@ -122,7 +122,7 @@ fun Spline<*>.toSvgPath(
     }
 }
 
-fun Spline<*>.toControlSvgPath(
+fun Spline.toControlSvgPath(
     document: SVGDocument,
 ): SVGPathElement {
     val spline = this
@@ -243,17 +243,17 @@ fun Path2D.pathTo(curve: Curve) {
     }
 }
 
-fun Spline<*>.toControlPath(): Path2D.Double = when (this) {
+fun Spline.toControlPath(): Path2D.Double = when (this) {
     is ClosedSpline -> toControlPathClosed()
     is OpenSpline -> toControlPathOpen()
 }
 
-fun Spline<*>.toPath(): Path2D.Double = when (this) {
+fun Spline.toPath(): Path2D.Double = when (this) {
     is ClosedSpline -> toPathClosed()
     is OpenSpline -> toPathOpen()
 }
 
-fun Spline<*>.drawSpline(
+fun Spline.drawSpline(
     graphics2D: Graphics2D,
     color: Color = Color.BLACK,
 ) {
