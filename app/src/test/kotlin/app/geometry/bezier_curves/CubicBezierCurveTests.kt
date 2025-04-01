@@ -37,44 +37,44 @@ class CubicBezierCurveTests {
             actual = splitSpline.innerLinks.size,
         )
 
-        val firstLink = splitSpline.innerLinks[0]
-        val firstEdge = assertIs<BezierSplineEdge>(firstLink.edge)
+        val link0 = splitSpline.innerLinks[0]
+        val edge0 = assertIs<BezierSplineEdge>(link0.edge)
 
         assertEquals(
             expected = start,
-            actual = firstLink.startKnot,
+            actual = link0.startKnot,
         )
 
         assertPointEquals(
             expected = expectedNewControl0,
-            actual = firstEdge.startControl,
+            actual = edge0.startControl,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl1,
-            actual = firstEdge.endControl,
+            actual = edge0.endControl,
             absoluteTolerance = eps,
         )
 
-        val secondLink = splitSpline.innerLinks[1]
-        val secondEdge = assertIs<BezierSplineEdge>(secondLink.edge)
+        val link1 = splitSpline.innerLinks[1]
+        val edge1 = assertIs<BezierSplineEdge>(link1.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint,
-            actual = secondLink.startKnot,
+            actual = link1.startKnot,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl2,
-            actual = secondEdge.startControl,
+            actual = edge1.startControl,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl3,
-            actual = secondEdge.endControl,
+            actual = edge1.endControl,
             absoluteTolerance = eps,
         )
 
@@ -116,12 +116,12 @@ class CubicBezierCurveTests {
             actual = splitSpline.innerLinks.size,
         )
 
-        val firstLink = splitSpline.firstLink
-        val firstEdge = assertIs<BezierSplineEdge>(firstLink.edge)
+        val link0 = splitSpline.innerLinks[0]
+        val firstEdge = assertIs<BezierSplineEdge>(link0.edge)
 
         assertEquals(
             expected = start,
-            actual = firstLink.startKnot,
+            actual = link0.startKnot,
         )
 
         assertPointEquals(
@@ -136,45 +136,169 @@ class CubicBezierCurveTests {
             absoluteTolerance = eps,
         )
 
-        val secondLink = splitSpline.innerLinks[1]
-        val secondEdge = assertIs<BezierSplineEdge>(secondLink.edge)
+        val link1 = splitSpline.innerLinks[1]
+        val edge1 = assertIs<BezierSplineEdge>(link1.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint0,
-            actual = secondLink.startKnot,
+            actual = link1.startKnot,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl2,
-            actual = secondEdge.startControl,
+            actual = edge1.startControl,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl3,
-            actual = secondEdge.endControl,
+            actual = edge1.endControl,
             absoluteTolerance = eps,
         )
 
-        val thirdLink = splitSpline.innerLinks[2]
-        val thirdEdge = assertIs<BezierSplineEdge>(thirdLink.edge)
+        val link2 = splitSpline.innerLinks[2]
+        val edge2 = assertIs<BezierSplineEdge>(link2.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint1,
-            actual = thirdLink.startKnot,
+            actual = link2.startKnot,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl4,
-            actual = thirdEdge.startControl,
+            actual = edge2.startControl,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl5,
-            actual = thirdEdge.endControl,
+            actual = edge2.endControl,
+            absoluteTolerance = eps,
+        )
+
+        assertEquals(
+            expected = end,
+            actual = splitSpline.terminalLink.endKnot
+        )
+    }
+
+    @Test
+    fun testSplitAtMultiple_threeTValues() {
+        val start = Point.of(0.0, 0.0)
+        val end = Point.of(3.0, 0.0)
+
+        val bezierCurve = CubicBezierCurve.of(
+            start = start,
+            control0 = Point.of(1.0, 1.0),
+            control1 = Point.of(2.0, 1.0),
+            end = end,
+        )
+
+        val splitSpline = assertNotNull(
+            bezierCurve.splitAtMultiple(
+                tValues = setOf(0.2, 0.5, 0.8),
+            ),
+        )
+
+        val expectedNewControl0 = Point.of(0.2, 0.2)
+        val expectedNewControl1 = Point.of(0.4, 0.36)
+        val expectedSplitPoint0 = Point.of(0.6, 0.48)
+        val expectedNewControl2 = Point.of(0.9, 0.66)
+        val expectedNewControl3 = Point.of(1.2, 0.75)
+        val expectedSplitPoint1 = Point.of(1.5, 0.75)
+        val expectedNewControl4 = Point.of(1.8, 0.75)
+        val expectedNewControl5 = Point.of(2.1, 0.66)
+        val expectedSplitPoint2 = Point.of(2.4, 0.48)
+        val expectedNewControl6 = Point.of(2.6, 0.36)
+        val expectedNewControl7 = Point.of(2.8, 0.2)
+
+        assertEquals(
+            expected = 4,
+            actual = splitSpline.innerLinks.size,
+        )
+
+        val link0 = splitSpline.innerLinks[0]
+        val edge0 = assertIs<BezierSplineEdge>(link0.edge)
+
+        assertEquals(
+            expected = start,
+            actual = link0.startKnot,
+        )
+
+        assertPointEquals(
+            expected = expectedNewControl0,
+            actual = edge0.startControl,
+            absoluteTolerance = eps,
+        )
+
+        assertPointEquals(
+            expected = expectedNewControl1,
+            actual = edge0.endControl,
+            absoluteTolerance = eps,
+        )
+
+        val link1 = splitSpline.innerLinks[1]
+        val edge1 = assertIs<BezierSplineEdge>(link1.edge)
+
+        assertPointEquals(
+            expected = expectedSplitPoint0,
+            actual = link1.startKnot,
+            absoluteTolerance = eps,
+        )
+
+        assertPointEquals(
+            expected = expectedNewControl2,
+            actual = edge1.startControl,
+            absoluteTolerance = eps,
+        )
+
+        assertPointEquals(
+            expected = expectedNewControl3,
+            actual = edge1.endControl,
+            absoluteTolerance = eps,
+        )
+
+        val link2 = splitSpline.innerLinks[2]
+        val edge2 = assertIs<BezierSplineEdge>(link2.edge)
+
+        assertPointEquals(
+            expected = expectedSplitPoint1,
+            actual = link2.startKnot,
+            absoluteTolerance = eps,
+        )
+
+        assertPointEquals(
+            expected = expectedNewControl4,
+            actual = edge2.startControl,
+            absoluteTolerance = eps,
+        )
+
+        assertPointEquals(
+            expected = expectedNewControl5,
+            actual = edge2.endControl,
+            absoluteTolerance = eps,
+        )
+
+        val link3 = splitSpline.innerLinks[3]
+        val edge3 = assertIs<BezierSplineEdge>(link3.edge)
+
+        assertPointEquals(
+            expected = expectedSplitPoint2,
+            actual = link3.startKnot,
+            absoluteTolerance = eps,
+        )
+
+        assertPointEquals(
+            expected = expectedNewControl6,
+            actual = edge3.startControl,
+            absoluteTolerance = eps,
+        )
+
+        assertPointEquals(
+            expected = expectedNewControl7,
+            actual = edge3.endControl,
             absoluteTolerance = eps,
         )
 
