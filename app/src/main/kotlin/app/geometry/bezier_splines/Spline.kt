@@ -22,14 +22,14 @@ import java.awt.geom.Path2D
  * (a spline formed of cubic Bézier curves)
  */
 sealed class Spline {
-    sealed interface Link {
+    sealed interface Node {
         val knot: Point
     }
 
     data class Segment(
         val startKnot: Point,
         val edge: SegmentCurve.Edge,
-    ) : Link {
+    ) : Node {
         companion object {
             fun bezier(
                 startKnot: Point,
@@ -50,7 +50,7 @@ sealed class Spline {
 
     data class Terminator(
         val endKnot: Point,
-    ) : Link {
+    ) : Node {
         override val knot: Point
             get() = endKnot
     }
@@ -64,11 +64,11 @@ sealed class Spline {
     /**
      * Splines always have at least one node
      */
-    abstract val nodes: Iterable<Link>
+    abstract val nodes: Iterable<Node>
 
     abstract val segments: Iterable<Segment>
 
-    abstract val rightEdgeNode: Link
+    abstract val rightEdgeNode: Node
 
     val subCurves: List<SegmentCurve> by lazy {
         segments.mapWithNext(rightEdge = rightEdgeNode) { segment, nextLink ->

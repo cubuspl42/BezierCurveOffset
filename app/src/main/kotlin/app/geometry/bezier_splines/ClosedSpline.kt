@@ -67,9 +67,9 @@ class ClosedSpline(
         require(segments.isNotEmpty())
     }
 
-    override val nodes: List<Link> = segments
+    override val nodes: List<Node> = segments
 
-    override val rightEdgeNode: Link
+    override val rightEdgeNode: Node
         get() = segments.first()
 
     /**

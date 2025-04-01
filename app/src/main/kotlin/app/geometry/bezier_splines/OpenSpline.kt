@@ -138,8 +138,8 @@ class OpenSpline(
         splines = listOf(this, rightSubSplitCurve),
     )
 
-    override val nodes: List<Link> = segments + terminator
+    override val nodes: List<Node> = segments + terminator
 
-    override val rightEdgeNode: Link
+    override val rightEdgeNode: Node
         get() = terminator
 }

@@ -81,7 +81,7 @@ fun SVGPathElement.toSpline(): ClosedSpline {
     val originPathSeg = firstPathSeg as PathSeg.MoveTo
     val edgePathSegs = tailPathSegs.elementWiseAs<PathSeg.CubicTo>()
 
-    val links = edgePathSegs.withPrevious(
+    val segments = edgePathSegs.withPrevious(
         outerLeft = originPathSeg,
     ).map { (prevPathSeg, pathSeg) ->
         Spline.Segment(
@@ -94,7 +94,7 @@ fun SVGPathElement.toSpline(): ClosedSpline {
     }
 
     return ClosedSpline(
-        segments = links,
+        segments = segments,
     )
 }
 

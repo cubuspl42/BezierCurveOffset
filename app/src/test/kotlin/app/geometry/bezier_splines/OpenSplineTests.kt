@@ -15,7 +15,7 @@ class OpenSplineTests {
         val control1 = Point.of(2.0, 1.0)
         val knot1End = Point.of(3.0, 0.0)
 
-        val links = listOf(
+        val segments = listOf(
             Segment(
                 startKnot = knot0Start,
                 edge = BezierCurve.Edge(
@@ -30,14 +30,14 @@ class OpenSplineTests {
         )
 
         val spline = OpenSpline(
-            segments = links,
+            segments = segments,
             terminator = terminator,
         )
 
         val mergedSpline = OpenSpline.merge(listOf(spline))
 
         assertEquals(
-            expected = links,
+            expected = segments,
             actual = mergedSpline.segments,
         )
 
@@ -49,7 +49,7 @@ class OpenSplineTests {
 
     @Test
     fun testMerge_singleSpline_multipleSubCurves() {
-        val links = listOf(
+        val segments = listOf(
             Segment(
                 startKnot = Point.of(0.0, 0.0),
                 edge = BezierCurve.Edge(
@@ -71,14 +71,14 @@ class OpenSplineTests {
         )
 
         val spline = OpenSpline(
-            segments = links,
+            segments = segments,
             terminator = terminator,
         )
 
         val mergedSpline = OpenSpline.merge(listOf(spline))
 
         assertEquals(
-            expected = links,
+            expected = segments,
             actual = mergedSpline.segments,
         )
 
