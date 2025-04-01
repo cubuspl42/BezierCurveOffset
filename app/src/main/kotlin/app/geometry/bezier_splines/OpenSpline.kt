@@ -1,6 +1,7 @@
 package app.geometry.bezier_splines
 
 import app.geometry.Point
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import app.interleave
 import app.mapFirst
@@ -42,9 +43,9 @@ class OpenSpline(
 
             return Pair(prevLink, nextLink)
 
-            val prevEdge = prevLink.edge as BezierSplineEdge
+            val prevEdge = prevLink.edge as BezierCurve.Edge
             val prevTerminalLink = prevSpline.terminalLink
-            val nextEdge = nextLink.edge as BezierSplineEdge
+            val nextEdge = nextLink.edge as BezierCurve.Edge
 
             val fixedKnot = Point.midPoint(
                 prevTerminalLink.endKnot,

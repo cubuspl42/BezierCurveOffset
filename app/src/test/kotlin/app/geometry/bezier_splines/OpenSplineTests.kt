@@ -1,6 +1,7 @@
 package app.geometry.bezier_splines
 
 import app.geometry.Point
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_splines.Spline.InnerLink
 import app.geometry.bezier_splines.Spline.TerminalLink
 import kotlin.test.Test
@@ -17,7 +18,7 @@ class OpenSplineTests {
         val links = listOf(
             InnerLink(
                 startKnot = knot0Start,
-                edge = BezierSplineEdge(
+                edge = BezierCurve.Edge(
                     startControl = control0,
                     endControl = control1
                 ),
@@ -51,14 +52,14 @@ class OpenSplineTests {
         val links = listOf(
             InnerLink(
                 startKnot = Point.of(0.0, 0.0),
-                edge = BezierSplineEdge(
+                edge = BezierCurve.Edge(
                     startControl = Point.of(1.0, 1.0),
                     endControl = Point.of(2.0, 1.0),
                 ),
             ),
             InnerLink(
                 startKnot = Point.of(3.0, 0.0),
-                edge = BezierSplineEdge(
+                edge = BezierCurve.Edge(
                     startControl = Point.of(4.0, 1.0),
                     endControl = Point.of(5.0, 1.0)
                 ),
@@ -172,7 +173,7 @@ class OpenSplineTests {
 
         val link0 = InnerLink(
             startKnot = knot0Start,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = control0,
                 endControl = control1,
             ),
@@ -180,7 +181,7 @@ class OpenSplineTests {
 
         val link1 = InnerLink(
             startKnot = knot1,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = control2,
                 endControl = control3,
             ),
@@ -197,7 +198,7 @@ class OpenSplineTests {
 
         val link2 = InnerLink(
             startKnot = knot2Joint,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = control4,
                 endControl = control5,
             ),
@@ -205,7 +206,7 @@ class OpenSplineTests {
 
         val link3 = InnerLink(
             startKnot = knot3,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = control6,
                 endControl = control7,
             ),
@@ -268,7 +269,7 @@ class OpenSplineTests {
 
         val link1 = InnerLink(
             startKnot = knot0Start,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = control0,
                 endControl = control1,
             ),
@@ -276,7 +277,7 @@ class OpenSplineTests {
 
         val link2 = InnerLink(
             startKnot = knot1,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = control2,
                 endControl = control3,
             ),
@@ -293,7 +294,7 @@ class OpenSplineTests {
 
         val link3 = InnerLink(
             startKnot = knot2Joint,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = control4,
                 endControl = control5,
             ),
@@ -301,7 +302,7 @@ class OpenSplineTests {
 
         val link4 = InnerLink(
             startKnot = knot3,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = control6,
                 endControl = control7,
             ),
@@ -318,7 +319,7 @@ class OpenSplineTests {
 
         val link5 = InnerLink(
             startKnot = knot4Joint,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = control8,
                 endControl = control9,
             ),
@@ -326,7 +327,7 @@ class OpenSplineTests {
 
         val link6 = InnerLink(
             startKnot = knot5,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = control10,
                 endControl = control11,
             ),

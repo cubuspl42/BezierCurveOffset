@@ -1,6 +1,7 @@
 package app
 
 import app.geometry.Point
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_splines.*
@@ -85,7 +86,7 @@ fun SVGPathElement.toSpline(): ClosedSpline {
     ).map { (prevPathSeg, pathSeg) ->
         Spline.InnerLink(
             startKnot = prevPathSeg.finalPoint,
-            edge = BezierSplineEdge(
+            edge = BezierCurve.Edge(
                 startControl = pathSeg.firstControl,
                 endControl = pathSeg.secondControl,
             )
