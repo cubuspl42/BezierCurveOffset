@@ -3,11 +3,11 @@ package app.geometry.bezier_curves
 import app.geometry.Point
 
 abstract class SegmentCurve {
-    abstract class Edge {
+    abstract class Edge<CurveT: SegmentCurve> {
         abstract fun bind(
             startKnot: Point,
             endKnot: Point,
-        ): SegmentCurve
+        ): CurveT
     }
 
     abstract val start: Point

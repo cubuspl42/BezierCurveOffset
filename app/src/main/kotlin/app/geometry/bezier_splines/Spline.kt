@@ -33,7 +33,7 @@ sealed class Spline {
 
     data class Segment(
         val startKnot: Point,
-        val edge: SegmentCurve.Edge,
+        val edge: SegmentCurve.Edge<*>,
     ) : Node {
         companion object {
             fun bezier(

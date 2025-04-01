@@ -18,22 +18,6 @@ class OpenSpline(
     val terminator: Terminator,
 ) : Spline() {
     companion object {
-        fun ofEdge(
-            startKnot: Point,
-            edge: SegmentCurve.Edge,
-            endKnot: Point,
-        ): OpenSpline = OpenSpline(
-            segments = listOf(
-                Segment(
-                    startKnot = startKnot,
-                    edge = edge,
-                ),
-            ),
-            terminator = Terminator(
-                endKnot = endKnot,
-            ),
-        )
-
         // TODO: Nuke?
         fun fastenSegmentsSmoothly(
             prevSpline: OpenSpline,

@@ -15,7 +15,7 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> : SegmentCurve() {
     data class Edge(
         val control0: Point,
         val control1: Point,
-    ) : SegmentCurve.Edge() {
+    ) : SegmentCurve.Edge<BezierCurve<*>>() {
         override fun bind(
             startKnot: Point,
             endKnot: Point,
