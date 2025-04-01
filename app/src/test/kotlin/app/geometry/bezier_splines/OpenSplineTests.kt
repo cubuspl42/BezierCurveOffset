@@ -3,7 +3,7 @@ package app.geometry.bezier_splines
 import app.geometry.Point
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_splines.Spline.Segment
-import app.geometry.bezier_splines.Spline.TerminalLink
+import app.geometry.bezier_splines.Spline.Terminator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -25,13 +25,13 @@ class OpenSplineTests {
             ),
         )
 
-        val terminalLink = TerminalLink(
+        val terminator = Terminator(
             endKnot = knot1End,
         )
 
         val spline = OpenSpline(
             segments = links,
-            terminalLink = terminalLink,
+            terminator = terminator,
         )
 
         val mergedSpline = OpenSpline.merge(listOf(spline))
@@ -42,8 +42,8 @@ class OpenSplineTests {
         )
 
         assertEquals(
-            expected = terminalLink,
-            actual = mergedSpline.terminalLink,
+            expected = terminator,
+            actual = mergedSpline.terminator,
         )
     }
 
@@ -66,13 +66,13 @@ class OpenSplineTests {
             ),
         )
 
-        val terminalLink = TerminalLink(
+        val terminator = Terminator(
             endKnot = Point.of(6.0, 0.0),
         )
 
         val spline = OpenSpline(
             segments = links,
-            terminalLink = terminalLink,
+            terminator = terminator,
         )
 
         val mergedSpline = OpenSpline.merge(listOf(spline))
@@ -83,8 +83,8 @@ class OpenSplineTests {
         )
 
         assertEquals(
-            expected = terminalLink,
-            actual = mergedSpline.terminalLink,
+            expected = terminator,
+            actual = mergedSpline.terminator,
         )
     }
 
@@ -119,7 +119,7 @@ class OpenSplineTests {
             segments = listOf(
                 link0
             ),
-            terminalLink = Spline.TerminalLink(
+            terminator = Spline.Terminator(
                 endKnot = knot0Joint,
             ),
         )
@@ -128,7 +128,7 @@ class OpenSplineTests {
             segments = listOf(
                 link1
             ),
-            terminalLink = Spline.TerminalLink(
+            terminator = Spline.Terminator(
                 endKnot = end,
             ),
         )
@@ -143,10 +143,10 @@ class OpenSplineTests {
         )
 
         assertEquals(
-            expected = Spline.TerminalLink(
+            expected = Spline.Terminator(
                 endKnot = end,
             ),
-            actual = mergedSpline.terminalLink,
+            actual = mergedSpline.terminator,
         )
     }
 
@@ -187,13 +187,13 @@ class OpenSplineTests {
             ),
         )
 
-        val terminalLink1 = TerminalLink(
+        val terminator1 = Terminator(
             endKnot = knot2Joint,
         )
 
         val spline0 = OpenSpline(
             segments = listOf(link0, link1),
-            terminalLink = terminalLink1,
+            terminator = terminator1,
         )
 
         val link2 = Segment(
@@ -212,13 +212,13 @@ class OpenSplineTests {
             ),
         )
 
-        val terminalLink2 = TerminalLink(
+        val terminator2 = Terminator(
             endKnot = knot4End,
         )
 
         val spline1 = OpenSpline(
             segments = listOf(link2, link3),
-            terminalLink = terminalLink2,
+            terminator = terminator2,
         )
 
         val mergedSpline = OpenSpline.merge(
@@ -231,8 +231,8 @@ class OpenSplineTests {
         )
 
         assertEquals(
-            expected = terminalLink2,
-            actual = mergedSpline.terminalLink,
+            expected = terminator2,
+            actual = mergedSpline.terminator,
         )
     }
 
@@ -283,13 +283,13 @@ class OpenSplineTests {
             ),
         )
 
-        val terminalLink1 = TerminalLink(
+        val terminator1 = Terminator(
             endKnot = knot2Joint,
         )
 
         val spline0 = OpenSpline(
             segments = listOf(link1, link2),
-            terminalLink = terminalLink1,
+            terminator = terminator1,
         )
 
         val link3 = Segment(
@@ -308,13 +308,13 @@ class OpenSplineTests {
             ),
         )
 
-        val terminalLink2 = TerminalLink(
+        val terminator2 = Terminator(
             endKnot = knot4Joint,
         )
 
         val spline1 = OpenSpline(
             segments = listOf(link3, link4),
-            terminalLink = terminalLink2,
+            terminator = terminator2,
         )
 
         val link5 = Segment(
@@ -333,13 +333,13 @@ class OpenSplineTests {
             ),
         )
 
-        val terminalLink3 = TerminalLink(
+        val terminator3 = Terminator(
             endKnot = knot6End,
         )
 
         val spline2 = OpenSpline(
             segments = listOf(link5, link6),
-            terminalLink = terminalLink3,
+            terminator = terminator3,
         )
 
         val mergedSpline = OpenSpline.merge(
@@ -352,8 +352,8 @@ class OpenSplineTests {
         )
 
         assertEquals(
-            expected = terminalLink3,
-            actual = mergedSpline.terminalLink,
+            expected = terminator3,
+            actual = mergedSpline.terminator,
         )
     }
 }

@@ -48,7 +48,7 @@ sealed class Spline {
             get() = startKnot
     }
 
-    data class TerminalLink(
+    data class Terminator(
         val endKnot: Point,
     ) : Link {
         override val knot: Point
@@ -69,13 +69,6 @@ sealed class Spline {
     abstract val segments: Iterable<Segment>
 
     abstract val rightEdgeNode: Link
-
-    /**
-     * Splines always have at least one knot
-     */
-    val knots: Set<Point> by lazy {
-        nodes.map { it.knot }.toSet()
-    }
 
     val subCurves: List<SegmentCurve> by lazy {
         segments.mapWithNext(rightEdge = rightEdgeNode) { segment, nextLink ->

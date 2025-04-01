@@ -79,7 +79,7 @@ class CubicBezierSegmentCurveTests {
 
         assertEquals(
             expected = end,
-            actual = splitSpline.terminalLink.endKnot
+            actual = splitSpline.terminator.endKnot
         )
     }
 
@@ -179,7 +179,7 @@ class CubicBezierSegmentCurveTests {
 
         assertEquals(
             expected = end,
-            actual = splitSpline.terminalLink.endKnot
+            actual = splitSpline.terminator.endKnot
         )
     }
 
@@ -303,7 +303,7 @@ class CubicBezierSegmentCurveTests {
 
         assertEquals(
             expected = end,
-            actual = splitSpline.terminalLink.endKnot
+            actual = splitSpline.terminator.endKnot
         )
     }
 

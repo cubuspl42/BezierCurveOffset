@@ -15,7 +15,7 @@ class OpenSpline(
     /**
      * The plug node that terminates the path of links
      */
-    val terminalLink: TerminalLink,
+    val terminator: Terminator,
 ) : Spline() {
     companion object {
         fun ofEdge(
@@ -29,7 +29,7 @@ class OpenSpline(
                     edge = edge,
                 ),
             ),
-            terminalLink = TerminalLink(
+            terminator = Terminator(
                 endKnot = endKnot,
             ),
         )
@@ -44,7 +44,7 @@ class OpenSpline(
             return Pair(prevLink, nextLink)
 
             val prevEdge = prevLink.edge as BezierCurve.Edge
-            val prevTerminalLink = prevSpline.terminalLink
+            val prevTerminalLink = prevSpline.terminator
             val nextEdge = nextLink.edge as BezierCurve.Edge
 
             val fixedKnot = Point.midPoint(
@@ -102,7 +102,7 @@ class OpenSpline(
             val segments = splines.withPreviousOrNull().flatMap { (prevSpline, spline) ->
                 when {
                     prevSpline != null -> spline.segments.mapFirst { firstLink ->
-                        val prevSplineEndEndKnot = prevSpline.terminalLink.endKnot
+                        val prevSplineEndEndKnot = prevSpline.terminator.endKnot
                         val splineStartKnot = firstLink.startKnot
 
                         firstLink.copy(
@@ -116,11 +116,11 @@ class OpenSpline(
             }
 
             val lastSpline = splines.last()
-            val terminalLink = lastSpline.terminalLink
+            val terminalLink = lastSpline.terminator
 
             return OpenSpline(
                 segments = segments,
-                terminalLink = terminalLink,
+                terminator = terminalLink,
             )
         }
     }
@@ -138,8 +138,8 @@ class OpenSpline(
         splines = listOf(this, rightSubSplitCurve),
     )
 
-    override val nodes: List<Link> = segments + terminalLink
+    override val nodes: List<Link> = segments + terminator
 
     override val rightEdgeNode: Link
-        get() = terminalLink
+        get() = terminator
 }
