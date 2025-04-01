@@ -26,7 +26,7 @@ sealed class Spline {
         val knot: Point
     }
 
-    data class InnerLink(
+    data class Segment(
         val startKnot: Point,
         val edge: SegmentCurve.Edge,
     ) : Link {
@@ -35,7 +35,7 @@ sealed class Spline {
                 startKnot: Point,
                 control0: Point,
                 control1: Point,
-            ): InnerLink = InnerLink(
+            ): Segment = Segment(
                 startKnot = startKnot,
                 edge = BezierCurve.Edge(
                     startControl = control0,
@@ -55,18 +55,18 @@ sealed class Spline {
             get() = endKnot
     }
 
-    val firstLink: InnerLink
-        get() = innerLinks.first()
+    val firstLink: Segment
+        get() = segments.first()
 
-    val lastLink: InnerLink
-        get() = innerLinks.last()
+    val lastLink: Segment
+        get() = segments.last()
 
     /**
      * Splines always have at least one node
      */
     abstract val nodes: Iterable<Link>
 
-    abstract val innerLinks: Iterable<InnerLink>
+    abstract val segments: Iterable<Segment>
 
     abstract val rightEdgeNode: Link
 
@@ -78,10 +78,10 @@ sealed class Spline {
     }
 
     val subCurves: List<SegmentCurve> by lazy {
-        innerLinks.mapWithNext(rightEdge = rightEdgeNode) { innerLink, nextLink ->
-            val startKnot = innerLink.startKnot
+        segments.mapWithNext(rightEdge = rightEdgeNode) { segment, nextLink ->
+            val startKnot = segment.startKnot
             val endKnot = nextLink.knot
-            val edge = innerLink.edge
+            val edge = segment.edge
 
             edge.bind(
                 startKnot = startKnot,

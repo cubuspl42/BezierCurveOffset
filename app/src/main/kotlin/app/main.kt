@@ -84,7 +84,7 @@ fun SVGPathElement.toSpline(): ClosedSpline {
     val links = edgePathSegs.withPrevious(
         outerLeft = originPathSeg,
     ).map { (prevPathSeg, pathSeg) ->
-        Spline.InnerLink(
+        Spline.Segment(
             startKnot = prevPathSeg.finalPoint,
             edge = BezierCurve.Edge(
                 startControl = pathSeg.firstControl,
@@ -94,7 +94,7 @@ fun SVGPathElement.toSpline(): ClosedSpline {
     }
 
     return ClosedSpline(
-        innerLinks = links,
+        segments = links,
     )
 }
 

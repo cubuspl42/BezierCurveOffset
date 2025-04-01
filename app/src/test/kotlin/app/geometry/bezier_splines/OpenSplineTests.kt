@@ -2,7 +2,7 @@ package app.geometry.bezier_splines
 
 import app.geometry.Point
 import app.geometry.bezier_curves.BezierCurve
-import app.geometry.bezier_splines.Spline.InnerLink
+import app.geometry.bezier_splines.Spline.Segment
 import app.geometry.bezier_splines.Spline.TerminalLink
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,7 +16,7 @@ class OpenSplineTests {
         val knot1End = Point.of(3.0, 0.0)
 
         val links = listOf(
-            InnerLink(
+            Segment(
                 startKnot = knot0Start,
                 edge = BezierCurve.Edge(
                     startControl = control0,
@@ -30,7 +30,7 @@ class OpenSplineTests {
         )
 
         val spline = OpenSpline(
-            innerLinks = links,
+            segments = links,
             terminalLink = terminalLink,
         )
 
@@ -38,7 +38,7 @@ class OpenSplineTests {
 
         assertEquals(
             expected = links,
-            actual = mergedSpline.innerLinks,
+            actual = mergedSpline.segments,
         )
 
         assertEquals(
@@ -50,14 +50,14 @@ class OpenSplineTests {
     @Test
     fun testMerge_singleSpline_multipleSubCurves() {
         val links = listOf(
-            InnerLink(
+            Segment(
                 startKnot = Point.of(0.0, 0.0),
                 edge = BezierCurve.Edge(
                     startControl = Point.of(1.0, 1.0),
                     endControl = Point.of(2.0, 1.0),
                 ),
             ),
-            InnerLink(
+            Segment(
                 startKnot = Point.of(3.0, 0.0),
                 edge = BezierCurve.Edge(
                     startControl = Point.of(4.0, 1.0),
@@ -71,7 +71,7 @@ class OpenSplineTests {
         )
 
         val spline = OpenSpline(
-            innerLinks = links,
+            segments = links,
             terminalLink = terminalLink,
         )
 
@@ -79,7 +79,7 @@ class OpenSplineTests {
 
         assertEquals(
             expected = links,
-            actual = mergedSpline.innerLinks,
+            actual = mergedSpline.segments,
         )
 
         assertEquals(
@@ -103,20 +103,20 @@ class OpenSplineTests {
         val control3 = Point.of(5.0, 1.0)
         val end = Point.of(6.0, 0.0)
 
-        val link0 = Spline.InnerLink.bezier(
+        val link0 = Spline.Segment.bezier(
             startKnot = start,
             control0 = control0,
             control1 = control1,
         )
 
-        val link1 = Spline.InnerLink.bezier(
+        val link1 = Spline.Segment.bezier(
             startKnot = knot0Joint,
             control0 = control2,
             control1 = control3,
         )
 
         val spline0 = OpenSpline(
-            innerLinks = listOf(
+            segments = listOf(
                 link0
             ),
             terminalLink = Spline.TerminalLink(
@@ -125,7 +125,7 @@ class OpenSplineTests {
         )
 
         val spline1 = OpenSpline(
-            innerLinks = listOf(
+            segments = listOf(
                 link1
             ),
             terminalLink = Spline.TerminalLink(
@@ -139,7 +139,7 @@ class OpenSplineTests {
 
         assertEquals(
             expected = listOf(link0, link1),
-            actual = mergedSpline.innerLinks,
+            actual = mergedSpline.segments,
         )
 
         assertEquals(
@@ -171,7 +171,7 @@ class OpenSplineTests {
         val control7 = Point.of(11.0, 1.0)
         val knot4End = Point.of(12.0, 0.0)
 
-        val link0 = InnerLink(
+        val link0 = Segment(
             startKnot = knot0Start,
             edge = BezierCurve.Edge(
                 startControl = control0,
@@ -179,7 +179,7 @@ class OpenSplineTests {
             ),
         )
 
-        val link1 = InnerLink(
+        val link1 = Segment(
             startKnot = knot1,
             edge = BezierCurve.Edge(
                 startControl = control2,
@@ -192,11 +192,11 @@ class OpenSplineTests {
         )
 
         val spline0 = OpenSpline(
-            innerLinks = listOf(link0, link1),
+            segments = listOf(link0, link1),
             terminalLink = terminalLink1,
         )
 
-        val link2 = InnerLink(
+        val link2 = Segment(
             startKnot = knot2Joint,
             edge = BezierCurve.Edge(
                 startControl = control4,
@@ -204,7 +204,7 @@ class OpenSplineTests {
             ),
         )
 
-        val link3 = InnerLink(
+        val link3 = Segment(
             startKnot = knot3,
             edge = BezierCurve.Edge(
                 startControl = control6,
@@ -217,7 +217,7 @@ class OpenSplineTests {
         )
 
         val spline1 = OpenSpline(
-            innerLinks = listOf(link2, link3),
+            segments = listOf(link2, link3),
             terminalLink = terminalLink2,
         )
 
@@ -227,7 +227,7 @@ class OpenSplineTests {
 
         assertEquals(
             expected = listOf(link0, link1, link2, link3),
-            actual = mergedSpline.innerLinks,
+            actual = mergedSpline.segments,
         )
 
         assertEquals(
@@ -267,7 +267,7 @@ class OpenSplineTests {
         val control11 = Point.of(17.0, 1.0)
         val knot6End = Point.of(18.0, 0.0)
 
-        val link1 = InnerLink(
+        val link1 = Segment(
             startKnot = knot0Start,
             edge = BezierCurve.Edge(
                 startControl = control0,
@@ -275,7 +275,7 @@ class OpenSplineTests {
             ),
         )
 
-        val link2 = InnerLink(
+        val link2 = Segment(
             startKnot = knot1,
             edge = BezierCurve.Edge(
                 startControl = control2,
@@ -288,11 +288,11 @@ class OpenSplineTests {
         )
 
         val spline0 = OpenSpline(
-            innerLinks = listOf(link1, link2),
+            segments = listOf(link1, link2),
             terminalLink = terminalLink1,
         )
 
-        val link3 = InnerLink(
+        val link3 = Segment(
             startKnot = knot2Joint,
             edge = BezierCurve.Edge(
                 startControl = control4,
@@ -300,7 +300,7 @@ class OpenSplineTests {
             ),
         )
 
-        val link4 = InnerLink(
+        val link4 = Segment(
             startKnot = knot3,
             edge = BezierCurve.Edge(
                 startControl = control6,
@@ -313,11 +313,11 @@ class OpenSplineTests {
         )
 
         val spline1 = OpenSpline(
-            innerLinks = listOf(link3, link4),
+            segments = listOf(link3, link4),
             terminalLink = terminalLink2,
         )
 
-        val link5 = InnerLink(
+        val link5 = Segment(
             startKnot = knot4Joint,
             edge = BezierCurve.Edge(
                 startControl = control8,
@@ -325,7 +325,7 @@ class OpenSplineTests {
             ),
         )
 
-        val link6 = InnerLink(
+        val link6 = Segment(
             startKnot = knot5,
             edge = BezierCurve.Edge(
                 startControl = control10,
@@ -338,7 +338,7 @@ class OpenSplineTests {
         )
 
         val spline2 = OpenSpline(
-            innerLinks = listOf(link5, link6),
+            segments = listOf(link5, link6),
             terminalLink = terminalLink3,
         )
 
@@ -348,7 +348,7 @@ class OpenSplineTests {
 
         assertEquals(
             expected = listOf(link1, link2, link3, link4, link5, link6),
-            actual = mergedSpline.innerLinks,
+            actual = mergedSpline.segments,
         )
 
         assertEquals(

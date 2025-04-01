@@ -8,7 +8,7 @@ class ClosedSpline(
     /**
      * The cyclic chain of links, must not be empty
      */
-    override val innerLinks: List<InnerLink>,
+    override val segments: List<Segment>,
 ) : Spline() {
     abstract class ContourSplineApproximationResult(
         val contourSpline: ClosedSpline,
@@ -58,19 +58,19 @@ class ClosedSpline(
             )
 
             return ClosedSpline(
-                innerLinks = listOf(firstLink) + insideLinks + lastLink,
+                segments = listOf(firstLink) + insideLinks + lastLink,
             )
         }
     }
 
     init {
-        require(innerLinks.isNotEmpty())
+        require(segments.isNotEmpty())
     }
 
-    override val nodes: List<Link> = innerLinks
+    override val nodes: List<Link> = segments
 
     override val rightEdgeNode: Link
-        get() = innerLinks.first()
+        get() = segments.first()
 
     /**
      * Find the contour of this spline.

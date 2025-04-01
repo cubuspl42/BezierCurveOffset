@@ -11,7 +11,7 @@ class OpenSpline(
     /**
      * The path of links, must not be empty
      */
-    override val innerLinks: List<InnerLink>,
+    override val segments: List<Segment>,
     /**
      * The plug node that terminates the path of links
      */
@@ -23,8 +23,8 @@ class OpenSpline(
             edge: SegmentCurve.Edge,
             endKnot: Point,
         ): OpenSpline = OpenSpline(
-            innerLinks = listOf(
-                InnerLink(
+            segments = listOf(
+                Segment(
                     startKnot = startKnot,
                     edge = edge,
                 ),
@@ -37,7 +37,7 @@ class OpenSpline(
         fun fastenLinksSmoothly(
             prevSpline: OpenSpline,
             nextSpline: OpenSpline,
-        ): Pair<InnerLink, InnerLink> {
+        ): Pair<Segment, Segment> {
             val prevLink = prevSpline.lastLink
             val nextLink = nextSpline.firstLink
 
@@ -78,7 +78,7 @@ class OpenSpline(
 
         fun fastenSplines(
             splines: List<OpenSpline>,
-        ): List<InnerLink> = splines.interleave(
+        ): List<Segment> = splines.interleave(
             transform = {
                 it.insideLinks
             },
@@ -99,9 +99,9 @@ class OpenSpline(
                 return splines.single()
             }
 
-            val innerLinks = splines.withPreviousOrNull().flatMap { (prevSpline, spline) ->
+            val segments = splines.withPreviousOrNull().flatMap { (prevSpline, spline) ->
                 when {
-                    prevSpline != null -> spline.innerLinks.mapFirst { firstLink ->
+                    prevSpline != null -> spline.segments.mapFirst { firstLink ->
                         val prevSplineEndEndKnot = prevSpline.terminalLink.endKnot
                         val splineStartKnot = firstLink.startKnot
 
@@ -111,7 +111,7 @@ class OpenSpline(
 
                     }
 
-                    else -> spline.innerLinks
+                    else -> spline.segments
                 }
             }
 
@@ -119,18 +119,18 @@ class OpenSpline(
             val terminalLink = lastSpline.terminalLink
 
             return OpenSpline(
-                innerLinks = innerLinks,
+                segments = segments,
                 terminalLink = terminalLink,
             )
         }
     }
 
     init {
-        require(innerLinks.isNotEmpty())
+        require(segments.isNotEmpty())
     }
 
-    val insideLinks: List<InnerLink>
-        get() = innerLinks.drop(1).dropLast(1)
+    val insideLinks: List<Segment>
+        get() = segments.drop(1).dropLast(1)
 
     fun mergeWith(
         rightSubSplitCurve: OpenSpline,
@@ -138,7 +138,7 @@ class OpenSpline(
         splines = listOf(this, rightSubSplitCurve),
     )
 
-    override val nodes: List<Link> = innerLinks + terminalLink
+    override val nodes: List<Link> = segments + terminalLink
 
     override val rightEdgeNode: Link
         get() = terminalLink
