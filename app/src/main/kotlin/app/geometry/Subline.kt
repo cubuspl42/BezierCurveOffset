@@ -1,14 +1,18 @@
 package app.geometry
 
 import app.fillCircle
+import app.geometry.bezier_curves.Curve
 import java.awt.Graphics2D
 import java.awt.geom.Line2D
 import kotlin.math.roundToInt
 
-data class LineSegment(
-    val start: Point,
-    val end: Point,
-) {
+/**
+ * A line segment, called "subline" for naming reasons
+ */
+data class Subline(
+    override val start: Point,
+    override val end: Point,
+): Curve() {
     val direction: Direction? = Direction.of(
         end.pv - start.pv,
     )
@@ -54,8 +58,8 @@ data class LineSegment(
     fun moveInDirection(
         direction: Direction,
         distance: Double,
-    ): LineSegment? {
-        return LineSegment(
+    ): Subline? {
+        return Subline(
             start = start.moveInDirection(
                 direction = direction,
                 distance = distance,

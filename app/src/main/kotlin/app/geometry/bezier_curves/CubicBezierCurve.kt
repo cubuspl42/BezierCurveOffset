@@ -109,7 +109,7 @@ data class CubicBezierCurve private constructor(
         graphics2D.stroke = BasicStroke(0.5f)
         graphics2D.color = Color.LIGHT_GRAY
 
-        basisFormula.lineSegments.forEach { segment ->
+        basisFormula.sublines.forEach { segment ->
             segment.draw(graphics2D = graphics2D)
         }
 
