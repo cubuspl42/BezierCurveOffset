@@ -43,7 +43,7 @@ class ClosedSpline(
         fun interconnect(
             splines: List<OpenSpline>,
         ): ClosedSpline {
-            require(splines.isNotEmpty())
+            require(splines.size >= 2)
 
             val firstSpline = splines.first()
             val lastSpline = splines.last()
