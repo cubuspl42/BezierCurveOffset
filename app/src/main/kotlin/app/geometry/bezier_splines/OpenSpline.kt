@@ -1,6 +1,7 @@
 package app.geometry.bezier_splines
 
 import app.geometry.Point
+import app.geometry.bezier_curves.SegmentCurve
 import app.interleave
 import app.mapFirst
 import app.withPreviousOrNull
@@ -18,7 +19,7 @@ class OpenSpline(
     companion object {
         fun ofEdge(
             startKnot: Point,
-            edge: SplineEdge,
+            edge: SegmentCurve.Edge,
             endKnot: Point,
         ): OpenSpline = OpenSpline(
             innerLinks = listOf(

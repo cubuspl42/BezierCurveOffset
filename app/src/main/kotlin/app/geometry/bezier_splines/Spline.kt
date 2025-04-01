@@ -27,7 +27,7 @@ sealed class Spline {
 
     data class InnerLink(
         val startKnot: Point,
-        val edge: SplineEdge,
+        val edge: SegmentCurve.Edge,
     ) : Link {
         companion object {
             fun bezier(
