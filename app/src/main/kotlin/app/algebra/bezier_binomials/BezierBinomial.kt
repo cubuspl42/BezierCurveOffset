@@ -1,9 +1,8 @@
 package app.algebra.bezier_binomials
 
 import app.algebra.Vector
-import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.polynomials.Polynomial
-import app.geometry.Segment
+import app.geometry.LineSegment
 import app.geometry.bezier_curves.TimeFunction
 
 /**
@@ -36,7 +35,7 @@ sealed class BezierBinomial<out V> : RealFunction<V>() {
     abstract fun evaluate(t: Double): V
 }
 
-val BezierBinomial<Vector>.segments: List<Segment>
+val BezierBinomial<Vector>.lineSegments: List<LineSegment>
     get() = when (this) {
         is LinearBezierBinomial<Vector> -> this.segmentsLinear
         is QuadraticBezierBinomial<Vector> -> this.segmentsQuadratic

@@ -5,7 +5,7 @@ import app.algebra.Vector
 import app.algebra.VectorSpace
 import app.algebra.polynomials.LinearPolynomial
 import app.geometry.Point
-import app.geometry.Segment
+import app.geometry.LineSegment
 
 data class LinearBezierBinomial<V>(
     internal val vectorSpace: VectorSpace<V>,
@@ -28,11 +28,11 @@ val LinearBezierBinomial<Vector>.point0: Point
 val LinearBezierBinomial<Vector>.point1: Point
     get() = this.weight1.toPoint()
 
-val LinearBezierBinomial<Vector>.segment0: Segment
-    get() = Segment(start = point0, end = point1)
+val LinearBezierBinomial<Vector>.lineSegment0: LineSegment
+    get() = LineSegment(start = point0, end = point1)
 
-val LinearBezierBinomial<Vector>.segmentsLinear: List<Segment>
-    get() = listOf(segment0)
+val LinearBezierBinomial<Vector>.segmentsLinear: List<LineSegment>
+    get() = listOf(lineSegment0)
 
 fun LinearBezierBinomial<Double>.toPolynomialFormulaLinear(): Polynomial? = LinearPolynomial.of(
     a = weight1 - weight0,

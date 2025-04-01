@@ -3,7 +3,7 @@ package app.algebra.bezier_binomials
 import app.algebra.Vector
 import app.algebra.VectorSpace
 import app.geometry.Point
-import app.geometry.Segment
+import app.geometry.LineSegment
 import app.invSafe
 import org.ujmp.core.Matrix
 
@@ -76,17 +76,17 @@ val CubicBezierBinomial<Vector>.point2: Point
 val CubicBezierBinomial<Vector>.point3: Point
     get() = this.weight3.toPoint()
 
-val CubicBezierBinomial<Vector>.segmentsCubic: List<Segment>
-    get() = listOf(segment0, segment1, segment2)
+val CubicBezierBinomial<Vector>.segmentsCubic: List<LineSegment>
+    get() = listOf(lineSegment0, lineSegment1, lineSegment2)
 
-val CubicBezierBinomial<Vector>.segment0: Segment
-    get() = Segment(start = point0, end = point1)
+val CubicBezierBinomial<Vector>.lineSegment0: LineSegment
+    get() = LineSegment(start = point0, end = point1)
 
-val CubicBezierBinomial<Vector>.segment1: Segment
-    get() = Segment(start = point1, end = point2)
+val CubicBezierBinomial<Vector>.lineSegment1: LineSegment
+    get() = LineSegment(start = point1, end = point2)
 
-val CubicBezierBinomial<Vector>.segment2: Segment
-    get() = Segment(start = point2, end = point3)
+val CubicBezierBinomial<Vector>.lineSegment2: LineSegment
+    get() = LineSegment(start = point2, end = point3)
 
 val CubicBezierBinomial<Vector>.componentXCubic
     get() = CubicBezierBinomial(
@@ -109,9 +109,9 @@ val CubicBezierBinomial<Vector>.componentYCubic
 fun CubicBezierBinomial<Vector>.findSkeletonCubic(
     t: Double,
 ): QuadraticBezierBinomial<Vector> {
-    val subPoint0 = segment0.linearlyInterpolate(t = t)
-    val subPoint1 = segment1.linearlyInterpolate(t = t)
-    val subPoint2 = segment2.linearlyInterpolate(t = t)
+    val subPoint0 = lineSegment0.linearlyInterpolate(t = t)
+    val subPoint1 = lineSegment1.linearlyInterpolate(t = t)
+    val subPoint2 = lineSegment2.linearlyInterpolate(t = t)
 
     return QuadraticBezierBinomial(
         vectorSpace = vectorSpace,

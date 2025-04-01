@@ -5,7 +5,7 @@ import java.awt.Graphics2D
 import java.awt.geom.Line2D
 import kotlin.math.roundToInt
 
-data class Segment(
+data class LineSegment(
     val start: Point,
     val end: Point,
 ) {
@@ -54,8 +54,8 @@ data class Segment(
     fun moveInDirection(
         direction: Direction,
         distance: Double,
-    ): Segment? {
-        return Segment(
+    ): LineSegment? {
+        return LineSegment(
             start = start.moveInDirection(
                 direction = direction,
                 distance = distance,
