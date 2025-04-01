@@ -67,10 +67,10 @@ sealed class Spline {
             get() = endKnot
     }
 
-    val firstLink: Segment
+    val firstSegment: Segment
         get() = segments.first()
 
-    val lastLink: Segment
+    val lastSegment: Segment
         get() = segments.last()
 
     /**
@@ -83,9 +83,9 @@ sealed class Spline {
     abstract val rightEdgeNode: Node
 
     val subCurves: List<SegmentCurve> by lazy {
-        segments.mapWithNext(rightEdge = rightEdgeNode) { segment, nextLink ->
+        segments.mapWithNext(rightEdge = rightEdgeNode) { segment, nextNode ->
             val startKnot = segment.startKnot
-            val endKnot = nextLink.frontKnot
+            val endKnot = nextNode.frontKnot
             val edge = segment.edge
 
             edge.bind(
@@ -95,7 +95,6 @@ sealed class Spline {
         }
     }
 }
-
 
 fun Spline.toSvgPath(
     document: SVGDocument,
@@ -116,7 +115,7 @@ fun Spline.toSvgPath(
             pathSegList.appendItem(
                 subCurve.toSvgPathSeg(
                     pathElement = this,
-                )
+                ),
             )
         }
 
@@ -134,7 +133,7 @@ fun Spline.toControlSvgPath(
     val spline = this
 
     return document.createPathElement().apply {
-        val startKnot = firstLink.startKnot
+        val startKnot = firstSegment.startKnot
 
         pathSegList.appendItem(
             createSVGPathSegMovetoAbs(
@@ -196,7 +195,7 @@ private fun SegmentCurve.toControlSvgPathSegs(
 }
 
 fun OpenSpline.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {
-    moveTo(firstLink.startKnot)
+    moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
         pathToControl(subCurve)
@@ -204,7 +203,7 @@ fun OpenSpline.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {
 }
 
 fun OpenSpline.toPathOpen(): Path2D.Double = Path2D.Double().apply {
-    moveTo(firstLink.startKnot)
+    moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
         pathTo(subCurve)
@@ -212,7 +211,7 @@ fun OpenSpline.toPathOpen(): Path2D.Double = Path2D.Double().apply {
 }
 
 fun ClosedSpline.toControlPathClosed(): Path2D.Double = Path2D.Double().apply {
-    moveTo(firstLink.startKnot)
+    moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
         pathToControl(subCurve)
@@ -222,7 +221,7 @@ fun ClosedSpline.toControlPathClosed(): Path2D.Double = Path2D.Double().apply {
 }
 
 fun ClosedSpline.toPathClosed(): Path2D.Double = Path2D.Double().apply {
-    moveTo(firstLink.startKnot)
+    moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
         pathTo(subCurve)

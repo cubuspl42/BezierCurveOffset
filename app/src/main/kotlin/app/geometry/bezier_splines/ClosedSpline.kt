@@ -2,7 +2,7 @@ package app.geometry.bezier_splines
 
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
-import app.geometry.bezier_splines.OpenSpline.Companion.fastenLinksSmoothly
+import app.geometry.bezier_splines.OpenSpline.Companion.fastenSegmentsSmoothly
 
 class ClosedSpline(
     /**
@@ -48,17 +48,17 @@ class ClosedSpline(
             val firstSpline = splines.first()
             val lastSpline = splines.last()
 
-            val (lastLink, firstLink) = fastenLinksSmoothly(
+            val (lastNode, firstNode) = fastenSegmentsSmoothly(
                 prevSpline = lastSpline,
                 nextSpline = firstSpline,
             )
 
-            val insideLinks = OpenSpline.fastenSplines(
+            val insideSegments = OpenSpline.fastenSplines(
                 splines = splines
             )
 
             return ClosedSpline(
-                segments = listOf(firstLink) + insideLinks + lastLink,
+                segments = listOf(firstNode) + insideSegments + lastNode,
             )
         }
     }

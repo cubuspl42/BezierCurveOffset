@@ -34,22 +34,23 @@ class OpenSpline(
             ),
         )
 
-        fun fastenLinksSmoothly(
+        // TODO: Nuke?
+        fun fastenSegmentsSmoothly(
             prevSpline: OpenSpline,
             nextSpline: OpenSpline,
         ): Pair<Segment, Segment> {
-            val prevLink = prevSpline.lastLink
-            val nextLink = nextSpline.firstLink
+            val prevNode = prevSpline.lastSegment
+            val nextNode = nextSpline.firstSegment
 
-            return Pair(prevLink, nextLink)
+            return Pair(prevNode, nextNode)
 
-            val prevEdge = prevLink.edge as BezierCurve.Edge
-            val prevTerminalLink = prevSpline.terminator
-            val nextEdge = nextLink.edge as BezierCurve.Edge
+            val prevEdge = prevNode.edge as BezierCurve.Edge
+            val prevTerminalNode = prevSpline.terminator
+            val nextEdge = nextNode.edge as BezierCurve.Edge
 
             val fixedKnot = Point.midPoint(
-                prevTerminalLink.endKnot,
-                nextLink.startKnot,
+                prevTerminalNode.endKnot,
+                nextNode.startKnot,
             )
 
             val firstControl = prevEdge.endControl
@@ -62,12 +63,12 @@ class OpenSpline(
             )
 
             return Pair(
-                prevLink.copy(
+                prevNode.copy(
                     edge = prevEdge.copy(
                         endControl = fixedFirstControl,
                     ),
                 ),
-                nextLink.copy(
+                nextNode.copy(
                     startKnot = fixedKnot,
                     edge = nextEdge.copy(
                         startControl = fixedSecondControl,
@@ -76,14 +77,15 @@ class OpenSpline(
             )
         }
 
+        // TODO: Nuke?
         fun fastenSplines(
             splines: List<OpenSpline>,
         ): List<Segment> = splines.interleave(
             transform = {
-                it.insideLinks
+                it.insideSegments
             },
             separate = { prevSpline, nextSpline ->
-                fastenLinksSmoothly(
+                fastenSegmentsSmoothly(
                     prevSpline = prevSpline,
                     nextSpline = nextSpline,
                 ).toList()
@@ -101,11 +103,11 @@ class OpenSpline(
 
             val segments = splines.withPreviousOrNull().flatMap { (prevSpline, spline) ->
                 when {
-                    prevSpline != null -> spline.segments.mapFirst { firstLink ->
+                    prevSpline != null -> spline.segments.mapFirst { firstNode ->
                         val prevSplineEndEndKnot = prevSpline.terminator.endKnot
-                        val splineStartKnot = firstLink.startKnot
+                        val splineStartKnot = firstNode.startKnot
 
-                        firstLink.copy(
+                        firstNode.copy(
                             startKnot = Point.midPoint(prevSplineEndEndKnot, splineStartKnot),
                         )
 
@@ -116,11 +118,11 @@ class OpenSpline(
             }
 
             val lastSpline = splines.last()
-            val terminalLink = lastSpline.terminator
+            val terminalNode = lastSpline.terminator
 
             return OpenSpline(
                 segments = segments,
-                terminator = terminalLink,
+                terminator = terminalNode,
             )
         }
     }
@@ -129,7 +131,7 @@ class OpenSpline(
         require(segments.isNotEmpty())
     }
 
-    val insideLinks: List<Segment>
+    val insideSegments: List<Segment>
         get() = segments.drop(1).dropLast(1)
 
     fun mergeWith(
