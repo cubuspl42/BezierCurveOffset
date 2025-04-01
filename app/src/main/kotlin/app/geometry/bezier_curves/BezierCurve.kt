@@ -10,6 +10,7 @@ import app.geometry.TimedPointSeries
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.bezier_splines.OpenSpline
+import app.geometry.bezier_splines.Spline
 
 sealed class BezierCurve<CurveT : BezierCurve<CurveT>> : SegmentCurve() {
     data class Edge(
@@ -127,13 +128,16 @@ sealed class BezierCurve<CurveT : BezierCurve<CurveT>> : SegmentCurve() {
 
     abstract val asLongitudinal: LongitudinalBezierCurve<*>?
 
-    fun toSpline(): OpenSpline = OpenSpline.ofEdge(
-        startKnot = start,
-        edge = BezierCurve.Edge(
-            startControl = firstControl,
-            endControl = lastControl,
+    fun toSpline(): OpenSpline = OpenSpline(
+        segments = listOf(
+            Spline.Segment.bezier(
+                startKnot = start,
+                control0 = firstControl,
+                control1 = lastControl,
+            ),
         ),
-
-        endKnot = end,
+        terminator = Spline.Terminator(
+            endKnot = end,
+        ),
     )
 }

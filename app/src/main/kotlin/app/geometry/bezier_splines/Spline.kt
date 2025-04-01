@@ -3,6 +3,7 @@ package app.geometry.bezier_splines
 import app.appendAllItems
 import app.createPathElement
 import app.geometry.Point
+import app.geometry.Subline
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
@@ -41,6 +42,13 @@ sealed class Spline {
                     startControl = control0,
                     endControl = control1,
                 ),
+            )
+
+            fun subline(
+                startKnot: Point,
+            ): Segment = Segment(
+                startKnot = startKnot,
+                edge = Subline.Edge,
             )
         }
 

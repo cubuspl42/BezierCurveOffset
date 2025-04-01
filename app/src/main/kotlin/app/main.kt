@@ -84,12 +84,10 @@ fun SVGPathElement.toSpline(): ClosedSpline {
     val segments = edgePathSegs.withPrevious(
         outerLeft = originPathSeg,
     ).map { (prevPathSeg, pathSeg) ->
-        Spline.Segment(
+        Spline.Segment.bezier(
             startKnot = prevPathSeg.finalPoint,
-            edge = BezierCurve.Edge(
-                startControl = pathSeg.firstControl,
-                endControl = pathSeg.secondControl,
-            )
+            control0 = pathSeg.firstControl,
+            control1 = pathSeg.secondControl,
         )
     }
 

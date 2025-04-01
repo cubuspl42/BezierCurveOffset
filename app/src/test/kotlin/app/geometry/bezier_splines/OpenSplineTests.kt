@@ -16,13 +16,11 @@ class OpenSplineTests {
         val knot1End = Point.of(3.0, 0.0)
 
         val segments = listOf(
-            Segment(
+            Segment.bezier(
                 startKnot = knot0Start,
-                edge = BezierCurve.Edge(
-                    startControl = control0,
-                    endControl = control1
-                ),
-            ),
+                control0 = control0,
+                control1 = control1,
+            )
         )
 
         val terminator = Terminator(
@@ -50,19 +48,15 @@ class OpenSplineTests {
     @Test
     fun testMerge_singleSpline_multipleSubCurves() {
         val segments = listOf(
-            Segment(
+            Segment.bezier(
                 startKnot = Point.of(0.0, 0.0),
-                edge = BezierCurve.Edge(
-                    startControl = Point.of(1.0, 1.0),
-                    endControl = Point.of(2.0, 1.0),
-                ),
+                control0 = Point.of(1.0, 1.0),
+                control1 = Point.of(2.0, 1.0),
             ),
-            Segment(
+            Segment.bezier(
                 startKnot = Point.of(3.0, 0.0),
-                edge = BezierCurve.Edge(
-                    startControl = Point.of(4.0, 1.0),
-                    endControl = Point.of(5.0, 1.0)
-                ),
+                control0 = Point.of(4.0, 1.0),
+                control1 = Point.of(5.0, 1.0),
             ),
         )
 
@@ -171,20 +165,16 @@ class OpenSplineTests {
         val control7 = Point.of(11.0, 1.0)
         val knot4End = Point.of(12.0, 0.0)
 
-        val link0 = Segment(
+        val link0 = Spline.Segment.bezier(
             startKnot = knot0Start,
-            edge = BezierCurve.Edge(
-                startControl = control0,
-                endControl = control1,
-            ),
+            control0 = control0,
+            control1 = control1,
         )
 
-        val link1 = Segment(
+        val link1 = Spline.Segment.bezier(
             startKnot = knot1,
-            edge = BezierCurve.Edge(
-                startControl = control2,
-                endControl = control3,
-            ),
+            control0 = control2,
+            control1 = control3,
         )
 
         val terminator1 = Terminator(
@@ -196,20 +186,16 @@ class OpenSplineTests {
             terminator = terminator1,
         )
 
-        val link2 = Segment(
+        val link2 = Spline.Segment.bezier(
             startKnot = knot2Joint,
-            edge = BezierCurve.Edge(
-                startControl = control4,
-                endControl = control5,
-            ),
+            control0 = control4,
+            control1 = control5,
         )
 
-        val link3 = Segment(
+        val link3 = Spline.Segment.bezier(
             startKnot = knot3,
-            edge = BezierCurve.Edge(
-                startControl = control6,
-                endControl = control7,
-            ),
+            control0 = control6,
+            control1 = control7,
         )
 
         val terminator2 = Terminator(
@@ -267,20 +253,16 @@ class OpenSplineTests {
         val control11 = Point.of(17.0, 1.0)
         val knot6End = Point.of(18.0, 0.0)
 
-        val link1 = Segment(
+        val link1 = Segment.bezier(
             startKnot = knot0Start,
-            edge = BezierCurve.Edge(
-                startControl = control0,
-                endControl = control1,
-            ),
+            control0 = control0,
+            control1 = control1,
         )
 
-        val link2 = Segment(
+        val link2 = Segment.bezier(
             startKnot = knot1,
-            edge = BezierCurve.Edge(
-                startControl = control2,
-                endControl = control3,
-            ),
+            control0 = control2,
+            control1 = control3,
         )
 
         val terminator1 = Terminator(
@@ -292,20 +274,16 @@ class OpenSplineTests {
             terminator = terminator1,
         )
 
-        val link3 = Segment(
+        val link3 = Segment.bezier(
             startKnot = knot2Joint,
-            edge = BezierCurve.Edge(
-                startControl = control4,
-                endControl = control5,
-            ),
+            control0 = control4,
+            control1 = control5,
         )
 
-        val link4 = Segment(
+        val link4 = Segment.bezier(
             startKnot = knot3,
-            edge = BezierCurve.Edge(
-                startControl = control6,
-                endControl = control7,
-            ),
+            control0 = control6,
+            control1 = control7,
         )
 
         val terminator2 = Terminator(
@@ -317,20 +295,16 @@ class OpenSplineTests {
             terminator = terminator2,
         )
 
-        val link5 = Segment(
+        val link5 = Segment.bezier(
             startKnot = knot4Joint,
-            edge = BezierCurve.Edge(
-                startControl = control8,
-                endControl = control9,
-            ),
+            control0 = control8,
+            control1 = control9,
         )
 
-        val link6 = Segment(
+        val link6 = Segment.bezier(
             startKnot = knot5,
-            edge = BezierCurve.Edge(
-                startControl = control10,
-                endControl = control11,
-            ),
+            control0 = control10,
+            control1 = control11,
         )
 
         val terminator3 = Terminator(
