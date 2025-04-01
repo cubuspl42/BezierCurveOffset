@@ -1,17 +1,12 @@
 package app
 
 import app.geometry.Point
-import app.geometry.bezier_splines.BezierSpline
-import app.geometry.bezier_splines.BezierSplineEdge
-import app.geometry.bezier_splines.ClosedSpline
-import app.geometry.bezier_splines.toSvgDocument
+import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.ProperBezierCurve
+import app.geometry.bezier_splines.*
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory
 import org.w3c.dom.svg.*
 import java.nio.file.Path
-import javax.xml.transform.Source
-import javax.xml.transform.TransformerFactory
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 import kotlin.io.path.Path
 import kotlin.io.path.reader
 
@@ -104,7 +99,7 @@ fun SVGPathElement.toSpline(): ClosedSpline {
 
 fun extractSplineFromFile(
     filePath: Path,
-): BezierSpline<*> {
+): ClosedSpline {
     val reader = filePath.reader()
     val uri = "file://Bezier.svg"
 
@@ -121,10 +116,42 @@ fun main() {
         filePath = Path("/Users/jakub/Temporary/Shape.svg"),
     )
 
-    val document = spline.toSvgDocument(
-        width = 100,
-        height = 100,
-    )
+    val firstSubCurve = spline.subCurves.first() as CubicBezierCurve
+
+    val offsetSpline = firstSubCurve.findOffsetSpline(
+        strategy = ProperBezierCurve.BestFitOffsetStrategy,
+        offset = 10.0,
+    )!!.offsetSpline
+
+    val contourSpline = spline.findContourSpline(
+        strategy = ProperBezierCurve.BestFitOffsetStrategy,
+        offset = 10.0,
+    )!!.contourSpline
+
+    val document = createSvgDocument().apply {
+        val svgElement = documentSvgElement
+
+        svgElement.appendChild(
+            spline.toControlSvgPath(document = this).apply {
+                fill = "none"
+                stroke = "lightGray"
+            },
+        )
+
+        svgElement.appendChild(
+            spline.toSvgPath(document = this).apply {
+                fill = "none"
+                stroke = "red"
+            },
+        )
+
+        svgElement.appendChild(
+            offsetSpline.toSvgPath(document = this).apply {
+                fill = "none"
+                stroke = "blue"
+            },
+        )
+    }
 
     document.writeToFile(
         filePath = Path("/Users/jakub/Temporary/Shape2.svg"),

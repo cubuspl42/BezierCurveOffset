@@ -35,14 +35,16 @@ class OpenSpline(
             nextSpline: OpenSpline,
         ): Pair<InnerLink, InnerLink> {
             val prevLink = prevSpline.lastLink
-            val prevEdge = prevLink.edge as BezierSplineEdge
-            val prevPlug = prevSpline.terminalLink
-
             val nextLink = nextSpline.firstLink
+
+            return Pair(prevLink, nextLink)
+
+            val prevEdge = prevLink.edge as BezierSplineEdge
+            val prevTerminalLink = prevSpline.terminalLink
             val nextEdge = nextLink.edge as BezierSplineEdge
 
             val fixedKnot = Point.midPoint(
-                prevPlug.endKnot,
+                prevTerminalLink.endKnot,
                 nextLink.startKnot,
             )
 

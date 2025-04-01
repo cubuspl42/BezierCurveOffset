@@ -31,6 +31,20 @@ sealed class BezierSpline<SplineT : BezierSpline<SplineT>> {
         val startKnot: Point,
         val edge: SplineEdge,
     ) : Link {
+        companion object {
+            fun bezier(
+                startKnot: Point,
+                control0: Point,
+                control1: Point,
+            ): InnerLink = InnerLink(
+                startKnot = startKnot,
+                edge = BezierSplineEdge(
+                    startControl = control0,
+                    endControl = control1,
+                ),
+            )
+        }
+
         override val knot: Point
             get() = startKnot
     }
@@ -97,29 +111,6 @@ sealed class BezierSpline<SplineT : BezierSpline<SplineT>> {
     }
 }
 
-fun BezierSpline<*>.toSvgDocument(
-    width: Int,
-    height: Int,
-): SVGDocument = createSvgDocument().apply {
-    val svgElement = documentSvgElement
-
-    svgElement.width = width
-    svgElement.height = height
-
-    svgElement.appendChild(
-        toControlSvgPath(document = this).apply {
-            fill = "none"
-            stroke = "lightGray"
-        },
-    )
-
-    svgElement.appendChild(
-        toSvgPath(document = this).apply {
-            fill = "none"
-            stroke = "red"
-        },
-    )
-}
 
 fun BezierSpline<*>.toSvgPath(
     document: SVGDocument,

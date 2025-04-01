@@ -205,6 +205,13 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
         strategy: OffsetStrategy,
         offset: Double,
     ): OffsetCurveApproximationResult? {
+        // TODO: Figure out the handling of tiny curves where the distance
+        //   between the control points is very small, but does not trigger
+        //   division by zero
+//        if (start.distanceTo(end) < 1.0) {
+//            throw UnsupportedOperationException()
+//        }
+
         // TODO: Check for collinear control points up front?
 
         val approximatedOffsetCurve = strategy.approximateOffsetCurve(
@@ -276,7 +283,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
                 // point), we know we can't generate an offset spline for it,
                 // so we give up for this segment. Again, let the spline
                 // merging handle that.
-                splitCurve.asLongitudinal?.findOffsetSplineRecursive(
+                splitBezierCurve.asLongitudinal?.findOffsetSplineRecursive(
                     strategy = strategy,
                     offset = offset,
                     subdivisionLevel = 0,

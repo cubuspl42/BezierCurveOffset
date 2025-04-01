@@ -116,9 +116,11 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
             return null
         }
 
-        return OpenSpline.merge(
+        val mergedSpline = OpenSpline.merge(
             splines = subSplines,
         )
+
+        return mergedSpline
     }
 
     fun splitAtMidPoint() = splitAt(t = 0.5)
