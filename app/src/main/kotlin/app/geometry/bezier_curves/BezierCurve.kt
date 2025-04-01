@@ -13,16 +13,16 @@ import app.geometry.bezier_splines.OpenSpline
 
 sealed class BezierCurve<CurveT : BezierCurve<CurveT>> : SegmentCurve() {
     data class Edge(
-        val startControl: Point,
-        val endControl: Point,
+        val control0: Point,
+        val control1: Point,
     ) : SegmentCurve.Edge() {
         override fun bind(
             startKnot: Point,
             endKnot: Point,
         ): BezierCurve<*> = CubicBezierCurve.of(
             start = startKnot,
-            control0 = startControl,
-            control1 = endControl,
+            control0 = control0,
+            control1 = control1,
             end = endKnot,
         )
     }

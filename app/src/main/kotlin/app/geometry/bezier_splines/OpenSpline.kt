@@ -53,8 +53,8 @@ class OpenSpline(
                 nextNode.startKnot,
             )
 
-            val firstControl = prevEdge.endControl
-            val secondControl = nextEdge.startControl
+            val firstControl = prevEdge.control1
+            val secondControl = nextEdge.control0
 
             val (fixedFirstControl, fixedSecondControl) = Point.makeCollinear(
                 a = firstControl,
@@ -65,13 +65,13 @@ class OpenSpline(
             return Pair(
                 prevNode.copy(
                     edge = prevEdge.copy(
-                        endControl = fixedFirstControl,
+                        control1 = fixedFirstControl,
                     ),
                 ),
                 nextNode.copy(
                     startKnot = fixedKnot,
                     edge = nextEdge.copy(
-                        startControl = fixedSecondControl,
+                        control0 = fixedSecondControl,
                     ),
                 ),
             )

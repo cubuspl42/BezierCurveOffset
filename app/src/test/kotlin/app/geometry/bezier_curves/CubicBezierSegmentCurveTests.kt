@@ -46,13 +46,13 @@ class CubicBezierSegmentCurveTests {
 
         assertPointEquals(
             expected = expectedNewControl0,
-            actual = edge0.startControl,
+            actual = edge0.control0,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl1,
-            actual = edge0.endControl,
+            actual = edge0.control1,
             absoluteTolerance = eps,
         )
 
@@ -67,13 +67,13 @@ class CubicBezierSegmentCurveTests {
 
         assertPointEquals(
             expected = expectedNewControl2,
-            actual = edge1.startControl,
+            actual = edge1.control0,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl3,
-            actual = edge1.endControl,
+            actual = edge1.control1,
             absoluteTolerance = eps,
         )
 
@@ -125,13 +125,13 @@ class CubicBezierSegmentCurveTests {
 
         assertPointEquals(
             expected = expectedNewControl0,
-            actual = firstEdge.startControl,
+            actual = firstEdge.control0,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl1,
-            actual = firstEdge.endControl,
+            actual = firstEdge.control1,
             absoluteTolerance = eps,
         )
 
@@ -146,13 +146,13 @@ class CubicBezierSegmentCurveTests {
 
         assertPointEquals(
             expected = expectedNewControl2,
-            actual = edge1.startControl,
+            actual = edge1.control0,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl3,
-            actual = edge1.endControl,
+            actual = edge1.control1,
             absoluteTolerance = eps,
         )
 
@@ -167,13 +167,13 @@ class CubicBezierSegmentCurveTests {
 
         assertPointEquals(
             expected = expectedNewControl4,
-            actual = edge2.startControl,
+            actual = edge2.control0,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl5,
-            actual = edge2.endControl,
+            actual = edge2.control1,
             absoluteTolerance = eps,
         )
 
@@ -228,13 +228,13 @@ class CubicBezierSegmentCurveTests {
 
         assertPointEquals(
             expected = expectedNewControl0,
-            actual = edge0.startControl,
+            actual = edge0.control0,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl1,
-            actual = edge0.endControl,
+            actual = edge0.control1,
             absoluteTolerance = eps,
         )
 
@@ -249,13 +249,13 @@ class CubicBezierSegmentCurveTests {
 
         assertPointEquals(
             expected = expectedNewControl2,
-            actual = edge1.startControl,
+            actual = edge1.control0,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl3,
-            actual = edge1.endControl,
+            actual = edge1.control1,
             absoluteTolerance = eps,
         )
 
@@ -270,13 +270,13 @@ class CubicBezierSegmentCurveTests {
 
         assertPointEquals(
             expected = expectedNewControl4,
-            actual = edge2.startControl,
+            actual = edge2.control0,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl5,
-            actual = edge2.endControl,
+            actual = edge2.control1,
             absoluteTolerance = eps,
         )
 
@@ -291,13 +291,13 @@ class CubicBezierSegmentCurveTests {
 
         assertPointEquals(
             expected = expectedNewControl6,
-            actual = edge3.startControl,
+            actual = edge3.control0,
             absoluteTolerance = eps,
         )
 
         assertPointEquals(
             expected = expectedNewControl7,
-            actual = edge3.endControl,
+            actual = edge3.control1,
             absoluteTolerance = eps,
         )
 

@@ -43,8 +43,8 @@ sealed class Spline {
             ): Segment = Segment(
                 startKnot = startKnot,
                 edge = BezierCurve.Edge(
-                    startControl = control0,
-                    endControl = control1,
+                    control0 = control0,
+                    control1 = control1,
                 ),
             )
 
