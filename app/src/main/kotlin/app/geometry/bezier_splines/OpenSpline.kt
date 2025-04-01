@@ -2,12 +2,14 @@ package app.geometry.bezier_splines
 
 import app.geometry.Point
 import app.interleave
+import app.mapFirst
+import app.withPreviousOrNull
 
 class OpenSpline(
     /**
      * The path of links, must not be empty
      */
-    override val links: List<InnerLink>,
+    override val innerLinks: List<InnerLink>,
     /**
      * The plug node that terminates the path of links
      */
@@ -19,7 +21,7 @@ class OpenSpline(
             edge: SplineEdge,
             endKnot: Point,
         ): OpenSpline = OpenSpline(
-            links = listOf(
+            innerLinks = listOf(
                 InnerLink(
                     startKnot = startKnot,
                     edge = edge,
@@ -95,26 +97,38 @@ class OpenSpline(
                 return splines.single()
             }
 
-            val firstSpline = splines.first()
-            val lastSpline = splines.last()
+            val innerLinks = splines.withPreviousOrNull().flatMap { (prevSpline, spline) ->
+                when {
+                    prevSpline != null -> spline.innerLinks.mapFirst { firstLink ->
+                        val prevSplineEndEndKnot = prevSpline.terminalLink.endKnot
+                        val splineStartKnot = firstLink.startKnot
 
-            val firstLink = firstSpline.firstLink
-            val innerLinks = fastenSplines(splines = splines)
-            val lastLink = lastSpline.lastLink
+                        firstLink.copy(
+                            startKnot = Point.midPoint(prevSplineEndEndKnot, splineStartKnot),
+                        )
+
+                    }
+
+                    else -> spline.innerLinks
+                }
+            }
+
+            val lastSpline = splines.last()
+            val terminalLink = lastSpline.terminalLink
 
             return OpenSpline(
-                links = listOf(firstLink) + innerLinks + lastLink,
-                terminalLink = lastSpline.terminalLink,
+                innerLinks = innerLinks,
+                terminalLink = terminalLink,
             )
         }
     }
 
     init {
-        require(links.isNotEmpty())
+        require(innerLinks.isNotEmpty())
     }
 
     val insideLinks: List<InnerLink>
-        get() = links.drop(1).dropLast(1)
+        get() = innerLinks.drop(1).dropLast(1)
 
     fun mergeWith(
         rightSubSplitCurve: OpenSpline,
@@ -122,7 +136,7 @@ class OpenSpline(
         splines = listOf(this, rightSubSplitCurve),
     )
 
-    override val nodes: List<Link> = links + terminalLink
+    override val nodes: List<Link> = innerLinks + terminalLink
 
     override val rightEdgeNode: Link
         get() = terminalLink

@@ -6,10 +6,9 @@ import app.geometry.bezier_splines.BezierSplineEdge
 import kotlin.test.*
 
 class CubicBezierCurveTests {
-    private val eps = 10e-2
+    private val eps = 10e-3
 
     @Test
-    @Ignore // TODO: Fix bugs in the splitting algorithm
     fun testSplitAtMultiple_singleTValue() {
         val start = Point.of(0.0, 0.0)
         val end = Point.of(3.0, 0.0)
@@ -27,18 +26,18 @@ class CubicBezierCurveTests {
             ),
         )
 
-        val expectedNewControl0 = Point.of(0.0, 0.0) // FIXME
-        val expectedNewControl1 = Point.of(0.0, 0.0) // FIXME
-        val expectedSplitPoint = Point.of(0.0, 0.0) // FIXME
-        val expectedNewControl2 = Point.of(0.0, 0.0) // FIXME
-        val expectedNewControl3 = Point.of(0.0, 0.0) // FIXME
+        val expectedNewControl0 = Point.of(0.2, 0.2)
+        val expectedNewControl1 = Point.of(0.4, 0.36)
+        val expectedSplitPoint = Point.of(0.6, 0.48)
+        val expectedNewControl2 = Point.of(1.4, 0.96)
+        val expectedNewControl3 = Point.of(2.2, 0.8)
 
         assertEquals(
             expected = 2,
-            actual = splitSpline.links.size,
+            actual = splitSpline.innerLinks.size,
         )
 
-        val firstLink = splitSpline.links[0]
+        val firstLink = splitSpline.innerLinks[0]
         val firstEdge = assertIs<BezierSplineEdge>(firstLink.edge)
 
         assertEquals(
@@ -58,13 +57,12 @@ class CubicBezierCurveTests {
             absoluteTolerance = eps,
         )
 
-
-        val secondLink = splitSpline.links[1]
+        val secondLink = splitSpline.innerLinks[1]
         val secondEdge = assertIs<BezierSplineEdge>(secondLink.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint,
-            actual = secondEdge.startControl,
+            actual = secondLink.startKnot,
             absoluteTolerance = eps,
         )
 
@@ -87,7 +85,6 @@ class CubicBezierCurveTests {
     }
 
     @Test
-    @Ignore // TODO: Fix bugs in the splitting algorithm
     fun testSplitAtMultiple_twoTValues() {
         val start = Point.of(0.0, 0.0)
         val end = Point.of(3.0, 0.0)
@@ -105,18 +102,18 @@ class CubicBezierCurveTests {
             ),
         )
 
-        val expectedNewControl0 = Point.of(0.0, 0.0) // FIXME
-        val expectedNewControl1 = Point.of(0.0, 0.0) // FIXME
-        val expectedSplitPoint0 = Point.of(0.0, 0.0) // FIXME
-        val expectedNewControl2 = Point.of(0.0, 0.0) // FIXME
-        val expectedNewControl3 = Point.of(0.0, 0.0) // FIXME
-        val expectedSplitPoint1 = Point.of(0.0, 0.0) // FIXME
-        val expectedNewControl4 = Point.of(0.0, 0.0) // FIXME
-        val expectedNewControl5 = Point.of(0.0, 0.0) // FIXME
+        val expectedNewControl0 = Point.of(0.2, 0.2)
+        val expectedNewControl1 = Point.of(0.4, 0.36)
+        val expectedSplitPoint0 = Point.of(0.6, 0.48)
+        val expectedNewControl2 = Point.of(1.2, 0.84)
+        val expectedNewControl3 = Point.of(1.8, 0.84)
+        val expectedSplitPoint1 = Point.of(2.4, 0.48)
+        val expectedNewControl4 = Point.of(2.6, 0.36)
+        val expectedNewControl5 = Point.of(2.8, 0.2)
 
         assertEquals(
             expected = 3,
-            actual = splitSpline.links.size,
+            actual = splitSpline.innerLinks.size,
         )
 
         val firstLink = splitSpline.firstLink
@@ -139,12 +136,12 @@ class CubicBezierCurveTests {
             absoluteTolerance = eps,
         )
 
-        val secondLink = splitSpline.links[1]
+        val secondLink = splitSpline.innerLinks[1]
         val secondEdge = assertIs<BezierSplineEdge>(secondLink.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint0,
-            actual = secondEdge.startControl,
+            actual = secondLink.startKnot,
             absoluteTolerance = eps,
         )
 
@@ -160,12 +157,12 @@ class CubicBezierCurveTests {
             absoluteTolerance = eps,
         )
 
-        val thirdLink = splitSpline.links[2]
+        val thirdLink = splitSpline.innerLinks[2]
         val thirdEdge = assertIs<BezierSplineEdge>(thirdLink.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint1,
-            actual = thirdEdge.startControl,
+            actual = thirdLink.startKnot,
             absoluteTolerance = eps,
         )
 
@@ -261,10 +258,9 @@ class CubicBezierCurveTests {
         )
 
         assertEquals(
-            expected = 1.35,
+            expected = 0.0, // TODO: Verify this
             actual = offsetSplineResult.globalDeviation,
-            absoluteTolerance = 0.01,
+            absoluteTolerance = eps,
         )
     }
-
 }

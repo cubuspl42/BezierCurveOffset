@@ -55,17 +55,17 @@ sealed class Spline {
     }
 
     val firstLink: InnerLink
-        get() = links.first()
+        get() = innerLinks.first()
 
     val lastLink: InnerLink
-        get() = links.last()
+        get() = innerLinks.last()
 
     /**
      * Splines always have at least one node
      */
     abstract val nodes: Iterable<Link>
 
-    abstract val links: Iterable<InnerLink>
+    abstract val innerLinks: Iterable<InnerLink>
 
     abstract val rightEdgeNode: Link
 
@@ -77,7 +77,7 @@ sealed class Spline {
     }
 
     val subCurves: List<Curve> by lazy {
-        links.mapWithNext(rightEdge = rightEdgeNode) { innerLink, nextLink ->
+        innerLinks.mapWithNext(rightEdge = rightEdgeNode) { innerLink, nextLink ->
             val startKnot = innerLink.startKnot
             val endKnot = nextLink.knot
             val edge = innerLink.edge

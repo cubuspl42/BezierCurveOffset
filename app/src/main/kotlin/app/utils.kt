@@ -125,20 +125,18 @@ inline fun <T, U : T, R> Iterable<U>.mapWithNext(
     return result
 }
 
-@Suppress("BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER")
-data class WithPrevious<L, M, R>(
+data class WithPrevious<L, M>(
     val prevElement: L,
     val element: M,
-) where M : L, M : R
+) where M : L
 
-@Suppress("BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER")
-fun <L, M, R> Iterable<M>.withPrevious(
+fun <L, M> Iterable<M>.withPrevious(
     outerLeft: L,
-): List<WithPrevious<L, M, R>> where M : L, M : R {
+): List<WithPrevious<L, M>> where M : L {
     val iterator = iterator()
     if (!iterator.hasNext()) return emptyList()
 
-    val result = mutableListOf<WithPrevious<L, M, R>>()
+    val result = mutableListOf<WithPrevious<L, M>>()
     var prev: L = outerLeft
     var current = iterator.next()
 
@@ -166,6 +164,10 @@ fun <L, M, R> Iterable<M>.withPrevious(
     return result
 }
 
+fun <T : Any> Iterable<T>.withPreviousOrNull(): List<WithPrevious<T?, T>> = withPrevious(
+    outerLeft = null,
+)
+
 @Suppress("BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER")
 data class WithNeighbours<L, M, R>(
     val prevElement: L,
@@ -190,9 +192,7 @@ fun <L, M, R> Iterable<M>.withNeighbours(
 
         result.add(
             WithNeighbours(
-                prevElement = prev,
-                element = current,
-                nextElement = next
+                prevElement = prev, element = current, nextElement = next
             ),
         )
 
@@ -285,3 +285,8 @@ inline fun <E, R> Iterable<E>.interleave(
 
 @Suppress("UNCHECKED_CAST")
 fun <E> List<*>.elementWiseAs(): List<E> = this.map { it as E }
+
+fun <T> List<T>.mapFirst(transform: (T) -> T): List<T> = when {
+    isEmpty() -> emptyList()
+    else ->  listOf(transform(first())) + drop(1)
+}

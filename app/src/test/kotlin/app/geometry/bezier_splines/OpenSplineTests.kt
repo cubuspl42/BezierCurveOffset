@@ -25,7 +25,7 @@ class OpenSplineTests {
         )
 
         val spline = OpenSpline(
-            links = links,
+            innerLinks = links,
             terminalLink = terminalLink,
         )
 
@@ -33,7 +33,7 @@ class OpenSplineTests {
 
         assertEquals(
             expected = links,
-            actual = mergedSpline.links,
+            actual = mergedSpline.innerLinks,
         )
 
         assertEquals(
@@ -66,7 +66,7 @@ class OpenSplineTests {
         )
 
         val spline = OpenSpline(
-            links = links,
+            innerLinks = links,
             terminalLink = terminalLink,
         )
 
@@ -74,7 +74,7 @@ class OpenSplineTests {
 
         assertEquals(
             expected = links,
-            actual = mergedSpline.links,
+            actual = mergedSpline.innerLinks,
         )
 
         assertEquals(
@@ -84,7 +84,6 @@ class OpenSplineTests {
     }
 
     @Test
-    @Ignore // TODO: Fix bugs related to merging one-segment splines
     fun testMerge_twoSplines() {
         val start = Point.of(0.0, 0.0)
         val control0 = Point.of(1.0, 1.0)
@@ -95,7 +94,7 @@ class OpenSplineTests {
         val end = Point.of(6.0, 0.0)
 
         val firstSpline = OpenSpline(
-            links = listOf(
+            innerLinks = listOf(
                 Spline.InnerLink.bezier(
                     startKnot = start,
                     control0 = control0,
@@ -108,7 +107,7 @@ class OpenSplineTests {
         )
 
         val secondSpline = OpenSpline(
-            links = listOf(
+            innerLinks = listOf(
                 Spline.InnerLink.bezier(
                     startKnot = mid,
                     control0 = control2,
@@ -137,7 +136,7 @@ class OpenSplineTests {
                     control1 = control3,
                 ),
             ),
-            actual = mergedSpline.links,
+            actual = mergedSpline.innerLinks,
         )
 
         assertEquals(
@@ -169,7 +168,7 @@ class OpenSplineTests {
         val terminalLink1 = TerminalLink(endKnot = Point.of(6.0, 0.0))
 
         val spline1 = OpenSpline(
-            links = listOf(link1, link2),
+            innerLinks = listOf(link1, link2),
             terminalLink = terminalLink1,
         )
 
@@ -192,7 +191,7 @@ class OpenSplineTests {
         val terminalLink2 = TerminalLink(endKnot = Point.of(12.0, 0.0))
 
         val spline2 = OpenSpline(
-            links = listOf(link3, link4),
+            innerLinks = listOf(link3, link4),
             terminalLink = terminalLink2,
         )
 
@@ -200,7 +199,7 @@ class OpenSplineTests {
 
         assertEquals(
             expected = listOf(link1, link2, link3, link4),
-            actual = mergedSpline.links,
+            actual = mergedSpline.innerLinks,
         )
 
         assertEquals(

@@ -93,7 +93,7 @@ fun SVGPathElement.toSpline(): ClosedSpline {
     }
 
     return ClosedSpline(
-        links = links,
+        innerLinks = links,
     )
 }
 
