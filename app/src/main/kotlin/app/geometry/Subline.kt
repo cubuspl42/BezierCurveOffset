@@ -1,6 +1,8 @@
 package app.geometry
 
 import app.fillCircle
+import app.geometry.bezier_curves.BezierCurve
+import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import java.awt.Graphics2D
 import java.awt.geom.Line2D
@@ -12,7 +14,17 @@ import kotlin.math.roundToInt
 data class Subline(
     override val start: Point,
     override val end: Point,
-): SegmentCurve() {
+) : SegmentCurve() {
+    object Edge : SegmentCurve.Edge() {
+        override fun bind(
+            startKnot: Point,
+            endKnot: Point,
+        ): Subline = Subline(
+            start = startKnot,
+            end = endKnot,
+        )
+    }
+
     val direction: Direction? = Direction.of(
         end.pv - start.pv,
     )
