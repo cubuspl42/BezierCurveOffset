@@ -2,13 +2,12 @@ package app.geometry.bezier_splines
 
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
-import app.geometry.bezier_splines.OpenSpline.Companion.fastenSegmentsSmoothly
 
 class ClosedSpline(
     /**
      * The cyclic chain of links, must not be empty
      */
-    override val segments: List<Segment>,
+    override val segments: List<Segment<*>>,
 ) : Spline() {
     abstract class ContourSplineApproximationResult(
         val contourSpline: ClosedSpline,
@@ -45,20 +44,10 @@ class ClosedSpline(
         ): ClosedSpline {
             require(splines.size >= 2)
 
-            val firstSpline = splines.first()
-            val lastSpline = splines.last()
-
-            val (lastNode, firstNode) = fastenSegmentsSmoothly(
-                prevSpline = lastSpline,
-                nextSpline = firstSpline,
-            )
-
-            val insideSegments = OpenSpline.fastenSplines(
-                splines = splines
-            )
+            TODO()
 
             return ClosedSpline(
-                segments = listOf(firstNode) + insideSegments + lastNode,
+                segments = emptyList(),
             )
         }
     }

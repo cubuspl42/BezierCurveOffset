@@ -31,16 +31,16 @@ sealed class Spline {
         val frontKnot: Point
     }
 
-    data class Segment(
+    data class Segment<CurveT: SegmentCurve>(
         val startKnot: Point,
-        val edge: SegmentCurve.Edge<*>,
+        val edge: SegmentCurve.Edge<CurveT>,
     ) : Node {
         companion object {
             fun bezier(
                 startKnot: Point,
                 control0: Point,
                 control1: Point,
-            ): Segment = Segment(
+            ): Segment<BezierCurve<*>> = Segment(
                 startKnot = startKnot,
                 edge = BezierCurve.Edge(
                     control0 = control0,
@@ -50,7 +50,7 @@ sealed class Spline {
 
             fun subline(
                 startKnot: Point,
-            ): Segment = Segment(
+            ): Segment<Subline> = Segment(
                 startKnot = startKnot,
                 edge = Subline.Edge,
             )
@@ -67,10 +67,10 @@ sealed class Spline {
             get() = endKnot
     }
 
-    val firstSegment: Segment
+    val firstSegment: Segment<*>
         get() = segments.first()
 
-    val lastSegment: Segment
+    val lastSegment: Segment<*>
         get() = segments.last()
 
     /**
@@ -78,7 +78,7 @@ sealed class Spline {
      */
     abstract val nodes: Iterable<Node>
 
-    abstract val segments: Iterable<Segment>
+    abstract val segments: Iterable<Segment<*>>
 
     abstract val rightEdgeNode: Node
 
