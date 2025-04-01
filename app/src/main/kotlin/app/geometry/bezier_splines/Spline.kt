@@ -4,7 +4,7 @@ import app.appendAllItems
 import app.createPathElement
 import app.geometry.Point
 import app.geometry.bezier_curves.CubicBezierCurve
-import app.geometry.bezier_curves.Curve
+import app.geometry.bezier_curves.SegmentCurve
 import app.geometry.cubicTo
 import app.geometry.lineTo
 import app.geometry.moveTo
@@ -76,7 +76,7 @@ sealed class Spline {
         nodes.map { it.knot }.toSet()
     }
 
-    val subCurves: List<Curve> by lazy {
+    val subCurves: List<SegmentCurve> by lazy {
         innerLinks.mapWithNext(rightEdge = rightEdgeNode) { innerLink, nextLink ->
             val startKnot = innerLink.startKnot
             val endKnot = nextLink.knot
@@ -153,7 +153,7 @@ fun Spline.toControlSvgPath(
     }
 }
 
-private fun Curve.toSvgPathSeg(
+private fun SegmentCurve.toSvgPathSeg(
     pathElement: SVGPathElement,
 ): SVGPathSeg = when (this) {
     is CubicBezierCurve -> pathElement.createSVGPathSegCurvetoCubicAbs(
@@ -168,7 +168,7 @@ private fun Curve.toSvgPathSeg(
     else -> throw UnsupportedOperationException()
 }
 
-private fun Curve.toControlSvgPathSegs(
+private fun SegmentCurve.toControlSvgPathSegs(
     pathElement: SVGPathElement,
 ): List<SVGPathSeg> = when (this) {
     is CubicBezierCurve -> listOf(
@@ -225,7 +225,7 @@ fun ClosedSpline.toPathClosed(): Path2D.Double = Path2D.Double().apply {
     closePath()
 }
 
-fun Path2D.pathToControl(curve: Curve) {
+fun Path2D.pathToControl(curve: SegmentCurve) {
     when (curve) {
         is CubicBezierCurve -> {
             lineTo(p = curve.control0)
@@ -235,7 +235,7 @@ fun Path2D.pathToControl(curve: Curve) {
     }
 }
 
-fun Path2D.pathTo(curve: Curve) {
+fun Path2D.pathTo(curve: SegmentCurve) {
     when (curve) {
         is CubicBezierCurve -> {
             cubicTo(p1 = curve.control0, p2 = curve.control1, p3 = curve.end)

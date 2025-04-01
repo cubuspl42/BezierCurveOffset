@@ -1,7 +1,6 @@
 package app.geometry.bezier_curves
 
 import app.algebra.Vector
-import app.algebra.bezier_binomials.BezierBinomial
 import app.algebra.bezier_binomials.DifferentiableBezierBinomial
 import app.algebra.bezier_binomials.findFaster
 import app.geometry.Direction
@@ -13,7 +12,7 @@ import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.bezier_splines.BezierSplineEdge
 import app.geometry.bezier_splines.OpenSpline
 
-sealed class BezierCurve<CurveT : BezierCurve<CurveT>> : Curve() {
+sealed class BezierCurve<CurveT : BezierCurve<CurveT>> : SegmentCurve() {
     companion object {
         fun bindRay(
             pointFunction: TimeFunction<Point>,

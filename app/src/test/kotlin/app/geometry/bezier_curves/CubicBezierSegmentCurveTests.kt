@@ -5,7 +5,7 @@ import app.geometry.Point
 import app.geometry.bezier_splines.BezierSplineEdge
 import kotlin.test.*
 
-class CubicBezierCurveTests {
+class CubicBezierSegmentCurveTests {
     private val eps = 10e-3
 
     @Test
