@@ -1,8 +1,14 @@
 package app.geometry.bezier_splines
 
-import app.*
-import app.geometry.*
-import app.geometry.bezier_curves.*
+import app.appendAllItems
+import app.createPathElement
+import app.geometry.Point
+import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.Curve
+import app.geometry.cubicTo
+import app.geometry.lineTo
+import app.geometry.moveTo
+import app.mapWithNext
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
@@ -10,13 +16,11 @@ import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
-
-
 /**
  * A Bézier spline, also called "poly-Bézier curve", or "composite Bézier curve"
  * (a spline formed of cubic Bézier curves)
  */
-sealed class BezierSpline<SplineT : BezierSpline<SplineT>> {
+sealed class Spline<SplineT : Spline<SplineT>> {
     sealed interface Link {
         val knot: Point
     }
@@ -87,7 +91,7 @@ sealed class BezierSpline<SplineT : BezierSpline<SplineT>> {
 }
 
 
-fun BezierSpline<*>.toSvgPath(
+fun Spline<*>.toSvgPath(
     document: SVGDocument,
 ): SVGPathElement {
     val spline = this
@@ -118,7 +122,7 @@ fun BezierSpline<*>.toSvgPath(
     }
 }
 
-fun BezierSpline<*>.toControlSvgPath(
+fun Spline<*>.toControlSvgPath(
     document: SVGDocument,
 ): SVGPathElement {
     val spline = this
@@ -239,17 +243,17 @@ fun Path2D.pathTo(curve: Curve) {
     }
 }
 
-fun BezierSpline<*>.toControlPath(): Path2D.Double = when (this) {
+fun Spline<*>.toControlPath(): Path2D.Double = when (this) {
     is ClosedSpline -> toControlPathClosed()
     is OpenSpline -> toControlPathOpen()
 }
 
-fun BezierSpline<*>.toPath(): Path2D.Double = when (this) {
+fun Spline<*>.toPath(): Path2D.Double = when (this) {
     is ClosedSpline -> toPathClosed()
     is OpenSpline -> toPathOpen()
 }
 
-fun BezierSpline<*>.drawSpline(
+fun Spline<*>.drawSpline(
     graphics2D: Graphics2D,
     color: Color = Color.BLACK,
 ) {

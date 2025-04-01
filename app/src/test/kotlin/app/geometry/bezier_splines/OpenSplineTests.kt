@@ -1,8 +1,8 @@
 package app.geometry.bezier_splines
 
 import app.geometry.Point
-import app.geometry.bezier_splines.BezierSpline.InnerLink
-import app.geometry.bezier_splines.BezierSpline.TerminalLink
+import app.geometry.bezier_splines.Spline.InnerLink
+import app.geometry.bezier_splines.Spline.TerminalLink
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -96,26 +96,26 @@ class OpenSplineTests {
 
         val firstSpline = OpenSpline(
             links = listOf(
-                BezierSpline.InnerLink.bezier(
+                Spline.InnerLink.bezier(
                     startKnot = start,
                     control0 = control0,
                     control1 = control1,
                 )
             ),
-            terminalLink = BezierSpline.TerminalLink(
+            terminalLink = Spline.TerminalLink(
                 endKnot = mid,
             ),
         )
 
         val secondSpline = OpenSpline(
             links = listOf(
-                BezierSpline.InnerLink.bezier(
+                Spline.InnerLink.bezier(
                     startKnot = mid,
                     control0 = control2,
                     control1 = control3,
                 )
             ),
-            terminalLink = BezierSpline.TerminalLink(
+            terminalLink = Spline.TerminalLink(
                 endKnot = end,
             ),
         )
@@ -126,12 +126,12 @@ class OpenSplineTests {
 
         assertEquals(
             expected = listOf(
-                BezierSpline.InnerLink.bezier(
+                Spline.InnerLink.bezier(
                     startKnot = start,
                     control0 = control0,
                     control1 = control1,
                 ),
-                BezierSpline.InnerLink.bezier(
+                Spline.InnerLink.bezier(
                     startKnot = mid,
                     control0 = control2,
                     control1 = control3,
@@ -141,7 +141,7 @@ class OpenSplineTests {
         )
 
         assertEquals(
-            expected = BezierSpline.TerminalLink(
+            expected = Spline.TerminalLink(
                 endKnot = end,
             ),
             actual = mergedSpline.terminalLink,

@@ -9,7 +9,7 @@ class ClosedSpline(
      * The cyclic chain of links, must not be empty
      */
     override val links: List<InnerLink>,
-) : BezierSpline<ClosedSpline>() {
+) : Spline<ClosedSpline>() {
     abstract class ContourSplineApproximationResult(
         val contourSpline: ClosedSpline,
     ) {
