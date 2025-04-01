@@ -17,12 +17,6 @@ import java.awt.geom.Path2D
  * (a spline formed of cubic Bézier curves)
  */
 sealed class BezierSpline<SplineT : BezierSpline<SplineT>> {
-    abstract class Prototype<SplineT : BezierSpline<SplineT>> {
-        abstract fun merge(
-            splines: List<OpenSpline>,
-        ): SplineT
-    }
-
     sealed interface Link {
         val knot: Point
     }
@@ -56,30 +50,11 @@ sealed class BezierSpline<SplineT : BezierSpline<SplineT>> {
             get() = endKnot
     }
 
-    /**
-     * @return A merged spline, or null if no sub-curves could be constructed
-     */
-    fun mergeOfNonNullOrNull(
-        transformCurve: (Curve) -> OpenSpline?,
-    ): SplineT? {
-        val transformedSplines = subCurves.mapNotNull(transformCurve)
-
-        return when {
-            transformedSplines.isEmpty() -> null
-
-            else -> prototype.merge(
-                splines = transformedSplines,
-            )
-        }
-    }
-
     val firstLink: InnerLink
         get() = links.first()
 
     val lastLink: InnerLink
         get() = links.last()
-
-    abstract val prototype: Prototype<SplineT>
 
     /**
      * Splines always have at least one node

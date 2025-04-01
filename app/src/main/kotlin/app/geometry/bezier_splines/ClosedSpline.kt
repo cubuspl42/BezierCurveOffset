@@ -19,7 +19,7 @@ class ClosedSpline(
             ): ContourSplineApproximationResult {
                 require(subResults.isNotEmpty())
 
-                val mergedContourSpline = ClosedSpline.merge(
+                val mergedContourSpline = ClosedSpline.interconnect(
                     splines = subResults.map { it.offsetSpline },
                 )
 
@@ -39,8 +39,8 @@ class ClosedSpline(
         abstract val globalDeviation: Double
     }
 
-    companion object : Prototype<ClosedSpline>() {
-        override fun merge(
+    companion object {
+        fun interconnect(
             splines: List<OpenSpline>,
         ): ClosedSpline {
             require(splines.isNotEmpty())
@@ -66,8 +66,6 @@ class ClosedSpline(
     init {
         require(links.isNotEmpty())
     }
-
-    override val prototype = ClosedSpline
 
     override val nodes: List<Link> = links
 

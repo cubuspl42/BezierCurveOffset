@@ -13,7 +13,7 @@ class OpenSpline(
      */
     val terminalLink: TerminalLink,
 ) : BezierSpline<OpenSpline>() {
-    companion object : Prototype<OpenSpline>() {
+    companion object {
         fun ofEdge(
             startKnot: Point,
             edge: SplineEdge,
@@ -86,7 +86,7 @@ class OpenSpline(
             },
         ).flatten()
 
-        override fun merge(
+        fun merge(
             splines: List<OpenSpline>,
         ): OpenSpline {
             require(splines.isNotEmpty())
@@ -121,8 +121,6 @@ class OpenSpline(
     ): OpenSpline = OpenSpline.merge(
         splines = listOf(this, rightSubSplitCurve),
     )
-
-    override val prototype = OpenSpline
 
     override val nodes: List<Link> = links + terminalLink
 
