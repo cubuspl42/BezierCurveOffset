@@ -5,6 +5,8 @@ import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.fillCircle
 import app.geometry.*
+import app.geometry.bezier_splines.OpenSpline
+import app.geometry.bezier_splines.Spline
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
@@ -152,13 +154,18 @@ data class CubicBezierCurve private constructor(
         )
     }
 
-    fun isSingularity(): Boolean = setOf(start, control0, control1, end).size == 1
-
-    override val firstControl: Point
-        get() = control0
-
-    override val lastControl: Point
-        get() = control1
+    override fun toSpline(): OpenSpline = OpenSpline(
+        segments = listOf(
+            Spline.Segment.bezier(
+                startKnot = start,
+                control0 = control0,
+                control1 = control1,
+            ),
+        ),
+        terminator = Spline.Terminator(
+            endKnot = end,
+        ),
+    )
 
     override val basisFormula = CubicBezierBinomial(
         vectorSpace = Vector.VectorVectorSpace,
