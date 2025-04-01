@@ -97,7 +97,7 @@ class OpenSplineTests {
         val control3 = Point.of(5.0, 1.0)
         val end = Point.of(6.0, 0.0)
 
-        val link0 = Spline.Segment.bezier(
+        val segment0 = Spline.Segment.bezier(
             startKnot = start,
             control0 = control0,
             control1 = control1,
@@ -111,7 +111,7 @@ class OpenSplineTests {
 
         val spline0 = OpenSpline(
             segments = listOf(
-                link0
+                segment0,
             ),
             terminator = Spline.Terminator(
                 endKnot = knot0Joint,
@@ -132,7 +132,7 @@ class OpenSplineTests {
         )
 
         assertEquals(
-            expected = listOf(link0, link1),
+            expected = listOf(segment0, link1),
             actual = mergedSpline.segments,
         )
 
@@ -165,7 +165,7 @@ class OpenSplineTests {
         val control7 = Point.of(11.0, 1.0)
         val knot4End = Point.of(12.0, 0.0)
 
-        val link0 = Spline.Segment.bezier(
+        val segment0 = Spline.Segment.bezier(
             startKnot = knot0Start,
             control0 = control0,
             control1 = control1,
@@ -182,7 +182,7 @@ class OpenSplineTests {
         )
 
         val spline0 = OpenSpline(
-            segments = listOf(link0, link1),
+            segments = listOf(segment0, link1),
             terminator = terminator1,
         )
 
@@ -212,7 +212,7 @@ class OpenSplineTests {
         )
 
         assertEquals(
-            expected = listOf(link0, link1, link2, link3),
+            expected = listOf(segment0, link1, link2, link3),
             actual = mergedSpline.segments,
         )
 
