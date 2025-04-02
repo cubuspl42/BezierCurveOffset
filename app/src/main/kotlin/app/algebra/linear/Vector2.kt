@@ -6,7 +6,7 @@ import app.geometry.toDirection
 import kotlin.math.sqrt
 
 /**
- * A two-dimensional free vector
+ * A two-dimensional vector, which might (but doesn't have to) have a spatial interpretation
  */
 data class Vector2(
     val x: Double,
@@ -16,7 +16,7 @@ data class Vector2(
      * A vectors space of two-dimensional vectors
      */
     object Vector2VectorSpace : VectorSpace<Vector2>() {
-        override val zero: Vector2 = Companion.zero
+        override val zero: Vector2 = Vector2.zero
 
         override fun add(
             u: Vector2,
@@ -47,6 +47,14 @@ data class Vector2(
         require(x.isFinite())
         require(y.isFinite())
     }
+
+    fun toVec3(
+        z: Double = 1.0,
+    ): Vector3 = Vector3(
+        x = x,
+        y = y,
+        z = z,
+    )
 
     operator fun minus(
         other: Vector2,

@@ -126,3 +126,5 @@ fun Document.writeToFile(filePath: Path) {
 
     transformer.transform(source, result);
 }
+
+operator fun SVGTransformList.get(index: Int): SVGTransform = getItem(index)

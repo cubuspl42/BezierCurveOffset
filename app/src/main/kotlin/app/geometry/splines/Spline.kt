@@ -5,6 +5,7 @@ import app.appendAllItems
 import app.createPathElement
 import app.geometry.Point
 import app.geometry.Subline
+import app.geometry.Transformation
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import app.geometry.cubicTo
@@ -65,6 +66,13 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
                 edge = ${edge.dump()},
             )
         """.trimIndent()
+
+        fun transformVia(
+            transformation: Transformation,
+        ): Segment<CurveT> = Segment(
+            startKnot = startKnot.transformVia(transformation = transformation),
+            edge = edge.transformVia(transformation),
+        )
     }
 
     data class Terminator(

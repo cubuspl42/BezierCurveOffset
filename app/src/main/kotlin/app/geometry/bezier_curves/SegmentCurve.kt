@@ -1,6 +1,7 @@
 package app.geometry.bezier_curves
 
 import app.geometry.Point
+import app.geometry.Transformation
 import app.geometry.splines.Spline
 
 abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
@@ -11,6 +12,10 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         ): CurveT
 
         abstract fun dump(): String
+
+        abstract fun transformVia(
+            transformation: Transformation,
+        ): Edge<CurveT>
     }
 
     val segment: Spline.Segment<CurveT>

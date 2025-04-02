@@ -1,8 +1,10 @@
 package app
 
 import app.geometry.Point
+import app.geometry.Transformation
 import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.splines.*
+import app.geometry.transformation
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory
 import org.w3c.dom.Element
 import org.w3c.dom.svg.*
@@ -75,7 +77,7 @@ sealed class PathSeg {
     abstract val finalPoint: Point
 }
 
-fun SVGPathElement.toSpline(): ClosedSpline<*> {
+fun SVGPathElement.toClosedSpline(): ClosedSpline<*> {
     val svgPathSegs = pathSegList.asList()
 
     require(svgPathSegs.last().pathSegType == SVGPathSeg.PATHSEG_CLOSEPATH)
@@ -105,10 +107,22 @@ fun SVGPathElement.toSpline(): ClosedSpline<*> {
 }
 
 fun extractChild(
+    transformation: Transformation,
     element: Element,
-): SVGPathElement = when (val singleChild = element.childElements.single()) {
-    is SVGPathElement -> singleChild
-    is SVGGElement -> extractChild(singleChild)
+): ClosedSpline<*> = when (val singleChild = element.childElements.single()) {
+    is SVGPathElement -> singleChild.toClosedSpline().transformVia(
+        transformation = transformation
+    )
+
+    is SVGGElement -> {
+        val newTransformation = singleChild.transformation.combineWith(base = transformation)
+
+        extractChild(
+            transformation = newTransformation,
+            element = singleChild
+        )
+    }
+
     else -> throw UnsupportedOperationException("Unsupported child element: $singleChild")
 }
 
@@ -120,9 +134,12 @@ fun extractSplineFromFile(
 
     val document = documentFactory.createDocument(uri, reader) as SVGDocument
     val svgElement = document.documentElement as SVGElement
-    val pathElement = extractChild(svgElement)
+    val pathElement = extractChild(
+        transformation = Transformation.identity,
+        element = svgElement
+    )
 
-    return pathElement.toSpline()
+    return pathElement
 }
 
 fun main() {

@@ -42,6 +42,13 @@ data class CubicBezierCurve private constructor(
                 control1 = ${control1.dump()},
             )
         """.trimIndent()
+
+        override fun transformVia(
+            transformation: Transformation,
+        ): Edge = Edge(
+            control0 = control0.transformVia(transformation = transformation),
+            control1 = control1.transformVia(transformation = transformation),
+        )
     }
 
     companion object {
@@ -202,6 +209,14 @@ data class CubicBezierCurve private constructor(
         weight2 = control1.toVector(),
         weight3 = end.toVector(),
     )
+
+    fun transformVia(
+        transformation: Transformation,
+    ): CubicBezierCurve = mapPointWise {
+        it.transformVia(
+            transformation = transformation,
+        )
+    }
 
     fun mapPointWise(
         transform: (Point) -> Point,

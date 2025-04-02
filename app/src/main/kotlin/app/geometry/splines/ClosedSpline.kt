@@ -1,6 +1,7 @@
 package app.geometry.splines
 
 import app.dump
+import app.geometry.Transformation
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
@@ -80,6 +81,12 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
 
     override val rightEdgeNode: Node
         get() = segments.first()
+
+    fun transformVia(
+        transformation: Transformation,
+    ) = ClosedSpline(
+        segments = segments.map { it.transformVia(transformation) }
+    )
 
     /**
      * Find the contour of this spline.
