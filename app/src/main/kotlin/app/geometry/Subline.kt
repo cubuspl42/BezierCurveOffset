@@ -15,7 +15,7 @@ data class Subline(
     override val start: Point,
     override val end: Point,
 ) : SegmentCurve<Subline>() {
-    data object Edge : SegmentCurve.Edge<Subline>() {
+    object Edge : SegmentCurve.Edge<Subline>() {
         override fun bind(
             startKnot: Point,
             endKnot: Point,
@@ -25,6 +25,8 @@ data class Subline(
         )
 
         override fun dump(): String = "Subline.Edge"
+
+        override fun toString(): String = "Subline.Edge"
     }
 
     val direction: Direction? = Direction.of(

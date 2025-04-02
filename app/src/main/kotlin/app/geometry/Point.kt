@@ -171,7 +171,7 @@ data class Point private constructor(
         return Point.of(s + (pv - s).projectOnto(line.d))
     }
 
-    fun dump(): String = "Point.of(${pv.x}, ${pv.y})"
+    fun dump(): String = "Point.of(${"%.2f".format(pv.x)}, ${"%.2f".format(pv.y)})"
 }
 
 fun Path2D.moveTo(p: Point) {

@@ -1,6 +1,5 @@
 package app.geometry.bezier_splines
 
-import app.Dumpbable
 import app.dump
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
