@@ -10,6 +10,10 @@ data class Point private constructor(
     val pv: Vector,
 ) {
     companion object {
+        val zero = Point(
+            pv = Vector.zero,
+        )
+
         fun of(
             pv: Vector,
         ): Point = Point(

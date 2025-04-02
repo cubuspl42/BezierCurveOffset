@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.algebra.Vector
+import app.algebra.unaryMinus
 
 /**
  * A direction in 2D Euclidean space, i.e. an infinite set of vectors with cross
@@ -34,6 +35,9 @@ data class Direction private constructor(
     val perpendicular: Direction
         // If d is non-zero, its perpendicular vector will also be non-zero
         get() = Direction(dv = dv.perpendicular)
+
+    val opposite: Direction
+        get() = Direction(dv = -dv)
 }
 
 internal fun Vector.toDirection(): Direction? = Direction.of(dv = this)

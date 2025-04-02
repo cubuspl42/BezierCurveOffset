@@ -1,8 +1,10 @@
 package app.geometry.bezier_splines
 
 import app.geometry.bezier_curves.BezierCurve
+import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
+import app.withNextCyclic
 
 class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
     /**
@@ -41,13 +43,25 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
 
     companion object {
         fun interconnect(
-            splines: List<OpenSpline<BezierCurve<*>>>,
+            splines: List<OpenSpline<CubicBezierCurve>>,
         ): ClosedSpline<*> {
             require(splines.isNotEmpty())
 
-            val segments = splines.flatMap { spline ->
+            val segments = splines.withNextCyclic().flatMap { (spline, nextSpline) ->
+                val lastSubCurve = spline.subCurves.last()
+                val extensionRay = lastSubCurve.tangentRayFunction.endValue!!
+
+                val nextFirstCurve = nextSpline.subCurves.first()
+                val nextExtensionRay = nextFirstCurve.tangentRayFunction.startValue!!.opposite
+
                 spline.segments + Segment.subline(
                     startKnot = spline.terminator.endKnot,
+                ) + listOfNotNull(
+                    extensionRay.intersect(nextExtensionRay)?.let { intersectionPoint ->
+                        Segment.subline(
+                            startKnot = intersectionPoint,
+                        )
+                    },
                 )
             }
 

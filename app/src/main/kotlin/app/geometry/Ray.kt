@@ -54,6 +54,12 @@ data class Ray(
             d = d.perpendicular,
         )
 
+    val opposite: Ray
+        get() = Ray(
+            startingPoint = startingPoint,
+            direction = direction.opposite,
+        )
+
     fun intersect(
         other: Ray,
     ): Point? {

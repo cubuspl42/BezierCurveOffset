@@ -37,7 +37,7 @@ class CubicBezierSegmentCurveTests {
         )
 
         val segment0 = splitSpline.segments[0]
-        val edge0 = assertIs<BezierCurve.Edge>(segment0.edge)
+        val edge0 = assertIs<CubicBezierCurve.Edge>(segment0.edge)
 
         assertEquals(
             expected = start,
@@ -57,7 +57,7 @@ class CubicBezierSegmentCurveTests {
         )
 
         val link1 = splitSpline.segments[1]
-        val edge1 = assertIs<BezierCurve.Edge>(link1.edge)
+        val edge1 = assertIs<CubicBezierCurve.Edge>(link1.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint,
@@ -116,7 +116,7 @@ class CubicBezierSegmentCurveTests {
         )
 
         val segment0 = splitSpline.segments[0]
-        val firstEdge = assertIs<BezierCurve.Edge>(segment0.edge)
+        val firstEdge = assertIs<CubicBezierCurve.Edge>(segment0.edge)
 
         assertEquals(
             expected = start,
@@ -136,7 +136,7 @@ class CubicBezierSegmentCurveTests {
         )
 
         val link1 = splitSpline.segments[1]
-        val edge1 = assertIs<BezierCurve.Edge>(link1.edge)
+        val edge1 = assertIs<CubicBezierCurve.Edge>(link1.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint0,
@@ -157,7 +157,7 @@ class CubicBezierSegmentCurveTests {
         )
 
         val link2 = splitSpline.segments[2]
-        val edge2 = assertIs<BezierCurve.Edge>(link2.edge)
+        val edge2 = assertIs<CubicBezierCurve.Edge>(link2.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint1,
@@ -219,7 +219,7 @@ class CubicBezierSegmentCurveTests {
         )
 
         val segment0 = splitSpline.segments[0]
-        val edge0 = assertIs<BezierCurve.Edge>(segment0.edge)
+        val edge0 = assertIs<CubicBezierCurve.Edge>(segment0.edge)
 
         assertEquals(
             expected = start,
@@ -239,7 +239,7 @@ class CubicBezierSegmentCurveTests {
         )
 
         val link1 = splitSpline.segments[1]
-        val edge1 = assertIs<BezierCurve.Edge>(link1.edge)
+        val edge1 = assertIs<CubicBezierCurve.Edge>(link1.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint0,
@@ -260,7 +260,7 @@ class CubicBezierSegmentCurveTests {
         )
 
         val link2 = splitSpline.segments[2]
-        val edge2 = assertIs<BezierCurve.Edge>(link2.edge)
+        val edge2 = assertIs<CubicBezierCurve.Edge>(link2.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint1,
@@ -281,7 +281,7 @@ class CubicBezierSegmentCurveTests {
         )
 
         val link3 = splitSpline.segments[3]
-        val edge3 = assertIs<BezierCurve.Edge>(link3.edge)
+        val edge3 = assertIs<CubicBezierCurve.Edge>(link3.edge)
 
         assertPointEquals(
             expected = expectedSplitPoint2,

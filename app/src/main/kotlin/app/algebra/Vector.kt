@@ -129,6 +129,11 @@ data class Vector(
     fun toPoint(): Point = Point.of(pv = this)
 }
 
+operator fun Vector.unaryMinus(): Vector = Vector(
+    x = -x,
+    y = -y,
+)
+
 operator fun Double.times(
     v: Vector,
 ): Vector = Vector(

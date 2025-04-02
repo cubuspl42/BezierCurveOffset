@@ -79,7 +79,7 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
 
     abstract val rightEdgeNode: Node
 
-    val subCurves: List<SegmentCurve<CurveT>> by lazy {
+    val subCurves: List<CurveT> by lazy {
         segments.mapWithNext(rightEdge = rightEdgeNode) { segment, nextNode ->
             val startKnot = segment.startKnot
             val endKnot = nextNode.frontKnot

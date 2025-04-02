@@ -15,7 +15,7 @@ data class Subline(
     override val start: Point,
     override val end: Point,
 ) : SegmentCurve<Subline>() {
-    object Edge : SegmentCurve.Edge<Subline>() {
+    data object Edge : SegmentCurve.Edge<Subline>() {
         override fun bind(
             startKnot: Point,
             endKnot: Point,
