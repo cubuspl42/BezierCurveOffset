@@ -115,12 +115,7 @@ fun main() {
         filePath = Path("/Users/jakub/Temporary/Shape.svg"),
     )
 
-    val pickedSubCurve = spline.subCurves[3] as CubicBezierCurve
-
-    val pickedOffsetSpline = pickedSubCurve.findOffsetSpline(
-        strategy = ProperBezierCurve.BestFitOffsetStrategy,
-        offset = 10.0,
-    )!!.offsetSpline
+    println(spline.dump())
 
     val contourSpline = spline.findContourSpline(
         strategy = ProperBezierCurve.BestFitOffsetStrategy,
@@ -150,13 +145,6 @@ fun main() {
                 stroke = "lightBlue"
             },
         )
-
-//        svgElement.appendChild(
-//            pickedOffsetSpline.toSvgPath(document = this).apply {
-//                fill = "none"
-//                stroke = "blue"
-//            },
-//        )
     }
 
     document.writeToFile(

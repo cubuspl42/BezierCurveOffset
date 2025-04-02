@@ -170,6 +170,8 @@ data class Point private constructor(
         val s = line.s
         return Point.of(s + (pv - s).projectOnto(line.d))
     }
+
+    fun dump(): String = "Point.of(${pv.x}, ${pv.y})"
 }
 
 fun Path2D.moveTo(p: Point) {

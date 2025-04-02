@@ -1,5 +1,6 @@
 package app.geometry.bezier_splines
 
+import app.Dumpbable
 import app.appendAllItems
 import app.createPathElement
 import app.geometry.Point
@@ -34,7 +35,7 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
     data class Segment<out CurveT : SegmentCurve<CurveT>>(
         val startKnot: Point,
         val edge: SegmentCurve.Edge<CurveT>,
-    ) : Node {
+    ) : Node, Dumpbable {
         companion object {
             fun bezier(
                 startKnot: Point,
@@ -58,6 +59,13 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
 
         override val frontKnot: Point
             get() = startKnot
+
+        override fun dump() = """
+            Spline.Segment(
+                startKnot = ${startKnot.dump()},
+                edge = ${edge.dump()},
+            )
+        """.trimIndent()
     }
 
     data class Terminator(

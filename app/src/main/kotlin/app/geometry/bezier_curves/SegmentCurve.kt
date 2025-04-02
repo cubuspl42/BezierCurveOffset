@@ -9,6 +9,8 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
             startKnot: Point,
             endKnot: Point,
         ): CurveT
+
+        abstract fun dump(): String
     }
 
     val segment: Spline.Segment<CurveT>

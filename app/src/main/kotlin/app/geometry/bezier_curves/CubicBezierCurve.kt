@@ -35,6 +35,13 @@ data class CubicBezierCurve private constructor(
             control1 = control1,
             end = endKnot,
         )
+
+        override fun dump(): String = """
+            CubicBezierCurve.Edge(
+                control0 = ${control0.dump()},
+                control1 = ${control1.dump()},
+            )
+        """.trimIndent()
     }
 
     companion object {

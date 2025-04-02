@@ -23,6 +23,8 @@ data class Subline(
             start = startKnot,
             end = endKnot,
         )
+
+        override fun dump(): String = "Subline.Edge"
     }
 
     val direction: Direction? = Direction.of(
