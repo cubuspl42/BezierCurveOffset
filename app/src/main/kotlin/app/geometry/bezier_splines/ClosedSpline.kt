@@ -1,10 +1,11 @@
 package app.geometry.bezier_splines
 
+import app.geometry.Subline
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 
-class ClosedSpline<CurveT: SegmentCurve>(
+class ClosedSpline<CurveT : SegmentCurve>(
     /**
      * The cyclic chain of links, must not be empty
      */
@@ -45,9 +46,14 @@ class ClosedSpline<CurveT: SegmentCurve>(
         ): ClosedSpline<*> {
             require(splines.isNotEmpty())
 
-            // TODO
-            return ClosedSpline<SegmentCurve>(
-                segments = emptyList(),
+            val segments = splines.flatMap { spline ->
+                spline.segments + Segment.subline(
+                    startKnot = spline.terminator.endKnot,
+                )
+            }
+
+            return ClosedSpline(
+                segments = segments,
             )
         }
     }

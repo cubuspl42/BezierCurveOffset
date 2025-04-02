@@ -1,13 +1,11 @@
 package app.geometry.bezier_splines
 
 import app.geometry.Point
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ClosedSplineTests {
     @Test
-    @Ignore // TODO: Fix issues with interconnecting
     fun testInterconnect_singleSpline() {
         val knot0Start = Point.of(-0.5, 0.0)
         val control0 = Point.of(-1.0, -1.0)
@@ -20,32 +18,31 @@ class ClosedSplineTests {
             control1 = control1,
         )
 
-        val terminator = Spline.Terminator(
-            endKnot = knot1End,
-        )
-
         val spline = OpenSpline(
             segments = listOf(
                 bezierSegment0,
             ),
-            terminator = terminator,
+            terminator = Spline.Terminator(
+                endKnot = knot1End,
+            ),
         )
 
         val interconnectedSpline = ClosedSpline.interconnect(
             splines = listOf(spline),
         )
 
-        // TODO: Expect the line segments?
         assertEquals(
             expected = listOf(
                 bezierSegment0,
+                Spline.Segment.subline(
+                    startKnot = knot1End,
+                ),
             ),
             actual = interconnectedSpline.segments,
         )
     }
 
     @Test
-    @Ignore // TODO: Fix issues with interconnecting
     fun testInterconnect_twoSplines() {
         val knot0 = Point.of(0.0, 0.5)
         val control0 = Point.of(1.0, 1.0)
@@ -91,19 +88,22 @@ class ClosedSplineTests {
             splines = listOf(spline0, spline1),
         )
 
-        // FIXME: Remove duplicates!
-        // TODO: Expect the line segments?
         assertEquals(
             expected = listOf(
                 bezierSegment0,
+                Spline.Segment.subline(
+                    startKnot = knot1,
+                ),
                 bezierSegment1,
+                Spline.Segment.subline(
+                    startKnot = knot3,
+                ),
             ),
             actual = interconnectedSpline.segments,
         )
     }
 
     @Test
-    @Ignore // TODO: Fix issues with interconnecting
     fun testInterconnect_threeSplines() {
         val knot0 = Point.of(-3.0, -1.0)
         val control0 = Point.of(-2.5, -2.0)
@@ -169,12 +169,20 @@ class ClosedSplineTests {
             splines = listOf(spline0, spline1, spline2),
         )
 
-        // TODO: Expect the line segments?
         assertEquals(
             expected = listOf(
                 bezierSegment0,
+                Spline.Segment.subline(
+                    startKnot = knot1,
+                ),
                 bezierSegment1,
+                Spline.Segment.subline(
+                    startKnot = knot3,
+                ),
                 bezierSegment2,
+                Spline.Segment.subline(
+                    startKnot = knot5,
+                ),
             ),
             actual = interconnectedSpline.segments,
         )

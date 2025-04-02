@@ -173,6 +173,214 @@ class UtilsTests {
     }
 
     @Test
+    fun testWithPreviousCyclic_standardCase() {
+        val actual = listOf(
+            FullDominoBlock(
+                redNumber = 1,
+                blueNumber = 6,
+            ),
+            FullDominoBlock(
+                redNumber = 6,
+                blueNumber = 2,
+            ),
+            FullDominoBlock(
+                redNumber = 2,
+                blueNumber = 5,
+            ),
+        ).withPreviousCyclic()
+
+        assertEquals(
+            expected = listOf(
+                WithPrevious(
+                    prevElement = FullDominoBlock(
+                        redNumber = 2,
+                        blueNumber = 5,
+                    ),
+                    element = FullDominoBlock(
+                        redNumber = 1,
+                        blueNumber = 6,
+                    ),
+                ),
+                WithPrevious(
+                    prevElement = FullDominoBlock(
+                        redNumber = 1,
+                        blueNumber = 6,
+                    ),
+                    element = FullDominoBlock(
+                        redNumber = 6,
+                        blueNumber = 2,
+                    ),
+                ),
+                WithPrevious(
+                    prevElement = FullDominoBlock(
+                        redNumber = 6,
+                        blueNumber = 2,
+                    ),
+                    element = FullDominoBlock(
+                        redNumber = 2,
+                        blueNumber = 5,
+                    ),
+                ),
+            ),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun testWithNext_standardCase() {
+        val actual = listOf(
+            FullDominoBlock(
+                redNumber = 1,
+                blueNumber = 6,
+            ),
+            FullDominoBlock(
+                redNumber = 6,
+                blueNumber = 2,
+            ),
+            FullDominoBlock(
+                redNumber = 2,
+                blueNumber = 5,
+            ),
+        ).withNext(
+            outerRight = RedHalfDominoBlock(
+                redNumber = 5,
+            ),
+        )
+
+        assertEquals(
+            expected = listOf(
+                WithNext(
+                    element = FullDominoBlock(
+                        redNumber = 1,
+                        blueNumber = 6,
+                    ),
+                    nextElement = FullDominoBlock(
+                        redNumber = 6,
+                        blueNumber = 2,
+                    ),
+                ),
+                WithNext(
+                    element = FullDominoBlock(
+                        redNumber = 6,
+                        blueNumber = 2,
+                    ),
+                    nextElement = FullDominoBlock(
+                        redNumber = 2,
+                        blueNumber = 5,
+                    ),
+                ),
+                WithNext(
+                    element = FullDominoBlock(
+                        redNumber = 2,
+                        blueNumber = 5,
+                    ),
+                    nextElement = RedHalfDominoBlock(
+                        redNumber = 5,
+                    ),
+                ),
+            ),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun testWithNext_singleElement() {
+        val actual = listOf(
+            FullDominoBlock(
+                redNumber = 1,
+                blueNumber = 6,
+            ),
+        ).withNext(
+            outerRight = RedHalfDominoBlock(
+                redNumber = 5,
+            ),
+        )
+
+        assertEquals(
+            expected = listOf(
+                WithNext(
+                    element = FullDominoBlock(
+                        redNumber = 1,
+                        blueNumber = 6,
+                    ),
+                    nextElement = RedHalfDominoBlock(
+                        redNumber = 5,
+                    ),
+                ),
+            ),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun testWithNext_emptyList() {
+        val actual = emptyList<FullDominoBlock>().withNext(
+            outerRight = RedHalfDominoBlock(
+                redNumber = 5,
+            ),
+        )
+
+        assertEquals(
+            expected = emptyList(),
+            actual = actual,
+        )
+    }
+
+    @Test
+    fun testWithNextCyclic_standardCase() {
+        val actual = listOf(
+            FullDominoBlock(
+                redNumber = 1,
+                blueNumber = 6,
+            ),
+            FullDominoBlock(
+                redNumber = 6,
+                blueNumber = 2,
+            ),
+            FullDominoBlock(
+                redNumber = 2,
+                blueNumber = 5,
+            ),
+        ).withNextCyclic()
+
+        assertEquals(
+            expected = listOf(
+                WithNext(
+                    element = FullDominoBlock(
+                        redNumber = 1,
+                        blueNumber = 6,
+                    ),
+                    nextElement = FullDominoBlock(
+                        redNumber = 6,
+                        blueNumber = 2,
+                    ),
+                ),
+                WithNext(
+                    element = FullDominoBlock(
+                        redNumber = 6,
+                        blueNumber = 2,
+                    ),
+                    nextElement = FullDominoBlock(
+                        redNumber = 2,
+                        blueNumber = 5,
+                    ),
+                ),
+                WithNext(
+                    element = FullDominoBlock(
+                        redNumber = 2,
+                        blueNumber = 5,
+                    ),
+                    nextElement = FullDominoBlock(
+                        redNumber = 1,
+                        blueNumber = 6,
+                    ),
+                ),
+            ),
+            actual = actual,
+        )
+    }
+
+    @Test
     fun testWithNeighbours_standardCase() {
         val actual = listOf(
             FullDominoBlock(

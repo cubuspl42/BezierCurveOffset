@@ -22,7 +22,7 @@ import java.awt.geom.Path2D
  * A Bézier spline, also called "poly-Bézier curve", or "composite Bézier curve"
  * (a spline formed of cubic Bézier curves)
  */
-sealed class Spline<out CurveT: SegmentCurve> {
+sealed class Spline<out CurveT : SegmentCurve> {
     sealed interface Node {
         /**
          * The "front" knot, i.e. the next knot when looked from the perspective
@@ -31,7 +31,7 @@ sealed class Spline<out CurveT: SegmentCurve> {
         val frontKnot: Point
     }
 
-    data class Segment<out CurveT: SegmentCurve>(
+    data class Segment<out CurveT : SegmentCurve>(
         val startKnot: Point,
         val edge: SegmentCurve.Edge<CurveT>,
     ) : Node {
@@ -69,9 +69,6 @@ sealed class Spline<out CurveT: SegmentCurve> {
 
     val firstSegment: Segment<CurveT>
         get() = segments.first()
-
-    val lastSegment: Segment<CurveT>
-        get() = segments.last()
 
     /**
      * Splines always have at least one node
@@ -170,7 +167,12 @@ private fun SegmentCurve.toSvgPathSeg(
         control1.y.toFloat(),
     )
 
-    else -> throw UnsupportedOperationException()
+    is Subline -> pathElement.createSVGPathSegLinetoAbs(
+        end.x.toFloat(),
+        end.y.toFloat(),
+    )
+
+    else -> throw UnsupportedOperationException("Unsupported segment curve: $this")
 }
 
 private fun SegmentCurve.toControlSvgPathSegs(

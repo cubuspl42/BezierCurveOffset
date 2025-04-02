@@ -147,16 +147,16 @@ fun main() {
         svgElement.appendChild(
             contourSpline.toSvgPath(document = this).apply {
                 fill = "none"
-                stroke = "orange"
+                stroke = "lightBlue"
             },
         )
 
-        svgElement.appendChild(
-            pickedOffsetSpline.toSvgPath(document = this).apply {
-                fill = "none"
-                stroke = "blue"
-            },
-        )
+//        svgElement.appendChild(
+//            pickedOffsetSpline.toSvgPath(document = this).apply {
+//                fill = "none"
+//                stroke = "blue"
+//            },
+//        )
     }
 
     document.writeToFile(

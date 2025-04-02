@@ -164,8 +164,65 @@ fun <L, M> Iterable<M>.withPrevious(
     return result
 }
 
+fun <T : Any> List<T>.withPreviousCyclic(): List<WithPrevious<T, T>> = when {
+    isEmpty() -> emptyList()
+
+    else -> withPrevious(
+        outerLeft = last(),
+    )
+}
+
 fun <T : Any> Iterable<T>.withPreviousOrNull(): List<WithPrevious<T?, T>> = withPrevious(
     outerLeft = null,
+)
+
+data class WithNext<M, R>(
+    val element: M,
+    val nextElement: R,
+) where M : R
+
+fun <M, R> Iterable<M>.withNext(
+    outerRight: R,
+): List<WithNext<M, R>> where M : R {
+    val iterator = iterator()
+    if (!iterator.hasNext()) return emptyList()
+
+    val result = mutableListOf<WithNext<M, R>>()
+    var current = iterator.next()
+
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+
+        result.add(
+            WithNext(
+                element = current,
+                nextElement = next,
+            ),
+        )
+
+        current = next
+    }
+
+    result.add(
+        WithNext(
+            element = current,
+            nextElement = outerRight,
+        ),
+    )
+
+    return result
+}
+
+fun <T : Any> List<T>.withNextCyclic(): List<WithNext<T, T>> = when {
+    isEmpty() -> emptyList()
+
+    else -> withNext(
+        outerRight = first(),
+    )
+}
+
+fun <T : Any> Iterable<T>.withNextOrNull(): List<WithNext<T, T?>> = withNext(
+    outerRight = null,
 )
 
 @Suppress("BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER")
@@ -288,5 +345,5 @@ fun <E> List<*>.elementWiseAs(): List<E> = this.map { it as E }
 
 fun <T> List<T>.mapFirst(transform: (T) -> T): List<T> = when {
     isEmpty() -> emptyList()
-    else ->  listOf(transform(first())) + drop(1)
+    else -> listOf(transform(first())) + drop(1)
 }
