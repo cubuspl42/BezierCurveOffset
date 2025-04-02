@@ -11,22 +11,7 @@ import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationRes
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.bezier_splines.OpenSpline
 
-sealed class BezierCurve<out CurveT : BezierCurve<CurveT>> : SegmentCurve() {
-    data class Edge(
-        val control0: Point,
-        val control1: Point,
-    ) : SegmentCurve.Edge<BezierCurve<*>>() {
-        override fun bind(
-            startKnot: Point,
-            endKnot: Point,
-        ): BezierCurve<*> = CubicBezierCurve.of(
-            start = startKnot,
-            control0 = control0,
-            control1 = control1,
-            end = endKnot,
-        )
-    }
-
+sealed class BezierCurve<out CurveT : BezierCurve<CurveT>> : SegmentCurve<CurveT>() {
     companion object {
         fun bindRay(
             pointFunction: TimeFunction<Point>,
@@ -123,5 +108,5 @@ sealed class BezierCurve<out CurveT : BezierCurve<CurveT>> : SegmentCurve() {
 
     abstract val asLongitudinal: LongitudinalBezierCurve<*>?
 
-    abstract fun toSpline(): OpenSpline<BezierCurve<*>>
+    abstract fun toSpline(): OpenSpline<CubicBezierCurve>
 }

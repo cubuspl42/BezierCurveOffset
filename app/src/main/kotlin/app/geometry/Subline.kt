@@ -14,7 +14,7 @@ import kotlin.math.roundToInt
 data class Subline(
     override val start: Point,
     override val end: Point,
-) : SegmentCurve() {
+) : SegmentCurve<Subline>() {
     object Edge : SegmentCurve.Edge<Subline>() {
         override fun bind(
             startKnot: Point,
@@ -82,4 +82,6 @@ data class Subline(
             ) ?: return null,
         )
     }
+
+    override val edge: SegmentCurve.Edge<Subline> = Edge
 }

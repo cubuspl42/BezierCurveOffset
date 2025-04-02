@@ -9,7 +9,7 @@ import java.awt.geom.Path2D
 /**
  * A Bézier curve of order >= 1, i.e. a curve of non-zero length (not a point).
  */
-sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> : BezierCurve<CurveT>() {
+sealed class LongitudinalBezierCurve<out CurveT : LongitudinalBezierCurve<CurveT>> : BezierCurve<CurveT>() {
     abstract fun splitAt(
         t: Double,
     ): Pair<BezierCurve<*>, BezierCurve<*>>
@@ -50,7 +50,7 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
      */
     fun splitAtMultiple(
         tValues: Set<Double>,
-    ): OpenSpline<BezierCurve<*>>? {
+    ): OpenSpline<CubicBezierCurve>? {
         if (tValues.isEmpty()) {
             return this.toSpline()
         }
@@ -72,7 +72,7 @@ sealed class LongitudinalBezierCurve<CurveT : LongitudinalBezierCurve<CurveT>> :
      */
     private fun splitAtMultipleSorted(
         tValuesSorted: List<Double>,
-    ): OpenSpline<BezierCurve<*>>? {
+    ): OpenSpline<CubicBezierCurve>? {
         val partitioningResult =
             tValuesSorted.partitionSorted() ?: return this.toSpline() // We're done, no more places to split
 

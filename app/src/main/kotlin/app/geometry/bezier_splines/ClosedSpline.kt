@@ -1,11 +1,10 @@
 package app.geometry.bezier_splines
 
-import app.geometry.Subline
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 
-class ClosedSpline<CurveT : SegmentCurve>(
+class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
     /**
      * The cyclic chain of links, must not be empty
      */

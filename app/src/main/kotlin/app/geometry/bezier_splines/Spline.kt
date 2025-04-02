@@ -22,7 +22,7 @@ import java.awt.geom.Path2D
  * A Bézier spline, also called "poly-Bézier curve", or "composite Bézier curve"
  * (a spline formed of cubic Bézier curves)
  */
-sealed class Spline<out CurveT : SegmentCurve> {
+sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
     sealed interface Node {
         /**
          * The "front" knot, i.e. the next knot when looked from the perspective
@@ -31,7 +31,7 @@ sealed class Spline<out CurveT : SegmentCurve> {
         val frontKnot: Point
     }
 
-    data class Segment<out CurveT : SegmentCurve>(
+    data class Segment<out CurveT : SegmentCurve<CurveT>>(
         val startKnot: Point,
         val edge: SegmentCurve.Edge<CurveT>,
     ) : Node {
@@ -40,9 +40,9 @@ sealed class Spline<out CurveT : SegmentCurve> {
                 startKnot: Point,
                 control0: Point,
                 control1: Point,
-            ): Segment<BezierCurve<*>> = Segment(
+            ): Segment<CubicBezierCurve> = Segment(
                 startKnot = startKnot,
-                edge = BezierCurve.Edge(
+                edge = CubicBezierCurve.Edge(
                     control0 = control0,
                     control1 = control1,
                 ),
@@ -79,7 +79,7 @@ sealed class Spline<out CurveT : SegmentCurve> {
 
     abstract val rightEdgeNode: Node
 
-    val subCurves: List<SegmentCurve> by lazy {
+    val subCurves: List<SegmentCurve<CurveT>> by lazy {
         segments.mapWithNext(rightEdge = rightEdgeNode) { segment, nextNode ->
             val startKnot = segment.startKnot
             val endKnot = nextNode.frontKnot
@@ -155,7 +155,7 @@ fun Spline<*>.toControlSvgPath(
     }
 }
 
-private fun SegmentCurve.toSvgPathSeg(
+private fun SegmentCurve<*>.toSvgPathSeg(
     pathElement: SVGPathElement,
 ): SVGPathSeg = when (this) {
     is CubicBezierCurve -> pathElement.createSVGPathSegCurvetoCubicAbs(
@@ -175,7 +175,7 @@ private fun SegmentCurve.toSvgPathSeg(
     else -> throw UnsupportedOperationException("Unsupported segment curve: $this")
 }
 
-private fun SegmentCurve.toControlSvgPathSegs(
+private fun SegmentCurve<*>.toControlSvgPathSegs(
     pathElement: SVGPathElement,
 ): List<SVGPathSeg> = when (this) {
     is CubicBezierCurve -> listOf(
@@ -232,7 +232,7 @@ fun ClosedSpline<*>.toPathClosed(): Path2D.Double = Path2D.Double().apply {
     closePath()
 }
 
-fun Path2D.pathToControl(curve: SegmentCurve) {
+fun Path2D.pathToControl(curve: SegmentCurve<*>) {
     when (curve) {
         is CubicBezierCurve -> {
             lineTo(p = curve.control0)
@@ -242,7 +242,7 @@ fun Path2D.pathToControl(curve: SegmentCurve) {
     }
 }
 
-fun Path2D.pathTo(curve: SegmentCurve) {
+fun Path2D.pathTo(curve: SegmentCurve<*>) {
     when (curve) {
         is CubicBezierCurve -> {
             cubicTo(p1 = curve.control0, p2 = curve.control1, p3 = curve.end)

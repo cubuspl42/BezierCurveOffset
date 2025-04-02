@@ -22,6 +22,21 @@ data class CubicBezierCurve private constructor(
     val control1: Point,
     override val end: Point,
 ) : ProperBezierCurve<CubicBezierCurve>() {
+    data class Edge(
+        val control0: Point,
+        val control1: Point,
+    ) : SegmentCurve.Edge<CubicBezierCurve>() {
+        override fun bind(
+            startKnot: Point,
+            endKnot: Point,
+        ): CubicBezierCurve = CubicBezierCurve.of(
+            start = startKnot,
+            control0 = control0,
+            control1 = control1,
+            end = endKnot,
+        )
+    }
+
     companion object {
         fun of(
             start: Point,
@@ -154,7 +169,7 @@ data class CubicBezierCurve private constructor(
         )
     }
 
-    override fun toSpline(): OpenSpline<BezierCurve<*>> = OpenSpline(
+    override fun toSpline(): OpenSpline<CubicBezierCurve> = OpenSpline(
         segments = listOf(
             Spline.Segment.bezier(
                 startKnot = start,
@@ -166,6 +181,12 @@ data class CubicBezierCurve private constructor(
             endKnot = end,
         ),
     )
+
+    override val edge: SegmentCurve.Edge<CubicBezierCurve>
+        get() = CubicBezierCurve.Edge(
+            control0 = control0,
+            control1 = control1,
+        )
 
     override val basisFormula = CubicBezierBinomial(
         vectorSpace = Vector.VectorVectorSpace,

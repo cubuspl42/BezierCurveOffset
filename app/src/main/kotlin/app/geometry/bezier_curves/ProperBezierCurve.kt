@@ -17,7 +17,7 @@ import app.geometry.bezier_splines.OpenSpline
  * such a curve to a linear Bézier curve is non-trivial. At the tip(s), such a
  * curve has its velocity equal to zero, which causes unfortunate corner cases.
  */
-sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : LongitudinalBezierCurve<CurveT>() {
+sealed class ProperBezierCurve<out CurveT : ProperBezierCurve<CurveT>> : LongitudinalBezierCurve<CurveT>() {
     abstract class OffsetCurveApproximationResult(
         val offsetCurve: BezierCurve<*>,
     ) {
@@ -40,7 +40,7 @@ sealed class ProperBezierCurve<CurveT : ProperBezierCurve<CurveT>> : Longitudina
     }
 
     abstract class OffsetSplineApproximationResult(
-        val offsetSpline: OpenSpline<BezierCurve<*>>,
+        val offsetSpline: OpenSpline<CubicBezierCurve>,
     ) {
         companion object {
             fun precise(

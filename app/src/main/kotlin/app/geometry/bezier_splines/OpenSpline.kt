@@ -6,7 +6,7 @@ import app.interleave
 import app.mapFirst
 import app.withPreviousOrNull
 
-class OpenSpline<CurveT: SegmentCurve>(
+class OpenSpline<out CurveT: SegmentCurve<CurveT>>(
     /**
      * The path of links, must not be empty
      */
@@ -17,7 +17,7 @@ class OpenSpline<CurveT: SegmentCurve>(
     val terminator: Terminator,
 ) : Spline<CurveT>() {
     companion object {
-        fun <CurveT : SegmentCurve> merge(
+        fun <CurveT : SegmentCurve<CurveT>> merge(
             splines: List<OpenSpline<CurveT>>,
         ): OpenSpline<CurveT> {
             require(splines.isNotEmpty())
@@ -55,14 +55,14 @@ class OpenSpline<CurveT: SegmentCurve>(
         require(segments.isNotEmpty())
     }
 
-    fun mergeWith(
-        rightSubSplitCurve: OpenSpline<CurveT>,
-    ): OpenSpline<CurveT> = OpenSpline.merge(
-        splines = listOf(this, rightSubSplitCurve),
-    )
-
     override val nodes: List<Node> = segments + terminator
 
     override val rightEdgeNode: Node
         get() = terminator
 }
+
+fun <CurveT : SegmentCurve<CurveT>> OpenSpline<CurveT>.mergeWith(
+    rightSubSplitCurve: OpenSpline<CurveT>,
+): OpenSpline<CurveT> = OpenSpline.merge(
+    splines = listOf(this, rightSubSplitCurve),
+)
