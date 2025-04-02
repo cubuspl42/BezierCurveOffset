@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.algebra.Vector
+import app.algebra.linear.Vector
 
 /**
  * A bi-ray in 2D Euclidean space, i.e. a pair of rays sharing the same starting point

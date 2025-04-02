@@ -1,6 +1,6 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.Vector
+import app.algebra.linear.Vector
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.geometry.lineTo
 import app.geometry.moveTo

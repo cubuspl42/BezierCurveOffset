@@ -1,4 +1,4 @@
-package app.algebra
+package app.algebra.linear
 
 import app.geometry.Direction
 import app.geometry.Point
@@ -122,7 +122,7 @@ data class Vector(
         get() = sqrt(lengthSquared)
 
     fun projectOnto(other: Vector): Vector {
-        require(other != Vector.zero)
+        require(other != zero)
         return (this.dot(other) / other.lengthSquared) * other
     }
 

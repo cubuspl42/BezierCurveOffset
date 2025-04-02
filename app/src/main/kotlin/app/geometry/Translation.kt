@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.algebra.Vector
+import app.algebra.linear.Vector
 
 @Suppress("DataClassPrivateConstructor")
 data class Translation private constructor(

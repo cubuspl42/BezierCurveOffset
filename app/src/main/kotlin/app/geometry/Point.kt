@@ -1,7 +1,7 @@
 package app.geometry
 
-import app.algebra.Vector
-import app.algebra.div
+import app.algebra.linear.Vector
+import app.algebra.linear.div
 import app.equalsZeroApproximately
 import java.awt.geom.Path2D
 

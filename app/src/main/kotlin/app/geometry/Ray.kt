@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.algebra.Vector
+import app.algebra.linear.Vector
 
 /**
  * A ray in 2D Euclidean space, described by the equation p = s + td for t >= 0

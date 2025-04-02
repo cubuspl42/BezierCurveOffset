@@ -1,6 +1,6 @@
 package app.geometry.bezier_curves
 
-import app.algebra.Vector
+import app.algebra.linear.Vector
 import app.algebra.bezier_binomials.DifferentiableBezierBinomial
 import app.algebra.bezier_binomials.findFaster
 import app.geometry.Direction

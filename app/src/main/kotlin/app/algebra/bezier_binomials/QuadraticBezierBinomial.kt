@@ -2,8 +2,8 @@ package app.algebra.bezier_binomials
 
 import app.algebra.polynomials.Polynomial
 import app.algebra.polynomials.QuadraticPolynomial
-import app.algebra.Vector
-import app.algebra.VectorSpace
+import app.algebra.linear.Vector
+import app.algebra.linear.VectorSpace
 import app.geometry.Point
 import app.geometry.Subline
 
