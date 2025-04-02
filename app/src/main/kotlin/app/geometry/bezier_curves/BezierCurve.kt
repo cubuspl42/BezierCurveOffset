@@ -1,6 +1,6 @@
 package app.geometry.bezier_curves
 
-import app.algebra.linear.Vector
+import app.algebra.linear.Vector2
 import app.algebra.bezier_binomials.DifferentiableBezierBinomial
 import app.algebra.bezier_binomials.findFaster
 import app.geometry.Direction
@@ -102,7 +102,7 @@ sealed class BezierCurve<out CurveT : BezierCurve<CurveT>> : SegmentCurve<CurveT
         offset: Double,
     ): OffsetSplineApproximationResult?
 
-    abstract val basisFormula: DifferentiableBezierBinomial<Vector>
+    abstract val basisFormula: DifferentiableBezierBinomial<Vector2>
 
     abstract val asProper: ProperBezierCurve<*>?
 

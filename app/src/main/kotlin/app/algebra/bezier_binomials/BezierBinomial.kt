@@ -1,6 +1,6 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.linear.Vector
+import app.algebra.linear.Vector2
 import app.algebra.polynomials.Polynomial
 import app.geometry.Subline
 import app.geometry.bezier_curves.TimeFunction
@@ -35,11 +35,11 @@ sealed class BezierBinomial<out V> : RealFunction<V>() {
     abstract fun evaluate(t: Double): V
 }
 
-val BezierBinomial<Vector>.sublines: List<Subline>
+val BezierBinomial<Vector2>.sublines: List<Subline>
     get() = when (this) {
-        is LinearBezierBinomial<Vector> -> this.segmentsLinear
-        is QuadraticBezierBinomial<Vector> -> this.segmentsQuadratic
-        is CubicBezierBinomial<Vector> -> this.segmentsCubic
+        is LinearBezierBinomial<Vector2> -> this.segmentsLinear
+        is QuadraticBezierBinomial<Vector2> -> this.segmentsQuadratic
+        is CubicBezierBinomial<Vector2> -> this.segmentsCubic
     }
 
 fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial? = when (this) {
@@ -49,37 +49,37 @@ fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial? = when (this) {
     is CubicBezierBinomial<Double> -> throw NotImplementedError()
 }
 
-fun BezierBinomial<Vector>.findFaster(): TimeFunction<Vector> {
-    return object : TimeFunction<Vector>() {
-        override fun evaluateDirectly(t: Double): Vector = evaluateFast(t = t)
+fun BezierBinomial<Vector2>.findFaster(): TimeFunction<Vector2> {
+    return object : TimeFunction<Vector2>() {
+        override fun evaluateDirectly(t: Double): Vector2 = evaluateFast(t = t)
     }
 }
 
-fun BezierBinomial<Vector>.evaluateFast(
+fun BezierBinomial<Vector2>.evaluateFast(
     t: Double,
-): Vector = when (this) {
-    is LinearBezierBinomial<Vector> -> this.evaluateLinear(t = t)
-    is QuadraticBezierBinomial<Vector> -> this.evaluateFastQuadratic(t = t)
-    is CubicBezierBinomial<Vector> -> this.evaluateFastCubic(t = t)
+): Vector2 = when (this) {
+    is LinearBezierBinomial<Vector2> -> this.evaluateLinear(t = t)
+    is QuadraticBezierBinomial<Vector2> -> this.evaluateFastQuadratic(t = t)
+    is CubicBezierBinomial<Vector2> -> this.evaluateFastCubic(t = t)
 }
 
-val BezierBinomial<Vector>.componentX: BezierBinomial<Double>
+val BezierBinomial<Vector2>.componentX: BezierBinomial<Double>
     get() = when (this) {
-        is LinearBezierBinomial<Vector> -> this.componentXLinear
-        is QuadraticBezierBinomial<Vector> -> this.componentXQuadratic
-        is CubicBezierBinomial<Vector> -> this.componentXCubic
+        is LinearBezierBinomial<Vector2> -> this.componentXLinear
+        is QuadraticBezierBinomial<Vector2> -> this.componentXQuadratic
+        is CubicBezierBinomial<Vector2> -> this.componentXCubic
     }
 
-val BezierBinomial<Vector>.componentY: BezierBinomial<Double>
+val BezierBinomial<Vector2>.componentY: BezierBinomial<Double>
     get() = when (this) {
-        is LinearBezierBinomial<Vector> -> this.componentYLinear
-        is QuadraticBezierBinomial<Vector> -> this.componentYQuadratic
-        is CubicBezierBinomial<Vector> -> this.componentYCubic
+        is LinearBezierBinomial<Vector2> -> this.componentYLinear
+        is QuadraticBezierBinomial<Vector2> -> this.componentYQuadratic
+        is CubicBezierBinomial<Vector2> -> this.componentYCubic
     }
 
 fun BezierBinomial<Double>.findRoots(): Set<Double> = toPolynomialFormula()?.findRoots() ?: emptySet()
 
-fun DifferentiableBezierBinomial<Vector>.findAllCriticalPoints(): BezierBinomial.CriticalPointSet {
+fun DifferentiableBezierBinomial<Vector2>.findAllCriticalPoints(): BezierBinomial.CriticalPointSet {
     val derivative = findDerivative()
     return BezierBinomial.CriticalPointSet(
         criticalPointsX = derivative.componentX.findRoots(),
@@ -87,5 +87,5 @@ fun DifferentiableBezierBinomial<Vector>.findAllCriticalPoints(): BezierBinomial
     )
 }
 
-fun DifferentiableBezierBinomial<Vector>.findInterestingCriticalPoints(): BezierBinomial.CriticalPointSet =
+fun DifferentiableBezierBinomial<Vector2>.findInterestingCriticalPoints(): BezierBinomial.CriticalPointSet =
     findAllCriticalPoints().filterInteresting()

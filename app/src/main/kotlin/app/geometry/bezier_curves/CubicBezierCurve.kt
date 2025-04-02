@@ -1,6 +1,6 @@
 package app.geometry.bezier_curves
 
-import app.algebra.linear.Vector
+import app.algebra.linear.Vector2
 import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.fillCircle
@@ -196,7 +196,7 @@ data class CubicBezierCurve private constructor(
         )
 
     override val basisFormula = CubicBezierBinomial(
-        vectorSpace = Vector.VectorVectorSpace,
+        vectorSpace = Vector2.Vector2VectorSpace,
         weight0 = start.toVector(),
         weight1 = control0.toVector(),
         weight2 = control1.toVector(),

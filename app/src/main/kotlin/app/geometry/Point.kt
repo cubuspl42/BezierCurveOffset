@@ -1,21 +1,21 @@
 package app.geometry
 
-import app.algebra.linear.Vector
+import app.algebra.linear.Vector2
 import app.algebra.linear.div
 import app.equalsZeroApproximately
 import java.awt.geom.Path2D
 
 @Suppress("DataClassPrivateConstructor")
 data class Point private constructor(
-    val pv: Vector,
+    val pv: Vector2,
 ) {
     companion object {
         val zero = Point(
-            pv = Vector.zero,
+            pv = Vector2.zero,
         )
 
         fun of(
-            pv: Vector,
+            pv: Vector2,
         ): Point = Point(
             pv = pv,
         )
@@ -24,7 +24,7 @@ data class Point private constructor(
             px: Double,
             py: Double,
         ): Point = of(
-            pv = Vector(
+            pv = Vector2(
                 x = px,
                 y = py,
             ),
@@ -82,7 +82,7 @@ data class Point private constructor(
         px: Double,
         py: Double,
     ) : this(
-        pv = Vector(
+        pv = Vector2(
             x = px,
             y = py,
         ),
@@ -164,7 +164,7 @@ data class Point private constructor(
     }
 
     // TODO: Nuke?
-    fun toVector(): Vector = Vector(x, y)
+    fun toVector(): Vector2 = Vector2(x, y)
 
     fun projectOnto(line: Line): Point {
         val s = line.s

@@ -1,14 +1,14 @@
 package app.geometry
 
-import app.algebra.linear.Vector
+import app.algebra.linear.Vector2
 
 @Suppress("DataClassPrivateConstructor")
 data class Translation private constructor(
-    val tv: Vector,
+    val tv: Vector2,
 ) {
     companion object {
         fun of(
-            tv: Vector,
+            tv: Vector2,
         ): Translation = Translation(
             tv = tv,
         )
@@ -17,7 +17,7 @@ data class Translation private constructor(
             tx: Double,
             ty: Double,
         ): Translation = of(
-            tv = Vector(
+            tv = Vector2(
                 x = tx,
                 y = ty,
             ),

@@ -8,39 +8,39 @@ import kotlin.math.sqrt
 /**
  * A two-dimensional free vector
  */
-data class Vector(
+data class Vector2(
     val x: Double,
     val y: Double,
 ) {
     /**
      * A vectors space of two-dimensional vectors
      */
-    object VectorVectorSpace : VectorSpace<Vector>() {
-        override val zero: Vector = Companion.zero
+    object Vector2VectorSpace : VectorSpace<Vector2>() {
+        override val zero: Vector2 = Companion.zero
 
         override fun add(
-            u: Vector,
-            v: Vector,
-        ): Vector = u + v
+            u: Vector2,
+            v: Vector2,
+        ): Vector2 = u + v
 
         override fun subtract(
-            u: Vector,
-            v: Vector,
-        ): Vector = u - v
+            u: Vector2,
+            v: Vector2,
+        ): Vector2 = u - v
 
         override fun scale(
             a: Double,
-            v: Vector,
-        ): Vector = v.scale(a)
+            v: Vector2,
+        ): Vector2 = v.scale(a)
     }
 
     companion object {
-        val zero = Vector(0.0, 0.0)
+        val zero = Vector2(0.0, 0.0)
 
         fun bisector(
-            a: Vector,
-            b: Vector,
-        ): Vector = b.length * a + a.length * b
+            a: Vector2,
+            b: Vector2,
+        ): Vector2 = b.length * a + a.length * b
     }
 
     init {
@@ -49,32 +49,32 @@ data class Vector(
     }
 
     operator fun minus(
-        other: Vector,
-    ): Vector = Vector(
+        other: Vector2,
+    ): Vector2 = Vector2(
         x = x - other.x,
         y = y - other.y,
     )
 
     operator fun plus(
-        other: Vector,
-    ): Vector = Vector(
+        other: Vector2,
+    ): Vector2 = Vector2(
         x = x + other.x,
         y = y + other.y,
     )
 
     fun dot(
-        other: Vector,
+        other: Vector2,
     ): Double = x * other.x + y * other.y
 
     fun cross(
-        other: Vector,
+        other: Vector2,
     ): Double = x * other.y - y * other.x
 
     fun scale(
         factor: Double,
-    ): Vector {
+    ): Vector2 {
         require(factor.isFinite())
-        return Vector(
+        return Vector2(
             x = x * factor,
             y = y * factor,
         )
@@ -89,7 +89,7 @@ data class Vector(
      */
     fun resize(
         newLength: Double,
-    ): Vector {
+    ): Vector2 {
         require(newLength.isFinite())
         require(lengthSquared > 0.0)
         return scale(newLength / length)
@@ -106,8 +106,8 @@ data class Vector(
     /**
      * The counterclockwise perpendicular vector
      */
-    val perpendicular: Vector
-        get() = Vector(-y, x)
+    val perpendicular: Vector2
+        get() = Vector2(-y, x)
 
     /**
      * The length^2 of this vector
@@ -121,7 +121,7 @@ data class Vector(
     val length: Double
         get() = sqrt(lengthSquared)
 
-    fun projectOnto(other: Vector): Vector {
+    fun projectOnto(other: Vector2): Vector2 {
         require(other != zero)
         return (this.dot(other) / other.lengthSquared) * other
     }
@@ -129,21 +129,21 @@ data class Vector(
     fun toPoint(): Point = Point.of(pv = this)
 }
 
-operator fun Vector.unaryMinus(): Vector = Vector(
+operator fun Vector2.unaryMinus(): Vector2 = Vector2(
     x = -x,
     y = -y,
 )
 
 operator fun Double.times(
-    v: Vector,
-): Vector = Vector(
+    v: Vector2,
+): Vector2 = Vector2(
     x = this * v.x,
     y = this * v.y,
 )
 
-operator fun Vector.div(
+operator fun Vector2.div(
     divisor: Double,
-): Vector = Vector(
+): Vector2 = Vector2(
     x = x / divisor,
     y = y / divisor,
 )

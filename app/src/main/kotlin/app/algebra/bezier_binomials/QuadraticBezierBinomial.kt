@@ -2,7 +2,7 @@ package app.algebra.bezier_binomials
 
 import app.algebra.polynomials.Polynomial
 import app.algebra.polynomials.QuadraticPolynomial
-import app.algebra.linear.Vector
+import app.algebra.linear.Vector2
 import app.algebra.linear.VectorSpace
 import app.geometry.Point
 import app.geometry.Subline
@@ -22,27 +22,27 @@ class QuadraticBezierBinomial<V>(
     }
 }
 
-val QuadraticBezierBinomial<Vector>.point0: Point
+val QuadraticBezierBinomial<Vector2>.point0: Point
     get() = this.weight0.toPoint()
 
-val QuadraticBezierBinomial<Vector>.point1: Point
+val QuadraticBezierBinomial<Vector2>.point1: Point
     get() = this.weight1.toPoint()
 
-val QuadraticBezierBinomial<Vector>.point2: Point
+val QuadraticBezierBinomial<Vector2>.point2: Point
     get() = this.weight2.toPoint()
 
-val QuadraticBezierBinomial<Vector>.segmentsQuadratic: List<Subline>
+val QuadraticBezierBinomial<Vector2>.segmentsQuadratic: List<Subline>
     get() = listOf(subline0, subline1)
 
-val QuadraticBezierBinomial<Vector>.subline0: Subline
+val QuadraticBezierBinomial<Vector2>.subline0: Subline
     get() = Subline(start = point0, end = point1)
 
-val QuadraticBezierBinomial<Vector>.subline1: Subline
+val QuadraticBezierBinomial<Vector2>.subline1: Subline
     get() = Subline(start = point1, end = point2)
 
-fun QuadraticBezierBinomial<Vector>.findSkeletonQuadratic(
+fun QuadraticBezierBinomial<Vector2>.findSkeletonQuadratic(
     t: Double,
-): LinearBezierBinomial<Vector> {
+): LinearBezierBinomial<Vector2> {
     val subPoint0 = subline0.linearlyInterpolate(t = t)
     val subPoint1 = subline1.linearlyInterpolate(t = t)
 
@@ -53,9 +53,9 @@ fun QuadraticBezierBinomial<Vector>.findSkeletonQuadratic(
     )
 }
 
-fun QuadraticBezierBinomial<Vector>.evaluateFastQuadratic(
+fun QuadraticBezierBinomial<Vector2>.evaluateFastQuadratic(
     t: Double,
-): Vector = findSkeletonQuadratic(t = t).evaluateLinear(t = t)
+): Vector2 = findSkeletonQuadratic(t = t).evaluateLinear(t = t)
 
 fun QuadraticBezierBinomial<Double>.toPolynomialFormulaQuadratic(): Polynomial? = QuadraticPolynomial.of(
     a = weight0 - 2.0 * weight1 + weight2,
@@ -63,7 +63,7 @@ fun QuadraticBezierBinomial<Double>.toPolynomialFormulaQuadratic(): Polynomial? 
     c = weight0,
 )
 
-val QuadraticBezierBinomial<Vector>.componentXQuadratic
+val QuadraticBezierBinomial<Vector2>.componentXQuadratic
     get() = QuadraticBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.x,
@@ -71,7 +71,7 @@ val QuadraticBezierBinomial<Vector>.componentXQuadratic
         weight2 = weight2.x,
     )
 
-val QuadraticBezierBinomial<Vector>.componentYQuadratic
+val QuadraticBezierBinomial<Vector2>.componentYQuadratic
     get() = QuadraticBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.y,

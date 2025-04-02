@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.algebra.linear.Vector
+import app.algebra.linear.Vector2
 
 /**
  * A ray in 2D Euclidean space, described by the equation p = s + td for t >= 0
@@ -17,7 +17,7 @@ data class Ray(
 ) {
     private fun evaluate(
         t: Double,
-    ): Vector {
+    ): Vector2 {
         if (t < 0) {
             throw IllegalArgumentException("t must be non-negative")
         }
@@ -35,10 +35,10 @@ data class Ray(
         )
     }
 
-    internal val s: Vector
+    internal val s: Vector2
         get() = startingPoint.pv
 
-    internal val d: Vector
+    internal val d: Vector2
         get() = direction.dv
 
     val containingLine: Line
