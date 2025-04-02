@@ -9,7 +9,7 @@ import app.geometry.Ray
 import app.geometry.TimedPointSeries
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
-import app.geometry.bezier_splines.OpenSpline
+import app.geometry.splines.OpenSpline
 
 sealed class BezierCurve<out CurveT : BezierCurve<CurveT>> : SegmentCurve<CurveT>() {
     companion object {

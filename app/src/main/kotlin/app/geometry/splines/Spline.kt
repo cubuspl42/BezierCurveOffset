@@ -1,11 +1,10 @@
-package app.geometry.bezier_splines
+package app.geometry.splines
 
 import app.Dumpbable
 import app.appendAllItems
 import app.createPathElement
 import app.geometry.Point
 import app.geometry.Subline
-import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import app.geometry.cubicTo

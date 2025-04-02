@@ -1,4 +1,4 @@
-package app.geometry.bezier_splines
+package app.geometry.splines
 
 import app.assertEquals
 import app.component10

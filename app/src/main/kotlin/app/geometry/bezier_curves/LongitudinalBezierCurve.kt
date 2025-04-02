@@ -2,7 +2,7 @@ package app.geometry.bezier_curves
 
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
-import app.geometry.bezier_splines.OpenSpline
+import app.geometry.splines.OpenSpline
 import app.partitionSorted
 import java.awt.geom.Path2D
 

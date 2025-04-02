@@ -1,11 +1,10 @@
 package app
 
 import app.geometry.Point
-import app.geometry.bezier_curves.BezierCurve
-import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
-import app.geometry.bezier_splines.*
+import app.geometry.splines.*
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory
+import org.w3c.dom.Element
 import org.w3c.dom.svg.*
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -30,6 +29,17 @@ sealed class PathSeg {
                     )
                 }
 
+                SVGPathSeg.PATHSEG_LINETO_ABS -> {
+                    val pathSegLinetoAbs = pathSeg as SVGPathSegLinetoAbs
+
+                    return MoveTo(
+                        finalPoint = Point.of(
+                            px = pathSegLinetoAbs.x.toDouble(),
+                            py = pathSegLinetoAbs.y.toDouble(),
+                        )
+                    )
+                }
+
                 SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS -> {
                     val pathSegCubicToAbs = pathSeg as SVGPathSegCurvetoCubicAbs
 
@@ -37,12 +47,10 @@ sealed class PathSeg {
                         firstControl = Point.of(
                             px = pathSegCubicToAbs.x1.toDouble(),
                             py = pathSegCubicToAbs.y1.toDouble(),
-                        ),
-                        secondControl = Point.of(
+                        ), secondControl = Point.of(
                             px = pathSegCubicToAbs.x2.toDouble(),
                             py = pathSegCubicToAbs.y2.toDouble(),
-                        ),
-                        finalPoint = Point.of(
+                        ), finalPoint = Point.of(
                             px = pathSegCubicToAbs.x.toDouble(),
                             py = pathSegCubicToAbs.y.toDouble(),
                         )
@@ -79,7 +87,7 @@ fun SVGPathElement.toSpline(): ClosedSpline<*> {
     val (firstPathSeg, tailPathSegs) = pathSegs.uncons()!!
 
     val originPathSeg = firstPathSeg as PathSeg.MoveTo
-    val edgePathSegs = tailPathSegs.elementWiseAs<PathSeg.CubicTo>()
+    val edgePathSegs = tailPathSegs.filterIsInstance<PathSeg.CubicTo>()
 
     val segments = edgePathSegs.withPrevious(
         outerLeft = originPathSeg,
@@ -96,6 +104,14 @@ fun SVGPathElement.toSpline(): ClosedSpline<*> {
     )
 }
 
+fun extractChild(
+    element: Element,
+): SVGPathElement = when (val singleChild = element.childElements.single()) {
+    is SVGPathElement -> singleChild
+    is SVGGElement -> extractChild(singleChild)
+    else -> throw UnsupportedOperationException("Unsupported child element: $singleChild")
+}
+
 fun extractSplineFromFile(
     filePath: Path,
 ): ClosedSpline<*> {
@@ -104,8 +120,7 @@ fun extractSplineFromFile(
 
     val document = documentFactory.createDocument(uri, reader) as SVGDocument
     val svgElement = document.documentElement as SVGElement
-
-    val pathElement = svgElement.childElements.single() as SVGPathElement
+    val pathElement = extractChild(svgElement)
 
     return pathElement.toSpline()
 }

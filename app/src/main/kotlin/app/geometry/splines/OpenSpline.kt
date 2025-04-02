@@ -1,8 +1,7 @@
-package app.geometry.bezier_splines
+package app.geometry.splines
 
 import app.geometry.Point
 import app.geometry.bezier_curves.SegmentCurve
-import app.interleave
 import app.mapFirst
 import app.withPreviousOrNull
 

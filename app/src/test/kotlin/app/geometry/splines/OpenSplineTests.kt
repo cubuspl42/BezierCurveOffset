@@ -1,9 +1,8 @@
-package app.geometry.bezier_splines
+package app.geometry.splines
 
 import app.geometry.Point
-import app.geometry.bezier_curves.BezierCurve
-import app.geometry.bezier_splines.Spline.Segment
-import app.geometry.bezier_splines.Spline.Terminator
+import app.geometry.splines.Spline.Segment
+import app.geometry.splines.Spline.Terminator
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

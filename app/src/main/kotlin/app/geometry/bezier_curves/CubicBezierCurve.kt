@@ -5,8 +5,8 @@ import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.fillCircle
 import app.geometry.*
-import app.geometry.bezier_splines.OpenSpline
-import app.geometry.bezier_splines.Spline
+import app.geometry.splines.OpenSpline
+import app.geometry.splines.Spline
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D

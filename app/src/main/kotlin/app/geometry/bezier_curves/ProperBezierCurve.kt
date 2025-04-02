@@ -5,7 +5,7 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.findInterestingCriticalPoints
 import app.algebra.bezier_binomials.sample
 import app.geometry.Point
-import app.geometry.bezier_splines.OpenSpline
+import app.geometry.splines.OpenSpline
 
 /**
  * A best-effort non-degenerate Bézier of order >= 2, where all the control
