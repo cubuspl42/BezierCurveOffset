@@ -2,7 +2,7 @@ package app
 
 import app.geometry.Point
 
-fun assertPointEquals(
+fun assertEquals(
     expected: Point,
     actual: Point,
     absoluteTolerance: Double,

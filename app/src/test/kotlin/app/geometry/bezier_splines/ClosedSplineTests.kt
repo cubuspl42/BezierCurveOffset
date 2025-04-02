@@ -1,9 +1,17 @@
 package app.geometry.bezier_splines
 
+import app.assertEquals
+import app.component6
+import app.component7
+import app.component8
+import app.component9
 import app.geometry.Point
-import kotlin.test.Ignore
+import app.geometry.Subline
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
+
+private val eps = 10e3
 
 class ClosedSplineTests {
     @Test
@@ -39,7 +47,7 @@ class ClosedSplineTests {
                     startKnot = knot1End,
                 ),
                 Spline.Segment.subline(
-                    startKnot = Point(0.0, 1.0),
+                    startKnot = Point.of(0.0, 1.0),
                 ),
             ),
             actual = interconnectedSpline.segments,
@@ -99,14 +107,14 @@ class ClosedSplineTests {
                     startKnot = knot1,
                 ),
                 Spline.Segment.subline(
-                    startKnot = Point(3.5, 0.25),
+                    startKnot = Point.of(3.5, 0.25),
                 ),
                 bezierSegment1,
                 Spline.Segment.subline(
                     startKnot = knot3,
                 ),
                 Spline.Segment.subline(
-                    startKnot = Point(-0.5, 0.25),
+                    startKnot = Point.of(-0.5, 0.25),
                 ),
             ),
             actual = interconnectedSpline.segments,
@@ -114,7 +122,6 @@ class ClosedSplineTests {
     }
 
     @Test
-    @Ignore // TOOD: Handle the tolerance
     fun testInterconnect_threeSplines() {
         val knot0 = Point.of(-3.0, -1.0)
         val control0 = Point.of(-2.5, -2.0)
@@ -180,31 +187,79 @@ class ClosedSplineTests {
             splines = listOf(spline0, spline1, spline2),
         )
 
+        val (
+            actualSegment0,
+            actualSegment1,
+            actualSegment2,
+            actualSegment3,
+            actualSegment4,
+            actualSegment5,
+            actualSegment6,
+            actualSegment7,
+            actualSegment8,
+        ) = interconnectedSpline.segments
+
         assertEquals(
-            expected = listOf(
-                bezierSegment0,
-                Spline.Segment.subline(
-                    startKnot = knot1,
-                ),
-                Spline.Segment.subline(
-                    startKnot = Point(0.0, 7.5),
-                ),
-                bezierSegment1,
-                Spline.Segment.subline(
-                    startKnot = knot3,
-                ),
-                Spline.Segment.subline(
-                    startKnot = Point(10.0 / 3.0, -1.0 / 3.0),
-                ),
-                bezierSegment2,
-                Spline.Segment.subline(
-                    startKnot = knot5,
-                ),
-                Spline.Segment.subline(
-                    startKnot = Point(-10.0 / 3.0, -1.0 / 3.0),
-                ),
+            expected = bezierSegment0,
+            actual = actualSegment0,
+        )
+
+        assertEquals(
+            expected = Spline.Segment.subline(
+                startKnot = knot1,
             ),
-            actual = interconnectedSpline.segments,
+            actual = actualSegment1,
+        )
+
+        assertEquals(
+            expected = Spline.Segment.subline(
+                startKnot = Point.of(0.0, 7.5),
+            ),
+            actual = actualSegment2,
+        )
+
+        assertEquals(
+            expected = bezierSegment1,
+            actual = actualSegment3,
+        )
+
+        assertEquals(
+            expected = Spline.Segment.subline(
+                startKnot = knot3,
+            ),
+            actual = actualSegment4,
+        )
+
+        assertIs<Subline.Edge>(
+            actualSegment5.edge,
+        )
+
+        assertEquals(
+            expected = Point.of(3.33, -0.33),
+            actual = actualSegment5.startKnot,
+            absoluteTolerance = eps,
+        )
+
+        assertEquals(
+            expected = bezierSegment2,
+            actual = actualSegment6,
+        )
+
+        assertEquals(
+            expected = Spline.Segment.subline(
+                startKnot = knot5,
+            ),
+            actual = actualSegment7,
+        )
+
+        assertIs<Subline.Edge>(
+            actualSegment8.edge,
+        )
+
+        assertEquals(
+            expected = Point.of(-3.33, -0.33),
+            actual = actualSegment8.startKnot,
+            absoluteTolerance = eps,
         )
     }
 }
