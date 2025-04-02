@@ -14,20 +14,20 @@ class ClosedSpline<CurveT: SegmentCurve>(
         val contourSpline: ClosedSpline<*>,
     ) {
         companion object {
-            fun wrap(
-                subResults: List<ProperBezierCurve.OffsetSplineApproximationResult>,
+            fun interconnect(
+                offsetResults: List<ProperBezierCurve.OffsetSplineApproximationResult>,
             ): ContourSplineApproximationResult {
-                require(subResults.isNotEmpty())
+                require(offsetResults.isNotEmpty())
 
                 val interconnectedContourSpline = ClosedSpline.interconnect(
-                    splines = subResults.map { it.offsetSpline },
+                    splines = offsetResults.map { it.offsetSpline },
                 )
 
                 return object : ContourSplineApproximationResult(
                     contourSpline = interconnectedContourSpline,
                 ) {
-                    override val globalDeviation: Double by lazy {
-                        subResults.maxOf { it.globalDeviation }
+                    override val globalOffsetDeviation: Double by lazy {
+                        offsetResults.maxOf { it.globalDeviation }
                     }
                 }
             }
@@ -36,14 +36,14 @@ class ClosedSpline<CurveT: SegmentCurve>(
         /**
          * @return The calculated global deviation
          */
-        abstract val globalDeviation: Double
+        abstract val globalOffsetDeviation: Double
     }
 
     companion object {
         fun interconnect(
             splines: List<OpenSpline<BezierCurve<*>>>,
         ): ClosedSpline<*> {
-            require(splines.size >= 2)
+            require(splines.isNotEmpty())
 
             // TODO
             return ClosedSpline<SegmentCurve>(
@@ -85,8 +85,8 @@ class ClosedSpline<CurveT: SegmentCurve>(
             return null
         }
 
-        return ContourSplineApproximationResult.wrap(
-            subResults = subResults,
+        return ContourSplineApproximationResult.interconnect(
+            offsetResults = subResults,
         )
     }
 }
