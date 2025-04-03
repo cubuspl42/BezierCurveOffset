@@ -2,6 +2,7 @@ package app.algebra.linear
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class Matrix4x4Tests {
     @Test
@@ -32,6 +33,79 @@ class Matrix4x4Tests {
         assertEquals(
             expected = expected,
             actual = result,
+        )
+    }
+
+    @Test
+    fun testLuDecompose() {
+        val aMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(1.0, 22.0, 3.0, 4.0),
+            row1 = Vector1x4.of(14.0, 6.0, 7.0, 8.0),
+            row2 = Vector1x4.of(9.0, 10.0, 11.0, 12.0),
+            row3 = Vector1x4.of(13.0, 14.0, 15.0, 16.0),
+        )
+
+        val lupDecomposition = assertNotNull(
+            aMatrix.lupDecompose(),
+        )
+
+        val lMatrix = lupDecomposition.l
+
+        assertEquals(
+            expected = Vector1x4.of(1.0, 0.0, 0.0, 0.0),
+            actual = lMatrix.row0
+        )
+
+        assertEquals(
+            expected = Vector1x3.of(1.0, 0.0, 0.0),
+            actual = lMatrix.row1.vectorYzw,
+        )
+
+        assertEquals(
+            expected = Vector1x2.of(1.0, 0.0),
+            actual = lMatrix.row2.vectorZw,
+        )
+
+        assertEquals(
+            expected = 1.0,
+            actual = lMatrix.row3.w,
+        )
+
+        val uMatrix = lupDecomposition.u
+
+        assertEquals(
+            expected = 0.0,
+            actual = uMatrix.row1.x,
+        )
+
+        assertEquals(
+            expected = Vector1x2.of(0.0, 0.0),
+            actual = uMatrix.row2.vectorXy,
+        )
+
+        assertEquals(
+            expected = Vector1x3.of(0.0, 0.0, 0.0),
+            actual = uMatrix.row3.vectorXyz
+        )
+
+        val pMatrix = lupDecomposition.p
+
+        assertEquals(
+            expected = Matrix4x4.of(
+                row0 = Vector1x4.of(0.0, 1.0, 0.0, 0.0),
+                row1 = Vector1x4.of(0.0, 0.0, 0.0, 1.0),
+                row2 = Vector1x4.of(1.0, 0.0, 0.0, 0.0),
+                row3 = Vector1x4.of(0.0, 0.0, 1.0, 0.0),
+            ),
+            actual = pMatrix,
+        )
+
+        val paMatrix = pMatrix * aMatrix
+        val luMatrix = lMatrix * uMatrix
+
+        assertEquals(
+            expected = paMatrix,
+            actual = luMatrix,
         )
     }
 }

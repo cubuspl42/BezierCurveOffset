@@ -30,6 +30,32 @@ data class Vector1x4 private constructor(
         require(w.isFinite())
     }
 
+    val vectorXy: Vector1x2
+        get() = Vector1x2.of(
+            x = this.x,
+            y = this.y,
+        )
+
+    val vectorXyz: Vector1x3
+        get() = Vector1x3.of(
+            x = this.x,
+            y = this.y,
+            z = this.z,
+        )
+
+    val vectorYzw: Vector1x3
+        get() = Vector1x3.of(
+            x = this.y,
+            y = this.z,
+            z = this.w,
+        )
+
+    val vectorZw: Vector1x2
+        get() = Vector1x2.of(
+            x = this.z,
+            y = this.w,
+        )
+
     val transposed: Vector4x1
         get() = Vector4x1.of(
             x = this.x,
@@ -41,4 +67,14 @@ data class Vector1x4 private constructor(
     fun dot(
         other: Vector4x1,
     ): Double = dotForced(other)
+
+    operator fun get(
+        j: Int,
+    ): Double = when (j) {
+        0 -> x
+        1 -> y
+        2 -> z
+        3 -> w
+        else -> throw IndexOutOfBoundsException("Index $j out of bounds for length 4")
+    }
 }
