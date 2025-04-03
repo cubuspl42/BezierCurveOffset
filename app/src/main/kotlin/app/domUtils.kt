@@ -90,6 +90,8 @@ fun SVGDocument.createSvgElement(qualifiedName: String): Element = createElement
 
 fun SVGDocument.createPathElement(): SVGPathElement = createSvgElement("path") as SVGPathElement
 
+fun SVGDocument.createGElement(): SVGGElement = createSvgElement("g") as SVGGElement
+
 fun SVGPathSegList.asList(): List<SVGPathSeg> = object : AbstractList<SVGPathSeg>() {
     override val size: Int
         get() = numberOfItems

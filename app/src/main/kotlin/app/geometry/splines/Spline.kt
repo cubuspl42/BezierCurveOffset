@@ -2,17 +2,20 @@ package app.geometry.splines
 
 import app.Dumpbable
 import app.appendAllItems
+import app.createGElement
 import app.createPathElement
 import app.geometry.Point
 import app.geometry.Subline
 import app.geometry.Transformation
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
+import app.geometry.bezier_curves.toSvgPath
 import app.geometry.cubicTo
 import app.geometry.lineTo
 import app.geometry.moveTo
 import app.mapWithNext
 import org.w3c.dom.svg.SVGDocument
+import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 import java.awt.Color
@@ -108,34 +111,11 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
     }
 }
 
-fun Spline<*>.toSvgPath(
+fun Spline<*>.toSvgPathGroup(
     document: SVGDocument,
-): SVGPathElement {
-    val spline = this
-
-    return document.createPathElement().apply {
-        val start = subCurves.first().start
-
-        pathSegList.appendItem(
-            createSVGPathSegMovetoAbs(
-                start.x.toFloat(),
-                start.y.toFloat(),
-            ),
-        )
-
-        subCurves.forEach { subCurve ->
-            pathSegList.appendItem(
-                subCurve.toSvgPathSeg(
-                    pathElement = this,
-                ),
-            )
-        }
-
-        if (spline is ClosedSpline) {
-            pathSegList.appendItem(
-                createSVGPathSegClosePath(),
-            )
-        }
+): SVGGElement = document.createGElement().apply {
+    subCurves.forEach { subCurve ->
+        appendChild(subCurve.toSvgPath(document = document))
     }
 }
 
@@ -186,6 +166,7 @@ private fun SegmentCurve<*>.toSvgPathSeg(
         control1.x.toFloat(),
         control1.y.toFloat(),
     )
+
     else -> throw UnsupportedOperationException("Unsupported segment curve: $this")
 }
 

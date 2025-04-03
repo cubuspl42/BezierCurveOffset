@@ -194,17 +194,11 @@ fun main() {
         )
 
         svgElement.appendChild(
-            spline.toSvgPath(document = this).apply {
-                fill = "none"
-                stroke = "red"
-            },
+            spline.toSvgPathGroup(document = this)
         )
 
         svgElement.appendChild(
-            contourSpline.toSvgPath(document = this).apply {
-                fill = "none"
-                stroke = "lightBlue"
-            },
+            contourSpline.toSvgPathGroup(document = this)
         )
     }
 
