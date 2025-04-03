@@ -5,6 +5,7 @@ import app.algebra.linear.Vector2x1
 import app.algebra.linear.div
 import app.equalsZeroApproximately
 import app.geometry.transformations.Transformation
+import app.geometry.transformations.Translation
 import java.awt.geom.Path2D
 
 @Suppress("DataClassPrivateConstructor")
@@ -104,6 +105,12 @@ data class Point private constructor(
     val y: Double
         get() = pv.y
 
+    fun translationTo(
+        other: Point,
+    ): Translation = Translation.of(
+        tv = other.pv - this.pv,
+    )
+
     fun distanceTo(
         other: Point,
     ): Double = (other.pv - this.pv).length
@@ -163,8 +170,8 @@ data class Point private constructor(
     fun toVector(): Vector2x1 = Vector2.of(x, y)
 
     fun projectOnto(line: Line): Point {
-        val sv = line.pv
-        return Point.of(sv + (pv - sv).projectOnto(line.dv))
+        val tr = translationTo(line.representativePoint).projectOnto(line.representativeDirection)
+        return tr.translate(line.representativePoint)
     }
 
     fun dump(): String = "Point.of(${"%.2f".format(pv.x)}, ${"%.2f".format(pv.y)})"
