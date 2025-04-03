@@ -6,6 +6,7 @@ import app.algebra.bezier_binomials.findInterestingCriticalPoints
 import app.algebra.bezier_binomials.sample
 import app.geometry.Point
 import app.geometry.splines.OpenSpline
+import app.partitionSorted
 
 /**
  * A best-effort non-degenerate Bézier of order >= 2, where all the control
@@ -308,6 +309,76 @@ sealed class ProperBezierCurve : LongitudinalBezierCurve() {
     }
 
     /**
+     * @param tValues - a set of t-values to split at
+     *
+     * @return A spline consisting of curves resulting from splitting the curve
+     * at the given t-values, or null if the curve was too tiny to split
+     */
+    fun splitAtMultiple(
+        tValues: Set<Double>,
+    ): OpenSpline<CubicBezierCurve>? {
+        if (tValues.isEmpty()) {
+            return this.toSpline()
+        }
+
+        val tValuesSorted = tValues.sorted()
+
+        val spline = splitAtMultipleSorted(
+            tValuesSorted = tValuesSorted,
+        )
+
+        return spline
+    }
+
+    /**
+     * @param tValuesSorted - a sorted list of t-values to split at
+     *
+     * @return A spline consisting of curves resulting from splitting the curve
+     * at the given t-values, or null if the curve was too tiny to split
+     */
+    fun splitAtMultipleSorted(
+        tValuesSorted: List<Double>,
+    ): OpenSpline<CubicBezierCurve>? {
+        val partitioningResult =
+            tValuesSorted.partitionSorted() ?: return this.toSpline() // We're done, no more places to split
+
+        val leftTValues = partitioningResult.leftPart
+        val medianTValue = partitioningResult.medianValue
+        val rightTValues = partitioningResult.rightPart
+
+        val (leftSplitCurve, rightSplitCurve) = splitAt(
+            t = medianTValue,
+        )
+
+        val leftCorrectedTValues = leftTValues.map { it / medianTValue }
+        val rightCorrectedTValues = rightTValues.map { (it - medianTValue) / (1.0 - medianTValue) }
+
+        val leftSubSplitCurveOrNull = leftSplitCurve.splitAtMultipleSorted(
+            tValuesSorted = leftCorrectedTValues,
+        )
+
+        val rightSubSplitCurveOrNull = rightSplitCurve.splitAtMultipleSorted(
+            tValuesSorted = rightCorrectedTValues,
+        )
+
+        val subSplines = listOfNotNull(
+            leftSubSplitCurveOrNull,
+            rightSubSplitCurveOrNull,
+        )
+
+        if (subSplines.isEmpty()) {
+            return null
+        }
+
+        val mergedSpline = OpenSpline.merge(
+            splines = subSplines,
+        )
+
+        return mergedSpline
+    }
+
+
+    /**
      * Subdivide this curve and the offset spline recursively by joining the
      * offset splines of the subdivided curves, assuming this curve is
      * theoretically non-degenerate.
@@ -320,7 +391,7 @@ sealed class ProperBezierCurve : LongitudinalBezierCurve() {
         offset: Double,
         subdivisionLevel: Int,
     ): BezierOffsetSplineApproximationResult? {
-        val (leftSplitCurve, rightSplitCurve) = splitAtSafe(t = 0.5) ?: run {
+        val (leftSplitCurve, rightSplitCurve) = splitAt(t = 0.5) ?: run {
             // If the t-value 0.5 is too close to 0 or 1 to even split the curve,
             // this curve is just too tiny to generate the offset spline for it
             return null
@@ -344,4 +415,8 @@ sealed class ProperBezierCurve : LongitudinalBezierCurve() {
 
         return firstSubSplitCurve.mergeWith(secondSubSplitCurve)
     }
+
+    abstract fun splitAt(
+        t: Double,
+    ): Pair<ProperBezierCurve, ProperBezierCurve>
 }

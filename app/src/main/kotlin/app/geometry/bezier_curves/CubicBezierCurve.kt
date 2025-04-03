@@ -104,7 +104,7 @@ data class CubicBezierCurve private constructor(
 
     override fun splitAt(
         t: Double,
-    ): Pair<BezierCurve, BezierCurve> {
+    ): Pair<CubicBezierCurve, CubicBezierCurve> {
         val skeleton0 = basisFormula.findSkeletonCubic(t = t)
         val skeleton1 = skeleton0.findSkeletonQuadratic(t = t)
         val midPoint = skeleton1.evaluateLinear(t = t).toPoint()
