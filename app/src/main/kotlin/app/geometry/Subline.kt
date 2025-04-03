@@ -112,10 +112,14 @@ data class Subline(
         strategy: BezierCurve.OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OffsetSplineApproximationResult<Subline>? = findOffsetSpline(
-        strategy = strategy,
-        offset = offset,
-    )
+    ): OffsetSplineApproximationResult<Subline>? {
+        // We ignore the subdivision level, because subline offset is always optimal and safe to compute (unless it's
+        // a point)
+        return findOffsetSpline(
+            strategy = strategy,
+            offset = offset,
+        )
+    }
 
     override val edge: SegmentCurve.Edge<Subline> = Edge
 

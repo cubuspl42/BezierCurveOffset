@@ -299,12 +299,12 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
 
         if (criticalPoints.isNotEmpty()) {
-            val initialSplitSpline = splitAtMultiple(criticalPoints) ?: run {
+            val initialSplitSubCurves = splitAtMultiple(criticalPoints) ?: run {
                 // The curve was too tiny to split
                 return null
             }
 
-            val subResults = initialSplitSpline.subCurves.mapNotNull { splitCurve ->
+            val subResults = initialSplitSubCurves.mapNotNull { splitCurve ->
 
                 // After splitting at the critical points, each sub-curves should
                 // be theoretically non-degenerate, even if this curve is degenerate.
@@ -351,18 +351,16 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
      */
     fun splitAtMultiple(
         tValues: Set<Double>,
-    ): OpenSpline<CubicBezierCurve>? {
+    ): List<BezierCurve>? {
         if (tValues.isEmpty()) {
-            return this.toSpline()
+            return listOf(this)
         }
 
         val tValuesSorted = tValues.sorted()
 
-        val spline = splitAtMultipleSorted(
+        return splitAtMultipleSorted(
             tValuesSorted = tValuesSorted,
         )
-
-        return spline
     }
 
     /**
@@ -373,9 +371,9 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
      */
     fun splitAtMultipleSorted(
         tValuesSorted: List<Double>,
-    ): OpenSpline<CubicBezierCurve>? {
+    ): List<BezierCurve>? {
         val partitioningResult =
-            tValuesSorted.partitionSorted() ?: return this.toSpline() // We're done, no more places to split
+            tValuesSorted.partitionSorted() ?: return listOf(this) // We're done, no more places to split
 
         val leftTValues = partitioningResult.leftPart
         val medianTValue = partitioningResult.medianValue
@@ -388,30 +386,22 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         val leftCorrectedTValues = leftTValues.map { it / medianTValue }
         val rightCorrectedTValues = rightTValues.map { (it - medianTValue) / (1.0 - medianTValue) }
 
-        val leftSubSplitCurveOrNull = leftSplitCurve.splitAtMultipleSorted(
+        val leftSubSplitCurves = leftSplitCurve.splitAtMultipleSorted(
             tValuesSorted = leftCorrectedTValues,
-        )
+        ) ?: emptyList()
 
-        val rightSubSplitCurveOrNull = rightSplitCurve.splitAtMultipleSorted(
+        val rightSubSplitCurves = rightSplitCurve.splitAtMultipleSorted(
             tValuesSorted = rightCorrectedTValues,
-        )
+        ) ?: emptyList()
 
-        val subSplines = listOfNotNull(
-            leftSubSplitCurveOrNull,
-            rightSubSplitCurveOrNull,
-        )
+        val subCurves = leftSubSplitCurves + rightSubSplitCurves
 
-        if (subSplines.isEmpty()) {
+        if (subCurves.isEmpty()) {
             return null
         }
 
-        val mergedSpline = OpenSpline.merge(
-            splines = subSplines,
-        )
-
-        return mergedSpline
+        return subCurves
     }
-
 
     /**
      * Subdivide this curve and the offset spline recursively by joining the
