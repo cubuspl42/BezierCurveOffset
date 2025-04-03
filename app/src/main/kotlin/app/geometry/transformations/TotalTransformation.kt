@@ -49,7 +49,7 @@ data class TotalTransformation private constructor(
      *
      * @param base - The transformation that comes before this transformation
      */
-    fun combineWith(
+    fun applyOver(
         base: TotalTransformation,
     ): TotalTransformation = TotalTransformation(
         tm = tm * base.tm,

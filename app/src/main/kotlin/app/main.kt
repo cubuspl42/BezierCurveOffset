@@ -146,7 +146,7 @@ fun extractChild(
     )
 
     is SVGGElement -> {
-        val newTransformation = singleChild.transformation.combineWith(base = transformation)
+        val newTransformation = singleChild.transformation.applyOver(base = transformation)
 
         extractChild(
             transformation = newTransformation, element = singleChild
