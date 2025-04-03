@@ -22,7 +22,7 @@ import java.awt.Graphics2D
 import java.awt.geom.Path2D
 
 /**
- * A cubic Bézier curve
+ * A cubic Bézier curve (a Bézier curve of degree 3)
  */
 @Suppress("DataClassPrivateConstructor")
 data class CubicBezierCurve private constructor(

@@ -1,26 +1,25 @@
 package app.geometry.bezier_curves
 
+import app.algebra.bezier_binomials.DifferentiableBezierBinomial
 import app.algebra.bezier_binomials.RealFunction
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
+import app.algebra.bezier_binomials.findFaster
 import app.algebra.bezier_binomials.findInterestingCriticalPoints
 import app.algebra.bezier_binomials.sample
+import app.algebra.linear.Vector2
+import app.geometry.Direction
 import app.geometry.Point
+import app.geometry.Ray
+import app.geometry.TimedPointSeries
 import app.geometry.splines.OpenSpline
 import app.partitionSorted
 
 /**
- * A best-effort non-degenerate Bézier of order >= 2, where all the control
- * points are different from each other and from the start/end points.
- *
- * This model allows a specific case that could be considered a degenerate curve,
- * i.e. when the start point, the end point and all the control points are
- * different, but collinear. Mathematically, this is a line segment, but lowering
- * such a curve to a linear Bézier curve is non-trivial. At the tip(s), such a
- * curve has its velocity equal to zero, which causes unfortunate corner cases.
+ * A Bézier curve
  */
-sealed class ProperBezierCurve : BezierCurve() {
+sealed class ProperBezierCurve : SegmentCurve<CubicBezierCurve>() {
     abstract class OffsetCurveApproximationResult(
-        val offsetCurve: BezierCurve,
+        val offsetCurve: ProperBezierCurve,
     ) {
         companion object {
             val approximationRatingSampleCount = 16
@@ -42,10 +41,10 @@ sealed class ProperBezierCurve : BezierCurve() {
 
     abstract class BezierOffsetSplineApproximationResult(
         override val offsetSpline: OpenSpline<CubicBezierCurve>,
-    ) : OffsetSplineApproximationResult<CubicBezierCurve>() {
+    ) : SegmentCurve.OffsetSplineApproximationResult<CubicBezierCurve>() {
         companion object {
             fun precise(
-                offsetCurve: BezierCurve,
+                offsetCurve: ProperBezierCurve,
             ): BezierOffsetSplineApproximationResult = object : BezierOffsetSplineApproximationResult(
                 offsetSpline = offsetCurve.toSpline(),
             ) {
@@ -91,14 +90,14 @@ sealed class ProperBezierCurve : BezierCurve() {
         abstract fun approximateOffsetCurve(
             curve: ProperBezierCurve,
             offset: Double,
-        ): BezierCurve?
+        ): ProperBezierCurve?
     }
 
     data object BestFitOffsetStrategy : OffsetStrategy() {
         override fun approximateOffsetCurve(
             curve: ProperBezierCurve,
             offset: Double,
-        ): BezierCurve? {
+        ): ProperBezierCurve? {
             val offsetTimedSeries = curve.findOffsetTimedSeries(offset = offset) ?: return null
 
             // The computed timed point series could (should?) be improved using
@@ -111,8 +110,85 @@ sealed class ProperBezierCurve : BezierCurve() {
     }
 
     companion object {
+        fun bindRay(
+            pointFunction: TimeFunction<Point>,
+            vectorFunction: TimeFunction<Direction?>,
+        ): TimeFunction<Ray?> = TimeFunction.map2(
+            functionA = pointFunction,
+            functionB = vectorFunction,
+        ) { point, direction ->
+            direction?.let {
+                Ray.inDirection(
+                    point = point,
+                    direction = it,
+                )
+            }
+        }
+
         private const val findOffsetDeviationThreshold = 0.1
         private const val findOffsetMaxSubdivisionLevel = 8
+    }
+
+    val curveFunction: TimeFunction<Point> by lazy {
+        basisFormula.findFaster().map { it.toPoint() }
+    }
+
+    fun findOffsetCurveFunction(
+        offset: Double,
+    ): TimeFunction<Point?> = normalRayFunction.map { normalRay ->
+        normalRay?.startingPoint?.moveInDirection(
+            direction = normalRay.direction,
+            distance = offset,
+        )
+    }
+
+    /**
+     * The tangent direction function of the curve, based on the curve's
+     * velocity. If this curve is degenerate, it might "slow down" at some point
+     * to zero, so the tangent direction is non-existent (null). Theoretically,
+     * for longitudinal (non-point) curves (even the otherwise degenerate ones),
+     * the tangent should always be defined for t=0 and t=1, but even that is
+     * difficult to guarantee from the numerical perspective.
+     */
+    val tangentFunction: TimeFunction<Direction?> by lazy {
+        TimeFunction.wrap(basisFormula.findDerivative()).map {
+            Direction.of(it)
+        }
+    }
+
+    val tangentRayFunction: TimeFunction<Ray?> by lazy {
+        bindRay(
+            pointFunction = curveFunction,
+            vectorFunction = tangentFunction,
+        )
+    }
+
+    /**
+     * The normal direction of the curve, i.e. the direction perpendicular to
+     * the tangent direction.
+     */
+    val normalFunction: TimeFunction<Direction?> by lazy {
+        tangentFunction.map {
+            it?.perpendicular
+        }
+    }
+
+    val normalRayFunction: TimeFunction<Ray?> by lazy {
+        bindRay(
+            pointFunction = curveFunction,
+            vectorFunction = normalFunction,
+        )
+    }
+
+    fun findOffsetTimedSeries(
+        offset: Double,
+    ): TimedPointSeries? {
+        val offsetCurveFunction = findOffsetCurveFunction(offset = offset)
+
+        return TimedPointSeries.sample(
+            curveFunction = offsetCurveFunction,
+            sampleCount = 6,
+        )
     }
 
     final override fun findOffsetSpline(
@@ -245,10 +321,7 @@ sealed class ProperBezierCurve : BezierCurve() {
             }
         }
     }
-
-    final override val asProper: ProperBezierCurve
-        get() = this
-
+    
     /**
      * Split this curve at its critical points and the offset spline recursively
      * by joining the offset splines of the sub-cures.
@@ -414,6 +487,8 @@ sealed class ProperBezierCurve : BezierCurve() {
 
         return firstSubSplitCurve.mergeWith(secondSubSplitCurve)
     }
+
+    abstract val basisFormula: DifferentiableBezierBinomial<Vector2>
 
     abstract fun splitAt(
         t: Double,

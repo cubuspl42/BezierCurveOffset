@@ -6,8 +6,8 @@ import app.algebra.bezier_binomials.sample
 import app.fillCircle
 import app.fillColumnFrom
 import app.fillFrom
-import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_curves.TimeFunction
 import app.invSafe
 import org.ujmp.core.Matrix
@@ -73,7 +73,7 @@ data class TimedPointSeries(
         }
     }
 
-    fun bestFitCurve(): BezierCurve {
+    fun bestFitCurve(): ProperBezierCurve {
         // T
         val bigTMatrix = buildBigTMatrix()
 
@@ -119,7 +119,7 @@ data class TimedPointSeries(
     }
 
     fun calculateFitError(
-        bezierCurve: BezierCurve,
+        bezierCurve: ProperBezierCurve,
     ): Double = timedPoints.sumOf { timedPoint ->
         val t = timedPoint.t
         val point = timedPoint.point
