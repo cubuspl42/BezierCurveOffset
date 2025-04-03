@@ -1,12 +1,12 @@
 package app.algebra.linear
 
-data class VectorN(
-    val elements: List<Double>,
-) {
-    fun dot(
+abstract class VectorN {
+    abstract val xs: List<Double>
+
+    protected fun dotForced(
         other: VectorN,
     ): Double {
-        require(elements.size == other.elements.size)
-        return elements.zip(other.elements).sumOf { (a, b) -> a * b }
+        require(xs.size == other.xs.size)
+        return xs.zip(other.xs).sumOf { (a, b) -> a * b }
     }
 }

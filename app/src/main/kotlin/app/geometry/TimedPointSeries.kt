@@ -4,6 +4,7 @@ import app.algebra.bezier_binomials.CubicBezierBinomial
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.sample
 import app.algebra.linear.MatrixNx4
+import app.algebra.linear.Vector1x4
 import app.algebra.linear.Vector4x1
 import app.fillCircle
 import app.fillColumnFrom
@@ -76,10 +77,10 @@ data class TimedPointSeries(
 
     fun bestFitCurve(): BezierCurve {
         // T
-        val bigTMatrix = buildBigTMatrix().toUjmpMatrix()
+        val bigTMatrix = buildBigTMatrix()
 
         // T^t
-        val bigTTransposedMatrix = bigTMatrix.transpose()
+        val bigTTransposedMatrix = bigTMatrix.transposed.toUjmpMatrix()
 
         // X (H.x)
         val xVector = buildXVector()
@@ -88,7 +89,7 @@ data class TimedPointSeries(
         val yVector = buildYVector()
 
         // T^t * T
-        val aMatrix = bigTTransposedMatrix.mtimes(bigTMatrix)
+        val aMatrix = bigTTransposedMatrix.mtimes(bigTMatrix.toUjmpMatrix())
 
         // (T^t * T)^-1
         val bMatrix = aMatrix.invSafe()
@@ -141,7 +142,7 @@ data class TimedPointSeries(
         rows = timedPoints.map { timedPoint ->
             val t = timedPoint.t
 
-            Vector4x1.of(
+            Vector1x4.of(
                 x = t * t * t,
                 y = t * t,
                 z = t,

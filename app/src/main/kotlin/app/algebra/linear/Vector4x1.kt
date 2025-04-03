@@ -31,6 +31,6 @@ data class Vector4x1 private constructor(
     }
 
     fun dot(
-        other: Vector4x1,
+        other: Vector1x4,
     ): Double = dotForced(other)
 }

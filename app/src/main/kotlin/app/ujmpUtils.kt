@@ -8,12 +8,12 @@ fun Matrix.invSafe(): Matrix = when {
     else -> inv()
 }
 
-fun <T> DefaultDenseMatrixFactory.fillFrom(
-    collection: Collection<T>,
+fun <T> DefaultDenseMatrixFactory.fillByRow(
+    rowElements: Collection<T>,
     rowWidth: Int,
     buildRow: (T) -> DoubleArray,
-): Matrix = this.fill(0.0, collection.size.toLong(), rowWidth.toLong()).apply {
-    collection.forEachIndexed { i, v ->
+): Matrix = this.fill(0.0, rowElements.size.toLong(), rowWidth.toLong()).apply {
+    rowElements.forEachIndexed { i, v ->
         val row = buildRow(v)
 
         if (row.size != rowWidth) {
@@ -26,11 +26,29 @@ fun <T> DefaultDenseMatrixFactory.fillFrom(
     }
 }
 
+fun <T> DefaultDenseMatrixFactory.fillByColumn(
+    columnElements: Collection<T>,
+    columnHeight: Int,
+    buildColumn: (T) -> DoubleArray,
+): Matrix = this.fill(0.0, columnHeight.toLong(), columnElements.size.toLong()).apply {
+    columnElements.forEachIndexed { i, v ->
+        val column = buildColumn(v)
+
+        if (column.size != columnHeight) {
+            throw IllegalArgumentException("Column height must be $columnHeight, but was ${column.size}")
+        }
+
+        column.forEachIndexed { j, value ->
+            setAsDouble(value, j.toLong(), i.toLong())
+        }
+    }
+}
+
 fun <T> DefaultDenseMatrixFactory.fillColumnFrom(
     collection: Collection<T>,
     buildValue: (T) -> Double,
-): Matrix = fillFrom(
-    collection = collection,
+): Matrix = fillByRow(
+    rowElements = collection,
     rowWidth = 1,
     buildRow = { v -> doubleArrayOf(buildValue(v)) },
 )

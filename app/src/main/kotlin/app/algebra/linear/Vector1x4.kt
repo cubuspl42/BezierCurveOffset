@@ -30,6 +30,14 @@ data class Vector1x4 private constructor(
         require(w.isFinite())
     }
 
+    val transposed: Vector4x1
+        get() = Vector4x1.of(
+            x = this.x,
+            y = this.y,
+            z = this.z,
+            w = this.w,
+        )
+
     fun dot(
         other: Vector4x1,
     ): Double = dotForced(other)
