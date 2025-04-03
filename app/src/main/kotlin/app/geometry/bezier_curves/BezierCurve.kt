@@ -225,7 +225,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         }
     }
 
-    fun findOffsetSplineRecursive(
+    override fun findOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
@@ -321,7 +321,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
             }
         }
     }
-    
+
     /**
      * Split this curve at its critical points and the offset spline recursively
      * by joining the offset splines of the sub-cures.

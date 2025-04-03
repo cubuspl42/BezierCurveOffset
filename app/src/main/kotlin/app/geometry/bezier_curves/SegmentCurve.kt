@@ -7,6 +7,8 @@ import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.Subline
 import app.geometry.Transformation
+import app.geometry.bezier_curves.BezierCurve.BezierOffsetSplineApproximationResult
+import app.geometry.bezier_curves.BezierCurve.OffsetStrategy
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
 import app.geometry.toDebugPath
@@ -27,6 +29,12 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
     abstract fun findOffsetSpline(
         strategy: BezierCurve.OffsetStrategy,
         offset: Double,
+    ): OffsetSplineApproximationResult<CurveT>?
+
+    abstract fun findOffsetSplineRecursive(
+        strategy: OffsetStrategy,
+        offset: Double,
+        subdivisionLevel: Int,
     ): OffsetSplineApproximationResult<CurveT>?
 
     fun toSpline(): OpenSpline<CurveT> = OpenSpline(

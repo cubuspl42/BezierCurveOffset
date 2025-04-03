@@ -98,13 +98,24 @@ data class Subline(
     override fun findOffsetSpline(
         strategy: BezierCurve.OffsetStrategy,
         offset: Double,
-    ): OffsetSplineApproximationResult<Subline>? = findOffsetSubline(offset = offset)?.let { offsetSubline ->
+    ): OffsetSplineApproximationResult<Subline>? = findOffsetSubline(
+        offset = offset,
+    )?.let { offsetSubline ->
         object : OffsetSplineApproximationResult<Subline>() {
             override val offsetSpline: OpenSpline<Subline> = offsetSubline.toSpline()
 
             override val globalDeviation: Double = 0.0
         }
     }
+
+    override fun findOffsetSplineRecursive(
+        strategy: BezierCurve.OffsetStrategy,
+        offset: Double,
+        subdivisionLevel: Int,
+    ): OffsetSplineApproximationResult<Subline>? = findOffsetSpline(
+        strategy = strategy,
+        offset = offset,
+    )
 
     override val edge: SegmentCurve.Edge<Subline> = Edge
 
