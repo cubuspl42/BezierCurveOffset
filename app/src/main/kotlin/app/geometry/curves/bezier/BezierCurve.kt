@@ -101,7 +101,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     fun findOffsetCurveFunction(
         offset: Double,
     ): TimeFunction<Point?> = normalRayFunction.map { normalRay ->
-        normalRay?.startingPoint?.moveInDirection(
+        normalRay?.startingPoint?.translateInDirection(
             direction = normalRay.direction,
             distance = offset,
         )

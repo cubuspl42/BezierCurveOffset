@@ -281,7 +281,7 @@ data class CubicBezierCurve private constructor(
         direction: Direction,
         distance: Double,
     ): CubicBezierCurve? = mapPointWise {
-        it.moveInDirection(
+        it.translateInDirection(
             direction = direction,
             distance = distance,
         )

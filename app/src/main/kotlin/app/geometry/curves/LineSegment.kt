@@ -88,11 +88,11 @@ data class LineSegment(
         distance: Double,
     ): LineSegment? {
         return LineSegment(
-            start = start.moveInDirection(
+            start = start.translateInDirection(
                 direction = direction,
                 distance = distance,
             ) ?: return null,
-            end = end.moveInDirection(
+            end = end.translateInDirection(
                 direction = direction,
                 distance = distance,
             ) ?: return null,
@@ -133,11 +133,11 @@ data class LineSegment(
         val offsetDirection = direction?.perpendicular ?: return null
 
         return LineSegment(
-            start = start.moveInDirection(
+            start = start.translateInDirection(
                 direction = offsetDirection,
                 distance = offset,
             ),
-            end = end.moveInDirection(
+            end = end.translateInDirection(
                 direction = offsetDirection,
                 distance = offset,
             ),

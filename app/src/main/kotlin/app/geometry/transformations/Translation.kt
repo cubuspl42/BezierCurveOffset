@@ -1,6 +1,5 @@
 package app.geometry.transformations
 
-import app.algebra.linear.Vector2
 import app.algebra.linear.Vector2x1
 import app.algebra.linear.times
 import app.geometry.Direction
@@ -16,6 +15,17 @@ data class Translation private constructor(
         ): Translation = Translation(
             tv = tv,
         )
+
+        fun inDirection(
+            direction: Direction,
+            distance: Double,
+        ): Translation {
+            require(distance.isFinite())
+
+            return Translation(
+                tv = direction.dv.resize(distance),
+            )
+        }
 
         fun of(
             tx: Double,

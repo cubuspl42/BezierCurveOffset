@@ -95,7 +95,7 @@ fun Ray.toDebugPath(
     document: SVGDocument,
 ): SVGPathElement = LineSegment(
     start = startingPoint,
-    end = startingPoint.moveInDirection(
+    end = startingPoint.translateInDirection(
         direction = direction,
         distance = 100.0,
     ),

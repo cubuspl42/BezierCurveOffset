@@ -1,6 +1,5 @@
 package app.geometry
 
-import app.algebra.linear.Vector2
 import app.algebra.linear.Vector2x1
 import app.algebra.linear.div
 import app.equalsZeroApproximately
@@ -136,16 +135,12 @@ data class Point private constructor(
      * @return point moved in the given direction, or null if the direction was
      * numerically
      */
-    fun moveInDirection(
+    fun translateInDirection(
         direction: Direction,
         distance: Double,
-    ): Point {
-        require(distance.isFinite())
-
-        return Point.of(
-            pv = pv + direction.dv.resize(newLength = distance)
-        )
-    }
+    ): Point = Translation.inDirection(
+        direction, distance,
+    ).translate(this)
 
     /**
      * @param origin - point to move away from, must be a different point
@@ -160,7 +155,7 @@ data class Point private constructor(
 
         val direction = directionTo(origin) ?: return null
 
-        return moveInDirection(
+        return translateInDirection(
             direction = direction,
             distance = distance,
         )
