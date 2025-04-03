@@ -2,22 +2,18 @@ package app.geometry.splines
 
 import app.Dumpbable
 import app.SVGGElementUtils
-import app.createGElement
 import app.geometry.Point
 import app.geometry.Subline
-import app.geometry.Transformation
+import app.geometry.TotalTransformation
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import app.geometry.bezier_curves.toDebugSvgPathGroup
 import app.geometry.cubicTo
 import app.geometry.lineTo
 import app.geometry.moveTo
-import app.geometry.toDebugPath
 import app.mapWithNext
-import app.withNext
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement
-import org.w3c.dom.svg.SVGPathElement
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
@@ -81,7 +77,7 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
         )
 
         fun transformVia(
-            transformation: Transformation,
+            transformation: TotalTransformation,
         ): Segment<CurveT> = Segment(
             startKnot = startKnot.transformVia(transformation = transformation),
             edge = edge.transformVia(transformation),

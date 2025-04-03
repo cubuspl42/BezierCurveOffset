@@ -7,11 +7,11 @@ import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGMatrix
 
 @Suppress("DataClassPrivateConstructor")
-data class Transformation private constructor(
+data class TotalTransformation private constructor(
     val tm: Matrix3x3,
 ) {
     companion object {
-        val identity = Transformation(
+        val identity = TotalTransformation(
             tm = Matrix3x3.identity,
         )
 
@@ -22,7 +22,7 @@ data class Transformation private constructor(
             d: Double,
             e: Double,
             f: Double,
-        ): Transformation = Transformation(
+        ): TotalTransformation = TotalTransformation(
             tm = Matrix3x3(
                 row0 = Vector3(
                     x = a,
@@ -49,8 +49,8 @@ data class Transformation private constructor(
      * @param base - The transformation that comes before this transformation
      */
     fun combineWith(
-        base: Transformation,
-    ): Transformation = Transformation(
+        base: TotalTransformation,
+    ): TotalTransformation = TotalTransformation(
         tm = tm * base.tm,
     )
 
@@ -61,10 +61,10 @@ data class Transformation private constructor(
     )
 }
 
-val SVGGElement.transformation: Transformation
+val SVGGElement.transformation: TotalTransformation
     get() = transform.baseVal[0].matrix.toTransformation()
 
-fun SVGMatrix.toTransformation(): Transformation = Transformation.of(
+fun SVGMatrix.toTransformation(): TotalTransformation = TotalTransformation.of(
     a = a.toDouble(),
     b = b.toDouble(),
     c = c.toDouble(),

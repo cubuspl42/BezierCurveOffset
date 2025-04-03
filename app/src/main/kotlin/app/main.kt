@@ -2,7 +2,7 @@ package app
 
 import app.geometry.Point
 import app.geometry.Subline
-import app.geometry.Transformation
+import app.geometry.TotalTransformation
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.SegmentCurve
@@ -138,7 +138,7 @@ fun SVGPathElement.toClosedSpline(): ClosedSpline<*> {
 }
 
 fun extractChild(
-    transformation: Transformation,
+    transformation: TotalTransformation,
     element: Element,
 ): ClosedSpline<*> = when (val singleChild = element.childElements.single()) {
     is SVGPathElement -> singleChild.toClosedSpline().transformVia(
@@ -165,7 +165,7 @@ fun extractSplineFromFile(
     val document = documentFactory.createDocument(uri, reader) as SVGDocument
     val svgElement = document.documentElement as SVGElement
     val pathElement = extractChild(
-        transformation = Transformation.identity, element = svgElement
+        transformation = TotalTransformation.identity, element = svgElement
     )
 
     return pathElement

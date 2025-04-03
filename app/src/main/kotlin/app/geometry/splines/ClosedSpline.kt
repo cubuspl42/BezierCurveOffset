@@ -1,7 +1,7 @@
 package app.geometry.splines
 
 import app.dump
-import app.geometry.Transformation
+import app.geometry.TotalTransformation
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import app.withNext
@@ -80,7 +80,7 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
         get() = segments.first()
 
     fun transformVia(
-        transformation: Transformation,
+        transformation: TotalTransformation,
     ) = ClosedSpline(
         segments = segments.map { it.transformVia(transformation) })
 

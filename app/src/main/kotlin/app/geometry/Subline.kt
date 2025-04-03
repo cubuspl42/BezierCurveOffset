@@ -31,7 +31,7 @@ data class Subline(
         override fun dump(): String = "Subline.Edge"
 
         override fun transformVia(
-            transformation: Transformation,
+            transformation: TotalTransformation,
         ): Edge = Edge
 
         override fun toString(): String = "Subline.Edge"

@@ -48,7 +48,7 @@ data class CubicBezierCurve private constructor(
         """.trimIndent()
 
         override fun transformVia(
-            transformation: Transformation,
+            transformation: TotalTransformation,
         ): Edge = Edge(
             control0 = control0.transformVia(transformation = transformation),
             control1 = control1.transformVia(transformation = transformation),
@@ -231,7 +231,7 @@ data class CubicBezierCurve private constructor(
         get() = basisFormula.subline2
 
     fun transformVia(
-        transformation: Transformation,
+        transformation: TotalTransformation,
     ): CubicBezierCurve = mapPointWise {
         it.transformVia(
             transformation = transformation,
