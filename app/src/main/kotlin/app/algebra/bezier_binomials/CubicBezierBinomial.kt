@@ -1,6 +1,8 @@
 package app.algebra.bezier_binomials
 
+import app.algebra.linear.Matrix4x4
 import app.algebra.linear.Vector2x1
+import app.algebra.linear.Vector4x1
 import app.algebra.linear.VectorSpace
 import app.geometry.Point
 import app.geometry.curves.LineSegment
@@ -18,29 +20,14 @@ data class CubicBezierBinomial<V>(
         /**
          * The characteristic matrix of the cubic Bézier curve.
          */
-        val characteristicMatrix: Matrix = Matrix.Factory.fill(0.0, 4, 4).apply {
-            setAsDouble(-1.0, 0, 0)
-            setAsDouble(3.0, 0, 1)
-            setAsDouble(-3.0, 0, 2)
-            setAsDouble(1.0, 0, 3)
+        val characteristicMatrix = Matrix4x4(
+            column0 = Vector4x1.of(-1.0, 3.0, -3.0, 1.0),
+            column1 = Vector4x1.of(3.0, -6.0, 3.0, 0.0),
+            column2 = Vector4x1.of(-3.0, 3.0, 0.0, 0.0),
+            column3 = Vector4x1.of(1.0, 0.0, 0.0, 0.0),
+        )
 
-            setAsDouble(3.0, 1, 0)
-            setAsDouble(-6.0, 1, 1)
-            setAsDouble(3.0, 1, 2)
-            setAsDouble(0.0, 1, 3)
-
-            setAsDouble(-3.0, 2, 0)
-            setAsDouble(3.0, 2, 1)
-            setAsDouble(0.0, 2, 2)
-            setAsDouble(0.0, 2, 3)
-
-            setAsDouble(1.0, 3, 0)
-            setAsDouble(0.0, 3, 1)
-            setAsDouble(0.0, 3, 2)
-            setAsDouble(0.0, 3, 3)
-        }
-
-        val characteristicInvertedMatrix = characteristicMatrix.invSafe()
+        val characteristicInvertedMatrix = characteristicMatrix.toUjmpMatrix().invSafe()
     }
 
     override fun findDerivative(): QuadraticBezierBinomial<V> {
