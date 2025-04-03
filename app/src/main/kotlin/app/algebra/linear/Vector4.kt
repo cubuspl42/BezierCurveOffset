@@ -1,38 +1,27 @@
 package app.algebra.linear
 
-@Suppress("DataClassPrivateConstructor")
-data class Vector4 private constructor(
-    val x: Double,
-    val y: Double,
-    val z: Double,
-    val w: Double,
-) {
+abstract class Vector4 {
     companion object {
         fun of(
             x: Double,
             y: Double,
             z: Double,
             w: Double,
-        ): Vector4 = Vector4(
+        ): Vector4 = Vector4x1.of(
             x = x,
             y = y,
             z = z,
             w = w,
         )
-
-        val zero = Vector4.of(0.0, 0.0, 0.0, 0.0)
     }
 
-    init {
-        require(x.isFinite())
-        require(y.isFinite())
-        require(z.isFinite())
-        require(w.isFinite())
-    }
+    abstract val x: Double
 
-    fun dot(
-        other: Vector4,
-    ): Double = x * other.x + y * other.y + z * other.z + w * other.w
+    abstract val y: Double
+
+    abstract val z: Double
+
+    abstract val w: Double
 
     fun toArray(): DoubleArray = doubleArrayOf(
         x,
@@ -40,4 +29,8 @@ data class Vector4 private constructor(
         z,
         w,
     )
+
+    protected fun dotRaw(
+        other: Vector4,
+    ): Double = x * other.x + y * other.y + z * other.z + w * other.w
 }
