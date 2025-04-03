@@ -6,6 +6,7 @@ import app.algebra.bezier_binomials.sample
 import app.algebra.linear.MatrixNx4
 import app.algebra.linear.Vector1x4
 import app.algebra.linear.Vector4x1
+import app.algebra.linear.VectorNx1
 import app.fillCircle
 import app.fillColumnFrom
 import app.geometry.curves.bezier.CubicBezierCurve
@@ -101,9 +102,9 @@ data class TimedPointSeries(
         val dMatrix = cMatrix.mtimes(bigTTransposedMatrix.toUjmpMatrix())
 
         // P_x (weight X)
-        val weightXVector = dMatrix.mtimes(xVector)
+        val weightXVector = dMatrix.mtimes(xVector.toUjmpMatrix())
         // P_y (weight Y)
-        val weightYVector = dMatrix.mtimes(yVector)
+        val weightYVector = dMatrix.mtimes(yVector.toUjmpMatrix())
 
         fun getWeight(i: Long): Point {
             val x = weightXVector.getAsDouble(i, 0)
@@ -130,13 +131,13 @@ data class TimedPointSeries(
         curvePoint.distanceSquaredTo(point)
     }
 
-    private fun buildXVector(): Matrix = Matrix.Factory.fillColumnFrom(
-        collection = timedPoints,
-    ) { it.point.x }
+    private fun buildXVector(): VectorNx1 = VectorNx1(
+        xs = timedPoints.map { it.point.x },
+    )
 
-    private fun buildYVector(): Matrix = Matrix.Factory.fillColumnFrom(
-        collection = timedPoints,
-    ) { it.point.y }
+    private fun buildYVector(): VectorNx1 = VectorNx1(
+        xs = timedPoints.map { it.point.y },
+    )
 
     private fun buildBigTMatrix(): MatrixNx4 = MatrixNx4(
         rows = timedPoints.map { timedPoint ->
