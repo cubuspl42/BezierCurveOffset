@@ -5,7 +5,7 @@ import app.algebra.linear.Vector2
 @Suppress("DataClassPrivateConstructor")
 data class Translation private constructor(
     val tv: Vector2,
-) {
+) : Transformation() {
     companion object {
         fun of(
             tv: Vector2,
@@ -23,6 +23,14 @@ data class Translation private constructor(
             ),
         )
     }
+
+    override fun transform(
+        point: Point,
+    ): Point = translate(point = point)
+
+    fun translate(point: Point): Point = Point.of(
+        pv = point.pv + tv,
+    )
 
     fun projectOnto(
         direction: Direction,

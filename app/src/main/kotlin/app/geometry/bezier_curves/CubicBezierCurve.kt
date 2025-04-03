@@ -285,7 +285,7 @@ data class CubicBezierCurve private constructor(
     fun translate(
         translation: Translation,
     ): CubicBezierCurve = mapPointWise {
-        it.translate(translation = translation)
+        it.transformVia(translation)
     }
 }
 

@@ -121,12 +121,6 @@ data class Point private constructor(
         dv = other.pv - this.pv,
     )
 
-    fun translate(
-        translation: Translation,
-    ): Point = Point.of(
-        pv = pv + translation.tv,
-    )
-
     /**
      * @param direction - direction to move in, must not be a zero vector
      * @param distance - distance to move in the direction

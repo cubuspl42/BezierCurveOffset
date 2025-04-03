@@ -44,8 +44,8 @@ data class Subline(
     fun linearlyInterpolate(t: Double): Point {
         if (t < 0 || t > 1) throw IllegalArgumentException("t must be in [0, 1], was: $t")
 
-        return start.translate(
-            translation = Translation.of(
+        return start.transformVia(
+            transformation = Translation.of(
                 tv = (end.pv - start.pv).scale(t),
             ),
         )
