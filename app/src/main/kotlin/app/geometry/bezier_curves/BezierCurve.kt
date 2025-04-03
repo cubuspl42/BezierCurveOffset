@@ -1,14 +1,12 @@
 package app.geometry.bezier_curves
 
-import app.algebra.linear.Vector2
 import app.algebra.bezier_binomials.DifferentiableBezierBinomial
 import app.algebra.bezier_binomials.findFaster
+import app.algebra.linear.Vector2
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.TimedPointSeries
-import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
-import app.geometry.splines.OpenSpline
 
 sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     companion object {
@@ -93,6 +91,4 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     abstract val basisFormula: DifferentiableBezierBinomial<Vector2>
 
     abstract val asProper: ProperBezierCurve?
-
-    abstract val asLongitudinal: LongitudinalBezierCurve?
 }

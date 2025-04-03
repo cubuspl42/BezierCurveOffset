@@ -18,7 +18,7 @@ import app.partitionSorted
  * such a curve to a linear Bézier curve is non-trivial. At the tip(s), such a
  * curve has its velocity equal to zero, which causes unfortunate corner cases.
  */
-sealed class ProperBezierCurve : LongitudinalBezierCurve() {
+sealed class ProperBezierCurve : BezierCurve() {
     abstract class OffsetCurveApproximationResult(
         val offsetCurve: BezierCurve,
     ) {
@@ -42,7 +42,7 @@ sealed class ProperBezierCurve : LongitudinalBezierCurve() {
 
     abstract class BezierOffsetSplineApproximationResult(
         override val offsetSpline: OpenSpline<CubicBezierCurve>,
-    ): OffsetSplineApproximationResult<CubicBezierCurve>() {
+    ) : OffsetSplineApproximationResult<CubicBezierCurve>() {
         companion object {
             fun precise(
                 offsetCurve: BezierCurve,
@@ -149,7 +149,7 @@ sealed class ProperBezierCurve : LongitudinalBezierCurve() {
         }
     }
 
-    override fun findOffsetSplineRecursive(
+    fun findOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
@@ -269,7 +269,6 @@ sealed class ProperBezierCurve : LongitudinalBezierCurve() {
             }
 
             val subResults = initialSplitSpline.subCurves.mapNotNull { splitCurve ->
-                val splitBezierCurve = splitCurve as BezierCurve
 
                 // After splitting at the critical points, each sub-curves should
                 // be theoretically non-degenerate, even if this curve is degenerate.
@@ -279,7 +278,7 @@ sealed class ProperBezierCurve : LongitudinalBezierCurve() {
                 // point), we know we can't generate an offset spline for it,
                 // so we give up for this segment. Again, let the spline
                 // merging handle that.
-                splitBezierCurve.asLongitudinal?.findOffsetSplineRecursive(
+                splitCurve.findOffsetSplineRecursive(
                     strategy = strategy,
                     offset = offset,
                     subdivisionLevel = 0,

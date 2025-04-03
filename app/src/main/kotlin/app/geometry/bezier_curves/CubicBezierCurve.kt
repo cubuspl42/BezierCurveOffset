@@ -277,11 +277,6 @@ data class CubicBezierCurve private constructor(
         )
     }
 
-    override fun toPath2D(): Path2D.Double = Path2D.Double().apply {
-        moveTo(start)
-        cubicTo(control0, control1, end)
-    }
-
     fun translate(
         translation: Translation,
     ): CubicBezierCurve = mapPointWise {
