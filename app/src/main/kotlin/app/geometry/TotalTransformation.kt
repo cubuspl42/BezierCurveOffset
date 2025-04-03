@@ -9,7 +9,7 @@ import org.w3c.dom.svg.SVGMatrix
 @Suppress("DataClassPrivateConstructor")
 data class TotalTransformation private constructor(
     val tm: Matrix3x3,
-) {
+): Transformation() {
     companion object {
         val identity = TotalTransformation(
             tm = Matrix3x3.identity,
@@ -54,7 +54,7 @@ data class TotalTransformation private constructor(
         tm = tm * base.tm,
     )
 
-    fun transform(
+    override fun transform(
         point: Point,
     ): Point = Point.of(
         pv = tm.timesVertical(point.pv.toVec3()).vectorXy,

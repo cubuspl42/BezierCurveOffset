@@ -174,7 +174,7 @@ data class Point private constructor(
     fun dump(): String = "Point.of(${"%.2f".format(pv.x)}, ${"%.2f".format(pv.y)})"
 
     fun transformVia(
-        transformation: TotalTransformation,
+        transformation: Transformation,
     ): Point = transformation.transform(this)
 }
 

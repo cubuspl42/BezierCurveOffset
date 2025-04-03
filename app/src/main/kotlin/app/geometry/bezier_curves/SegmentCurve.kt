@@ -7,6 +7,7 @@ import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.Subline
 import app.geometry.TotalTransformation
+import app.geometry.Transformation
 import app.geometry.bezier_curves.BezierCurve.OffsetStrategy
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
@@ -79,7 +80,7 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         ).simplified.edge
 
         abstract fun transformVia(
-            transformation: TotalTransformation,
+            transformation: Transformation,
         ): Edge<CurveT>
     }
 

@@ -5,6 +5,7 @@ import app.SVGGElementUtils
 import app.geometry.Point
 import app.geometry.Subline
 import app.geometry.TotalTransformation
+import app.geometry.Transformation
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import app.geometry.bezier_curves.toDebugSvgPathGroup
@@ -77,7 +78,7 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
         )
 
         fun transformVia(
-            transformation: TotalTransformation,
+            transformation: Transformation,
         ): Segment<CurveT> = Segment(
             startKnot = startKnot.transformVia(transformation = transformation),
             edge = edge.transformVia(transformation),
