@@ -197,11 +197,11 @@ data class CubicBezierCurve private constructor(
             control1 = control1,
         )
 
-    override val frontRay: Ray
-        get() = tangentRayFunction.startValue!!.opposite
+    override val frontRay: Ray?
+        get() = tangentRayFunction.startValue?.opposite
 
-    override val backRay: Ray
-        get() = tangentRayFunction.endValue!!
+    override val backRay: Ray?
+        get() = tangentRayFunction.endValue
 
     override val basisFormula = CubicBezierBinomial(
         vectorSpace = Vector2.Vector2VectorSpace,

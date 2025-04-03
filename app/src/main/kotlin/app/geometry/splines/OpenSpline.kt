@@ -1,6 +1,7 @@
 package app.geometry.splines
 
 import app.geometry.Point
+import app.geometry.Ray
 import app.geometry.bezier_curves.SegmentCurve
 import app.mapFirst
 import app.withPreviousOrNull
@@ -53,6 +54,12 @@ class OpenSpline<out CurveT: SegmentCurve<CurveT>>(
     init {
         require(segments.isNotEmpty())
     }
+
+    val frontRay: Ray?
+        get() = subCurves.first().frontRay
+
+    val backRay: Ray?
+        get() = subCurves.last().backRay
 
     override val nodes: List<Node> = segments + terminator
 

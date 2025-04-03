@@ -52,16 +52,10 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
             require(splines.isNotEmpty())
 
             val segments = splines.withNextCyclic().flatMap { (spline, nextSpline) ->
-                val lastSubCurve = spline.subCurves.last()
-                val extensionRay = lastSubCurve.backRay
-
-                val nextFirstCurve = nextSpline.subCurves.first()
-                val nextExtensionRay = nextFirstCurve.frontRay
-
                 spline.segments + Segment.subline(
                     startKnot = spline.terminator.endKnot,
                 ) + listOfNotNull(
-                    extensionRay.intersect(nextExtensionRay)?.let { intersectionPoint ->
+                    spline.backRay!!.intersect(nextSpline.frontRay!!)?.let { intersectionPoint ->
                         Segment.subline(
                             startKnot = intersectionPoint,
                         )

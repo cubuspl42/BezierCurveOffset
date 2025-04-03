@@ -9,6 +9,7 @@ import app.geometry.Subline
 import app.geometry.Transformation
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
+import app.geometry.toDebugPath
 import app.geometry.toSvgPathSegSubline
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
@@ -60,9 +61,9 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
 
     abstract val edge: Edge<CurveT>
 
-    abstract val frontRay: Ray
+    abstract val frontRay: Ray?
 
-    abstract val backRay: Ray
+    abstract val backRay: Ray?
 }
 
 fun SegmentCurve<*>.toDebugSvgPathGroup(
@@ -75,6 +76,8 @@ fun SegmentCurve<*>.toDebugSvgPathGroup(
             stroke = debugStrokeColor
         },
         toDebugControlSvgPathGroup(document = document),
+        frontRay?.toDebugPath(document = document),
+        backRay?.toDebugPath(document = document),
     ),
 )
 

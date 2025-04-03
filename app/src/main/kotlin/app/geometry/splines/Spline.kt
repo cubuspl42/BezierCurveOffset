@@ -1,6 +1,7 @@
 package app.geometry.splines
 
 import app.Dumpbable
+import app.SVGGElementUtils
 import app.createGElement
 import app.geometry.Point
 import app.geometry.Subline
@@ -11,9 +12,11 @@ import app.geometry.bezier_curves.toDebugSvgPathGroup
 import app.geometry.cubicTo
 import app.geometry.lineTo
 import app.geometry.moveTo
+import app.geometry.toDebugPath
 import app.mapWithNext
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement
+import org.w3c.dom.svg.SVGPathElement
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
@@ -107,13 +110,22 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
     }
 }
 
-fun Spline<*>.toSvgPathGroup(
+//fun Spline<*>.toDebugSvgPathGroup(
+//    document: SVGDocument,
+//): SVGGElement = document.createGElement().apply {
+//    subCurves.forEach { subCurve ->
+//        appendChild(subCurve.toDebugSvgPathGroup(document = document))
+//    }
+//}
+
+fun Spline<*>.toDebugSvgPathGroup(
     document: SVGDocument,
-): SVGGElement = document.createGElement().apply {
-    subCurves.forEach { subCurve ->
-        appendChild(subCurve.toDebugSvgPathGroup(document = document))
-    }
-}
+): SVGGElement = SVGGElementUtils.of(
+    document = document,
+    elements = subCurves.map { subCurve ->
+        subCurve.toDebugSvgPathGroup(document = document)
+    },
+)
 
 fun OpenSpline<*>.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {
     moveTo(firstSegment.startKnot)

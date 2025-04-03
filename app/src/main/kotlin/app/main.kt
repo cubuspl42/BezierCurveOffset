@@ -192,14 +192,14 @@ fun main() {
         val svgElement = documentSvgElement
 
         svgElement.appendChild(
-            spline.toSvgPathGroup(document = this)
+            spline.toDebugSvgPathGroup(document = this)
         )
 
         svgElement.appendChild(
             SVGGElementUtils.of(
                 document = document,
                 elements = offsetSplines.map {
-                    it.toSvgPathGroup(document = document)
+                    it.toDebugSvgPathGroup(document = document)
                 }
             )
         )

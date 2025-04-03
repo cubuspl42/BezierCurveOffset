@@ -1,6 +1,12 @@
 package app.geometry
 
+import app.SVGPathElementUtils
 import app.algebra.linear.Vector2
+import app.fill
+import app.geometry.bezier_curves.toSvgPath
+import app.stroke
+import org.w3c.dom.svg.SVGDocument
+import org.w3c.dom.svg.SVGPathElement
 
 /**
  * A ray in 2D Euclidean space, described by the equation p = s + td for t >= 0
@@ -83,4 +89,19 @@ data class Ray(
     fun isParallelTo(
         other: Ray,
     ): Boolean = d.cross(other.d) == 0.0
+}
+
+fun Ray.toDebugPath(
+    document: SVGDocument,
+): SVGPathElement = Subline(
+    start = startingPoint,
+    end = startingPoint.moveInDirection(
+        direction = direction,
+        distance = 100.0,
+    ),
+).toSvgPath(
+    document = document,
+).apply {
+    fill = "none"
+    stroke = "orange"
 }
