@@ -25,10 +25,11 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
             val approximationRatingSampleCount = 16
         }
 
-        fun toOffsetSplineApproximationResult(): BezierOffsetSplineApproximationResult =
-            object : BezierOffsetSplineApproximationResult(
-                offsetSpline = offsetCurve.toSpline(),
-            ) {
+        fun toOffsetSplineApproximationResult(): OffsetSplineApproximationResult<CubicBezierCurve> =
+            object : OffsetSplineApproximationResult<CubicBezierCurve>() {
+                override val offsetSpline: OpenSpline<CubicBezierCurve>
+                    get() = offsetCurve.toSpline()
+
                 override val globalDeviation: Double
                     get() = deviation
             }
@@ -37,44 +38,6 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
          * @return The calculated deviation
          */
         abstract val deviation: Double
-    }
-
-    abstract class BezierOffsetSplineApproximationResult(
-        override val offsetSpline: OpenSpline<CubicBezierCurve>,
-    ) : SegmentCurve.OffsetSplineApproximationResult<CubicBezierCurve>() {
-        companion object {
-            fun precise(
-                offsetCurve: BezierCurve,
-            ): BezierOffsetSplineApproximationResult = object : BezierOffsetSplineApproximationResult(
-                offsetSpline = offsetCurve.toSpline(),
-            ) {
-                override val globalDeviation: Double = 0.0
-            }
-
-            fun merge(
-                subResults: List<BezierOffsetSplineApproximationResult>,
-            ): BezierOffsetSplineApproximationResult {
-                require(subResults.isNotEmpty())
-
-                val mergedOffsetSpline = OpenSpline.merge(
-                    splines = subResults.map { it.offsetSpline },
-                )
-
-                return object : BezierOffsetSplineApproximationResult(
-                    offsetSpline = mergedOffsetSpline,
-                ) {
-                    override val globalDeviation: Double by lazy {
-                        subResults.maxOf { it.globalDeviation }
-                    }
-                }
-            }
-        }
-
-        fun mergeWith(
-            rightResult: BezierOffsetSplineApproximationResult,
-        ): BezierOffsetSplineApproximationResult = merge(
-            subResults = listOf(this, rightResult),
-        )
     }
 
     sealed class OffsetStrategy {
@@ -194,7 +157,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     final override fun findOffsetSpline(
         strategy: OffsetStrategy,
         offset: Double,
-    ): BezierOffsetSplineApproximationResult? {
+    ): OffsetSplineApproximationResult<CubicBezierCurve>? {
         val initialOffsetCurveResult = findApproximatedOffsetCurve(
             strategy = strategy,
             offset = offset,
@@ -229,7 +192,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): BezierOffsetSplineApproximationResult? {
+    ): OffsetSplineApproximationResult<CubicBezierCurve>? {
         val offsetCurveResult = findApproximatedOffsetCurve(
             strategy = strategy,
             offset = offset,
@@ -332,7 +295,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     private fun splitAtCriticalPointsAndFindOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
-    ): BezierOffsetSplineApproximationResult? {
+    ): OffsetSplineApproximationResult<CubicBezierCurve>? {
         val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
 
         if (criticalPoints.isNotEmpty()) {
@@ -365,7 +328,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
                 return null
             }
 
-            return BezierOffsetSplineApproximationResult.merge(
+            return OffsetSplineApproximationResult.merge(
                 subResults = subResults
             )
 
@@ -462,7 +425,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): BezierOffsetSplineApproximationResult? {
+    ): OffsetSplineApproximationResult<CubicBezierCurve>? {
         val (leftSplitCurve, rightSplitCurve) = splitAt(t = 0.5) ?: run {
             // If the t-value 0.5 is too close to 0 or 1 to even split the curve,
             // this curve is just too tiny to generate the offset spline for it

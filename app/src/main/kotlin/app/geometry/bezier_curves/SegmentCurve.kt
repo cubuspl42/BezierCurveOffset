@@ -7,7 +7,6 @@ import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.Subline
 import app.geometry.Transformation
-import app.geometry.bezier_curves.BezierCurve.BezierOffsetSplineApproximationResult
 import app.geometry.bezier_curves.BezierCurve.OffsetStrategy
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
@@ -21,6 +20,26 @@ import org.w3c.dom.svg.SVGPathSeg
 
 abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
     abstract class OffsetSplineApproximationResult<out CurveT : SegmentCurve<CurveT>> {
+        companion object {
+            fun <CurveT : SegmentCurve<CurveT>> merge(
+                subResults: List<OffsetSplineApproximationResult<CurveT>>,
+            ): OffsetSplineApproximationResult<CurveT> {
+                require(subResults.isNotEmpty())
+
+                return object : OffsetSplineApproximationResult<CurveT>() {
+                    override val offsetSpline: OpenSpline<CurveT> by lazy {
+                        OpenSpline.merge(
+                            splines = subResults.map { it.offsetSpline },
+                        )
+                    }
+
+                    override val globalDeviation: Double by lazy {
+                        subResults.maxOf { it.globalDeviation }
+                    }
+                }
+            }
+        }
+
         abstract val offsetSpline: OpenSpline<CurveT>
 
         abstract val globalDeviation: Double
@@ -73,6 +92,12 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
 
     abstract val backRay: Ray?
 }
+
+fun <CurveT : SegmentCurve<CurveT>> SegmentCurve.OffsetSplineApproximationResult<CurveT>.mergeWith(
+    rightResult: SegmentCurve.OffsetSplineApproximationResult<CurveT>,
+): SegmentCurve.OffsetSplineApproximationResult<CurveT> = SegmentCurve.OffsetSplineApproximationResult.merge(
+    subResults = listOf(this, rightResult),
+)
 
 fun SegmentCurve<*>.toDebugSvgPathGroup(
     document: SVGDocument,
