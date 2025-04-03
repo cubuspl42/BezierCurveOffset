@@ -94,21 +94,6 @@ data class Vector2x1 private constructor(
     }
 
     /**
-     * Resizes this vector to the given length, requiring that the length of
-     * this vector is not zero
-     *
-     * @param newLength - the new length of this vector
-     * @return the resized vector
-     */
-    fun resize(
-        newLength: Double,
-    ): Vector2x1 {
-        require(newLength.isFinite())
-        require(lengthSquared > 0.0)
-        return scale(newLength / length)
-    }
-
-    /**
      * The direction of this vector
      *
      * @throws IllegalStateException if this vector doesn't have a direction (is a zero vector)
