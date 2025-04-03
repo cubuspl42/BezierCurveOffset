@@ -9,11 +9,11 @@ data class Line(
     /**
      * One of the infinitely many points lying on the line
      */
-    val s: Vector2x1,
+    val representativePoint: Point,
     /**
-     * One of the infinitely many vectors this line is parallel to, cannot be a zero vector
+     * One of two directions of this line
      */
-    val d: Vector2x1,
+    val representativeDirection: Direction,
 ) {
     companion object {
         fun inDirection(
@@ -25,22 +25,24 @@ data class Line(
         ).containingLine
     }
 
-    init {
-        require(d != Vector2x1.zero)
-    }
+    val pv: Vector2x1
+        get() = representativePoint.pv
+
+    val dv: Vector2x1
+        get() = representativeDirection.dv
 
     private fun evaluate(
         t: Double,
-    ): Vector2x1 = s + d.scale(t)
+    ): Vector2x1 = pv + dv.scale(t)
 
     fun findIntersectionPoint(
         other: Line,
     ): Point? {
-        val det = d.cross(other.d)
+        val det = dv.cross(other.dv)
         if (det == 0.0) return null // The lines are parallel
 
-        val ds = other.s - s
-        val u = ds.cross(other.d) / det
+        val ds = other.pv - pv
+        val u = ds.cross(other.dv) / det
 
         return Point.of(
             pv = evaluate(u)

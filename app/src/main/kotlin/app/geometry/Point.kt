@@ -163,8 +163,8 @@ data class Point private constructor(
     fun toVector(): Vector2x1 = Vector2.of(x, y)
 
     fun projectOnto(line: Line): Point {
-        val s = line.s
-        return Point.of(s + (pv - s).projectOnto(line.d))
+        val sv = line.pv
+        return Point.of(sv + (pv - sv).projectOnto(line.dv))
     }
 
     fun dump(): String = "Point.of(${"%.2f".format(pv.x)}, ${"%.2f".format(pv.y)})"

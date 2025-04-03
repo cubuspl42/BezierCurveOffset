@@ -28,7 +28,7 @@ data class Ray(
             throw IllegalArgumentException("t must be non-negative")
         }
 
-        return s + direction.dv.scale(t)
+        return sv + direction.dv.scale(t)
     }
 
     companion object {
@@ -41,23 +41,23 @@ data class Ray(
         )
     }
 
-    internal val s: Vector2x1
+    internal val sv: Vector2x1
         get() = startingPoint.pv
 
-    internal val d: Vector2x1
+    internal val dv: Vector2x1
         get() = direction.dv
 
     val containingLine: Line
         get() = Line(
-            s = s,
-            d = d,
+            representativePoint = startingPoint,
+            representativeDirection = direction,
         )
 
     val perpendicularLine: Line
         get() = Line(
-            s = s,
+            representativePoint = startingPoint,
             // If d is non-zero, its perpendicular vector will also be non-zero
-            d = d.perpendicular,
+            representativeDirection = direction.perpendicular,
         )
 
     val opposite: Ray
@@ -69,12 +69,12 @@ data class Ray(
     fun intersect(
         other: Ray,
     ): Point? {
-        val det = d.cross(other.d)
+        val det = dv.cross(other.dv)
         if (det == 0.0) return null // The rays are parallel
 
-        val sd = other.s - s
-        val u = sd.cross(other.d) / det
-        val v = sd.cross(this.d) / det
+        val sd = other.sv - sv
+        val u = sd.cross(other.dv) / det
+        val v = sd.cross(this.dv) / det
 
         return when {
             u > 0.0 && v > 0.0 -> Point.of(
@@ -88,7 +88,7 @@ data class Ray(
 
     fun isParallelTo(
         other: Ray,
-    ): Boolean = d.cross(other.d) == 0.0
+    ): Boolean = dv.cross(other.dv) == 0.0
 }
 
 fun Ray.toDebugPath(
