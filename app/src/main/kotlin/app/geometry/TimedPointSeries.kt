@@ -80,7 +80,7 @@ data class TimedPointSeries(
         val bigTMatrix = buildBigTMatrix()
 
         // T^t
-        val bigTTransposedMatrix = bigTMatrix.transposed.toUjmpMatrix()
+        val bigTTransposedMatrix = bigTMatrix.transposed
 
         // X (H.x)
         val xVector = buildXVector()
@@ -89,16 +89,16 @@ data class TimedPointSeries(
         val yVector = buildYVector()
 
         // T^t * T
-        val aMatrix = bigTTransposedMatrix.mtimes(bigTMatrix.toUjmpMatrix())
+        val aMatrix = bigTTransposedMatrix * bigTMatrix
 
         // (T^t * T)^-1
-        val bMatrix = aMatrix.invSafe()
+        val bMatrix = aMatrix.toUjmpMatrix().invSafe()
 
         // (M^-1) * (T^t * T)^-1
         val cMatrix = CubicBezierBinomial.characteristicInvertedMatrix.mtimes(bMatrix)
 
         // (M^-1) * (T^t * T)^-1 * T^t
-        val dMatrix = cMatrix.mtimes(bigTTransposedMatrix)
+        val dMatrix = cMatrix.mtimes(bigTTransposedMatrix.toUjmpMatrix())
 
         // P_x (weight X)
         val weightXVector = dMatrix.mtimes(xVector)

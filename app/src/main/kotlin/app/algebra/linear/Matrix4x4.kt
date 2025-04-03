@@ -1,5 +1,8 @@
 package app.algebra.linear
 
+import app.fillByColumn
+import org.ujmp.core.Matrix
+
 data class Matrix4x4(
     val column0: Vector4x1,
     val column1: Vector4x1,
@@ -74,5 +77,18 @@ data class Matrix4x4(
             z = row2.dot(other.column3),
             w = row3.dot(other.column3),
         ),
+    )
+
+    fun toUjmpMatrix(): Matrix = Matrix.Factory.fillByColumn(
+        columnElements = listOf(
+            column0,
+            column1,
+            column2,
+            column3,
+        ),
+        columnHeight = 4,
+        buildColumn = { column ->
+            column.toArray()
+        },
     )
 }
