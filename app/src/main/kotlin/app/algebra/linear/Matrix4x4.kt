@@ -49,32 +49,30 @@ data class Matrix4x4(
 
     operator fun times(
         other: Matrix4x4,
-    ): Matrix4x4 {
-        return Matrix4x4(
-            column0 = Vector4x1.of(
-                x = column0.dot(other.row0),
-                y = column0.dot(other.row1),
-                z = column0.dot(other.row2),
-                w = column0.dot(other.row3),
-            ),
-            column1 = Vector4x1.of(
-                x = column1.dot(other.row0),
-                y = column1.dot(other.row1),
-                z = column1.dot(other.row2),
-                w = column1.dot(other.row3),
-            ),
-            column2 = Vector4x1.of(
-                x = column2.dot(other.row0),
-                y = column2.dot(other.row1),
-                z = column2.dot(other.row2),
-                w = column2.dot(other.row3),
-            ),
-            column3 = Vector4x1.of(
-                x = column3.dot(other.row0),
-                y = column3.dot(other.row1),
-                z = column3.dot(other.row2),
-                w = column3.dot(other.row3),
-            ),
-        )
-    }
+    ): Matrix4x4 = Matrix4x4(
+        column0 = Vector4x1.of(
+            x = row0.dot(other.column0),
+            y = row1.dot(other.column0),
+            z = row2.dot(other.column0),
+            w = row3.dot(other.column0),
+        ),
+        column1 = Vector4x1.of(
+            x = row0.dot(other.column1),
+            y = row1.dot(other.column1),
+            z = row2.dot(other.column1),
+            w = row3.dot(other.column1),
+        ),
+        column2 = Vector4x1.of(
+            x = row0.dot(other.column2),
+            y = row1.dot(other.column2),
+            z = row2.dot(other.column2),
+            w = row3.dot(other.column2),
+        ),
+        column3 = Vector4x1.of(
+            x = row0.dot(other.column3),
+            y = row1.dot(other.column3),
+            z = row2.dot(other.column3),
+            w = row3.dot(other.column3),
+        ),
+    )
 }
