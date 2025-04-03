@@ -5,6 +5,11 @@ import app.geometry.Point
 import app.geometry.toDirection
 import kotlin.math.sqrt
 
+fun Vector2_of(
+    x: Double,
+    y: Double,
+): Vector2 = Vector2.of(x, y,)
+
 /**
  * A two-dimensional vector, which might (but doesn't have to) have a spatial interpretation
  */
@@ -36,7 +41,7 @@ data class Vector2 private constructor(
     }
 
     companion object {
-        val zero = Vector2.of(0.0, 0.0)
+        val zero = Vector2_of(0.0, 0.0)
 
         fun of(
             x: Double,
@@ -67,14 +72,14 @@ data class Vector2 private constructor(
 
     operator fun minus(
         other: Vector2,
-    ): Vector2 = Vector2.of(
+    ): Vector2 = Vector2_of(
         x = x - other.x,
         y = y - other.y,
     )
 
     operator fun plus(
         other: Vector2,
-    ): Vector2 = Vector2.of(
+    ): Vector2 = Vector2_of(
         x = x + other.x,
         y = y + other.y,
     )
@@ -91,7 +96,7 @@ data class Vector2 private constructor(
         factor: Double,
     ): Vector2 {
         require(factor.isFinite())
-        return Vector2.of(
+        return Vector2_of(
             x = x * factor,
             y = y * factor,
         )
@@ -124,7 +129,7 @@ data class Vector2 private constructor(
      * The counterclockwise perpendicular vector
      */
     val perpendicular: Vector2
-        get() = Vector2.of(-y, x)
+        get() = Vector2_of(-y, x)
 
     /**
      * The length^2 of this vector
@@ -146,21 +151,21 @@ data class Vector2 private constructor(
     fun toPoint(): Point = Point.of(pv = this)
 }
 
-operator fun Vector2.unaryMinus(): Vector2 = Vector2.of(
+operator fun Vector2.unaryMinus(): Vector2 = Vector2_of(
     x = -x,
     y = -y,
 )
 
 operator fun Double.times(
     v: Vector2,
-): Vector2 = Vector2.of(
+): Vector2 = Vector2_of(
     x = this * v.x,
     y = this * v.y,
 )
 
 operator fun Vector2.div(
     divisor: Double,
-): Vector2 = Vector2.of(
+): Vector2 = Vector2_of(
     x = x / divisor,
     y = y / divisor,
 )

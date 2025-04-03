@@ -24,7 +24,7 @@ data class Vector1x3 private constructor(
     }
 
     val vectorXy: Vector2
-        get() = Vector2.of(
+        get() = Vector2_of(
             x = x,
             y = y,
         )

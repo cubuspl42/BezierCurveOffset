@@ -1,6 +1,7 @@
 package app.geometry.transformations
 
 import app.algebra.linear.Vector2
+import app.algebra.linear.Vector2_of
 import app.geometry.Direction
 import app.geometry.Point
 
@@ -19,7 +20,7 @@ data class Translation private constructor(
             tx: Double,
             ty: Double,
         ): Translation = of(
-            tv = Vector2.of(
+            tv = Vector2_of(
                 x = tx,
                 y = ty,
             ),
