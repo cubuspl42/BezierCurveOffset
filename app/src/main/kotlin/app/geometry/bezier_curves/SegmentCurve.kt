@@ -1,7 +1,6 @@
 package app.geometry.bezier_curves
 
 import app.SVGGElementUtils
-import app.SVGPathElementUtils
 import app.createPathElement
 import app.fill
 import app.geometry.Point
@@ -25,7 +24,7 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
     }
 
     abstract fun findOffsetSpline(
-        strategy: ProperBezierCurve.OffsetStrategy,
+        strategy: BezierCurve.OffsetStrategy,
         offset: Double,
     ): OffsetSplineApproximationResult<CurveT>?
 

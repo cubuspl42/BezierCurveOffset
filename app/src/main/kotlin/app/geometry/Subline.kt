@@ -2,7 +2,7 @@ package app.geometry
 
 import app.fillCircle
 import app.geometry.bezier_curves.CubicBezierCurve
-import app.geometry.bezier_curves.ProperBezierCurve
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import app.geometry.splines.OpenSpline
 import org.w3c.dom.svg.SVGPathElement
@@ -96,7 +96,7 @@ data class Subline(
     }
 
     override fun findOffsetSpline(
-        strategy: ProperBezierCurve.OffsetStrategy,
+        strategy: BezierCurve.OffsetStrategy,
         offset: Double,
     ): OffsetSplineApproximationResult<Subline>? = findOffsetSubline(offset = offset)?.let { offsetSubline ->
         object : OffsetSplineApproximationResult<Subline>() {

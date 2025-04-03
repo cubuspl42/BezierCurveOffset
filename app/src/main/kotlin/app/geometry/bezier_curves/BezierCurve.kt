@@ -17,9 +17,9 @@ import app.partitionSorted
 /**
  * A Bézier curve
  */
-sealed class ProperBezierCurve : SegmentCurve<CubicBezierCurve>() {
+sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     abstract class OffsetCurveApproximationResult(
-        val offsetCurve: ProperBezierCurve,
+        val offsetCurve: BezierCurve,
     ) {
         companion object {
             val approximationRatingSampleCount = 16
@@ -44,7 +44,7 @@ sealed class ProperBezierCurve : SegmentCurve<CubicBezierCurve>() {
     ) : SegmentCurve.OffsetSplineApproximationResult<CubicBezierCurve>() {
         companion object {
             fun precise(
-                offsetCurve: ProperBezierCurve,
+                offsetCurve: BezierCurve,
             ): BezierOffsetSplineApproximationResult = object : BezierOffsetSplineApproximationResult(
                 offsetSpline = offsetCurve.toSpline(),
             ) {
@@ -88,16 +88,16 @@ sealed class ProperBezierCurve : SegmentCurve<CubicBezierCurve>() {
          * offset curve.
          */
         abstract fun approximateOffsetCurve(
-            curve: ProperBezierCurve,
+            curve: BezierCurve,
             offset: Double,
-        ): ProperBezierCurve?
+        ): BezierCurve?
     }
 
     data object BestFitOffsetStrategy : OffsetStrategy() {
         override fun approximateOffsetCurve(
-            curve: ProperBezierCurve,
+            curve: BezierCurve,
             offset: Double,
-        ): ProperBezierCurve? {
+        ): BezierCurve? {
             val offsetTimedSeries = curve.findOffsetTimedSeries(offset = offset) ?: return null
 
             // The computed timed point series could (should?) be improved using
@@ -492,5 +492,5 @@ sealed class ProperBezierCurve : SegmentCurve<CubicBezierCurve>() {
 
     abstract fun splitAt(
         t: Double,
-    ): Pair<ProperBezierCurve, ProperBezierCurve>
+    ): Pair<BezierCurve, BezierCurve>
 }

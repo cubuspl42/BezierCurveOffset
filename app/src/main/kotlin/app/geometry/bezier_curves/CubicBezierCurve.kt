@@ -1,25 +1,20 @@
 package app.geometry.bezier_curves
 
 import app.SVGGElementUtils
-import app.SVGPathElementUtils
 import app.algebra.linear.Vector2
 import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.fill
 import app.fillCircle
 import app.geometry.*
-import app.geometry.splines.OpenSpline
-import app.geometry.splines.Spline
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSegCurvetoCubicAbs
-import org.w3c.dom.svg.SVGPathSegLinetoAbs
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
-import java.awt.geom.Path2D
 
 /**
  * A cubic Bézier curve (a Bézier curve of degree 3)
@@ -30,7 +25,7 @@ data class CubicBezierCurve private constructor(
     val control0: Point,
     val control1: Point,
     override val end: Point,
-) : ProperBezierCurve() {
+) : BezierCurve() {
     data class Edge(
         val control0: Point,
         val control1: Point,

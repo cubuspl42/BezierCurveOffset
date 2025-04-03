@@ -4,7 +4,7 @@ import app.geometry.Point
 import app.geometry.Subline
 import app.geometry.Transformation
 import app.geometry.bezier_curves.CubicBezierCurve
-import app.geometry.bezier_curves.ProperBezierCurve
+import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import app.geometry.splines.*
 import app.geometry.transformation
@@ -179,7 +179,7 @@ fun main() {
     println(spline.dump())
 
     val contourSplineResult = spline.findContourSpline(
-        strategy = ProperBezierCurve.BestFitOffsetStrategy,
+        strategy = BezierCurve.BestFitOffsetStrategy,
         offset = 40.0,
     )!!
 
