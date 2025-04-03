@@ -4,6 +4,7 @@ import app.dump
 import app.geometry.Transformation
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.SegmentCurve
+import app.withNext
 import app.withNextCyclic
 
 class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
@@ -109,6 +110,21 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
             offsetResults = subResults,
         )
     }
+
+    val simplified: ClosedSpline<*>
+        get() {
+            val segments = segments.withNext(
+                outerRight = rightEdgeNode,
+            ).map { (segment, nextNode) ->
+                segment.simplify(
+                    endKnot = nextNode.frontKnot,
+                )
+            }
+
+            return ClosedSpline<SegmentCurve<*>>(
+                segments = segments,
+            )
+        }
 
     fun dump() = """
         ClosedSpline(

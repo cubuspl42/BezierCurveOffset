@@ -10,7 +10,6 @@ import app.geometry.Transformation
 import app.geometry.bezier_curves.BezierCurve.OffsetStrategy
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
-import app.geometry.toDebugPath
 import app.geometry.toSvgPathSegSubline
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
@@ -71,6 +70,14 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
 
         abstract fun dump(): String
 
+        fun simplify(
+            startKnot: Point,
+            endKnot: Point,
+        ): Edge<*> = bind(
+            startKnot = startKnot,
+            endKnot = endKnot,
+        ).simplified.edge
+
         abstract fun transformVia(
             transformation: Transformation,
         ): Edge<CurveT>
@@ -91,6 +98,8 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
     abstract val frontRay: Ray?
 
     abstract val backRay: Ray?
+
+    abstract val simplified: SegmentCurve<*>
 }
 
 fun <CurveT : SegmentCurve<CurveT>> SegmentCurve.OffsetSplineApproximationResult<CurveT>.mergeWith(
@@ -109,8 +118,8 @@ fun SegmentCurve<*>.toDebugSvgPathGroup(
             stroke = debugStrokeColor
         },
         toDebugControlSvgPathGroup(document = document),
-        frontRay?.toDebugPath(document = document),
-        backRay?.toDebugPath(document = document),
+//        frontRay?.toDebugPath(document = document),
+//        backRay?.toDebugPath(document = document),
     ),
 )
 

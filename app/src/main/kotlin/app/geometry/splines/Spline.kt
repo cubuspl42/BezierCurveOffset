@@ -14,6 +14,7 @@ import app.geometry.lineTo
 import app.geometry.moveTo
 import app.geometry.toDebugPath
 import app.mapWithNext
+import app.withNext
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGPathElement
@@ -68,6 +69,16 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
                 edge = ${edge.dump()},
             )
         """.trimIndent()
+
+        fun simplify(
+            endKnot: Point,
+        ): Segment<*> = Segment<SegmentCurve<*>>(
+            startKnot = startKnot,
+            edge = edge.simplify(
+                startKnot = startKnot,
+                endKnot = endKnot,
+            ),
+        )
 
         fun transformVia(
             transformation: Transformation,

@@ -151,6 +151,9 @@ data class Subline(
             point = end,
             direction = direction!!,
         )
+
+    override val simplified: SegmentCurve<*>
+        get() = this
 }
 
 private fun SegmentCurve<*>.toSvgPathSeg(

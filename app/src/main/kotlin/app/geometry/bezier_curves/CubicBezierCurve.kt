@@ -203,6 +203,16 @@ data class CubicBezierCurve private constructor(
     override val backRay: Ray?
         get() = tangentRayFunction.endValue
 
+    override val simplified: SegmentCurve<*>
+        get() = when {
+            start == control0 && control1 == end -> Subline(
+                start = start,
+                end = end,
+            )
+
+            else -> this
+        }
+
     override val basisFormula = CubicBezierBinomial(
         vectorSpace = Vector2.Vector2VectorSpace,
         weight0 = start.toVector(),

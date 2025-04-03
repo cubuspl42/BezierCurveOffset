@@ -174,7 +174,7 @@ fun extractSplineFromFile(
 fun main() {
     val spline = extractSplineFromFile(
         filePath = Path("/Users/jakub/Temporary/Shape.svg"),
-    )
+    ).simplified
 
     println(spline.dump())
 
@@ -182,7 +182,6 @@ fun main() {
         strategy = BezierCurve.BestFitOffsetStrategy,
         offset = 40.0,
     )!!
-
 
     val contourSpline = contourSplineResult.contourSpline
     val offsetSplines = contourSplineResult.offsetResults.map { it.offsetSpline }
@@ -195,18 +194,18 @@ fun main() {
             spline.toDebugSvgPathGroup(document = this)
         )
 
-        svgElement.appendChild(
-            SVGGElementUtils.of(
-                document = document,
-                elements = offsetSplines.map {
-                    it.toDebugSvgPathGroup(document = document)
-                }
-            )
-        )
-
 //        svgElement.appendChild(
-//            contourSpline.toSvgPathGroup(document = this)
+//            SVGGElementUtils.of(
+//                document = document,
+//                elements = offsetSplines.map {
+//                    it.toDebugSvgPathGroup(document = document)
+//                }
+//            )
 //        )
+
+        svgElement.appendChild(
+            contourSpline.toDebugSvgPathGroup(document = this)
+        )
     }
 
     document.writeToFile(
