@@ -24,7 +24,7 @@ import app.component7
 import app.component8
 import app.component9
 import app.geometry.Point
-import app.geometry.LineSegment
+import app.geometry.curves.LineSegment
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.BezierCurve
 import kotlin.test.Ignore

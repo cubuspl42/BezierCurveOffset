@@ -2,6 +2,7 @@ package app.geometry
 
 import app.algebra.linear.Vector2
 import app.fill
+import app.geometry.curves.LineSegment
 import app.geometry.curves.toSvgPath
 import app.stroke
 import org.w3c.dom.svg.SVGDocument

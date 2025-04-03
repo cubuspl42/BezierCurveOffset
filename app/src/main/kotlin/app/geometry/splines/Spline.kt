@@ -3,7 +3,7 @@ package app.geometry.splines
 import app.Dumpbable
 import app.SVGGElementUtils
 import app.geometry.Point
-import app.geometry.LineSegment
+import app.geometry.curves.LineSegment
 import app.geometry.Transformation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.SegmentCurve

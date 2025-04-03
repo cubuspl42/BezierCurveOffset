@@ -2,7 +2,7 @@ package app.algebra.bezier_binomials
 
 import app.algebra.linear.Vector2
 import app.algebra.polynomials.Polynomial
-import app.geometry.LineSegment
+import app.geometry.curves.LineSegment
 import app.geometry.curves.bezier.TimeFunction
 
 /**

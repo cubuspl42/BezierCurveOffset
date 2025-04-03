@@ -5,7 +5,7 @@ import app.algebra.polynomials.QuadraticPolynomial
 import app.algebra.linear.Vector2
 import app.algebra.linear.VectorSpace
 import app.geometry.Point
-import app.geometry.LineSegment
+import app.geometry.curves.LineSegment
 
 class QuadraticBezierBinomial<V>(
     internal val vectorSpace: VectorSpace<V>,

@@ -7,6 +7,7 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.fill
 import app.fillCircle
 import app.geometry.*
+import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.toSvgPath
 import app.stroke

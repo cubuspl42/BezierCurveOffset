@@ -1,9 +1,13 @@
-package app.geometry
+package app.geometry.curves
 
 import app.fillCircle
+import app.geometry.Direction
+import app.geometry.Point
+import app.geometry.Ray
+import app.geometry.Transformation
+import app.geometry.Translation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.BezierCurve
-import app.geometry.curves.SegmentCurve
 import app.geometry.splines.OpenSpline
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg

@@ -1,7 +1,7 @@
 package app
 
 import app.geometry.Point
-import app.geometry.LineSegment
+import app.geometry.curves.LineSegment
 import app.geometry.TotalTransformation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.BezierCurve
