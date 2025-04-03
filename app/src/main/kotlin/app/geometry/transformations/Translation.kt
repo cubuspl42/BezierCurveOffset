@@ -2,6 +2,7 @@ package app.geometry.transformations
 
 import app.algebra.linear.Vector2
 import app.algebra.linear.Vector2x1
+import app.algebra.linear.times
 import app.geometry.Direction
 import app.geometry.Point
 
@@ -37,7 +38,10 @@ data class Translation private constructor(
 
     fun projectOnto(
         direction: Direction,
-    ): Translation = Translation(
-        tv = tv.projectOnto(direction.dv),
-    )
+    ): Translation {
+        val dv = direction.dv
+        return Translation(
+            tv = (tv.dotForced(dv) / dv.lengthSquared) * dv
+        )
+    }
 }

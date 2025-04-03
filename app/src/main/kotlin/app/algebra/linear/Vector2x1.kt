@@ -122,11 +122,6 @@ data class Vector2x1 private constructor(
     val perpendicular: Vector2x1
         get() = Vector2x1.of(-y, x)
 
-    fun projectOnto(other: Vector2x1): Vector2x1 {
-        require(other != zero)
-        return (this.dotForced(other) / other.lengthSquared) * other
-    }
-
     fun toPoint(): Point = Point.of(pv = this)
 }
 

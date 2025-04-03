@@ -40,11 +40,6 @@ data class Vector1x2 private constructor(
             x = x,
             y = y,
         )
-
-        fun bisector(
-            a: Vector1x2,
-            b: Vector1x2,
-        ): Vector1x2 = b.length * a + a.length * b
     }
 
     init {
