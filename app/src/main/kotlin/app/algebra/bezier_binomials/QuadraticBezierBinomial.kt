@@ -5,7 +5,7 @@ import app.algebra.polynomials.QuadraticPolynomial
 import app.algebra.linear.Vector2
 import app.algebra.linear.VectorSpace
 import app.geometry.Point
-import app.geometry.Subline
+import app.geometry.LineSegment
 
 class QuadraticBezierBinomial<V>(
     internal val vectorSpace: VectorSpace<V>,
@@ -31,20 +31,20 @@ val QuadraticBezierBinomial<Vector2>.point1: Point
 val QuadraticBezierBinomial<Vector2>.point2: Point
     get() = this.weight2.toPoint()
 
-val QuadraticBezierBinomial<Vector2>.segmentsQuadratic: List<Subline>
-    get() = listOf(subline0, subline1)
+val QuadraticBezierBinomial<Vector2>.segmentsQuadratic: List<LineSegment>
+    get() = listOf(lineSegment0, lineSegment1)
 
-val QuadraticBezierBinomial<Vector2>.subline0: Subline
-    get() = Subline(start = point0, end = point1)
+val QuadraticBezierBinomial<Vector2>.lineSegment0: LineSegment
+    get() = LineSegment(start = point0, end = point1)
 
-val QuadraticBezierBinomial<Vector2>.subline1: Subline
-    get() = Subline(start = point1, end = point2)
+val QuadraticBezierBinomial<Vector2>.lineSegment1: LineSegment
+    get() = LineSegment(start = point1, end = point2)
 
 fun QuadraticBezierBinomial<Vector2>.findSkeletonQuadratic(
     t: Double,
 ): LinearBezierBinomial<Vector2> {
-    val subPoint0 = subline0.linearlyInterpolate(t = t)
-    val subPoint1 = subline1.linearlyInterpolate(t = t)
+    val subPoint0 = lineSegment0.linearlyInterpolate(t = t)
+    val subPoint1 = lineSegment1.linearlyInterpolate(t = t)
 
     return LinearBezierBinomial(
         vectorSpace = vectorSpace,

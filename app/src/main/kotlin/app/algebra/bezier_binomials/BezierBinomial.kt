@@ -2,7 +2,7 @@ package app.algebra.bezier_binomials
 
 import app.algebra.linear.Vector2
 import app.algebra.polynomials.Polynomial
-import app.geometry.Subline
+import app.geometry.LineSegment
 import app.geometry.curves.bezier.TimeFunction
 
 /**
@@ -35,7 +35,7 @@ sealed class BezierBinomial<out V> : RealFunction<V>() {
     abstract fun evaluate(t: Double): V
 }
 
-val BezierBinomial<Vector2>.sublines: List<Subline>
+val BezierBinomial<Vector2>.lineSegments: List<LineSegment>
     get() = when (this) {
         is LinearBezierBinomial<Vector2> -> this.segmentsLinear
         is QuadraticBezierBinomial<Vector2> -> this.segmentsQuadratic

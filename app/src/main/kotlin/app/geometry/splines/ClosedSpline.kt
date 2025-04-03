@@ -53,11 +53,11 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
             require(splines.isNotEmpty())
 
             val segments = splines.withNextCyclic().flatMap { (spline, nextSpline) ->
-                spline.segments + Segment.subline(
+                spline.segments + Segment.lineSegment(
                     startKnot = spline.terminator.endKnot,
                 ) + listOfNotNull(
                     spline.backRay!!.intersect(nextSpline.frontRay!!)?.let { intersectionPoint ->
-                        Segment.subline(
+                        Segment.lineSegment(
                             startKnot = intersectionPoint,
                         )
                     },

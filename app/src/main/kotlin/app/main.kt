@@ -1,7 +1,7 @@
 package app
 
 import app.geometry.Point
-import app.geometry.Subline
+import app.geometry.LineSegment
 import app.geometry.TotalTransformation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.BezierCurve
@@ -85,7 +85,7 @@ sealed class PathSeg {
     data class LineTo(
         override val endPoint: Point,
     ) : CurveTo() {
-        override fun toEdge(startKnot: Point): SegmentCurve.Edge<SegmentCurve<*>> = Subline.Edge
+        override fun toEdge(startKnot: Point): SegmentCurve.Edge<SegmentCurve<*>> = LineSegment.Edge
     }
 
     data class CubicTo(

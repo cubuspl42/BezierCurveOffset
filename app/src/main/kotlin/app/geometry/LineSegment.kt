@@ -13,28 +13,28 @@ import java.awt.geom.Line2D
 import kotlin.math.roundToInt
 
 /**
- * A line segment, called "subline" for naming reasons
+ * A line segment
  */
-data class Subline(
+data class LineSegment(
     override val start: Point,
     override val end: Point,
-) : SegmentCurve<Subline>() {
-    object Edge : SegmentCurve.Edge<Subline>() {
+) : SegmentCurve<LineSegment>() {
+    object Edge : SegmentCurve.Edge<LineSegment>() {
         override fun bind(
             startKnot: Point,
             endKnot: Point,
-        ): Subline = Subline(
+        ): LineSegment = LineSegment(
             start = startKnot,
             end = endKnot,
         )
 
-        override fun dump(): String = "Subline.Edge"
+        override fun dump(): String = "LineSegment.Edge"
 
         override fun transformVia(
             transformation: Transformation,
         ): Edge = Edge
 
-        override fun toString(): String = "Subline.Edge"
+        override fun toString(): String = "LineSegment.Edge"
     }
 
     val direction: Direction? = Direction.of(
@@ -82,8 +82,8 @@ data class Subline(
     fun moveInDirection(
         direction: Direction,
         distance: Double,
-    ): Subline? {
-        return Subline(
+    ): LineSegment? {
+        return LineSegment(
             start = start.moveInDirection(
                 direction = direction,
                 distance = distance,
@@ -98,11 +98,11 @@ data class Subline(
     override fun findOffsetSpline(
         strategy: BezierCurve.OffsetStrategy,
         offset: Double,
-    ): OffsetSplineApproximationResult<Subline>? = findOffsetSubline(
+    ): OffsetSplineApproximationResult<LineSegment>? = findOffsetLineSegment(
         offset = offset,
-    )?.let { offsetSubline ->
-        object : OffsetSplineApproximationResult<Subline>() {
-            override val offsetSpline: OpenSpline<Subline> = offsetSubline.toSpline()
+    )?.let { offsetLineSegment ->
+        object : OffsetSplineApproximationResult<LineSegment>() {
+            override val offsetSpline: OpenSpline<LineSegment> = offsetLineSegment.toSpline()
 
             override val globalDeviation: Double = 0.0
         }
@@ -112,8 +112,8 @@ data class Subline(
         strategy: BezierCurve.OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OffsetSplineApproximationResult<Subline>? {
-        // We ignore the subdivision level, because subline offset is always optimal and safe to compute (unless it's
+    ): OffsetSplineApproximationResult<LineSegment>? {
+        // We ignore the subdivision level, because lineSegment offset is always optimal and safe to compute (unless it's
         // a point)
         return findOffsetSpline(
             strategy = strategy,
@@ -121,14 +121,14 @@ data class Subline(
         )
     }
 
-    override val edge: SegmentCurve.Edge<Subline> = Edge
+    override val edge: SegmentCurve.Edge<LineSegment> = Edge
 
-    fun findOffsetSubline(
+    fun findOffsetLineSegment(
         offset: Double,
-    ): Subline? {
+    ): LineSegment? {
         val offsetDirection = direction?.perpendicular ?: return null
 
-        return Subline(
+        return LineSegment(
             start = start.moveInDirection(
                 direction = offsetDirection,
                 distance = offset,
@@ -159,7 +159,7 @@ data class Subline(
 private fun SegmentCurve<*>.toSvgPathSeg(
     pathElement: SVGPathElement,
 ): SVGPathSeg = when (this) {
-    is Subline -> pathElement.createSVGPathSegLinetoAbs(
+    is LineSegment -> pathElement.createSVGPathSegLinetoAbs(
         end.x.toFloat(),
         end.y.toFloat(),
     )
@@ -176,7 +176,7 @@ private fun SegmentCurve<*>.toSvgPathSeg(
     else -> throw UnsupportedOperationException("Unsupported segment curve: $this")
 }
 
-fun Subline.toSvgPathSegSubline(
+fun LineSegment.toSvgPathSegLineSegment(
     pathElement: SVGPathElement,
 ): SVGPathSegLinetoAbs = pathElement.createSVGPathSegLinetoAbs(
     end.x.toFloat(),

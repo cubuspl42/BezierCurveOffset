@@ -24,7 +24,7 @@ import app.component7
 import app.component8
 import app.component9
 import app.geometry.Point
-import app.geometry.Subline
+import app.geometry.LineSegment
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.BezierCurve
 import kotlin.test.Ignore
@@ -65,10 +65,10 @@ class ClosedSplineTests {
         assertEquals(
             expected = listOf(
                 bezierSegment0,
-                Spline.Segment.subline(
+                Spline.Segment.lineSegment(
                     startKnot = knot1End,
                 ),
-                Spline.Segment.subline(
+                Spline.Segment.lineSegment(
                     startKnot = Point.of(0.0, 1.0),
                 ),
             ),
@@ -125,17 +125,17 @@ class ClosedSplineTests {
         assertEquals(
             expected = listOf(
                 bezierSegment0,
-                Spline.Segment.subline(
+                Spline.Segment.lineSegment(
                     startKnot = knot1,
                 ),
-                Spline.Segment.subline(
+                Spline.Segment.lineSegment(
                     startKnot = Point.of(3.5, 0.25),
                 ),
                 bezierSegment1,
-                Spline.Segment.subline(
+                Spline.Segment.lineSegment(
                     startKnot = knot3,
                 ),
-                Spline.Segment.subline(
+                Spline.Segment.lineSegment(
                     startKnot = Point.of(-0.5, 0.25),
                 ),
             ),
@@ -227,14 +227,14 @@ class ClosedSplineTests {
         )
 
         assertEquals(
-            expected = Spline.Segment.subline(
+            expected = Spline.Segment.lineSegment(
                 startKnot = knot1,
             ),
             actual = actualSegment1,
         )
 
         assertEquals(
-            expected = Spline.Segment.subline(
+            expected = Spline.Segment.lineSegment(
                 startKnot = Point.of(0.0, 7.5),
             ),
             actual = actualSegment2,
@@ -246,13 +246,13 @@ class ClosedSplineTests {
         )
 
         assertEquals(
-            expected = Spline.Segment.subline(
+            expected = Spline.Segment.lineSegment(
                 startKnot = knot3,
             ),
             actual = actualSegment4,
         )
 
-        assertIs<Subline.Edge>(
+        assertIs<LineSegment.Edge>(
             actualSegment5.edge,
         )
 
@@ -268,13 +268,13 @@ class ClosedSplineTests {
         )
 
         assertEquals(
-            expected = Spline.Segment.subline(
+            expected = Spline.Segment.lineSegment(
                 startKnot = knot5,
             ),
             actual = actualSegment7,
         )
 
-        assertIs<Subline.Edge>(
+        assertIs<LineSegment.Edge>(
             actualSegment8.edge,
         )
 
@@ -471,7 +471,7 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment4.edge)
+        assertIs<LineSegment.Edge>(actualSegment4.edge)
 
         // Segment #5
         val actualStartKnot5 = actualSegment5.startKnot
@@ -481,7 +481,7 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment5.edge)
+        assertIs<LineSegment.Edge>(actualSegment5.edge)
 
         // Segment #6
         val actualStartKnot6 = actualSegment6.startKnot
@@ -591,7 +591,7 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment11.edge)
+        assertIs<LineSegment.Edge>(actualSegment11.edge)
 
         // Segment #12
         val actualStartKnot12 = actualSegment12.startKnot
@@ -601,7 +601,7 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment12.edge)
+        assertIs<LineSegment.Edge>(actualSegment12.edge)
 
         // Segment #13
         val actualStartKnot13 = actualSegment13.startKnot
@@ -631,7 +631,7 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment14.edge)
+        assertIs<LineSegment.Edge>(actualSegment14.edge)
 
         // Segment #15
         val actualStartKnot15 = actualSegment15.startKnot
@@ -641,7 +641,7 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment15.edge)
+        assertIs<LineSegment.Edge>(actualSegment15.edge)
 
         // Segment #16
         val actualStartKnot16 = actualSegment16.startKnot
@@ -711,7 +711,7 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment19.edge)
+        assertIs<LineSegment.Edge>(actualSegment19.edge)
 
         // Segment #20
         val actualStartKnot20 = actualSegment20.startKnot
@@ -741,7 +741,7 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment21.edge)
+        assertIs<LineSegment.Edge>(actualSegment21.edge)
 
         // Segment #22
         val actualStartKnot22 = actualSegment22.startKnot
@@ -751,7 +751,7 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment22.edge)
+        assertIs<LineSegment.Edge>(actualSegment22.edge)
 
         // Segment #23
         val actualStartKnot23 = actualSegment23.startKnot
@@ -801,7 +801,7 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment25.edge)
+        assertIs<LineSegment.Edge>(actualSegment25.edge)
 
         // Segment #26
         val actualStartKnot26 = actualSegment26.startKnot
@@ -811,6 +811,6 @@ class ClosedSplineTests {
             absoluteTolerance = eps,
         )
 
-        assertIs<Subline.Edge>(actualSegment26.edge)
+        assertIs<LineSegment.Edge>(actualSegment26.edge)
     }
 }

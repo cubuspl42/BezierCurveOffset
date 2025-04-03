@@ -92,7 +92,7 @@ data class Ray(
 
 fun Ray.toDebugPath(
     document: SVGDocument,
-): SVGPathElement = Subline(
+): SVGPathElement = LineSegment(
     start = startingPoint,
     end = startingPoint.moveInDirection(
         direction = direction,

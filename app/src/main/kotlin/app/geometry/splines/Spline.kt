@@ -3,7 +3,7 @@ package app.geometry.splines
 import app.Dumpbable
 import app.SVGGElementUtils
 import app.geometry.Point
-import app.geometry.Subline
+import app.geometry.LineSegment
 import app.geometry.Transformation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.SegmentCurve
@@ -48,11 +48,11 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
                 ),
             )
 
-            fun subline(
+            fun lineSegment(
                 startKnot: Point,
-            ): Segment<Subline> = Segment(
+            ): Segment<LineSegment> = Segment(
                 startKnot = startKnot,
-                edge = Subline.Edge,
+                edge = LineSegment.Edge,
             )
         }
 

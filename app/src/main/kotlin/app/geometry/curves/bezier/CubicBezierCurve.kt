@@ -150,7 +150,7 @@ data class CubicBezierCurve private constructor(
         graphics2D.stroke = BasicStroke(0.5f)
         graphics2D.color = Color.LIGHT_GRAY
 
-        basisFormula.sublines.forEach { segment ->
+        basisFormula.lineSegments.forEach { segment ->
             segment.draw(graphics2D = graphics2D)
         }
 
@@ -207,7 +207,7 @@ data class CubicBezierCurve private constructor(
 
     override val simplified: SegmentCurve<*>
         get() = when {
-            start == control0 && control1 == end -> Subline(
+            start == control0 && control1 == end -> LineSegment(
                 start = start,
                 end = end,
             )
@@ -223,14 +223,14 @@ data class CubicBezierCurve private constructor(
         weight3 = end.toVector(),
     )
 
-    val subline0: Subline
-        get() = basisFormula.subline0
+    val lineSegment0: LineSegment
+        get() = basisFormula.lineSegment0
 
-    val subline1: Subline
-        get() = basisFormula.subline1
+    val lineSegment1: LineSegment
+        get() = basisFormula.lineSegment1
 
-    val subline2: Subline
-        get() = basisFormula.subline2
+    val lineSegment2: LineSegment
+        get() = basisFormula.lineSegment2
 
     fun transformVia(
         transformation: Transformation,
@@ -296,19 +296,19 @@ fun CubicBezierCurve.toDebugControlSvgPathGroupCubic(
 ): SVGGElement = SVGGElementUtils.of(
     document = document,
     elements = listOf(
-        subline0.toSvgPath(
+        lineSegment0.toSvgPath(
             document = document,
         ).apply {
             fill = "none"
             stroke = "darkGray"
         },
-//        subline1.toSvgPath(
+//        lineSegment1.toSvgPath(
 //            document = document,
 //        ).apply {
 //            fill = "none"
 //            stroke = "lightGray"
 //        },
-        subline2.toSvgPath(
+        lineSegment2.toSvgPath(
             document = document,
         ).apply {
             fill = "none"

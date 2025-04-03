@@ -5,7 +5,7 @@ import app.createPathElement
 import app.fill
 import app.geometry.Point
 import app.geometry.Ray
-import app.geometry.Subline
+import app.geometry.LineSegment
 import app.geometry.Transformation
 import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.bezier.BezierCurve.OffsetStrategy
@@ -14,7 +14,7 @@ import app.geometry.curves.bezier.toDebugControlSvgPathGroupCubic
 import app.geometry.curves.bezier.toSvgPathSegCubic
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
-import app.geometry.toSvgPathSegSubline
+import app.geometry.toSvgPathSegLineSegment
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement
@@ -159,7 +159,7 @@ private fun SegmentCurve<*>.toDebugControlSvgPathGroup(
 private fun SegmentCurve<*>.toSvgPathSeg(
     pathElement: SVGPathElement,
 ): SVGPathSeg = when (this) {
-    is Subline -> this.toSvgPathSegSubline(
+    is LineSegment -> this.toSvgPathSegLineSegment(
         pathElement = pathElement,
     )
 
@@ -172,7 +172,7 @@ private fun SegmentCurve<*>.toSvgPathSeg(
 
 private val SegmentCurve<*>.debugStrokeColor: String
     get() = when (this) {
-        is Subline -> "blue"
+        is LineSegment -> "blue"
         is CubicBezierCurve -> "red"
         else -> throw UnsupportedOperationException("Unsupported segment curve: $this")
     }
