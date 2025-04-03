@@ -27,7 +27,7 @@ data class Point private constructor(
             px: Double,
             py: Double,
         ): Point = of(
-            pv = Vector2.of(
+            pv = Vector2x1.of(
                 x = px,
                 y = py,
             ),
@@ -85,7 +85,7 @@ data class Point private constructor(
         px: Double,
         py: Double,
     ) : this(
-        pv = Vector2.of(
+        pv = Vector2x1.of(
             x = px,
             y = py,
         ),
@@ -167,7 +167,7 @@ data class Point private constructor(
     }
 
     // TODO: Nuke?
-    fun toVector(): Vector2x1 = Vector2.of(x, y)
+    fun toVector(): Vector2x1 = Vector2x1.of(x, y)
 
     fun projectOnto(line: Line): Point {
         val tr = translationTo(line.representativePoint).projectOnto(line.representativeDirection)

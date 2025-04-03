@@ -21,7 +21,7 @@ data class Translation private constructor(
             tx: Double,
             ty: Double,
         ): Translation = of(
-            tv = Vector2.of(
+            tv = Vector2x1.of(
                 x = tx,
                 y = ty,
             ),
