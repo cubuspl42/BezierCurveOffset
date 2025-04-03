@@ -1,7 +1,8 @@
 package app.geometry.transformations
 
 import app.algebra.linear.Matrix3x3
-import app.algebra.linear.Vector3
+import app.algebra.linear.Vector1x3
+import app.algebra.linear.Vector3x1
 import app.geometry.Point
 import app.get
 import org.w3c.dom.svg.SVGGElement
@@ -25,17 +26,17 @@ data class TotalTransformation private constructor(
             f: Double,
         ): TotalTransformation = TotalTransformation(
             tm = Matrix3x3(
-                row0 = Vector3.of(
+                row0 = Vector1x3.of(
                     x = a,
                     y = c,
                     z = e,
                 ),
-                row1 = Vector3.of(
+                row1 = Vector1x3.of(
                     x = b,
                     y = d,
                     z = f,
                 ),
-                row2 = Vector3.of(
+                row2 = Vector1x3.of(
                     x = 0.0,
                     y = 0.0,
                     z = 1.0,
@@ -58,7 +59,7 @@ data class TotalTransformation private constructor(
     override fun transform(
         point: Point,
     ): Point = Point.of(
-        pv = tm.timesTransposed(point.pv.toVec3()).vectorXy,
+        pv = tm.times(point.pv.toVec3()).vectorXy,
     )
 }
 

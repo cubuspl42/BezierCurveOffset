@@ -59,7 +59,7 @@ data class Vector2 private constructor(
 
     fun toVec3(
         z: Double = 1.0,
-    ): Vector3 = Vector3.of(
+    ): Vector3x1 = Vector3x1.of(
         x = x,
         y = y,
         z = z,
