@@ -10,6 +10,8 @@ import app.geometry.*
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.toSvgPath
+import app.geometry.transformations.Transformation
+import app.geometry.transformations.Translation
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement

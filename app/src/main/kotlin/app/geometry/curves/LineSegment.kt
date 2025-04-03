@@ -4,8 +4,8 @@ import app.fillCircle
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
-import app.geometry.Transformation
-import app.geometry.Translation
+import app.geometry.transformations.Transformation
+import app.geometry.transformations.Translation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.BezierCurve
 import app.geometry.splines.OpenSpline

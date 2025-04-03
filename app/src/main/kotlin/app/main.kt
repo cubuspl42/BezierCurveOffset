@@ -2,12 +2,12 @@ package app
 
 import app.geometry.Point
 import app.geometry.curves.LineSegment
-import app.geometry.TotalTransformation
+import app.geometry.transformations.TotalTransformation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.SegmentCurve
 import app.geometry.splines.*
-import app.geometry.transformation
+import app.geometry.transformations.transformation
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory
 import org.w3c.dom.Element
 import org.w3c.dom.svg.*

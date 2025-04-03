@@ -1,6 +1,8 @@
-package app.geometry
+package app.geometry.transformations
 
 import app.algebra.linear.Vector2
+import app.geometry.Direction
+import app.geometry.Point
 
 @Suppress("DataClassPrivateConstructor")
 data class Translation private constructor(

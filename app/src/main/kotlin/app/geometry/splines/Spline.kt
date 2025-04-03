@@ -4,7 +4,7 @@ import app.Dumpbable
 import app.SVGGElementUtils
 import app.geometry.Point
 import app.geometry.curves.LineSegment
-import app.geometry.Transformation
+import app.geometry.transformations.Transformation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.toDebugSvgPathGroup

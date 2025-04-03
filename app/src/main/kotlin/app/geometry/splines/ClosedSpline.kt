@@ -1,7 +1,7 @@
 package app.geometry.splines
 
 import app.dump
-import app.geometry.Transformation
+import app.geometry.transformations.Transformation
 import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.SegmentCurve
 import app.withNext

@@ -3,6 +3,7 @@ package app.geometry
 import app.algebra.linear.Vector2
 import app.algebra.linear.div
 import app.equalsZeroApproximately
+import app.geometry.transformations.Transformation
 import java.awt.geom.Path2D
 
 @Suppress("DataClassPrivateConstructor")

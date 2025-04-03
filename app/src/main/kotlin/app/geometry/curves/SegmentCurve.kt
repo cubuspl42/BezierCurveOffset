@@ -5,7 +5,7 @@ import app.createPathElement
 import app.fill
 import app.geometry.Point
 import app.geometry.Ray
-import app.geometry.Transformation
+import app.geometry.transformations.Transformation
 import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.bezier.BezierCurve.OffsetStrategy
 import app.geometry.curves.bezier.CubicBezierCurve

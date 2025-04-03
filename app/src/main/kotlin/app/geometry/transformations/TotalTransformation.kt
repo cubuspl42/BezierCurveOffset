@@ -1,7 +1,8 @@
-package app.geometry
+package app.geometry.transformations
 
 import app.algebra.linear.Matrix3x3
 import app.algebra.linear.Vector3
+import app.geometry.Point
 import app.get
 import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGMatrix
