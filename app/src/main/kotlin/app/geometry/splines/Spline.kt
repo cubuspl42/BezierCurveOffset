@@ -173,6 +173,11 @@ fun Spline<*>.toControlSvgPath(
 private fun SegmentCurve<*>.toSvgPathSeg(
     pathElement: SVGPathElement,
 ): SVGPathSeg = when (this) {
+    is Subline -> pathElement.createSVGPathSegLinetoAbs(
+        end.x.toFloat(),
+        end.y.toFloat(),
+    )
+
     is CubicBezierCurve -> pathElement.createSVGPathSegCurvetoCubicAbs(
         end.x.toFloat(),
         end.y.toFloat(),
@@ -181,18 +186,19 @@ private fun SegmentCurve<*>.toSvgPathSeg(
         control1.x.toFloat(),
         control1.y.toFloat(),
     )
-
-    is Subline -> pathElement.createSVGPathSegLinetoAbs(
-        end.x.toFloat(),
-        end.y.toFloat(),
-    )
-
     else -> throw UnsupportedOperationException("Unsupported segment curve: $this")
 }
 
 private fun SegmentCurve<*>.toControlSvgPathSegs(
     pathElement: SVGPathElement,
 ): List<SVGPathSeg> = when (this) {
+    is Subline -> listOf(
+        pathElement.createSVGPathSegLinetoAbs(
+            end.x.toFloat(),
+            end.y.toFloat(),
+        ),
+    )
+
     is CubicBezierCurve -> listOf(
         pathElement.createSVGPathSegLinetoAbs(
             control0.x.toFloat(),

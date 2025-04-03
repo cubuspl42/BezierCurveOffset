@@ -4,29 +4,19 @@ import app.algebra.linear.Vector2
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.geometry.lineTo
 import app.geometry.moveTo
+import app.linspace
 import app.step
 import java.awt.geom.Path2D
 
 abstract class RealFunction<out V> {
     data class SamplingStrategy(
-        val x0: Double,
-        val x1: Double,
-        val xInterval: Double,
+        val x0: Double = 0.0,
+        val x1: Double = 1.0,
+        val sampleCount: Int,
     ) {
-        companion object {
-            fun withSampleCount(
-                sampleCount: Int,
-            ): SamplingStrategy = SamplingStrategy(
-                x0 = 0.0,
-                x1 = 1.0,
-                xInterval = 1.0 / sampleCount,
-            )
-        }
-
         init {
             require(x1 >= x0)
         }
-
     }
 
     data class Sample<V>(
@@ -37,7 +27,7 @@ abstract class RealFunction<out V> {
     abstract fun apply(x: Double): V
 }
 
-fun <V: Any> RealFunction<V?>.sampleValues(
+fun <V : Any> RealFunction<V?>.sampleValues(
     strategy: SamplingStrategy,
 ): List<V> = sample(strategy).map { it.value }
 
@@ -47,14 +37,18 @@ fun <V : Any> RealFunction<V?>.sample(
 
 fun <V : Any> SamplingStrategy.sample(
     formula: RealFunction<V?>,
-): List<RealFunction.Sample<V>> = (x0..x1 step xInterval).mapNotNull { x ->
+): List<RealFunction.Sample<V>> = linspace(
+    x0 = x0,
+    x1 = x1,
+    n = sampleCount,
+).mapNotNull { x ->
     formula.apply(x = x)?.let {
         RealFunction.Sample(
             x = x,
             value = it,
         )
     }
-}
+}.toList()
 
 fun RealFunction<Vector2>.toPath2D(
     samplingStrategy: SamplingStrategy,

@@ -66,9 +66,9 @@ data class Ray(
         val det = d.cross(other.d)
         if (det == 0.0) return null // The rays are parallel
 
-        val d = other.s - s
-        val u = d.cross(other.d) / det
-        val v = d.cross(this.d) / det
+        val sd = other.s - s
+        val u = sd.cross(other.d) / det
+        val v = sd.cross(this.d) / det
 
         return when {
             u > 0.0 && v > 0.0 -> Point.of(

@@ -3,7 +3,9 @@ package app.geometry
 import app.fillCircle
 import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
+import app.geometry.splines.OpenSpline
 import java.awt.Graphics2D
 import java.awt.geom.Line2D
 import kotlin.math.roundToInt
@@ -91,5 +93,46 @@ data class Subline(
         )
     }
 
+    override fun findOffsetSpline(
+        strategy: ProperBezierCurve.OffsetStrategy,
+        offset: Double,
+    ): OffsetSplineApproximationResult<Subline>? =
+        findOffsetSubline(offset = offset)?.let { offsetSubline ->
+            object : OffsetSplineApproximationResult<Subline>() {
+                override val offsetSpline: OpenSpline<Subline> = offsetSubline.toSpline()
+
+                override val globalDeviation: Double = 0.0
+            }
+        }
+
     override val edge: SegmentCurve.Edge<Subline> = Edge
+
+    fun findOffsetSubline(
+        offset: Double,
+    ): Subline? {
+        val offsetDirection = direction?.perpendicular ?: return null
+
+        return Subline(
+            start = start.moveInDirection(
+                direction = offsetDirection,
+                distance = offset,
+            ),
+            end = end.moveInDirection(
+                direction = offsetDirection,
+                distance = offset,
+            ),
+        )
+    }
+
+    override val frontRay: Ray
+        get() = Ray.inDirection(
+            point = start,
+            direction = direction!!.opposite,
+        )
+
+    override val backRay: Ray
+        get() = Ray.inDirection(
+            point = end,
+            direction = direction!!,
+        )
 }

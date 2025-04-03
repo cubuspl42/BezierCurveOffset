@@ -17,7 +17,7 @@ data class Polyline(
         }
     }
 
-    fun bestFitCurve(): BezierCurve<*> = timeNaively().bestFitCurve()
+    fun bestFitCurve(): BezierCurve = timeNaively().bestFitCurve()
 
     fun timeNaively(): TimedPointSeries {
         val pathLengthByPointIndex = points.zipWithNext().scan(

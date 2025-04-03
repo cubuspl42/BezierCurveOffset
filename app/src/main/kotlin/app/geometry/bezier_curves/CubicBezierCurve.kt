@@ -21,7 +21,7 @@ data class CubicBezierCurve private constructor(
     val control0: Point,
     val control1: Point,
     override val end: Point,
-) : ProperBezierCurve<CubicBezierCurve>() {
+) : ProperBezierCurve() {
     data class Edge(
         val control0: Point,
         val control1: Point,
@@ -57,12 +57,16 @@ data class CubicBezierCurve private constructor(
             control0: Point,
             control1: Point,
             end: Point,
-        ): CubicBezierCurve = CubicBezierCurve(
-            start = start,
-            control0 = control0,
-            control1 = control1,
-            end = end,
-        )
+        ): CubicBezierCurve {
+//            require(start.distanceTo(control0) > 0.001)
+
+            return CubicBezierCurve(
+                start = start,
+                control0 = control0,
+                control1 = control1,
+                end = end,
+            )
+        }
     }
 
     fun findBoundingBox(): BoundingBox {
@@ -91,7 +95,7 @@ data class CubicBezierCurve private constructor(
 
     override fun splitAt(
         t: Double,
-    ): Pair<BezierCurve<*>, BezierCurve<*>> {
+    ): Pair<BezierCurve, BezierCurve> {
         val skeleton0 = basisFormula.findSkeletonCubic(t = t)
         val skeleton1 = skeleton0.findSkeletonQuadratic(t = t)
         val midPoint = skeleton1.evaluateLinear(t = t).toPoint()
@@ -183,24 +187,17 @@ data class CubicBezierCurve private constructor(
         )
     }
 
-    override fun toSpline(): OpenSpline<CubicBezierCurve> = OpenSpline(
-        segments = listOf(
-            Spline.Segment.bezier(
-                startKnot = start,
-                control0 = control0,
-                control1 = control1,
-            ),
-        ),
-        terminator = Spline.Terminator(
-            endKnot = end,
-        ),
-    )
-
     override val edge: SegmentCurve.Edge<CubicBezierCurve>
         get() = CubicBezierCurve.Edge(
             control0 = control0,
             control1 = control1,
         )
+
+    override val frontRay: Ray
+        get() = tangentRayFunction.startValue!!.opposite
+
+    override val backRay: Ray
+        get() = tangentRayFunction.endValue!!
 
     override val basisFormula = CubicBezierBinomial(
         vectorSpace = Vector2.Vector2VectorSpace,

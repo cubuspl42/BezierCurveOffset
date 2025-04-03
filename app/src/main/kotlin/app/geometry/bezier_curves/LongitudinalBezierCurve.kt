@@ -1,6 +1,5 @@
 package app.geometry.bezier_curves
 
-import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.splines.OpenSpline
 import app.partitionSorted
@@ -9,10 +8,10 @@ import java.awt.geom.Path2D
 /**
  * A Bézier curve of order >= 1, i.e. a curve of non-zero length (not a point).
  */
-sealed class LongitudinalBezierCurve<out CurveT : LongitudinalBezierCurve<CurveT>> : BezierCurve<CurveT>() {
+sealed class LongitudinalBezierCurve : BezierCurve() {
     abstract fun splitAt(
         t: Double,
-    ): Pair<BezierCurve<*>, BezierCurve<*>>
+    ): Pair<BezierCurve, BezierCurve>
 
     /**
      * Split this Bézier curve to two curves at the given t-value.
@@ -26,7 +25,7 @@ sealed class LongitudinalBezierCurve<out CurveT : LongitudinalBezierCurve<CurveT
      */
     fun splitAtSafe(
         t: Double,
-    ): Pair<LongitudinalBezierCurve<*>, LongitudinalBezierCurve<*>>? {
+    ): Pair<LongitudinalBezierCurve, LongitudinalBezierCurve>? {
         val (leftSplitCurve, rightSplitCurve) = splitAt(t = t)
         val leftSafeSplitCurve = leftSplitCurve.asLongitudinal ?: return null
         val rightSafeSplitCurve = rightSplitCurve.asLongitudinal ?: return null
@@ -37,7 +36,7 @@ sealed class LongitudinalBezierCurve<out CurveT : LongitudinalBezierCurve<CurveT
         )
     }
 
-    final override val asLongitudinal: LongitudinalBezierCurve<*>
+    final override val asLongitudinal: LongitudinalBezierCurve
         get() = this
 
 
@@ -138,5 +137,5 @@ sealed class LongitudinalBezierCurve<out CurveT : LongitudinalBezierCurve<CurveT
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OffsetSplineApproximationResult?
+    ): ProperBezierCurve.BezierOffsetSplineApproximationResult?
 }

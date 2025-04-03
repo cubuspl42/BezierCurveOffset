@@ -23,9 +23,13 @@ data class Direction private constructor(
         fun of(
             dv: Vector2,
         ): Direction? = when {
-            dv.lengthSquared == 0.0 -> null
-            else -> Direction(dv = dv)
-        }
+                dv.lengthSquared == 0.0 -> null
+                else -> {
+//                    require(dv.lengthSquared > 0.0001)
+
+                    Direction(dv = dv)
+                }
+            }
     }
 
     init {

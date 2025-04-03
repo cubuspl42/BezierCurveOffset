@@ -7,11 +7,10 @@ import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.TimedPointSeries
-import app.geometry.bezier_curves.ProperBezierCurve.OffsetSplineApproximationResult
 import app.geometry.bezier_curves.ProperBezierCurve.OffsetStrategy
 import app.geometry.splines.OpenSpline
 
-sealed class BezierCurve<out CurveT : BezierCurve<CurveT>> : SegmentCurve<CurveT>() {
+sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     companion object {
         fun bindRay(
             pointFunction: TimeFunction<Point>,
@@ -91,22 +90,9 @@ sealed class BezierCurve<out CurveT : BezierCurve<CurveT>> : SegmentCurve<CurveT
         )
     }
 
-    /**
-     * Find the best offset spline of this curve.
-     *
-     * @return The best found offset spline, or null if this curve is too tiny
-     * to construct its offset spline
-     */
-    abstract fun findOffsetSpline(
-        strategy: OffsetStrategy,
-        offset: Double,
-    ): OffsetSplineApproximationResult?
-
     abstract val basisFormula: DifferentiableBezierBinomial<Vector2>
 
-    abstract val asProper: ProperBezierCurve<*>?
+    abstract val asProper: ProperBezierCurve?
 
-    abstract val asLongitudinal: LongitudinalBezierCurve<*>?
-
-    abstract fun toSpline(): OpenSpline<CubicBezierCurve>
+    abstract val asLongitudinal: LongitudinalBezierCurve?
 }

@@ -2,7 +2,6 @@ package app.geometry.splines
 
 import app.dump
 import app.geometry.Transformation
-import app.geometry.bezier_curves.BezierCurve
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
@@ -19,7 +18,7 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
     ) {
         companion object {
             fun interconnect(
-                offsetResults: List<ProperBezierCurve.OffsetSplineApproximationResult>,
+                offsetResults: List<SegmentCurve.OffsetSplineApproximationResult<*>>,
             ): ContourSplineApproximationResult {
                 require(offsetResults.isNotEmpty())
 
@@ -45,16 +44,16 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
 
     companion object {
         fun interconnect(
-            splines: List<OpenSpline<CubicBezierCurve>>,
+            splines: List<OpenSpline<*>>,
         ): ClosedSpline<*> {
             require(splines.isNotEmpty())
 
             val segments = splines.withNextCyclic().flatMap { (spline, nextSpline) ->
                 val lastSubCurve = spline.subCurves.last()
-                val extensionRay = lastSubCurve.tangentRayFunction.endValue!!
+                val extensionRay = lastSubCurve.backRay
 
                 val nextFirstCurve = nextSpline.subCurves.first()
-                val nextExtensionRay = nextFirstCurve.tangentRayFunction.startValue!!.opposite
+                val nextExtensionRay = nextFirstCurve.frontRay
 
                 spline.segments + Segment.subline(
                     startKnot = spline.terminator.endKnot,
@@ -99,9 +98,7 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
         offset: Double,
     ): ContourSplineApproximationResult? {
         val subResults = subCurves.mapNotNull { subCurve ->
-            val subBezierCurve = subCurve as BezierCurve<*>
-
-            subBezierCurve.findOffsetSpline(
+            subCurve.findOffsetSpline(
                 strategy = strategy,
                 offset = offset,
             )

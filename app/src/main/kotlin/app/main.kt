@@ -1,8 +1,11 @@
 package app
 
 import app.geometry.Point
+import app.geometry.Subline
 import app.geometry.Transformation
+import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
+import app.geometry.bezier_curves.SegmentCurve
 import app.geometry.splines.*
 import app.geometry.transformation
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory
@@ -34,8 +37,8 @@ sealed class PathSeg {
                 SVGPathSeg.PATHSEG_LINETO_ABS -> {
                     val pathSegLinetoAbs = pathSeg as SVGPathSegLinetoAbs
 
-                    return MoveTo(
-                        finalPoint = Point.of(
+                    return LineTo(
+                        endPoint = Point.of(
                             px = pathSegLinetoAbs.x.toDouble(),
                             py = pathSegLinetoAbs.y.toDouble(),
                         )
@@ -49,13 +52,15 @@ sealed class PathSeg {
                         firstControl = Point.of(
                             px = pathSegCubicToAbs.x1.toDouble(),
                             py = pathSegCubicToAbs.y1.toDouble(),
-                        ), secondControl = Point.of(
+                        ),
+                        secondControl = Point.of(
                             px = pathSegCubicToAbs.x2.toDouble(),
                             py = pathSegCubicToAbs.y2.toDouble(),
-                        ), finalPoint = Point.of(
+                        ),
+                        endPoint = Point.of(
                             px = pathSegCubicToAbs.x.toDouble(),
                             py = pathSegCubicToAbs.y.toDouble(),
-                        )
+                        ),
                     )
                 }
 
@@ -64,15 +69,41 @@ sealed class PathSeg {
         }
     }
 
+    sealed class CurveTo : PathSeg() {
+        abstract fun toEdge(startKnot: Point): SegmentCurve.Edge<SegmentCurve<*>>
+
+        final override val finalPoint: Point
+            get() = endPoint
+
+        abstract val endPoint: Point
+    }
+
     data class MoveTo(
         override val finalPoint: Point,
     ) : PathSeg()
 
+    data class LineTo(
+        override val endPoint: Point,
+    ) : CurveTo() {
+        override fun toEdge(startKnot: Point): SegmentCurve.Edge<SegmentCurve<*>> = Subline.Edge
+    }
+
     data class CubicTo(
         val firstControl: Point,
         val secondControl: Point,
-        override val finalPoint: Point,
-    ) : PathSeg()
+        override val endPoint: Point,
+    ) : CurveTo() {
+        override fun toEdge(
+            startKnot: Point,
+        ): SegmentCurve.Edge<SegmentCurve<*>> {
+//            require(startKnot.distanceTo(firstControl) > 0.001)
+
+            return CubicBezierCurve.Edge(
+                control0 = firstControl,
+                control1 = secondControl,
+            )
+        }
+    }
 
     abstract val finalPoint: Point
 }
@@ -89,15 +120,15 @@ fun SVGPathElement.toClosedSpline(): ClosedSpline<*> {
     val (firstPathSeg, tailPathSegs) = pathSegs.uncons()!!
 
     val originPathSeg = firstPathSeg as PathSeg.MoveTo
-    val edgePathSegs = tailPathSegs.filterIsInstance<PathSeg.CubicTo>()
+    val edgePathSegs = tailPathSegs.elementWiseAs<PathSeg.CurveTo>()
 
     val segments = edgePathSegs.withPrevious(
         outerLeft = originPathSeg,
     ).map { (prevPathSeg, pathSeg) ->
-        Spline.Segment.bezier(
-            startKnot = prevPathSeg.finalPoint,
-            control0 = pathSeg.firstControl,
-            control1 = pathSeg.secondControl,
+        val startKnot = prevPathSeg.finalPoint
+        Spline.Segment(
+            startKnot = startKnot,
+            edge = pathSeg.toEdge(startKnot),
         )
     }
 
@@ -118,8 +149,7 @@ fun extractChild(
         val newTransformation = singleChild.transformation.combineWith(base = transformation)
 
         extractChild(
-            transformation = newTransformation,
-            element = singleChild
+            transformation = newTransformation, element = singleChild
         )
     }
 
@@ -135,8 +165,7 @@ fun extractSplineFromFile(
     val document = documentFactory.createDocument(uri, reader) as SVGDocument
     val svgElement = document.documentElement as SVGElement
     val pathElement = extractChild(
-        transformation = Transformation.identity,
-        element = svgElement
+        transformation = Transformation.identity, element = svgElement
     )
 
     return pathElement
@@ -151,7 +180,7 @@ fun main() {
 
     val contourSpline = spline.findContourSpline(
         strategy = ProperBezierCurve.BestFitOffsetStrategy,
-        offset = 10.0,
+        offset = 40.0,
     )!!.contourSpline
 
     val document = createSvgDocument().apply {

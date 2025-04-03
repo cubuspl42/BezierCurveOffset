@@ -56,12 +56,9 @@ data class Transformation private constructor(
 
     fun transform(
         point: Point,
-    ): Point {
-        val p2 = Point.of(
-            pv = tm.timesVertical(point.pv.toVec3()).vectorXy,
-        )
-        return p2
-    }
+    ): Point = Point.of(
+        pv = tm.timesVertical(point.pv.toVec3()).vectorXy,
+    )
 }
 
 val SVGGElement.transformation: Transformation

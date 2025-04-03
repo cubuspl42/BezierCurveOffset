@@ -27,7 +27,7 @@ data class TimedPointSeries(
             sampleCount: Int,
         ): TimedPointSeries? {
             val timedPoints = curveFunction.sample(
-                strategy = SamplingStrategy.withSampleCount(sampleCount = sampleCount),
+                strategy = SamplingStrategy(sampleCount = sampleCount),
             ).map { pointSample ->
                 val t = pointSample.x
                 val point = pointSample.value
@@ -73,7 +73,7 @@ data class TimedPointSeries(
         }
     }
 
-    fun bestFitCurve(): BezierCurve<*> {
+    fun bestFitCurve(): BezierCurve {
         // T
         val bigTMatrix = buildBigTMatrix()
 
@@ -119,7 +119,7 @@ data class TimedPointSeries(
     }
 
     fun calculateFitError(
-        bezierCurve: BezierCurve<*>,
+        bezierCurve: BezierCurve,
     ): Double = timedPoints.sumOf { timedPoint ->
         val t = timedPoint.t
         val point = timedPoint.point
