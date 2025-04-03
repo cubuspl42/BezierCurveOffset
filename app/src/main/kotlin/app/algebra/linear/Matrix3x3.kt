@@ -59,7 +59,7 @@ data class Matrix3x3(
      *
      * @param vector - the vector to multiply (interpreted as a column vector)
      */
-    fun timesVertical(
+    fun timesTransposed(
         vector: Vector3,
     ): Vector3 = Vector3(
         x = row0.dot(vector),

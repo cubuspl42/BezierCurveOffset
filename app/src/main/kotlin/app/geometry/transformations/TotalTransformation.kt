@@ -58,7 +58,7 @@ data class TotalTransformation private constructor(
     override fun transform(
         point: Point,
     ): Point = Point.of(
-        pv = tm.timesVertical(point.pv.toVec3()).vectorXy,
+        pv = tm.timesTransposed(point.pv.toVec3()).vectorXy,
     )
 }
 
