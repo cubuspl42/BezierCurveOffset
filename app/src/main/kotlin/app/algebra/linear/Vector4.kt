@@ -1,13 +1,26 @@
 package app.algebra.linear
 
-data class Vector4(
+@Suppress("DataClassPrivateConstructor")
+data class Vector4 private constructor(
     val x: Double,
     val y: Double,
     val z: Double,
     val w: Double,
 ) {
     companion object {
-        val zero = Vector4(0.0, 0.0, 0.0, 0.0)
+        fun of(
+            x: Double,
+            y: Double,
+            z: Double,
+            w: Double,
+        ): Vector4 = Vector4(
+            x = x,
+            y = y,
+            z = z,
+            w = w,
+        )
+
+        val zero = Vector4.of(0.0, 0.0, 0.0, 0.0)
     }
 
     init {

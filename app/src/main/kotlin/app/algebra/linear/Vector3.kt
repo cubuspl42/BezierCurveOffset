@@ -3,17 +3,28 @@ package app.algebra.linear
 /**
  * A three-dimensional vector
  */
-data class Vector3(
+@Suppress("DataClassPrivateConstructor")
+data class Vector3 private constructor(
     val x: Double,
     val y: Double,
     val z: Double,
 ) {
     companion object {
-        val zero = Vector3(0.0, 0.0, 0.0)
+        fun of(
+            x: Double,
+            y: Double,
+            z: Double,
+        ): Vector3 = Vector3(
+            x = x,
+            y = y,
+            z = z,
+        )
+        
+        val zero = Vector3.of(0.0, 0.0, 0.0)
     }
 
     val vectorXy: Vector2
-        get() = Vector2(
+        get() = Vector2.of(
             x = x,
             y = y,
         )
@@ -26,7 +37,7 @@ data class Vector3(
 
     operator fun plus(
         other: Vector3,
-    ): Vector3 = Vector3(
+    ): Vector3 = Vector3.of(
         x = x + other.x,
         y = y + other.y,
         z = z + other.z,
@@ -34,7 +45,7 @@ data class Vector3(
 
     operator fun minus(
         other: Vector3,
-    ): Vector3 = Vector3(
+    ): Vector3 = Vector3.of(
         x = x - other.x,
         y = y - other.y,
         z = z - other.z,
@@ -47,7 +58,7 @@ data class Vector3(
 
 operator fun Double.times(
     v: Vector3,
-): Vector3 = Vector3(
+): Vector3 = Vector3.of(
     x = this * v.x,
     y = this * v.y,
     z = this * v.z,
@@ -55,7 +66,7 @@ operator fun Double.times(
 
 operator fun Vector3.div(
     divisor: Double,
-): Vector3 = Vector3(
+): Vector3 = Vector3.of(
     x = x / divisor,
     y = y / divisor,
     z = z / divisor,

@@ -19,7 +19,7 @@ data class Translation private constructor(
             tx: Double,
             ty: Double,
         ): Translation = of(
-            tv = Vector2(
+            tv = Vector2.of(
                 x = tx,
                 y = ty,
             ),

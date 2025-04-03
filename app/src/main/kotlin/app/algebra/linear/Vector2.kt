@@ -8,7 +8,8 @@ import kotlin.math.sqrt
 /**
  * A two-dimensional vector, which might (but doesn't have to) have a spatial interpretation
  */
-data class Vector2(
+@Suppress("DataClassPrivateConstructor")
+data class Vector2 private constructor(
     val x: Double,
     val y: Double,
 ) {
@@ -35,7 +36,15 @@ data class Vector2(
     }
 
     companion object {
-        val zero = Vector2(0.0, 0.0)
+        val zero = Vector2.of(0.0, 0.0)
+
+        fun of(
+            x: Double,
+            y: Double,
+        ): Vector2 = Vector2(
+            x = x,
+            y = y,
+        )
 
         fun bisector(
             a: Vector2,
@@ -50,7 +59,7 @@ data class Vector2(
 
     fun toVec3(
         z: Double = 1.0,
-    ): Vector3 = Vector3(
+    ): Vector3 = Vector3.of(
         x = x,
         y = y,
         z = z,
@@ -58,14 +67,14 @@ data class Vector2(
 
     operator fun minus(
         other: Vector2,
-    ): Vector2 = Vector2(
+    ): Vector2 = Vector2.of(
         x = x - other.x,
         y = y - other.y,
     )
 
     operator fun plus(
         other: Vector2,
-    ): Vector2 = Vector2(
+    ): Vector2 = Vector2.of(
         x = x + other.x,
         y = y + other.y,
     )
@@ -82,7 +91,7 @@ data class Vector2(
         factor: Double,
     ): Vector2 {
         require(factor.isFinite())
-        return Vector2(
+        return Vector2.of(
             x = x * factor,
             y = y * factor,
         )
@@ -115,7 +124,7 @@ data class Vector2(
      * The counterclockwise perpendicular vector
      */
     val perpendicular: Vector2
-        get() = Vector2(-y, x)
+        get() = Vector2.of(-y, x)
 
     /**
      * The length^2 of this vector
@@ -137,21 +146,21 @@ data class Vector2(
     fun toPoint(): Point = Point.of(pv = this)
 }
 
-operator fun Vector2.unaryMinus(): Vector2 = Vector2(
+operator fun Vector2.unaryMinus(): Vector2 = Vector2.of(
     x = -x,
     y = -y,
 )
 
 operator fun Double.times(
     v: Vector2,
-): Vector2 = Vector2(
+): Vector2 = Vector2.of(
     x = this * v.x,
     y = this * v.y,
 )
 
 operator fun Vector2.div(
     divisor: Double,
-): Vector2 = Vector2(
+): Vector2 = Vector2.of(
     x = x / divisor,
     y = y / divisor,
 )

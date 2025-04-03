@@ -25,17 +25,17 @@ data class TotalTransformation private constructor(
             f: Double,
         ): TotalTransformation = TotalTransformation(
             tm = Matrix3x3(
-                row0 = Vector3(
+                row0 = Vector3.of(
                     x = a,
                     y = c,
                     z = e,
                 ),
-                row1 = Vector3(
+                row1 = Vector3.of(
                     x = b,
                     y = d,
                     z = f,
                 ),
-                row2 = Vector3(
+                row2 = Vector3.of(
                     x = 0.0,
                     y = 0.0,
                     z = 1.0,

@@ -142,7 +142,7 @@ data class TimedPointSeries(
         rows = timedPoints.map { timedPoint ->
             val t = timedPoint.t
 
-            Vector4(
+            Vector4.of(
                 x = t * t * t,
                 y = t * t,
                 z = t,

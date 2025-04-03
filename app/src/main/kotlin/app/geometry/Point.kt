@@ -25,7 +25,7 @@ data class Point private constructor(
             px: Double,
             py: Double,
         ): Point = of(
-            pv = Vector2(
+            pv = Vector2.of(
                 x = px,
                 y = py,
             ),
@@ -83,7 +83,7 @@ data class Point private constructor(
         px: Double,
         py: Double,
     ) : this(
-        pv = Vector2(
+        pv = Vector2.of(
             x = px,
             y = py,
         ),
@@ -159,7 +159,7 @@ data class Point private constructor(
     }
 
     // TODO: Nuke?
-    fun toVector(): Vector2 = Vector2(x, y)
+    fun toVector(): Vector2 = Vector2.of(x, y)
 
     fun projectOnto(line: Line): Point {
         val s = line.s
