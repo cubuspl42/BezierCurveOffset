@@ -1,4 +1,4 @@
-package app.geometry.bezier_curves
+package app.geometry.curves.bezier
 
 import app.algebra.bezier_binomials.BezierBinomial
 import app.algebra.bezier_binomials.RealFunction

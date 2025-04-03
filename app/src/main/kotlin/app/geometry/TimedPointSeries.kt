@@ -6,9 +6,9 @@ import app.algebra.bezier_binomials.sample
 import app.fillCircle
 import app.fillColumnFrom
 import app.fillFrom
-import app.geometry.bezier_curves.CubicBezierCurve
-import app.geometry.bezier_curves.BezierCurve
-import app.geometry.bezier_curves.TimeFunction
+import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.curves.bezier.BezierCurve
+import app.geometry.curves.bezier.TimeFunction
 import app.invSafe
 import org.ujmp.core.Matrix
 import java.awt.Color

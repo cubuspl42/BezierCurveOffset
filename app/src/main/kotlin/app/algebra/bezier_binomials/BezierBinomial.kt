@@ -3,7 +3,7 @@ package app.algebra.bezier_binomials
 import app.algebra.linear.Vector2
 import app.algebra.polynomials.Polynomial
 import app.geometry.Subline
-import app.geometry.bezier_curves.TimeFunction
+import app.geometry.curves.bezier.TimeFunction
 
 /**
  * @param V - the type of the weights and the result

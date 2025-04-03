@@ -4,11 +4,10 @@ import app.Dumpbable
 import app.SVGGElementUtils
 import app.geometry.Point
 import app.geometry.Subline
-import app.geometry.TotalTransformation
 import app.geometry.Transformation
-import app.geometry.bezier_curves.CubicBezierCurve
-import app.geometry.bezier_curves.SegmentCurve
-import app.geometry.bezier_curves.toDebugSvgPathGroup
+import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.curves.SegmentCurve
+import app.geometry.curves.toDebugSvgPathGroup
 import app.geometry.cubicTo
 import app.geometry.lineTo
 import app.geometry.moveTo

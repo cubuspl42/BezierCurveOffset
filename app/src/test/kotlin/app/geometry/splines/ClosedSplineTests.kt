@@ -25,8 +25,8 @@ import app.component8
 import app.component9
 import app.geometry.Point
 import app.geometry.Subline
-import app.geometry.bezier_curves.CubicBezierCurve
-import app.geometry.bezier_curves.BezierCurve
+import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.curves.bezier.BezierCurve
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals

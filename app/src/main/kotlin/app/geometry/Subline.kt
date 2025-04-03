@@ -1,9 +1,9 @@
 package app.geometry
 
 import app.fillCircle
-import app.geometry.bezier_curves.CubicBezierCurve
-import app.geometry.bezier_curves.BezierCurve
-import app.geometry.bezier_curves.SegmentCurve
+import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.curves.bezier.BezierCurve
+import app.geometry.curves.SegmentCurve
 import app.geometry.splines.OpenSpline
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg

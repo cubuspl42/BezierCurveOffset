@@ -1,9 +1,8 @@
 package app.geometry
 
-import app.SVGPathElementUtils
 import app.algebra.linear.Vector2
 import app.fill
-import app.geometry.bezier_curves.toSvgPath
+import app.geometry.curves.toSvgPath
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGPathElement

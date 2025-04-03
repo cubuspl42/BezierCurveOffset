@@ -1,4 +1,4 @@
-package app.geometry.bezier_curves
+package app.geometry.curves
 
 import app.SVGGElementUtils
 import app.createPathElement
@@ -6,9 +6,12 @@ import app.fill
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.Subline
-import app.geometry.TotalTransformation
 import app.geometry.Transformation
-import app.geometry.bezier_curves.BezierCurve.OffsetStrategy
+import app.geometry.curves.bezier.BezierCurve
+import app.geometry.curves.bezier.BezierCurve.OffsetStrategy
+import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.curves.bezier.toDebugControlSvgPathGroupCubic
+import app.geometry.curves.bezier.toSvgPathSegCubic
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
 import app.geometry.toSvgPathSegSubline

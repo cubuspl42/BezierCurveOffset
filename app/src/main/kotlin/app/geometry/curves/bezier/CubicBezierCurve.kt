@@ -1,4 +1,4 @@
-package app.geometry.bezier_curves
+package app.geometry.curves.bezier
 
 import app.SVGGElementUtils
 import app.algebra.linear.Vector2
@@ -7,6 +7,8 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.fill
 import app.fillCircle
 import app.geometry.*
+import app.geometry.curves.SegmentCurve
+import app.geometry.curves.toSvgPath
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement
@@ -33,7 +35,7 @@ data class CubicBezierCurve private constructor(
         override fun bind(
             startKnot: Point,
             endKnot: Point,
-        ): CubicBezierCurve = CubicBezierCurve.of(
+        ): CubicBezierCurve = of(
             start = startKnot,
             control0 = control0,
             control1 = control1,
@@ -105,13 +107,13 @@ data class CubicBezierCurve private constructor(
         val midPoint = skeleton1.evaluateLinear(t = t).toPoint()
 
         return Pair(
-            CubicBezierCurve.of(
+            of(
                 start = start,
                 control0 = skeleton0.point0,
                 control1 = skeleton1.point0,
                 end = midPoint,
             ),
-            CubicBezierCurve.of(
+            of(
                 start = midPoint,
                 control0 = skeleton1.point1,
                 control1 = skeleton0.point2,
@@ -192,7 +194,7 @@ data class CubicBezierCurve private constructor(
     }
 
     override val edge: SegmentCurve.Edge<CubicBezierCurve>
-        get() = CubicBezierCurve.Edge(
+        get() = Edge(
             control0 = control0,
             control1 = control1,
         )

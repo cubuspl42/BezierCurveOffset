@@ -2,7 +2,7 @@ package app
 
 import app.geometry.Point
 import app.geometry.Polyline
-import app.geometry.bezier_curves.CubicBezierCurve
+import app.geometry.curves.bezier.CubicBezierCurve
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs

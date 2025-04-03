@@ -3,9 +3,9 @@ package app
 import app.geometry.Point
 import app.geometry.Subline
 import app.geometry.TotalTransformation
-import app.geometry.bezier_curves.CubicBezierCurve
-import app.geometry.bezier_curves.BezierCurve
-import app.geometry.bezier_curves.SegmentCurve
+import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.curves.bezier.BezierCurve
+import app.geometry.curves.SegmentCurve
 import app.geometry.splines.*
 import app.geometry.transformation
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory

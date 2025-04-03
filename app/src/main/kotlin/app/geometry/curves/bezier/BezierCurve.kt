@@ -1,4 +1,4 @@
-package app.geometry.bezier_curves
+package app.geometry.curves.bezier
 
 import app.algebra.bezier_binomials.DifferentiableBezierBinomial
 import app.algebra.bezier_binomials.RealFunction
@@ -11,6 +11,8 @@ import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.TimedPointSeries
+import app.geometry.curves.SegmentCurve
+import app.geometry.curves.mergeWith
 import app.geometry.splines.OpenSpline
 import app.partitionSorted
 

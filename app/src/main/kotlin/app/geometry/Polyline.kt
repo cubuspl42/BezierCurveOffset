@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.geometry.bezier_curves.BezierCurve
+import app.geometry.curves.bezier.BezierCurve
 import java.awt.geom.Path2D
 
 data class Polyline(

@@ -1,10 +1,9 @@
 package app.geometry.splines
 
 import app.dump
-import app.geometry.TotalTransformation
 import app.geometry.Transformation
-import app.geometry.bezier_curves.BezierCurve
-import app.geometry.bezier_curves.SegmentCurve
+import app.geometry.curves.bezier.BezierCurve
+import app.geometry.curves.SegmentCurve
 import app.withNext
 import app.withNextCyclic
 
