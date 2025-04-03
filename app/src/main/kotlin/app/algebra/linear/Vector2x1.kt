@@ -80,8 +80,8 @@ data class Vector2x1 private constructor(
     )
 
     fun dot(
-        other: Vector2x1,
-    ): Double = dotRaw(other)
+        other: Vector1x2,
+    ): Double = dotForced(other)
 
     fun scale(
         factor: Double,
@@ -124,7 +124,7 @@ data class Vector2x1 private constructor(
 
     fun projectOnto(other: Vector2x1): Vector2x1 {
         require(other != zero)
-        return (this.dot(other) / other.lengthSquared) * other
+        return (this.dotForced(other) / other.lengthSquared) * other
     }
 
     fun toPoint(): Point = Point.of(pv = this)

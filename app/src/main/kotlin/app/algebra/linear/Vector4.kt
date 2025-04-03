@@ -30,7 +30,7 @@ abstract class Vector4 {
         w,
     )
 
-    protected fun dotRaw(
+    protected fun dotForced(
         other: Vector4,
     ): Double = x * other.x + y * other.y + z * other.z + w * other.w
 }

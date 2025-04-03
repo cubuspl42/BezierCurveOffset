@@ -19,7 +19,7 @@ abstract class Vector3 {
 
     abstract val z: Double
 
-    protected fun dotRaw(
+    protected fun dotForced(
         other: Vector3,
     ): Double = x * other.x + y * other.y + z * other.z
 

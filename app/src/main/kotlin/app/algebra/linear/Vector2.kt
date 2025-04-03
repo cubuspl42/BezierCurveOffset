@@ -22,7 +22,11 @@ abstract class Vector2 {
     val length: Double
         get() = sqrt(lengthSquared)
 
-    protected fun dotRaw(
+    /**
+     * Calculates the dot product of this vector with another vector,
+     * assuming that the other has a matching orientation
+     */
+    fun dotForced(
         other: Vector2,
     ): Double = x * other.x + y * other.y
 

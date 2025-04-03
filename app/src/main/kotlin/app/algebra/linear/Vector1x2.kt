@@ -1,10 +1,5 @@
 package app.algebra.linear
 
-import app.geometry.Direction
-import app.geometry.Point
-import app.geometry.toDirection
-import kotlin.math.sqrt
-
 /**
  * A two-dimensional vector, which might (but doesn't have to) have a spatial interpretation
  */
@@ -80,8 +75,8 @@ data class Vector1x2 private constructor(
     )
 
     fun dot(
-        other: Vector1x2,
-    ): Double = dotRaw(other)
+        other: Vector2x1,
+    ): Double = dotForced(other)
 
     fun scale(
         factor: Double,

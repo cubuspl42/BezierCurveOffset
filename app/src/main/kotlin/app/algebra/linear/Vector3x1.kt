@@ -53,7 +53,7 @@ data class Vector3x1 private constructor(
 
     fun dot(
         other: Vector1x3,
-    ): Double = dotRaw(other)
+    ): Double = dotForced(other)
 }
 
 operator fun Double.times(
