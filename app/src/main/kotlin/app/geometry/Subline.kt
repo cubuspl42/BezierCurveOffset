@@ -6,6 +6,9 @@ import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import app.geometry.splines.OpenSpline
+import org.w3c.dom.svg.SVGPathElement
+import org.w3c.dom.svg.SVGPathSeg
+import org.w3c.dom.svg.SVGPathSegLinetoAbs
 import java.awt.Graphics2D
 import java.awt.geom.Line2D
 import kotlin.math.roundToInt
@@ -96,14 +99,13 @@ data class Subline(
     override fun findOffsetSpline(
         strategy: ProperBezierCurve.OffsetStrategy,
         offset: Double,
-    ): OffsetSplineApproximationResult<Subline>? =
-        findOffsetSubline(offset = offset)?.let { offsetSubline ->
-            object : OffsetSplineApproximationResult<Subline>() {
-                override val offsetSpline: OpenSpline<Subline> = offsetSubline.toSpline()
+    ): OffsetSplineApproximationResult<Subline>? = findOffsetSubline(offset = offset)?.let { offsetSubline ->
+        object : OffsetSplineApproximationResult<Subline>() {
+            override val offsetSpline: OpenSpline<Subline> = offsetSubline.toSpline()
 
-                override val globalDeviation: Double = 0.0
-            }
+            override val globalDeviation: Double = 0.0
         }
+    }
 
     override val edge: SegmentCurve.Edge<Subline> = Edge
 
@@ -136,3 +138,30 @@ data class Subline(
             direction = direction!!,
         )
 }
+
+private fun SegmentCurve<*>.toSvgPathSeg(
+    pathElement: SVGPathElement,
+): SVGPathSeg = when (this) {
+    is Subline -> pathElement.createSVGPathSegLinetoAbs(
+        end.x.toFloat(),
+        end.y.toFloat(),
+    )
+
+    is CubicBezierCurve -> pathElement.createSVGPathSegCurvetoCubicAbs(
+        end.x.toFloat(),
+        end.y.toFloat(),
+        control0.x.toFloat(),
+        control0.y.toFloat(),
+        control1.x.toFloat(),
+        control1.y.toFloat(),
+    )
+
+    else -> throw UnsupportedOperationException("Unsupported segment curve: $this")
+}
+
+fun Subline.toSvgPathSegSubline(
+    pathElement: SVGPathElement,
+): SVGPathSegLinetoAbs = pathElement.createSVGPathSegLinetoAbs(
+    end.x.toFloat(),
+    end.y.toFloat(),
+)

@@ -2,7 +2,6 @@ package app.geometry.splines
 
 import app.dump
 import app.geometry.Transformation
-import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.ProperBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
 import app.withNextCyclic
@@ -13,28 +12,32 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
      */
     override val segments: List<Segment<CurveT>>,
 ) : Spline<CurveT>() {
-    abstract class ContourSplineApproximationResult(
-        val contourSpline: ClosedSpline<*>,
-    ) {
+    abstract class ContourSplineApproximationResult {
         companion object {
             fun interconnect(
                 offsetResults: List<SegmentCurve.OffsetSplineApproximationResult<*>>,
             ): ContourSplineApproximationResult {
                 require(offsetResults.isNotEmpty())
 
-                val interconnectedContourSpline = ClosedSpline.interconnect(
-                    splines = offsetResults.map { it.offsetSpline },
-                )
+                return object : ContourSplineApproximationResult() {
+                    override val offsetResults = offsetResults
 
-                return object : ContourSplineApproximationResult(
-                    contourSpline = interconnectedContourSpline,
-                ) {
+                    override val contourSpline: ClosedSpline<*> by lazy {
+                        ClosedSpline.interconnect(
+                            splines = offsetResults.map { it.offsetSpline },
+                        )
+                    }
+
                     override val globalOffsetDeviation: Double by lazy {
                         offsetResults.maxOf { it.globalDeviation }
                     }
                 }
             }
         }
+
+        abstract val offsetResults: List<SegmentCurve.OffsetSplineApproximationResult<*>>
+
+        abstract val contourSpline: ClosedSpline<*>
 
         /**
          * @return The calculated global deviation
@@ -84,8 +87,7 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
     fun transformVia(
         transformation: Transformation,
     ) = ClosedSpline(
-        segments = segments.map { it.transformVia(transformation) }
-    )
+        segments = segments.map { it.transformVia(transformation) })
 
     /**
      * Find the contour of this spline.

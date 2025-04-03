@@ -1,23 +1,19 @@
 package app.geometry.splines
 
 import app.Dumpbable
-import app.appendAllItems
 import app.createGElement
-import app.createPathElement
 import app.geometry.Point
 import app.geometry.Subline
 import app.geometry.Transformation
 import app.geometry.bezier_curves.CubicBezierCurve
 import app.geometry.bezier_curves.SegmentCurve
-import app.geometry.bezier_curves.toSvgPath
+import app.geometry.bezier_curves.toDebugSvgPathGroup
 import app.geometry.cubicTo
 import app.geometry.lineTo
 import app.geometry.moveTo
 import app.mapWithNext
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement
-import org.w3c.dom.svg.SVGPathElement
-import org.w3c.dom.svg.SVGPathSeg
 import java.awt.Color
 import java.awt.Graphics2D
 import java.awt.geom.Path2D
@@ -115,87 +111,8 @@ fun Spline<*>.toSvgPathGroup(
     document: SVGDocument,
 ): SVGGElement = document.createGElement().apply {
     subCurves.forEach { subCurve ->
-        appendChild(subCurve.toSvgPath(document = document))
+        appendChild(subCurve.toDebugSvgPathGroup(document = document))
     }
-}
-
-fun Spline<*>.toControlSvgPath(
-    document: SVGDocument,
-): SVGPathElement {
-    val spline = this
-
-    return document.createPathElement().apply {
-        val startKnot = firstSegment.startKnot
-
-        pathSegList.appendItem(
-            createSVGPathSegMovetoAbs(
-                startKnot.x.toFloat(),
-                startKnot.y.toFloat(),
-            ),
-        )
-
-        subCurves.forEach { subCurve ->
-            pathSegList.appendAllItems(
-                subCurve.toControlSvgPathSegs(
-                    pathElement = this,
-                )
-            )
-        }
-
-        if (spline is ClosedSpline) {
-            pathSegList.appendItem(
-                createSVGPathSegClosePath(),
-            )
-        }
-    }
-}
-
-private fun SegmentCurve<*>.toSvgPathSeg(
-    pathElement: SVGPathElement,
-): SVGPathSeg = when (this) {
-    is Subline -> pathElement.createSVGPathSegLinetoAbs(
-        end.x.toFloat(),
-        end.y.toFloat(),
-    )
-
-    is CubicBezierCurve -> pathElement.createSVGPathSegCurvetoCubicAbs(
-        end.x.toFloat(),
-        end.y.toFloat(),
-        control0.x.toFloat(),
-        control0.y.toFloat(),
-        control1.x.toFloat(),
-        control1.y.toFloat(),
-    )
-
-    else -> throw UnsupportedOperationException("Unsupported segment curve: $this")
-}
-
-private fun SegmentCurve<*>.toControlSvgPathSegs(
-    pathElement: SVGPathElement,
-): List<SVGPathSeg> = when (this) {
-    is Subline -> listOf(
-        pathElement.createSVGPathSegLinetoAbs(
-            end.x.toFloat(),
-            end.y.toFloat(),
-        ),
-    )
-
-    is CubicBezierCurve -> listOf(
-        pathElement.createSVGPathSegLinetoAbs(
-            control0.x.toFloat(),
-            control0.y.toFloat(),
-        ),
-        pathElement.createSVGPathSegLinetoAbs(
-            control1.x.toFloat(),
-            control1.y.toFloat(),
-        ),
-        pathElement.createSVGPathSegLinetoAbs(
-            end.x.toFloat(),
-            end.y.toFloat(),
-        ),
-    )
-
-    else -> throw UnsupportedOperationException()
 }
 
 fun OpenSpline<*>.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {

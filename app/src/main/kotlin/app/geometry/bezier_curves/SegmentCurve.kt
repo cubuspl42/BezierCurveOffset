@@ -1,5 +1,7 @@
 package app.geometry.bezier_curves
 
+import app.SVGGElementUtils
+import app.SVGPathElementUtils
 import app.createPathElement
 import app.fill
 import app.geometry.Point
@@ -8,8 +10,10 @@ import app.geometry.Subline
 import app.geometry.Transformation
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
+import app.geometry.toSvgPathSegSubline
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
+import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 
@@ -62,6 +66,19 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
     abstract val backRay: Ray
 }
 
+fun SegmentCurve<*>.toDebugSvgPathGroup(
+    document: SVGDocument,
+): SVGGElement = SVGGElementUtils.of(
+    document = document,
+    elements = listOfNotNull(
+        toSvgPath(document = document).apply {
+            fill = "none"
+            stroke = debugStrokeColor
+        },
+        toDebugControlSvgPathGroup(document = document),
+    ),
+)
+
 fun SegmentCurve<*>.toSvgPath(
     document: SVGDocument,
 ): SVGPathElement = document.createPathElement().apply {
@@ -76,35 +93,36 @@ fun SegmentCurve<*>.toSvgPath(
         )
 
         appendItem(
-            toSvgPathSeg(pathElement = pathElement)
+            toSvgPathSeg(pathElement = pathElement),
         )
     }
+}
 
-    fill = "none"
-    stroke = strokeColor
+private fun SegmentCurve<*>.toDebugControlSvgPathGroup(
+    document: SVGDocument,
+): SVGGElement? = when (this) {
+    is CubicBezierCurve -> this.toDebugControlSvgPathGroupCubic(
+        document = document,
+    )
+
+    else -> null
 }
 
 private fun SegmentCurve<*>.toSvgPathSeg(
     pathElement: SVGPathElement,
 ): SVGPathSeg = when (this) {
-    is Subline -> pathElement.createSVGPathSegLinetoAbs(
-        end.x.toFloat(),
-        end.y.toFloat(),
+    is Subline -> this.toSvgPathSegSubline(
+        pathElement = pathElement,
     )
 
-    is CubicBezierCurve -> pathElement.createSVGPathSegCurvetoCubicAbs(
-        end.x.toFloat(),
-        end.y.toFloat(),
-        control0.x.toFloat(),
-        control0.y.toFloat(),
-        control1.x.toFloat(),
-        control1.y.toFloat(),
+    is CubicBezierCurve -> this.toSvgPathSegCubic(
+        pathElement = pathElement,
     )
 
     else -> throw UnsupportedOperationException("Unsupported segment curve: $this")
 }
 
-private val SegmentCurve<*>.strokeColor: String
+private val SegmentCurve<*>.debugStrokeColor: String
     get() = when (this) {
         is Subline -> "blue"
         is CubicBezierCurve -> "red"

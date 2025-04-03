@@ -130,3 +130,21 @@ fun Document.writeToFile(filePath: Path) {
 }
 
 operator fun SVGTransformList.get(index: Int): SVGTransform = getItem(index)
+
+object SVGGElementUtils {
+    fun of(
+        document: SVGDocument,
+        elements: List<Element>,
+    ): SVGGElement = document.createGElement().apply {
+        elements.forEach { appendChild(it) }
+    }
+}
+
+object SVGPathElementUtils {
+    fun build(
+        document: SVGDocument,
+        buildPathSegs: SVGPathElement.() -> List<SVGPathSeg>,
+    ): SVGPathElement = document.createPathElement().apply {
+        pathSegList.appendAllItems(this.buildPathSegs())
+    }
+}

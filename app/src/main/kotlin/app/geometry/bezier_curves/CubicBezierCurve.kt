@@ -1,12 +1,21 @@
 package app.geometry.bezier_curves
 
+import app.SVGGElementUtils
+import app.SVGPathElementUtils
 import app.algebra.linear.Vector2
 import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
+import app.fill
 import app.fillCircle
 import app.geometry.*
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
+import app.stroke
+import org.w3c.dom.svg.SVGDocument
+import org.w3c.dom.svg.SVGGElement
+import org.w3c.dom.svg.SVGPathElement
+import org.w3c.dom.svg.SVGPathSegCurvetoCubicAbs
+import org.w3c.dom.svg.SVGPathSegLinetoAbs
 import java.awt.BasicStroke
 import java.awt.Color
 import java.awt.Graphics2D
@@ -207,6 +216,15 @@ data class CubicBezierCurve private constructor(
         weight3 = end.toVector(),
     )
 
+    val subline0: Subline
+        get() = basisFormula.subline0
+
+    val subline1: Subline
+        get() = basisFormula.subline1
+
+    val subline2: Subline
+        get() = basisFormula.subline2
+
     fun transformVia(
         transformation: Transformation,
     ): CubicBezierCurve = mapPointWise {
@@ -270,3 +288,40 @@ data class CubicBezierCurve private constructor(
         it.translate(translation = translation)
     }
 }
+
+fun CubicBezierCurve.toDebugControlSvgPathGroupCubic(
+    document: SVGDocument,
+): SVGGElement = SVGGElementUtils.of(
+    document = document,
+    elements = listOf(
+        subline0.toSvgPath(
+            document = document,
+        ).apply {
+            fill = "none"
+            stroke = "darkGray"
+        },
+//        subline1.toSvgPath(
+//            document = document,
+//        ).apply {
+//            fill = "none"
+//            stroke = "lightGray"
+//        },
+        subline2.toSvgPath(
+            document = document,
+        ).apply {
+            fill = "none"
+            stroke = "darkGray"
+        },
+    ),
+)
+
+fun CubicBezierCurve.toSvgPathSegCubic(
+    pathElement: SVGPathElement,
+): SVGPathSegCurvetoCubicAbs = pathElement.createSVGPathSegCurvetoCubicAbs(
+    end.x.toFloat(),
+    end.y.toFloat(),
+    control0.x.toFloat(),
+    control0.y.toFloat(),
+    control1.x.toFloat(),
+    control1.y.toFloat(),
+)

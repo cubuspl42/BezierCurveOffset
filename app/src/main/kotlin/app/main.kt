@@ -178,28 +178,35 @@ fun main() {
 
     println(spline.dump())
 
-    val contourSpline = spline.findContourSpline(
+    val contourSplineResult = spline.findContourSpline(
         strategy = ProperBezierCurve.BestFitOffsetStrategy,
         offset = 40.0,
-    )!!.contourSpline
+    )!!
+
+
+    val contourSpline = contourSplineResult.contourSpline
+    val offsetSplines = contourSplineResult.offsetResults.map { it.offsetSpline }
 
     val document = createSvgDocument().apply {
+        val document = this
         val svgElement = documentSvgElement
-
-        svgElement.appendChild(
-            spline.toControlSvgPath(document = this).apply {
-                fill = "none"
-                stroke = "lightGray"
-            },
-        )
 
         svgElement.appendChild(
             spline.toSvgPathGroup(document = this)
         )
 
         svgElement.appendChild(
-            contourSpline.toSvgPathGroup(document = this)
+            SVGGElementUtils.of(
+                document = document,
+                elements = offsetSplines.map {
+                    it.toSvgPathGroup(document = document)
+                }
+            )
         )
+
+//        svgElement.appendChild(
+//            contourSpline.toSvgPathGroup(document = this)
+//        )
     }
 
     document.writeToFile(
