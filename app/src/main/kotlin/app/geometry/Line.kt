@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.algebra.linear.Vector2
+import app.algebra.linear.Vector2x1
 
 /**
  * A line in 2D Euclidean space, described by the equation p = s + td
@@ -9,11 +9,11 @@ data class Line(
     /**
      * One of the infinitely many points lying on the line
      */
-    val s: Vector2,
+    val s: Vector2x1,
     /**
      * One of the infinitely many vectors this line is parallel to, cannot be a zero vector
      */
-    val d: Vector2,
+    val d: Vector2x1,
 ) {
     companion object {
         fun inDirection(
@@ -26,12 +26,12 @@ data class Line(
     }
 
     init {
-        require(d != Vector2.zero)
+        require(d != Vector2x1.zero)
     }
 
     private fun evaluate(
         t: Double,
-    ): Vector2 = s + d.scale(t)
+    ): Vector2x1 = s + d.scale(t)
 
     fun findIntersectionPoint(
         other: Line,

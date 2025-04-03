@@ -1,6 +1,6 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.linear.Vector2
+import app.algebra.linear.Vector2x1
 import app.algebra.polynomials.Polynomial
 import app.geometry.curves.LineSegment
 import app.geometry.curves.bezier.TimeFunction
@@ -35,11 +35,11 @@ sealed class BezierBinomial<out V> : RealFunction<V>() {
     abstract fun evaluate(t: Double): V
 }
 
-val BezierBinomial<Vector2>.lineSegments: List<LineSegment>
+val BezierBinomial<Vector2x1>.lineSegments: List<LineSegment>
     get() = when (this) {
-        is LinearBezierBinomial<Vector2> -> this.segmentsLinear
-        is QuadraticBezierBinomial<Vector2> -> this.segmentsQuadratic
-        is CubicBezierBinomial<Vector2> -> this.segmentsCubic
+        is LinearBezierBinomial<Vector2x1> -> this.segmentsLinear
+        is QuadraticBezierBinomial<Vector2x1> -> this.segmentsQuadratic
+        is CubicBezierBinomial<Vector2x1> -> this.segmentsCubic
     }
 
 fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial? = when (this) {
@@ -49,37 +49,37 @@ fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial? = when (this) {
     is CubicBezierBinomial<Double> -> throw NotImplementedError()
 }
 
-fun BezierBinomial<Vector2>.findFaster(): TimeFunction<Vector2> {
-    return object : TimeFunction<Vector2>() {
-        override fun evaluateDirectly(t: Double): Vector2 = evaluateFast(t = t)
+fun BezierBinomial<Vector2x1>.findFaster(): TimeFunction<Vector2x1> {
+    return object : TimeFunction<Vector2x1>() {
+        override fun evaluateDirectly(t: Double): Vector2x1 = evaluateFast(t = t)
     }
 }
 
-fun BezierBinomial<Vector2>.evaluateFast(
+fun BezierBinomial<Vector2x1>.evaluateFast(
     t: Double,
-): Vector2 = when (this) {
-    is LinearBezierBinomial<Vector2> -> this.evaluateLinear(t = t)
-    is QuadraticBezierBinomial<Vector2> -> this.evaluateFastQuadratic(t = t)
-    is CubicBezierBinomial<Vector2> -> this.evaluateFastCubic(t = t)
+): Vector2x1 = when (this) {
+    is LinearBezierBinomial<Vector2x1> -> this.evaluateLinear(t = t)
+    is QuadraticBezierBinomial<Vector2x1> -> this.evaluateFastQuadratic(t = t)
+    is CubicBezierBinomial<Vector2x1> -> this.evaluateFastCubic(t = t)
 }
 
-val BezierBinomial<Vector2>.componentX: BezierBinomial<Double>
+val BezierBinomial<Vector2x1>.componentX: BezierBinomial<Double>
     get() = when (this) {
-        is LinearBezierBinomial<Vector2> -> this.componentXLinear
-        is QuadraticBezierBinomial<Vector2> -> this.componentXQuadratic
-        is CubicBezierBinomial<Vector2> -> this.componentXCubic
+        is LinearBezierBinomial<Vector2x1> -> this.componentXLinear
+        is QuadraticBezierBinomial<Vector2x1> -> this.componentXQuadratic
+        is CubicBezierBinomial<Vector2x1> -> this.componentXCubic
     }
 
-val BezierBinomial<Vector2>.componentY: BezierBinomial<Double>
+val BezierBinomial<Vector2x1>.componentY: BezierBinomial<Double>
     get() = when (this) {
-        is LinearBezierBinomial<Vector2> -> this.componentYLinear
-        is QuadraticBezierBinomial<Vector2> -> this.componentYQuadratic
-        is CubicBezierBinomial<Vector2> -> this.componentYCubic
+        is LinearBezierBinomial<Vector2x1> -> this.componentYLinear
+        is QuadraticBezierBinomial<Vector2x1> -> this.componentYQuadratic
+        is CubicBezierBinomial<Vector2x1> -> this.componentYCubic
     }
 
 fun BezierBinomial<Double>.findRoots(): Set<Double> = toPolynomialFormula()?.findRoots() ?: emptySet()
 
-fun DifferentiableBezierBinomial<Vector2>.findAllCriticalPoints(): BezierBinomial.CriticalPointSet {
+fun DifferentiableBezierBinomial<Vector2x1>.findAllCriticalPoints(): BezierBinomial.CriticalPointSet {
     val derivative = findDerivative()
     return BezierBinomial.CriticalPointSet(
         criticalPointsX = derivative.componentX.findRoots(),
@@ -87,5 +87,5 @@ fun DifferentiableBezierBinomial<Vector2>.findAllCriticalPoints(): BezierBinomia
     )
 }
 
-fun DifferentiableBezierBinomial<Vector2>.findInterestingCriticalPoints(): BezierBinomial.CriticalPointSet =
+fun DifferentiableBezierBinomial<Vector2x1>.findInterestingCriticalPoints(): BezierBinomial.CriticalPointSet =
     findAllCriticalPoints().filterInteresting()

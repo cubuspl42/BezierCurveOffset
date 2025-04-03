@@ -1,7 +1,7 @@
 package app.geometry
 
 import app.algebra.linear.Vector2
-import app.algebra.linear.Vector2_of
+import app.algebra.linear.Vector2x1
 import app.algebra.linear.div
 import app.equalsZeroApproximately
 import app.geometry.transformations.Transformation
@@ -9,15 +9,15 @@ import java.awt.geom.Path2D
 
 @Suppress("DataClassPrivateConstructor")
 data class Point private constructor(
-    val pv: Vector2,
+    val pv: Vector2x1,
 ) {
     companion object {
         val zero = Point(
-            pv = Vector2.zero,
+            pv = Vector2x1.zero,
         )
 
         fun of(
-            pv: Vector2,
+            pv: Vector2x1,
         ): Point = Point(
             pv = pv,
         )
@@ -26,7 +26,7 @@ data class Point private constructor(
             px: Double,
             py: Double,
         ): Point = of(
-            pv = Vector2_of(
+            pv = Vector2.of(
                 x = px,
                 y = py,
             ),
@@ -84,7 +84,7 @@ data class Point private constructor(
         px: Double,
         py: Double,
     ) : this(
-        pv = Vector2_of(
+        pv = Vector2.of(
             x = px,
             y = py,
         ),
@@ -160,7 +160,7 @@ data class Point private constructor(
     }
 
     // TODO: Nuke?
-    fun toVector(): Vector2 = Vector2_of(x, y)
+    fun toVector(): Vector2x1 = Vector2.of(x, y)
 
     fun projectOnto(line: Line): Point {
         val s = line.s

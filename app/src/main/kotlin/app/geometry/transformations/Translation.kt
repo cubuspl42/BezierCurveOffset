@@ -1,17 +1,17 @@
 package app.geometry.transformations
 
 import app.algebra.linear.Vector2
-import app.algebra.linear.Vector2_of
+import app.algebra.linear.Vector2x1
 import app.geometry.Direction
 import app.geometry.Point
 
 @Suppress("DataClassPrivateConstructor")
 data class Translation private constructor(
-    val tv: Vector2,
+    val tv: Vector2x1,
 ) : Transformation() {
     companion object {
         fun of(
-            tv: Vector2,
+            tv: Vector2x1,
         ): Translation = Translation(
             tv = tv,
         )
@@ -20,7 +20,7 @@ data class Translation private constructor(
             tx: Double,
             ty: Double,
         ): Translation = of(
-            tv = Vector2_of(
+            tv = Vector2.of(
                 x = tx,
                 y = ty,
             ),

@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.algebra.linear.Vector2
+import app.algebra.linear.Vector2x1
 import app.algebra.linear.unaryMinus
 
 /**
@@ -13,7 +13,7 @@ data class Direction private constructor(
      * One of the infinitely many vectors pointing in this direction, must not
      * effectively be a zero vector
      */
-    val dv: Vector2,
+    val dv: Vector2x1,
 ) {
     companion object {
         /**
@@ -21,7 +21,7 @@ data class Direction private constructor(
          * a zero vector
          */
         fun of(
-            dv: Vector2,
+            dv: Vector2x1,
         ): Direction? = when {
                 dv.lengthSquared == 0.0 -> null
                 else -> {
@@ -44,4 +44,4 @@ data class Direction private constructor(
         get() = Direction(dv = -dv)
 }
 
-internal fun Vector2.toDirection(): Direction? = Direction.of(dv = this)
+internal fun Vector2x1.toDirection(): Direction? = Direction.of(dv = this)
