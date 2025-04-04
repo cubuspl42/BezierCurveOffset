@@ -108,4 +108,27 @@ class Matrix4x4Tests {
             actual = luMatrix,
         )
     }
+
+    @Test
+    fun testInvertByBackSubstitution() {
+        val uMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(2.0, 3.0, 1.0, 4.0),
+            row1 = Vector1x4.of(0.0, 5.0, 2.0, 1.0),
+            row2 = Vector1x4.of(0.0, 0.0, 3.0, 6.0),
+            row3 = Vector1x4.of(0.0, 0.0, 0.0, 7.0),
+        )
+
+        val uInvMatrix = uMatrix.invertByBackSubstitution()
+
+        assertEquals(
+            expected = Matrix4x4.of(
+                row0 = Vector1x4.of(0.5, -0.3, 0.0333, -0.2714),
+                row1 = Vector1x4.of(0.0, 0.2, -0.1333, 0.0857),
+                row2 = Vector1x4.of(0.0, 0.0, 0.3333, -0.2857),
+                row3 = Vector1x4.of(0.0, 0.0, 0.0, 0.1429),
+            ),
+            actual = uInvMatrix,
+            absoluteTolerance = 0.001,
+        )
+    }
 }

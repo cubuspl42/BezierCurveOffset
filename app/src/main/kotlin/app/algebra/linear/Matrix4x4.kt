@@ -179,6 +179,89 @@ data class Matrix4x4(
         return rows.withIndex().drop(i0).maxBy { (_, row) -> selector(row) }.index
     }
 
+    fun invertByBackSubstitution(): Matrix4x4 = Matrix4x4.of(
+        row0 = Vector1x4.of(
+            x = 1.0 / this[0][0],
+            y = -this[0][1] / (this[0][0] * this[1][1]),
+            z = (this[0][1] * this[1][2] - this[0][2] * this[1][1]) / (this[0][0] * this[1][1] * this[2][2]),
+            w = (this[0][3] * this[2][2] * this[1][1] - this[0][2] * this[2][3] * this[1][1] - this[0][1] * (this[1][2] * this[2][3] - this[1][3] * this[2][2])) / (this[0][0] * this[1][1] * this[2][2] * this[3][3]),
+        ),
+        row1 = Vector1x4.of(
+            x = 0.0,
+            y = 1.0 / this[1][1],
+            z = -this[1][2] / (this[1][1] * this[2][2]),
+            w = (this[1][2] * this[2][3] - this[1][3] * this[2][2]) / (this[1][1] * this[2][2] * this[3][3]),
+        ),
+        row2 = Vector1x4.of(
+            x = 0.0,
+            y = 0.0,
+            z = 1.0 / this[2][2],
+            w = -this[2][3] / (this[2][2] * this[3][3]),
+        ),
+        row3 = Vector1x4.of(
+            x = 0.0,
+            y = 0.0,
+            z = 0.0,
+            w = 1.0 / this[3][3],
+        ),
+    )
+
+    //     // Assuming a 4x4 matrix, indexing from 0
+    //    val l11 = l[0][0]
+    //    val l21 = l[1][0]
+    //    val l22 = l[1][1]
+    //    val l31 = l[2][0]
+    //    val l32 = l[2][1]
+    //    val l33 = l[2][2]
+    //    val l41 = l[3][0]
+    //    val l42 = l[3][1]
+    //    val l43 = l[3][2]
+    //    val l44 = l[3][3]
+    //
+    //    // Column 1
+    //    lInv[0][0] = 1.0 / l11
+    //    lInv[1][0] = -l21 / (l11 * l22)
+    //    lInv[2][0] = -l31 / (l11 * l33) + (l21 * l32) / (l11 * l22 * l33)
+    //    lInv[3][0] = -l41 / (l11 * l44) + (l21 * l42) / (l11 * l22 * l44) + (l31 * l43) / (l11 * l33 * l44) - (l21 * l32 * l43) / (l11 * l22 * l33 * l44)
+    //
+    //    // Column 2
+    //    lInv[1][1] = 1.0 / l22
+    //    lInv[2][1] = -l32 / (l22 * l33)
+    //    lInv[3][1] = -l42 / (l22 * l44) + (l32 * l43) / (l22 * l33 * l44)
+    //
+    //    // Column 3
+    //    lInv[2][2] = 1.0 / l33
+    //    lInv[3][2] = -l43 / (l33 * l44)
+    //
+    //    // Column 4
+    //    lInv[3][3] = 1.0 / l44
+    fun invertByForwardSubstitution(): Matrix4x4 = Matrix4x4.of(
+        row0 = Vector1x4.of(
+            x = 1.0 / this[0][0],
+            y = -this[0][1] / (this[0][0] * this[1][1]),
+            z = (this[0][1] * this[1][2] - this[0][2] * this[1][1]) / (this[0][0] * this[1][1] * this[2][2]),
+            w = (this[0][3] * this[2][2] * this[1][1] - this[0][2] * this[2][3] * this[1][1] - this[0][1] * (this[1][2] * this[2][3] - this[1][3] * this[2][2])) / (this[0][0] * this[1][1] * this[2][2] * this[3][3]),
+        ),
+        row1 = Vector1x4.of(
+            x = 0.0,
+            y = 1.0 / this[1][1],
+            z = -this[1][2] / (this[1][1] * this[2][2]),
+            w = (this[1][2] * this[2][3] - this[1][3] * this[2][2]) / (this[1][1] * this[2][2] * this[3][3]),
+        ),
+        row2 = Vector1x4.of(
+            x = 0.0,
+            y = 0.0,
+            z = 1.0 / this[2][2],
+            w = -this[2][3] / (this[2][2] * this[3][3]),
+        ),
+        row3 = Vector1x4.of(
+            x = 0.0,
+            y = 0.0,
+            z = 0.0,
+            w = 1.0 / this[3][3],
+        ),
+    )
+
     fun pivotize(): Matrix4x4 {
         val p0 = Matrix4x4.identity
 
