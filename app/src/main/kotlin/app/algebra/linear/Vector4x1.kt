@@ -33,4 +33,14 @@ data class Vector4x1 private constructor(
     fun dot(
         other: Vector1x4,
     ): Double = dotForced(other)
+
+    operator fun get(
+        index: Int,
+    ): Double = when (index) {
+        0 -> x
+        1 -> y
+        2 -> z
+        3 -> w
+        else -> throw IndexOutOfBoundsException("Index $index out of bounds for length 4")
+    }
 }

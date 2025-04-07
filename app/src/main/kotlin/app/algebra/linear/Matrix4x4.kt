@@ -29,6 +29,18 @@ data class Matrix4x4(
         )
 
         fun of(
+            column0: Vector4x1,
+            column1: Vector4x1,
+            column2: Vector4x1,
+            column3: Vector4x1,
+        ): Matrix4x4 = Matrix4x4(
+            column0 = column0,
+            column1 = column1,
+            column2 = column2,
+            column3 = column3,
+        )
+
+        fun of(
             row0: Vector1x4,
             row1: Vector1x4,
             row2: Vector1x4,
@@ -179,7 +191,7 @@ data class Matrix4x4(
         return rows.withIndex().drop(i0).maxBy { (_, row) -> selector(row) }.index
     }
 
-    fun invertByBackSubstitution(): Matrix4x4 = Matrix4x4.of(
+    fun invert(): Matrix4x4 = Matrix4x4.of(
         row0 = Vector1x4.of(
             x = 1.0 / this[0][0],
             y = -this[0][1] / (this[0][0] * this[1][1]),
@@ -206,61 +218,150 @@ data class Matrix4x4(
         ),
     )
 
-    //     // Assuming a 4x4 matrix, indexing from 0
-    //    val l11 = l[0][0]
-    //    val l21 = l[1][0]
-    //    val l22 = l[1][1]
-    //    val l31 = l[2][0]
-    //    val l32 = l[2][1]
-    //    val l33 = l[2][2]
-    //    val l41 = l[3][0]
-    //    val l42 = l[3][1]
-    //    val l43 = l[3][2]
-    //    val l44 = l[3][3]
-    //
-    //    // Column 1
-    //    lInv[0][0] = 1.0 / l11
-    //    lInv[1][0] = -l21 / (l11 * l22)
-    //    lInv[2][0] = -l31 / (l11 * l33) + (l21 * l32) / (l11 * l22 * l33)
-    //    lInv[3][0] = -l41 / (l11 * l44) + (l21 * l42) / (l11 * l22 * l44) + (l31 * l43) / (l11 * l33 * l44) - (l21 * l32 * l43) / (l11 * l22 * l33 * l44)
-    //
-    //    // Column 2
-    //    lInv[1][1] = 1.0 / l22
-    //    lInv[2][1] = -l32 / (l22 * l33)
-    //    lInv[3][1] = -l42 / (l22 * l44) + (l32 * l43) / (l22 * l33 * l44)
-    //
-    //    // Column 3
-    //    lInv[2][2] = 1.0 / l33
-    //    lInv[3][2] = -l43 / (l33 * l44)
-    //
-    //    // Column 4
-    //    lInv[3][3] = 1.0 / l44
-    fun invertByForwardSubstitution(): Matrix4x4 = Matrix4x4.of(
-        row0 = Vector1x4.of(
-            x = 1.0 / this[0][0],
-            y = -this[0][1] / (this[0][0] * this[1][1]),
-            z = (this[0][1] * this[1][2] - this[0][2] * this[1][1]) / (this[0][0] * this[1][1] * this[2][2]),
-            w = (this[0][3] * this[2][2] * this[1][1] - this[0][2] * this[2][3] * this[1][1] - this[0][1] * (this[1][2] * this[2][3] - this[1][3] * this[2][2])) / (this[0][0] * this[1][1] * this[2][2] * this[3][3]),
-        ),
-        row1 = Vector1x4.of(
-            x = 0.0,
-            y = 1.0 / this[1][1],
-            z = -this[1][2] / (this[1][1] * this[2][2]),
-            w = (this[1][2] * this[2][3] - this[1][3] * this[2][2]) / (this[1][1] * this[2][2] * this[3][3]),
-        ),
-        row2 = Vector1x4.of(
-            x = 0.0,
-            y = 0.0,
-            z = 1.0 / this[2][2],
-            w = -this[2][3] / (this[2][2] * this[3][3]),
-        ),
-        row3 = Vector1x4.of(
-            x = 0.0,
-            y = 0.0,
-            z = 0.0,
-            w = 1.0 / this[3][3],
-        ),
-    )
+    /**
+     * Checks if the matrix is upper triangular.
+     */
+    fun isUpperTriangular(): Boolean {
+        val a21 = this[1][0]
+        val a31 = this[2][0]
+        val a32 = this[2][1]
+        val a41 = this[3][0]
+        val a42 = this[3][1]
+        val a43 = this[3][2]
+        return a21 == 0.0 && a31 == 0.0 && a32 == 0.0 && a41 == 0.0 && a42 == 0.0 && a43 == 0.0
+    }
+
+    /**
+     * Checks if the matrix is lower triangular.
+     */
+    fun isLowerTriangular(): Boolean {
+        val a12 = this[0][1]
+        val a13 = this[0][2]
+        val a14 = this[0][3]
+        val a23 = this[1][2]
+        val a24 = this[1][3]
+        val a34 = this[2][3]
+        return a12 == 0.0 && a13 == 0.0 && a14 == 0.0 && a23 == 0.0 && a24 == 0.0 && a34 == 0.0
+    }
+
+    /**
+     * Solves the system of equations Ax = y using backward substitution, where A is an upper triangular matrix.
+     *
+     * @return The solution vector x.
+     */
+    fun solveByBackSubstitution(
+        yVector: Vector4x1,
+    ): Vector4x1 {
+        require(isUpperTriangular()) { "Matrix is not upper triangular" }
+
+        val y4 = yVector[3]
+        val y3 = yVector[2]
+        val y2 = yVector[1]
+        val y1 = yVector[0]
+
+        val a11 = this[0][0]
+        val a12 = this[0][1]
+        val a13 = this[0][2]
+        val a14 = this[0][3]
+        val a22 = this[1][1]
+        val a23 = this[1][2]
+        val a24 = this[1][3]
+        val a33 = this[2][2]
+        val a34 = this[2][3]
+        val a44 = this[3][3]
+
+        val x4 = y4 / a44
+        val x3 = (y3 - a34 * x4) / a33
+        val x2 = (y2 - a24 * x4 - a23 * x3) / a22
+        val x1 = (y1 - a14 * x4 - a13 * x3 - a12 * x2) / a11
+
+        return Vector4x1.of(
+            x = x1,
+            y = x2,
+            z = x3,
+            w = x4,
+        )
+    }
+
+    /**
+     * Solves the equation AX = Y using backward substitution column-wise
+     *
+     * @return The solution matrix X.
+     */
+    fun solveByBackSubstitution(
+        yMatrix: Matrix4x4,
+    ): Matrix4x4 {
+        require(isUpperTriangular()) { "Matrix is not upper triangular" }
+
+        val xColumn0 = solveByBackSubstitution(yVector = yMatrix.column0)
+        val xColumn1 = solveByBackSubstitution(yVector = yMatrix.column1)
+        val xColumn2 = solveByBackSubstitution(yVector = yMatrix.column2)
+        val xColumn3 = solveByBackSubstitution(yVector = yMatrix.column3)
+
+        return Matrix4x4.of(
+            column0 = xColumn0,
+            column1 = xColumn1,
+            column2 = xColumn2,
+            column3 = xColumn3,
+        )
+    }
+
+    fun solveByForwardSubstitution(
+        yVector: Vector4x1,
+    ): Vector4x1 {
+        require(isLowerTriangular()) { "Matrix is not lower triangular" }
+
+        val y4 = yVector[3]
+        val y3 = yVector[2]
+        val y2 = yVector[1]
+        val y1 = yVector[0]
+
+        val a11 = this[0][0]
+        val a21 = this[1][0]
+        val a22 = this[1][1]
+        val a31 = this[2][0]
+        val a32 = this[2][1]
+        val a33 = this[2][2]
+        val a41 = this[3][0]
+        val a42 = this[3][1]
+        val a43 = this[3][2]
+        val a44 = this[3][3]
+
+        val x1 = y1 / a11
+        val x2 = (y2 - a21 * x1) / a22
+        val x3 = (y3 - a31 * x1 - a32 * x2) / a33
+        val x4 = (y4 - a41 * x1 - a42 * x2 - a43 * x3) / a44
+
+        return Vector4x1.of(
+            x = x1,
+            y = x2,
+            z = x3,
+            w = x4,
+        )
+    }
+
+    /**
+     * Solves the equation AX = Y using forward substitution column-wise
+     *
+     * @return The solution matrix X.
+     */
+    fun solveByForwardSubstitution(
+        yMatrix: Matrix4x4,
+    ): Matrix4x4 {
+        require(isLowerTriangular()) { "Matrix is not lower triangular" }
+
+        val xColumn0 = solveByForwardSubstitution(yVector = yMatrix.column0)
+        val xColumn1 = solveByForwardSubstitution(yVector = yMatrix.column1)
+        val xColumn2 = solveByForwardSubstitution(yVector = yMatrix.column2)
+        val xColumn3 = solveByForwardSubstitution(yVector = yMatrix.column3)
+
+        return Matrix4x4.of(
+            column0 = xColumn0,
+            column1 = xColumn1,
+            column2 = xColumn2,
+            column3 = xColumn3,
+        )
+    }
 
     fun pivotize(): Matrix4x4 {
         val p0 = Matrix4x4.identity
