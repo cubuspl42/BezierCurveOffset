@@ -43,4 +43,12 @@ data class Vector4x1 private constructor(
         3 -> w
         else -> throw IndexOutOfBoundsException("Index $index out of bounds for length 4")
     }
+
+    val transposed: Vector1x4
+        get() = Vector1x4.of(
+            x = this.x,
+            y = this.y,
+            z = this.z,
+            w = this.w,
+        )
 }

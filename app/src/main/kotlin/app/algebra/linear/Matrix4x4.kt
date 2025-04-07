@@ -152,6 +152,10 @@ data class Matrix4x4(
         ),
     )
 
+    operator fun times(
+        other: InvertedMatrix4x4,
+    ): Matrix4x4 = this * other.calculate()
+
     fun swapRows(
         i0: Int,
         i1: Int,
@@ -430,6 +434,14 @@ data class Matrix4x4(
             u = u,
         )
     }
+
+    val transposed: Matrix4x4
+        get() = Matrix4x4.of(
+            row0 = column0.transposed,
+            row1 = column1.transposed,
+            row2 = column2.transposed,
+            row3 = column3.transposed,
+        )
 
     fun toUjmpMatrix(): Matrix = Matrix.Factory.fillByColumn(
         columnElements = listOf(

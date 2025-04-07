@@ -258,4 +258,29 @@ class Matrix4x4Tests {
             absoluteTolerance = 0.001,
         )
     }
+
+    @Test
+    fun testInvertCalculate() {
+        val aMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(7.0, 3.3, 3.0, 2.5),
+            row1 = Vector1x4.of(3.0, 6.0, 0.0, 5.0),
+            row2 = Vector1x4.of(5.0, 2.0, -1.0, 0.0),
+            row3 = Vector1x4.of(2.0, 3.0, 1.0, 4.0),
+        )
+
+        val aMatrixInverted = assertNotNull(aMatrix.invert())
+
+        val bMatrix = aMatrixInverted.calculate()
+
+        assertEquals(
+            expected = Matrix4x4.of(
+                row0 = Vector1x4.of(-0.0080, -0.1986, 0.2291, 0.2532),
+                row1 = Vector1x4.of(0.1849, 0.5667, -0.2693, -0.8239),
+                row2 = Vector1x4.of(0.3296, 0.1407, -0.3931, -0.3818),
+                row3 = Vector1x4.of(-0.2170, -0.3609, 0.1857, 0.8368),
+            ),
+            actual = bMatrix,
+            absoluteTolerance = 0.001,
+        )
+    }
 }
