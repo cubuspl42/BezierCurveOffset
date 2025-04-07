@@ -191,32 +191,12 @@ data class Matrix4x4(
         return rows.withIndex().drop(i0).maxBy { (_, row) -> selector(row) }.index
     }
 
-    fun invert(): Matrix4x4 = Matrix4x4.of(
-        row0 = Vector1x4.of(
-            x = 1.0 / this[0][0],
-            y = -this[0][1] / (this[0][0] * this[1][1]),
-            z = (this[0][1] * this[1][2] - this[0][2] * this[1][1]) / (this[0][0] * this[1][1] * this[2][2]),
-            w = (this[0][3] * this[2][2] * this[1][1] - this[0][2] * this[2][3] * this[1][1] - this[0][1] * (this[1][2] * this[2][3] - this[1][3] * this[2][2])) / (this[0][0] * this[1][1] * this[2][2] * this[3][3]),
-        ),
-        row1 = Vector1x4.of(
-            x = 0.0,
-            y = 1.0 / this[1][1],
-            z = -this[1][2] / (this[1][1] * this[2][2]),
-            w = (this[1][2] * this[2][3] - this[1][3] * this[2][2]) / (this[1][1] * this[2][2] * this[3][3]),
-        ),
-        row2 = Vector1x4.of(
-            x = 0.0,
-            y = 0.0,
-            z = 1.0 / this[2][2],
-            w = -this[2][3] / (this[2][2] * this[3][3]),
-        ),
-        row3 = Vector1x4.of(
-            x = 0.0,
-            y = 0.0,
-            z = 0.0,
-            w = 1.0 / this[3][3],
-        ),
-    )
+    fun invert(): InvertedMatrix4x4? {
+        val lupDecomposition = lupDecompose() ?: return null
+        return InvertedMatrix4x4(
+            lupDecomposition = lupDecomposition,
+        )
+    }
 
     /**
      * Checks if the matrix is upper triangular.
@@ -395,7 +375,7 @@ data class Matrix4x4(
         )
     }
 
-    internal fun luDecompose(): LuDecomposition? {
+    private fun luDecompose(): LuDecomposition? {
         val u11 = this[0][0]
         val u12 = this[0][1]
         val u13 = this[0][2]

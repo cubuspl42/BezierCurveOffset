@@ -110,24 +110,151 @@ class Matrix4x4Tests {
     }
 
     @Test
-    fun testInvertByBackSubstitution() {
-        val uMatrix = Matrix4x4.of(
+    fun testSolveByBackSubstitutionVector() {
+        val aMatrix = Matrix4x4.of(
             row0 = Vector1x4.of(2.0, 3.0, 1.0, 4.0),
             row1 = Vector1x4.of(0.0, 5.0, 2.0, 1.0),
             row2 = Vector1x4.of(0.0, 0.0, 3.0, 6.0),
             row3 = Vector1x4.of(0.0, 0.0, 0.0, 7.0),
         )
 
-        val uInvMatrix = uMatrix.invertByBackSubstitution()
+        val yVector = Vector4x1.of(1.0, 2.0, 3.0, 4.0)
+
+        val xVector = aMatrix.solveByBackSubstitution(
+            yVector = yVector,
+        )
+
+        assertEquals(
+            expected = Vector4x1.of(
+                x = -1.0857,
+                y = 0.3429,
+                z = -0.1429,
+                w = 0.5714,
+            ),
+            actual = xVector,
+            absoluteTolerance = 0.001,
+        )
+    }
+
+    @Test
+    fun testSolveByBackSubstitutionMatrix() {
+        val aMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(2.0, 3.0, 1.0, 4.0),
+            row1 = Vector1x4.of(0.0, 5.0, 2.0, 1.0),
+            row2 = Vector1x4.of(0.0, 0.0, 3.0, 6.0),
+            row3 = Vector1x4.of(0.0, 0.0, 0.0, 7.0),
+        )
+
+        val yMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(1.0, 2.0, 3.0, 4.0),
+            row1 = Vector1x4.of(5.0, 6.0, 7.0, 8.0),
+            row2 = Vector1x4.of(9.0, 10.0, 11.0, 12.0),
+            row3 = Vector1x4.of(13.0, 14.0, 15.0, 16.0),
+        )
+
+        val xMatrix = aMatrix.solveByBackSubstitution(
+            yMatrix = yMatrix,
+        )
 
         assertEquals(
             expected = Matrix4x4.of(
-                row0 = Vector1x4.of(0.5, -0.3, 0.0333, -0.2714),
-                row1 = Vector1x4.of(0.0, 0.2, -0.1333, 0.0857),
-                row2 = Vector1x4.of(0.0, 0.0, 0.3333, -0.2857),
-                row3 = Vector1x4.of(0.0, 0.0, 0.0, 0.1429),
+                row0 = Vector1x4.of(-4.2286, -4.2667, -4.3048, -4.3429),
+                row1 = Vector1x4.of(0.9143, 1.0667, 1.2190, 1.3714),
+                row2 = Vector1x4.of(-0.7143, -0.6667, -0.6190, -0.5714),
+                row3 = Vector1x4.of(1.8571, 2.0000, 2.1429, 2.2857),
             ),
-            actual = uInvMatrix,
+            actual = xMatrix,
+            absoluteTolerance = 0.001,
+        )
+    }
+
+    @Test
+    fun testSolveByForwardSubstitutionVector() {
+        val aMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(7.0, 0.0, 0.0, 0.0),
+            row1 = Vector1x4.of(3.0, 6.0, 0.0, 0.0),
+            row2 = Vector1x4.of(5.0, 2.0, 1.0, 0.0),
+            row3 = Vector1x4.of(2.0, 3.0, 1.0, 4.0),
+        )
+
+        val yVector = Vector4x1.of(1.0, 2.0, 3.0, 4.0)
+
+        val xVector = aMatrix.solveByForwardSubstitution(
+            yVector = yVector,
+        )
+
+        assertEquals(
+            expected = Vector4x1.of(
+                x = 0.1429,
+                y = 0.2619,
+                z = 1.7619,
+                w = 0.2917,
+            ),
+            actual = xVector,
+            absoluteTolerance = 0.001,
+        )
+    }
+
+    @Test
+    fun testSolveByForwardSubstitutionMatrix() {
+        val aMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(7.0, 0.0, 0.0, 0.0),
+            row1 = Vector1x4.of(3.0, 6.0, 0.0, 0.0),
+            row2 = Vector1x4.of(5.0, 2.0, 1.0, 0.0),
+            row3 = Vector1x4.of(2.0, 3.0, 1.0, 4.0),
+        )
+
+        val yMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(1.0, 2.0, 3.0, 4.0),
+            row1 = Vector1x4.of(5.0, 6.0, 7.0, 8.0),
+            row2 = Vector1x4.of(9.0, 10.0, 11.0, 12.0),
+            row3 = Vector1x4.of(13.0, 14.0, 15.0, 16.0),
+        )
+
+        val xMatrix = aMatrix.solveByForwardSubstitution(
+            yMatrix = yMatrix,
+        )
+
+        assertEquals(
+            expected = Matrix4x4.of(
+                row0 = Vector1x4.of(0.1429, 0.2857, 0.4286, 0.5714),
+                row1 = Vector1x4.of(0.7619, 0.8571, 0.9524, 1.0476),
+                row2 = Vector1x4.of(6.7619, 6.8571, 6.9524, 7.0476),
+                row3 = Vector1x4.of(0.9167, 1.0000, 1.0833, 1.1667),
+            ),
+            actual = xMatrix,
+            absoluteTolerance = 0.001,
+        )
+    }
+
+    @Test
+    fun testInvertTimes() {
+        val aMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(7.0, 3.3, 3.0, 2.5),
+            row1 = Vector1x4.of(3.0, 6.0, 0.0, 5.0),
+            row2 = Vector1x4.of(5.0, 2.0, -1.0, 0.0),
+            row3 = Vector1x4.of(2.0, 3.0, 1.0, 4.0),
+        )
+
+        val bMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(1.0, 2.0, 3.0, 4.0),
+            row1 = Vector1x4.of(5.5, 6.0, -7.0, 8.0),
+            row2 = Vector1x4.of(9.0, -10.0, 11.0, 12.0),
+            row3 = Vector1x4.of(13.0, 14.0, 15.0, 16.0),
+        )
+
+        val aMatrixInverted = assertNotNull(aMatrix.invert())
+
+        val cMatrix = aMatrixInverted * bMatrix
+
+        assertEquals(
+            expected = Matrix4x4.of(
+                row0 = Vector1x4.of(4.2536, 0.0466, 7.6841, 5.1801),
+                row1 = Vector1x4.of(-9.8332, -5.0723, -18.7341, -11.1410),
+                row2 = Vector1x4.of(-7.3983, 0.0884, -10.0470, -8.3826),
+                row3 = Vector1x4.of(10.3480, 7.2588, 16.4700, 11.8620),
+            ),
+            actual = cMatrix,
             absoluteTolerance = 0.001,
         )
     }
