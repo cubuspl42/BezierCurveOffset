@@ -6,20 +6,23 @@ import app.geometry.curves.SegmentCurve
 import app.mapFirst
 import app.withPreviousOrNull
 
-class OpenSpline<out CurveT: SegmentCurve<CurveT>>(
+class OpenSpline<
+        out CurveT : SegmentCurve<CurveT>,
+        out EdgeMetadata,
+        >(
     /**
      * The path of links, must not be empty
      */
-    override val segments: List<Segment<CurveT>>,
+    override val segments: List<Segment<CurveT, EdgeMetadata>>,
     /**
      * The plug node that terminates the path of links
      */
-    val terminator: Terminator,
-) : Spline<CurveT>() {
+    val terminator: Spline.Terminator,
+) : Spline<CurveT, EdgeMetadata>() {
     companion object {
-        fun <CurveT : SegmentCurve<CurveT>> merge(
-            splines: List<OpenSpline<CurveT>>,
-        ): OpenSpline<CurveT> {
+        fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata> merge(
+            splines: List<OpenSpline<CurveT, EdgeMetadata>>,
+        ): OpenSpline<CurveT, EdgeMetadata> {
             require(splines.isNotEmpty())
 
             if (splines.size == 1) {
@@ -65,10 +68,14 @@ class OpenSpline<out CurveT: SegmentCurve<CurveT>>(
 
     override val rightEdgeNode: Node
         get() = terminator
+
 }
 
-fun <CurveT : SegmentCurve<CurveT>> OpenSpline<CurveT>.mergeWith(
-    rightSubSplitCurve: OpenSpline<CurveT>,
-): OpenSpline<CurveT> = OpenSpline.merge(
-    splines = listOf(this, rightSubSplitCurve),
+fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata> OpenSpline<CurveT, EdgeMetadata>.mergeWith(
+    other: OpenSpline<CurveT, EdgeMetadata>,
+): OpenSpline<CurveT, EdgeMetadata> = OpenSpline.merge(
+    splines = listOf(this, other),
 )
+
+val <CurveT : SegmentCurve<CurveT>> OpenSpline<CurveT, SegmentCurve.OffsetEdgeMetadata>.globalDeviation
+    get() = segments.maxOf { it.edgeMetadata.globalDeviation }

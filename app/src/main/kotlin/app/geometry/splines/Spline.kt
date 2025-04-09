@@ -2,15 +2,16 @@ package app.geometry.splines
 
 import app.Dumpbable
 import app.SVGGElementUtils
+import app.algebra.NumericObject
 import app.geometry.Point
-import app.geometry.curves.LineSegment
-import app.geometry.transformations.Transformation
-import app.geometry.curves.bezier.CubicBezierCurve
-import app.geometry.curves.SegmentCurve
-import app.geometry.curves.toDebugSvgPathGroup
 import app.geometry.cubicTo
+import app.geometry.curves.LineSegment
+import app.geometry.curves.SegmentCurve
+import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.curves.toDebugSvgPathGroup
 import app.geometry.lineTo
 import app.geometry.moveTo
+import app.geometry.transformations.Transformation
 import app.mapWithNext
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement
@@ -22,7 +23,10 @@ import java.awt.geom.Path2D
  * A Bézier spline, also called "poly-Bézier curve", or "composite Bézier curve"
  * (a spline formed of cubic Bézier curves)
  */
-sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
+sealed class Spline<
+        out CurveT : SegmentCurve<CurveT>,
+        out EdgeMetadata,
+        > {
     sealed interface Node {
         /**
          * The "front" knot, i.e. the next knot when looked from the perspective
@@ -31,28 +35,36 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
         val frontKnot: Point
     }
 
-    data class Segment<out CurveT : SegmentCurve<CurveT>>(
+    data class Segment<
+            out CurveT : SegmentCurve<CurveT>,
+            out EdgeMetadata,
+            >(
         val startKnot: Point,
         val edge: SegmentCurve.Edge<CurveT>,
-    ) : Node, Dumpbable {
+        val edgeMetadata: EdgeMetadata,
+    ) : Node, NumericObject, Dumpbable {
         companion object {
-            fun bezier(
+            fun <Metadata> bezier(
                 startKnot: Point,
                 control0: Point,
                 control1: Point,
-            ): Segment<CubicBezierCurve> = Segment(
+                metadata: Metadata,
+            ): Segment<CubicBezierCurve, Metadata> = Segment(
                 startKnot = startKnot,
                 edge = CubicBezierCurve.Edge(
                     control0 = control0,
                     control1 = control1,
                 ),
+                edgeMetadata = metadata,
             )
 
-            fun lineSegment(
+            fun <Metadata> lineSegment(
                 startKnot: Point,
-            ): Segment<LineSegment> = Segment(
+                metadata: Metadata,
+            ): Segment<LineSegment, Metadata> = Segment(
                 startKnot = startKnot,
                 edge = LineSegment.Edge,
+                edgeMetadata = metadata,
             )
         }
 
@@ -68,20 +80,39 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
 
         fun simplify(
             endKnot: Point,
-        ): Segment<*> = Segment<SegmentCurve<*>>(
+        ): Segment<*, EdgeMetadata> = Segment(
             startKnot = startKnot,
             edge = edge.simplify(
                 startKnot = startKnot,
                 endKnot = endKnot,
             ),
+            edgeMetadata = edgeMetadata,
         )
 
         fun transformVia(
             transformation: Transformation,
-        ): Segment<CurveT> = Segment(
+        ): Segment<CurveT, EdgeMetadata> = Segment(
             startKnot = startKnot.transformVia(transformation = transformation),
             edge = edge.transformVia(transformation),
+            edgeMetadata = edgeMetadata,
         )
+
+        fun <NewEdgeMetadata> mapMetadata(
+            transform: (EdgeMetadata) -> NewEdgeMetadata,
+        ): Segment<CurveT, NewEdgeMetadata> = Segment(
+            startKnot = startKnot,
+            edge = edge,
+            edgeMetadata = transform(edgeMetadata),
+        )
+
+        override fun equalsWithTolerance(other: NumericObject, absoluteTolerance: Double): Boolean {
+            return when {
+                other !is Segment<*, *> -> false
+                !other.startKnot.equalsWithTolerance(other.startKnot, absoluteTolerance = absoluteTolerance) -> false
+                other.edge != edge -> false
+                else -> true
+            }
+        }
     }
 
     data class Terminator(
@@ -91,7 +122,7 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
             get() = endKnot
     }
 
-    val firstSegment: Segment<CurveT>
+    val firstSegment: Segment<CurveT, EdgeMetadata>
         get() = segments.first()
 
     /**
@@ -99,7 +130,7 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
      */
     abstract val nodes: Iterable<Node>
 
-    abstract val segments: Iterable<Segment<CurveT>>
+    abstract val segments: Iterable<Segment<CurveT, EdgeMetadata>>
 
     abstract val rightEdgeNode: Node
 
@@ -117,7 +148,7 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
     }
 }
 
-//fun Spline<*>.toDebugSvgPathGroup(
+//fun Spline<*, *>.toDebugSvgPathGroup(
 //    document: SVGDocument,
 //): SVGGElement = document.createGElement().apply {
 //    subCurves.forEach { subCurve ->
@@ -125,7 +156,7 @@ sealed class Spline<out CurveT : SegmentCurve<CurveT>> {
 //    }
 //}
 
-fun Spline<*>.toDebugSvgPathGroup(
+fun Spline<*, *>.toDebugSvgPathGroup(
     document: SVGDocument,
 ): SVGGElement = SVGGElementUtils.of(
     document = document,
@@ -134,7 +165,7 @@ fun Spline<*>.toDebugSvgPathGroup(
     },
 )
 
-fun OpenSpline<*>.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {
+fun OpenSpline<*, *>.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {
     moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
@@ -142,7 +173,7 @@ fun OpenSpline<*>.toControlPathOpen(): Path2D.Double = Path2D.Double().apply {
     }
 }
 
-fun OpenSpline<*>.toPathOpen(): Path2D.Double = Path2D.Double().apply {
+fun OpenSpline<*, *>.toPathOpen(): Path2D.Double = Path2D.Double().apply {
     moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
@@ -150,7 +181,7 @@ fun OpenSpline<*>.toPathOpen(): Path2D.Double = Path2D.Double().apply {
     }
 }
 
-fun ClosedSpline<*>.toControlPathClosed(): Path2D.Double = Path2D.Double().apply {
+fun ClosedSpline<*, *>.toControlPathClosed(): Path2D.Double = Path2D.Double().apply {
     moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
@@ -160,7 +191,7 @@ fun ClosedSpline<*>.toControlPathClosed(): Path2D.Double = Path2D.Double().apply
     closePath()
 }
 
-fun ClosedSpline<*>.toPathClosed(): Path2D.Double = Path2D.Double().apply {
+fun ClosedSpline<*, *>.toPathClosed(): Path2D.Double = Path2D.Double().apply {
     moveTo(firstSegment.startKnot)
 
     subCurves.forEach { subCurve ->
@@ -188,17 +219,17 @@ fun Path2D.pathTo(curve: SegmentCurve<*>) {
     }
 }
 
-fun Spline<*>.toControlPath(): Path2D.Double = when (this) {
+fun Spline<*, *>.toControlPath(): Path2D.Double = when (this) {
     is ClosedSpline -> toControlPathClosed()
     is OpenSpline -> toControlPathOpen()
 }
 
-fun Spline<*>.toPath(): Path2D.Double = when (this) {
+fun Spline<*, *>.toPath(): Path2D.Double = when (this) {
     is ClosedSpline -> toPathClosed()
     is OpenSpline -> toPathOpen()
 }
 
-fun Spline<*>.drawSpline(
+fun Spline<*, *>.drawSpline(
     graphics2D: Graphics2D,
     color: Color = Color.BLACK,
 ) {

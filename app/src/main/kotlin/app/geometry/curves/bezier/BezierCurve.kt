@@ -12,8 +12,8 @@ import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.TimedPointSeries
 import app.geometry.curves.SegmentCurve
-import app.geometry.curves.mergeWith
 import app.geometry.splines.OpenSpline
+import app.geometry.splines.mergeWith
 import app.partitionSorted
 
 /**
@@ -27,14 +27,13 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
             val approximationRatingSampleCount = 16
         }
 
-        fun toOffsetSplineApproximationResult(): OffsetSplineApproximationResult<CubicBezierCurve> =
-            object : OffsetSplineApproximationResult<CubicBezierCurve>() {
-                override val offsetSpline: OpenSpline<CubicBezierCurve>
-                    get() = offsetCurve.toSpline()
-
-                override val globalDeviation: Double
-                    get() = deviation
-            }
+        fun toOffsetSplineApproximationResult(): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata> =
+            offsetCurve.toSpline(
+                edgeMetadata = object : OffsetEdgeMetadata() {
+                    override val globalDeviation: Double
+                        get() = deviation
+                },
+            )
 
         /**
          * @return The calculated deviation
@@ -159,7 +158,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     final override fun findOffsetSpline(
         strategy: OffsetStrategy,
         offset: Double,
-    ): OffsetSplineApproximationResult<CubicBezierCurve>? {
+    ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
         val initialOffsetCurveResult = findApproximatedOffsetCurve(
             strategy = strategy,
             offset = offset,
@@ -194,7 +193,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OffsetSplineApproximationResult<CubicBezierCurve>? {
+    ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
         val offsetCurveResult = findApproximatedOffsetCurve(
             strategy = strategy,
             offset = offset,
@@ -297,7 +296,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     private fun splitAtCriticalPointsAndFindOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
-    ): OffsetSplineApproximationResult<CubicBezierCurve>? {
+    ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
         val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
 
         if (criticalPoints.isNotEmpty()) {
@@ -306,8 +305,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
                 return null
             }
 
-            val subResults = initialSplitSubCurves.mapNotNull { splitCurve ->
-
+            val subSplines = initialSplitSubCurves.mapNotNull { splitCurve ->
                 // After splitting at the critical points, each sub-curves should
                 // be theoretically non-degenerate, even if this curve is degenerate.
                 // The problem of gluing at the critical point is shifted onto
@@ -323,15 +321,15 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
                 )
             }
 
-            if (subResults.isEmpty()) {
+            if (subSplines.isEmpty()) {
                 // None of the split curve was even longitudinal, or all of the
                 // longitudinal sub-curves were too tiny to construct an offset
                 // spline for them
                 return null
             }
 
-            return OffsetSplineApproximationResult.merge(
-                subResults = subResults
+            return OpenSpline.merge(
+                subSplines
             )
 
         } else {
@@ -417,7 +415,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OffsetSplineApproximationResult<CubicBezierCurve>? {
+    ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
         val (leftSplitCurve, rightSplitCurve) = splitAt(t = 0.5) ?: run {
             // If the t-value 0.5 is too close to 0 or 1 to even split the curve,
             // this curve is just too tiny to generate the offset spline for it

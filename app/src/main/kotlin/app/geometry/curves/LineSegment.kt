@@ -1,15 +1,16 @@
 package app.geometry.curves
 
+import app.algebra.NumericObject
 import app.fillCircle
 import app.geometry.BoundingBox
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
+import app.geometry.curves.bezier.BezierCurve
+import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.splines.OpenSpline
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.Translation
-import app.geometry.curves.bezier.CubicBezierCurve
-import app.geometry.curves.bezier.BezierCurve
-import app.geometry.splines.OpenSpline
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 import org.w3c.dom.svg.SVGPathSegLinetoAbs
@@ -38,6 +39,11 @@ data class LineSegment(
         override fun transformVia(
             transformation: Transformation,
         ): Edge = Edge
+
+        override fun equalsWithTolerance(
+            other: NumericObject,
+            absoluteTolerance: Double,
+        ): Boolean = other is Edge
 
         override fun toString(): String = "LineSegment.Edge"
     }
@@ -103,21 +109,17 @@ data class LineSegment(
     override fun findOffsetSpline(
         strategy: BezierCurve.OffsetStrategy,
         offset: Double,
-    ): OffsetSplineApproximationResult<LineSegment>? = findOffsetLineSegment(
+    ): OpenSpline<LineSegment, OffsetEdgeMetadata>? = findOffsetLineSegment(
         offset = offset,
-    )?.let { offsetLineSegment ->
-        object : OffsetSplineApproximationResult<LineSegment>() {
-            override val offsetSpline: OpenSpline<LineSegment> = offsetLineSegment.toSpline()
-
-            override val globalDeviation: Double = 0.0
-        }
-    }
+    )?.toSpline(
+        edgeMetadata = OffsetEdgeMetadata.Precise,
+    )
 
     override fun findOffsetSplineRecursive(
         strategy: BezierCurve.OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OffsetSplineApproximationResult<LineSegment>? {
+    ): OpenSpline<*, OffsetEdgeMetadata>? {
         // We ignore the subdivision level, because lineSegment offset is always optimal and safe to compute (unless it's
         // a point)
         return findOffsetSpline(

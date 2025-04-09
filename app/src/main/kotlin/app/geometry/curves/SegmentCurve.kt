@@ -1,6 +1,7 @@
 package app.geometry.curves
 
 import app.SVGGElementUtils
+import app.algebra.NumericObject
 import app.createPathElement
 import app.fill
 import app.geometry.BoundingBox
@@ -21,28 +22,10 @@ import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 
 abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
-    abstract class OffsetSplineApproximationResult<out CurveT : SegmentCurve<CurveT>> {
-        companion object {
-            fun <CurveT : SegmentCurve<CurveT>> merge(
-                subResults: List<OffsetSplineApproximationResult<CurveT>>,
-            ): OffsetSplineApproximationResult<CurveT> {
-                require(subResults.isNotEmpty())
-
-                return object : OffsetSplineApproximationResult<CurveT>() {
-                    override val offsetSpline: OpenSpline<CurveT> by lazy {
-                        OpenSpline.merge(
-                            splines = subResults.map { it.offsetSpline },
-                        )
-                    }
-
-                    override val globalDeviation: Double by lazy {
-                        subResults.maxOf { it.globalDeviation }
-                    }
-                }
-            }
+    abstract class OffsetEdgeMetadata {
+        object Precise : OffsetEdgeMetadata() {
+            override val globalDeviation: Double = 0.0
         }
-
-        abstract val offsetSpline: OpenSpline<CurveT>
 
         abstract val globalDeviation: Double
     }
@@ -50,22 +33,26 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
     abstract fun findOffsetSpline(
         strategy: BezierCurve.OffsetStrategy,
         offset: Double,
-    ): OffsetSplineApproximationResult<CurveT>?
+    ): OpenSpline<*, OffsetEdgeMetadata>?
 
     abstract fun findOffsetSplineRecursive(
         strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
-    ): OffsetSplineApproximationResult<CurveT>?
+    ): OpenSpline<*, OffsetEdgeMetadata>?
 
-    fun toSpline(): OpenSpline<CurveT> = OpenSpline(
-        segments = listOf(segment),
+    fun <EdgeMetadata> toSpline(
+        edgeMetadata: EdgeMetadata,
+    ): OpenSpline<CurveT, EdgeMetadata> = OpenSpline(
+        segments = listOf(
+            toSegment(edgeMetadata = edgeMetadata),
+        ),
         terminator = Spline.Terminator(
             endKnot = end,
         ),
     )
 
-    abstract class Edge<out CurveT : SegmentCurve<CurveT>> {
+    abstract class Edge<out CurveT : SegmentCurve<CurveT>> : NumericObject {
         abstract fun bind(
             startKnot: Point,
             endKnot: Point,
@@ -86,11 +73,13 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         ): Edge<CurveT>
     }
 
-    val segment: Spline.Segment<CurveT>
-        get() = Spline.Segment(
-            startKnot = start,
-            edge = edge,
-        )
+    fun <EdgeMetadata> toSegment(
+        edgeMetadata: EdgeMetadata,
+    ): Spline.Segment<CurveT, EdgeMetadata> = Spline.Segment(
+        startKnot = start,
+        edge = edge,
+        edgeMetadata = edgeMetadata,
+    )
 
     abstract fun findBoundingBox(): BoundingBox
 
@@ -106,12 +95,6 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
 
     abstract val simplified: SegmentCurve<*>
 }
-
-fun <CurveT : SegmentCurve<CurveT>> SegmentCurve.OffsetSplineApproximationResult<CurveT>.mergeWith(
-    rightResult: SegmentCurve.OffsetSplineApproximationResult<CurveT>,
-): SegmentCurve.OffsetSplineApproximationResult<CurveT> = SegmentCurve.OffsetSplineApproximationResult.merge(
-    subResults = listOf(this, rightResult),
-)
 
 fun SegmentCurve<*>.toDebugSvgPathGroup(
     document: SVGDocument,

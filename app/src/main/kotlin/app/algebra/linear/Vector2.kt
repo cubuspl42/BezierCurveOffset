@@ -1,8 +1,9 @@
 package app.algebra.linear
 
+import app.algebra.NumericObject
 import kotlin.math.sqrt
 
-abstract class Vector2 {
+abstract class Vector2 : NumericObject {
     companion object {
         fun of(
             x: Double,

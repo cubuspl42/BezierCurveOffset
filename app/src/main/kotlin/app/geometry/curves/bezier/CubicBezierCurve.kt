@@ -1,6 +1,7 @@
 package app.geometry.curves.bezier
 
 import app.SVGGElementUtils
+import app.algebra.NumericObject
 import app.algebra.linear.Vector2x1
 import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
@@ -58,6 +59,16 @@ data class CubicBezierCurve private constructor(
             control0 = control0.transformVia(transformation = transformation),
             control1 = control1.transformVia(transformation = transformation),
         )
+
+        override fun equalsWithTolerance(
+            other: NumericObject,
+            absoluteTolerance: Double,
+        ): Boolean = when {
+            other !is Edge -> false
+            !control0.equalsWithTolerance(other.control0, absoluteTolerance = absoluteTolerance) -> false
+            !control1.equalsWithTolerance(other.control1, absoluteTolerance = absoluteTolerance) -> false
+            else -> true
+        }
     }
 
     companion object {

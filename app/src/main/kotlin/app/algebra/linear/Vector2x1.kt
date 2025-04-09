@@ -1,9 +1,10 @@
 package app.algebra.linear
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.toDirection
-import kotlin.math.sqrt
 
 /**
  * A two-dimensional vector, which might (but doesn't have to) have a spatial interpretation
@@ -108,6 +109,16 @@ data class Vector2x1 private constructor(
         get() = Vector2x1.of(-y, x)
 
     fun toPoint(): Point = Point.of(pv = this)
+
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double
+    ): Boolean = when {
+        other !is Vector2x1 -> false
+        !x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) -> false
+        !y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) -> false
+        else -> true
+    }
 }
 
 operator fun Vector2x1.unaryMinus(): Vector2x1 = Vector2x1.of(

@@ -1,5 +1,6 @@
 package app.geometry.splines
 
+import app.algebra.assertEqualsWithTolerance
 import app.assertEquals
 import app.component10
 import app.component11
@@ -25,15 +26,17 @@ import app.component8
 import app.component9
 import app.geometry.Point
 import app.geometry.curves.LineSegment
+import app.geometry.curves.SegmentCurve.OffsetEdgeMetadata
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.BezierCurve
+import app.geometry.splines.ClosedSpline.ContourEdgeMetadata
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 
-private val eps = 10e3
+private val eps = 10e-3
 
 class ClosedSplineTests {
     @Test
@@ -47,6 +50,7 @@ class ClosedSplineTests {
             startKnot = knot0Start,
             control0 = control0,
             control1 = control1,
+            metadata = OffsetEdgeMetadata.Precise,
         )
 
         val spline = OpenSpline(
@@ -64,12 +68,20 @@ class ClosedSplineTests {
 
         assertEquals(
             expected = listOf(
-                bezierSegment0,
+                Spline.Segment(
+                    startKnot = bezierSegment0.startKnot,
+                    edge = bezierSegment0.edge,
+                    edgeMetadata = ContourEdgeMetadata.Side(
+                        offsetMetadata = OffsetEdgeMetadata.Precise,
+                    ),
+                ),
                 Spline.Segment.lineSegment(
                     startKnot = knot1End,
+                    metadata = ContourEdgeMetadata.Corner,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = Point.of(0.0, 1.0),
+                    metadata = ContourEdgeMetadata.Corner,
                 ),
             ),
             actual = interconnectedSpline.segments,
@@ -92,12 +104,14 @@ class ClosedSplineTests {
             startKnot = knot0,
             control0 = control0,
             control1 = control1,
+            metadata = OffsetEdgeMetadata.Precise,
         )
 
         val bezierSegment1 = Spline.Segment.bezier(
             startKnot = knot2,
             control0 = control2,
             control1 = control3,
+            metadata = OffsetEdgeMetadata.Precise,
         )
 
         val spline0 = OpenSpline(
@@ -124,19 +138,35 @@ class ClosedSplineTests {
 
         assertEquals(
             expected = listOf(
-                bezierSegment0,
+                Spline.Segment(
+                    startKnot = bezierSegment0.startKnot,
+                    edge = bezierSegment0.edge,
+                    edgeMetadata = ContourEdgeMetadata.Side(
+                        offsetMetadata = OffsetEdgeMetadata.Precise,
+                    ),
+                ),
                 Spline.Segment.lineSegment(
                     startKnot = knot1,
+                    metadata = ContourEdgeMetadata.Corner,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = Point.of(3.5, 0.25),
+                    metadata = ContourEdgeMetadata.Corner,
                 ),
-                bezierSegment1,
+                Spline.Segment(
+                    startKnot = bezierSegment1.startKnot,
+                    edge = bezierSegment1.edge,
+                    edgeMetadata = ContourEdgeMetadata.Side(
+                        offsetMetadata = OffsetEdgeMetadata.Precise,
+                    ),
+                ),
                 Spline.Segment.lineSegment(
                     startKnot = knot3,
+                    metadata = ContourEdgeMetadata.Corner,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = Point.of(-0.5, 0.25),
+                    metadata = ContourEdgeMetadata.Corner,
                 ),
             ),
             actual = interconnectedSpline.segments,
@@ -164,18 +194,21 @@ class ClosedSplineTests {
             startKnot = knot0,
             control0 = control0,
             control1 = control1,
+            metadata = OffsetEdgeMetadata.Precise,
         )
 
         val bezierSegment1 = Spline.Segment.bezier(
             startKnot = knot2,
             control0 = control2,
             control1 = control3,
+            metadata = OffsetEdgeMetadata.Precise,
         )
 
         val bezierSegment2 = Spline.Segment.bezier(
             startKnot = knot4,
             control0 = control4,
             control1 = control5,
+            metadata = OffsetEdgeMetadata.Precise,
         )
 
         val spline0 = OpenSpline(
@@ -222,13 +255,20 @@ class ClosedSplineTests {
         ) = interconnectedSpline.segments
 
         assertEquals(
-            expected = bezierSegment0,
+            expected = Spline.Segment(
+                startKnot = bezierSegment0.startKnot,
+                edge = bezierSegment0.edge,
+                edgeMetadata = ContourEdgeMetadata.Side(
+                    offsetMetadata = OffsetEdgeMetadata.Precise,
+                ),
+            ),
             actual = actualSegment0,
         )
 
         assertEquals(
             expected = Spline.Segment.lineSegment(
                 startKnot = knot1,
+                metadata = ContourEdgeMetadata.Corner,
             ),
             actual = actualSegment1,
         )
@@ -236,51 +276,65 @@ class ClosedSplineTests {
         assertEquals(
             expected = Spline.Segment.lineSegment(
                 startKnot = Point.of(0.0, 7.5),
+                metadata = ContourEdgeMetadata.Corner,
             ),
             actual = actualSegment2,
         )
 
         assertEquals(
-            expected = bezierSegment1,
+            expected = Spline.Segment(
+                startKnot = bezierSegment1.startKnot,
+                edge = bezierSegment1.edge,
+                edgeMetadata = ContourEdgeMetadata.Side(
+                    offsetMetadata = OffsetEdgeMetadata.Precise,
+                ),
+            ),
             actual = actualSegment3,
         )
 
         assertEquals(
             expected = Spline.Segment.lineSegment(
                 startKnot = knot3,
+                metadata = ContourEdgeMetadata.Corner,
             ),
             actual = actualSegment4,
         )
 
-        assertIs<LineSegment.Edge>(
-            actualSegment5.edge,
-        )
 
-        assertEquals(
-            expected = Point.of(3.33, -0.33),
-            actual = actualSegment5.startKnot,
+        assertEqualsWithTolerance(
+            expected = Spline.Segment.lineSegment(
+                startKnot = Point.of(3.33, -0.33),
+                metadata = ContourEdgeMetadata.Corner,
+            ),
+            actual = actualSegment5,
             absoluteTolerance = eps,
         )
 
         assertEquals(
-            expected = bezierSegment2,
+            expected = Spline.Segment(
+                startKnot = bezierSegment2.startKnot,
+                edge = bezierSegment2.edge,
+                edgeMetadata = ContourEdgeMetadata.Side(
+                    offsetMetadata = OffsetEdgeMetadata.Precise,
+                ),
+            ),
             actual = actualSegment6,
         )
 
         assertEquals(
             expected = Spline.Segment.lineSegment(
                 startKnot = knot5,
+                metadata = ContourEdgeMetadata.Corner,
             ),
             actual = actualSegment7,
         )
 
-        assertIs<LineSegment.Edge>(
-            actualSegment8.edge,
-        )
-
-        assertEquals(
-            expected = Point.of(-3.33, -0.33),
-            actual = actualSegment8.startKnot,
+        assertEqualsWithTolerance(
+            expected = Spline.Segment.lineSegment(
+                startKnot = Point.of(-3.33, -0.33),
+                metadata = ContourEdgeMetadata.Corner,
+            ),
+            actual = actualSegment8,
             absoluteTolerance = eps,
         )
     }
@@ -296,6 +350,7 @@ class ClosedSplineTests {
                         control0 = Point.of(13.32, 31.18),
                         control1 = Point.of(18.35, 72.59),
                     ),
+                    edgeMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(24.34, 78.87),
@@ -303,6 +358,7 @@ class ClosedSplineTests {
                         control0 = Point.of(53.47, 78.29),
                         control1 = Point.of(37.93, 65.40),
                     ),
+                    edgeMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(76.11, 65.90),
@@ -310,6 +366,7 @@ class ClosedSplineTests {
                         control0 = Point.of(71.17, 60.22),
                         control1 = Point.of(66.51, 49.56),
                     ),
+                    edgeMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(65.66, 43.91),
@@ -317,6 +374,7 @@ class ClosedSplineTests {
                         control0 = Point.of(55.22, 45.42),
                         control1 = Point.of(51.91, 43.18),
                     ),
+                    edgeMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(43.77, 46.24),
@@ -324,6 +382,7 @@ class ClosedSplineTests {
                         control0 = Point.of(42.30, 39.67),
                         control1 = Point.of(43.84, 25.10),
                     ),
+                    edgeMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(45.47, 20.40),
@@ -331,11 +390,12 @@ class ClosedSplineTests {
                         control0 = Point.of(35.84, 27.35),
                         control1 = Point.of(32.91, 26.87),
                     ),
+                    edgeMetadata = null,
                 ),
             ),
         )
 
-        val contourSplineResult = assertNotNull(
+        val contourSpline = assertNotNull(
             innerSpline.findContourSpline(
                 strategy = BezierCurve.BestFitOffsetStrategy,
                 offset = 10.0,
@@ -343,12 +403,10 @@ class ClosedSplineTests {
         )
 
         assertEquals(
-            expected = contourSplineResult.globalOffsetDeviation,
+            expected = contourSpline.globalOffsetDeviation,
             actual = 0.0,
             absoluteTolerance = eps,
         )
-
-        val contourSpline = contourSplineResult.contourSpline
 
         val (
             actualSegment0,

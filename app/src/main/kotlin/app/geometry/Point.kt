@@ -1,5 +1,7 @@
 package app.geometry
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
 import app.algebra.linear.Vector2x1
 import app.algebra.linear.div
 import app.equalsZeroApproximately
@@ -10,7 +12,7 @@ import java.awt.geom.Path2D
 @Suppress("DataClassPrivateConstructor")
 data class Point private constructor(
     val pv: Vector2x1,
-) {
+) : NumericObject {
     companion object {
         val zero = Point(
             pv = Vector2x1.zero,
@@ -178,6 +180,15 @@ data class Point private constructor(
     fun translateVia(
         translation: Translation,
     ): Point = translation.translate(this)
+
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double
+    ): Boolean = when {
+        other !is Point -> false
+        !other.pv.equalsWithTolerance(other.pv, absoluteTolerance = absoluteTolerance) -> false
+        else -> true
+    }
 }
 
 fun Path2D.moveTo(p: Point) {

@@ -4,7 +4,12 @@ import app.assertEquals
 import app.geometry.Point
 import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.bezier.CubicBezierCurve
-import kotlin.test.*
+import app.geometry.splines.globalDeviation
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertIs
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class CubicBezierSegmentCurveTests {
     private val eps = 10e-3

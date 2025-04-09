@@ -109,7 +109,7 @@ sealed class PathSeg {
     abstract val finalPoint: Point
 }
 
-fun SVGPathElement.toClosedSpline(): ClosedSpline<*> {
+fun SVGPathElement.toClosedSpline(): ClosedSpline<*, *> {
     val svgPathSegs = pathSegList.asList()
 
     require(svgPathSegs.last().pathSegType == SVGPathSeg.PATHSEG_CLOSEPATH)
@@ -130,6 +130,7 @@ fun SVGPathElement.toClosedSpline(): ClosedSpline<*> {
         Spline.Segment(
             startKnot = startKnot,
             edge = pathSeg.toEdge(startKnot),
+            edgeMetadata = null,
         )
     }
 
@@ -141,7 +142,7 @@ fun SVGPathElement.toClosedSpline(): ClosedSpline<*> {
 fun extractChild(
     transformation: TotalTransformation,
     element: Element,
-): ClosedSpline<*> = when (val singleChild = element.childElements.single()) {
+): ClosedSpline<*, *> = when (val singleChild = element.childElements.single()) {
     is SVGPathElement -> singleChild.toClosedSpline().transformVia(
         transformation = transformation
     )
@@ -159,7 +160,7 @@ fun extractChild(
 
 fun extractSplineFromFile(
     filePath: Path,
-): ClosedSpline<*> {
+): ClosedSpline<*, *> {
     val reader = filePath.reader()
     val uri = "file://Bezier.svg"
 
@@ -179,16 +180,12 @@ fun main() {
 
     println(spline.dump())
 
-    val contourSplineResult = spline.findContourSpline(
+    val contourSpline = spline.findContourSpline(
         strategy = BezierCurve.BestFitOffsetStrategy,
         offset = 40.0,
     )!!
 
-    val contourSpline = contourSplineResult.contourSpline
-
     val contourBoundingBox = contourSpline.findBoundingBox()
-
-    val offsetSplines = contourSplineResult.offsetResults.map { it.offsetSpline }
 
     val document = createSvgDocument().apply {
         documentSvgElement.apply {

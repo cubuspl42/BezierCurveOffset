@@ -1,5 +1,8 @@
 package app.algebra.linear
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
+
 /**
  * A two-dimensional vector, which might (but doesn't have to) have a spatial interpretation
  */
@@ -103,6 +106,16 @@ data class Vector1x2 private constructor(
      */
     val perpendicular: Vector1x2
         get() = Vector1x2.of(-y, x)
+
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double,
+    ): Boolean = when {
+        other !is Vector1x2 -> false
+        !x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) -> false
+        !y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) -> false
+        else -> true
+    }
 }
 
 operator fun Vector1x2.unaryMinus(): Vector1x2 = Vector1x2.of(
