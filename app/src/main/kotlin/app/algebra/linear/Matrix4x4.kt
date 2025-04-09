@@ -2,8 +2,11 @@ package app.algebra.linear
 
 import app.algebra.NumericObject
 import app.fillByColumn
+import app.indexOfMax
+import app.indexOfMaxBy
 import app.invSafe
 import org.ujmp.core.Matrix
+import kotlin.math.absoluteValue
 
 data class Matrix4x4(
     val column0: Vector4x1,
@@ -112,6 +115,14 @@ data class Matrix4x4(
             y = column1.w,
             z = column2.w,
             w = column3.w,
+        )
+
+    val columns: List<Vector4x1>
+        get() = listOf(
+            column0,
+            column1,
+            column2,
+            column3,
         )
 
     val rows: List<Vector1x4>
@@ -336,7 +347,7 @@ data class Matrix4x4(
     }
 
     /**
-     * Solves the equation AX = Y using forward substitution column-wise
+     * Solves the equation AX = BY using forward substitution column-wise
      *
      * @return The solution matrix X.
      */
@@ -362,15 +373,15 @@ data class Matrix4x4(
         val p0 = Matrix4x4.identity
 
         // The index of max row for column 0
-        val iMax0 = this.maxRowIndexBy(i0 = 0) { it[0] }
+        val iMax0 = column0.toList().indexOfMaxBy { it.absoluteValue }
         val p1 = p0.swapRows(i0 = 0, i1 = iMax0)
 
         // The index of max row for column 1
-        val iMax1 = this.maxRowIndexBy(i0 = 1) { it[1] }
+        val iMax1 = column1.toList().indexOfMaxBy(fromIndex = 1) { it.absoluteValue }
         val p2 = p1.swapRows(i0 = 1, i1 = iMax1)
 
         // The index of max row for column 2
-        val iMax2 = this.maxRowIndexBy(i0 = 2) { it[2] }
+        val iMax2 = column2.toList().indexOfMaxBy(fromIndex = 2) { it.absoluteValue }
         val p3 = p2.swapRows(i0 = 2, i1 = iMax2)
 
         // (Nothing to do for the bottom-right corner)
@@ -390,7 +401,7 @@ data class Matrix4x4(
         )
     }
 
-    private fun luDecompose(): LuDecomposition? {
+    internal fun luDecompose(): LuDecomposition? {
         val u11 = this[0][0]
         val u12 = this[0][1]
         val u13 = this[0][2]
@@ -471,7 +482,7 @@ data class Matrix4x4(
         columns = other.columns.map { column -> this * column },
     )
 
-    private operator fun times(vector: Vector4x1) = Vector4x1.of(
+    operator fun times(vector: Vector4x1) = Vector4x1.of(
         x = row0.dot(vector),
         y = row1.dot(vector),
         z = row2.dot(vector),

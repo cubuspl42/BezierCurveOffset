@@ -354,6 +354,32 @@ fun linspace(x0: Double, x1: Double, n: Int): Sequence<Double> {
     return generateSequence(0) { it + 1 }.take(n).map { i -> x0 + i * step }
 }
 
+fun <T : Comparable<T>> List<T>.indexOfMax(
+    fromIndex: Int = 0,
+    toIndex: Int = size - 1,
+): Int {
+    val (index, _) = withIndex().toList().subList(
+        fromIndex = fromIndex,
+        toIndex = toIndex,
+    ).maxBy { (_, v) -> v }
+
+    return index
+}
+
+fun <T, R : Comparable<R>> List<T>.indexOfMaxBy(
+    fromIndex: Int = 0,
+    toIndex: Int = size,
+    selector: (T) -> R,
+): Int {
+    val (index, _) = withIndex().toList().subList(
+        fromIndex = fromIndex,
+        toIndex = toIndex,
+    ).maxBy { (_, v) -> selector(v) }
+
+    return index
+}
+
+
 operator fun <E> List<E>.component6(): E = this[5]
 
 operator fun <E> List<E>.component7(): E = this[6]

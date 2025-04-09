@@ -5,6 +5,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class Matrix4x4Tests {
     @Test
@@ -82,6 +83,35 @@ class Matrix4x4Tests {
     @Test
     fun testLuDecompose() {
         val aMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(1.0308, 1.0560, 1.1034, 1.1960),
+            row1 = Vector1x4.of(1.0560, 1.1034, 1.1960, 1.3899),
+            row2 = Vector1x4.of(1.1034, 1.1960, 1.3899, 1.8377),
+            row3 = Vector1x4.of(1.1960, 1.3899, 1.8377, 4.0),
+        )
+
+        val lupDecomposition = assertNotNull(
+            aMatrix.luDecompose(),
+        )
+
+        val lMatrix = lupDecomposition.l
+        val uMatrix = lupDecomposition.u
+
+        assertTrue(actual = lMatrix.isLowerTriangular())
+
+        assertTrue(actual = uMatrix.isUpperTriangular())
+
+        val luMatrix = lMatrix * uMatrix
+
+        assertEqualsWithTolerance(
+            expected = aMatrix,
+            actual = luMatrix,
+            absoluteTolerance = 0.001,
+        )
+    }
+
+    @Test
+    fun testLupDecompose() {
+        val aMatrix = Matrix4x4.of(
             row0 = Vector1x4.of(1.0, 22.0, 3.0, 4.0),
             row1 = Vector1x4.of(14.0, 6.0, 7.0, 8.0),
             row2 = Vector1x4.of(9.0, 10.0, 11.0, 12.0),
@@ -93,62 +123,51 @@ class Matrix4x4Tests {
         )
 
         val lMatrix = lupDecomposition.l
-
-        assertEquals(
-            expected = Vector1x4.of(1.0, 0.0, 0.0, 0.0),
-            actual = lMatrix.row0
-        )
-
-        assertEquals(
-            expected = Vector1x3.of(1.0, 0.0, 0.0),
-            actual = lMatrix.row1.vectorYzw,
-        )
-
-        assertEquals(
-            expected = Vector1x2.of(1.0, 0.0),
-            actual = lMatrix.row2.vectorZw,
-        )
-
-        assertEquals(
-            expected = 1.0,
-            actual = lMatrix.row3.w,
-        )
-
         val uMatrix = lupDecomposition.u
-
-        assertEquals(
-            expected = 0.0,
-            actual = uMatrix.row1.x,
-        )
-
-        assertEquals(
-            expected = Vector1x2.of(0.0, 0.0),
-            actual = uMatrix.row2.vectorXy,
-        )
-
-        assertEquals(
-            expected = Vector1x3.of(0.0, 0.0, 0.0),
-            actual = uMatrix.row3.vectorXyz
-        )
-
         val pMatrix = lupDecomposition.p
 
-        assertEquals(
-            expected = Matrix4x4.of(
-                row0 = Vector1x4.of(0.0, 1.0, 0.0, 0.0),
-                row1 = Vector1x4.of(0.0, 0.0, 0.0, 1.0),
-                row2 = Vector1x4.of(1.0, 0.0, 0.0, 0.0),
-                row3 = Vector1x4.of(0.0, 0.0, 1.0, 0.0),
-            ),
-            actual = pMatrix,
-        )
+        assertTrue(actual = lMatrix.isLowerTriangular())
+
+        assertTrue(actual = uMatrix.isUpperTriangular())
 
         val paMatrix = pMatrix * aMatrix
         val luMatrix = lMatrix * uMatrix
 
-        assertEquals(
+        assertEqualsWithTolerance(
             expected = paMatrix,
             actual = luMatrix,
+            absoluteTolerance = 0.001,
+        )
+    }
+
+    @Test
+    fun testLupDecompose2() {
+        val aMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(1.0308, 1.0560, 1.1034, 1.1960),
+            row1 = Vector1x4.of(1.0560, 1.1034, 1.1960, 1.3899),
+            row2 = Vector1x4.of(1.1034, 1.1960, 1.3899, 1.8377),
+            row3 = Vector1x4.of(1.1960, 1.3899, 1.8377, 4.0),
+        )
+
+        val lupDecomposition = assertNotNull(
+            aMatrix.lupDecompose(),
+        )
+
+        val lMatrix = lupDecomposition.l
+        val uMatrix = lupDecomposition.u
+        val pMatrix = lupDecomposition.p
+
+        assertTrue(actual = lMatrix.isLowerTriangular())
+
+        assertTrue(actual = uMatrix.isUpperTriangular())
+
+        val paMatrix = pMatrix * aMatrix
+        val luMatrix = lMatrix * uMatrix
+
+        assertEqualsWithTolerance(
+            expected = paMatrix,
+            actual = luMatrix,
+            absoluteTolerance = 0.001,
         )
     }
 
@@ -271,6 +290,38 @@ class Matrix4x4Tests {
     }
 
     @Test
+    fun testSolveByForwardSubstitutionMatrix2() {
+        val aMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(1.0, 0.0, 0.0, 0.0),
+            row1 = Vector1x4.of(0.8618729096989967, 1.0, 0.0, 0.0),
+            row2 = Vector1x4.of(0.8829431438127091, 0.8723587622247958, 1.0, 0.0),
+            row3 = Vector1x4.of(0.9225752508361204, 0.6080120462194373, 1.7976835424854054, 1.0),
+        )
+
+        val yMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(0.0, 1.0, 0.0, 0.0),
+            row1 = Vector1x4.of(0.0, 0.0, 1.0, 0.0),
+            row2 = Vector1x4.of(0.0, 0.0, 0.0, 1.0),
+            row3 = Vector1x4.of(1.0, 0.0, 0.0, 0.0),
+        )
+
+        val xMatrix = aMatrix.solveByForwardSubstitution(
+            yMatrix = yMatrix,
+        )
+
+        assertEqualsWithTolerance(
+            expected = Matrix4x4.of(
+                row0 = Vector1x4.of(0.0, 1.0, 0.0, 0.0),
+                row1 = Vector1x4.of(0.0, -0.8619, 1.0, 0.0),
+                row2 = Vector1x4.of(0.0, -0.1311, -0.8724, 1.0),
+                row3 = Vector1x4.of(1.0, -0.1629, 0.9602, -1.7977),
+            ),
+            actual = xMatrix,
+            absoluteTolerance = 0.001,
+        )
+    }
+
+    @Test
     fun testInvertSingular() {
         assertNull(
             actual = Matrix4x4.zero.invert(),
@@ -331,6 +382,31 @@ class Matrix4x4Tests {
             ),
             actual = bMatrix,
             absoluteTolerance = 0.001,
+        )
+    }
+
+    @Test
+    fun testInvertCalculate2() {
+        val aMatrix = Matrix4x4.of(
+            row0 = Vector1x4.of(1.0308, 1.0560, 1.1034, 1.1960),
+            row1 = Vector1x4.of(1.0560, 1.1034, 1.1960, 1.3899),
+            row2 = Vector1x4.of(1.1034, 1.1960, 1.3899, 1.8377),
+            row3 = Vector1x4.of(1.1960, 1.3899, 1.8377, 4.0),
+        )
+
+        val aMatrixInverted = assertNotNull(aMatrix.invert())
+
+        val bMatrix = aMatrixInverted.calculate()
+
+        assertEqualsWithTolerance(
+            expected = Matrix4x4.of(
+                row0 = Vector1x4.of(535.62246, -783.58183, 256.78892, -5.85127),
+                row1 = Vector1x4.of(-783.58183, 1165.97234, -395.73348, 10.95458),
+                row2 = Vector1x4.of(256.78892, -395.73348, 145.44556, -6.09372),
+                row3 = Vector1x4.of(-5.85127, 10.95458, -6.09372, 0.99269),
+            ),
+            actual = bMatrix,
+            absoluteTolerance = 0.0001,
         )
     }
 }

@@ -55,14 +55,17 @@ data class Vector4x1 private constructor(
             w = this.w,
         )
 
+    fun toList(): List<Double> = listOf(x, y, z, w)
+
     override fun equalsWithTolerance(
         other: NumericObject,
         absoluteTolerance: Double,
-    ): Boolean = when (other) {
-        !is Vector4x1 -> false
-        else -> x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) &&
-                y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) &&
-                z.equalsWithTolerance(other.z, absoluteTolerance = absoluteTolerance) &&
-                w.equalsWithTolerance(other.w, absoluteTolerance = absoluteTolerance)
+    ): Boolean = when {
+        other !is Vector4x1 -> false
+        !x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) -> false
+        !y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) -> false
+        !z.equalsWithTolerance(other.z, absoluteTolerance = absoluteTolerance) -> false
+        !w.equalsWithTolerance(other.w, absoluteTolerance = absoluteTolerance) -> false
+        else -> true
     }
 }

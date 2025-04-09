@@ -89,7 +89,9 @@ data class TimedPointSeries(
         val aMatrix = bigTTransposedMatrix * bigTMatrix
 
         // (T^t * T)^-1
-        val bMatrix = aMatrix.invertUjmp() ?: throw AssertionError("Matrix is not invertible")
+        val aMatrixInverted = aMatrix.invertUjmp() ?: throw AssertionError("Matrix is not invertible")
+
+        val bMatrix = aMatrixInverted
 
         // (M^-1) * (T^t * T)^-1
         val cMatrix = CubicBezierBinomial.characteristicInvertedMatrix * bMatrix

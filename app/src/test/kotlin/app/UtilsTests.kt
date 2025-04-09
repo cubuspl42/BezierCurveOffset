@@ -1,5 +1,6 @@
 package app
 
+import kotlin.math.absoluteValue
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -506,10 +507,7 @@ class UtilsTests {
     @Test
     fun testInterleave_emptyList() {
         val numbers = emptyList<Int>()
-        val result = numbers.interleave(
-            transform = { "($it)" },
-            separate = { a, b -> "[$a$b]" }
-        )
+        val result = numbers.interleave(transform = { "($it)" }, separate = { a, b -> "[$a$b]" })
         assertEquals(
             expected = emptyList(),
             actual = result,
@@ -519,10 +517,7 @@ class UtilsTests {
     @Test
     fun testInterleave_singleElement() {
         val numbers = listOf(1)
-        val result = numbers.interleave(
-            transform = { "($it)" },
-            separate = { a, b -> "[$a$b]" }
-        )
+        val result = numbers.interleave(transform = { "($it)" }, separate = { a, b -> "[$a$b]" })
         assertEquals(
             expected = listOf("(1)"),
             actual = result,
@@ -534,7 +529,7 @@ class UtilsTests {
         val numbers = listOf(1, 2)
         val result = numbers.interleave(
             transform = { "($it)" },
-            separate = { a, b -> "[$a$b]" }
+            separate = { a, b -> "[$a$b]" },
         )
         assertEquals(
             expected = listOf("(1)", "[12]", "(2)"),
@@ -547,11 +542,21 @@ class UtilsTests {
         val numbers = listOf(1, 2, 3, 4)
         val result = numbers.interleave(
             transform = { "($it)" },
-            separate = { a, b -> "[$a$b]" }
+            separate = { a, b -> "[$a$b]" },
         )
         assertEquals(
             expected = listOf("(1)", "[12]", "(2)", "[23]", "(3)", "[34]", "(4)"),
             actual = result,
+        )
+    }
+
+    @Test
+    fun testIndexOfMaxBy() {
+        assertEquals(
+            expected = 3,
+            actual = listOf(22.0, 6.0, 10.0, -14.0).indexOfMaxBy(fromIndex = 1) {
+                it.absoluteValue
+            },
         )
     }
 }
