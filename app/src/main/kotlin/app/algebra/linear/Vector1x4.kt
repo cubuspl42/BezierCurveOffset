@@ -1,5 +1,8 @@
 package app.algebra.linear
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
+
 @Suppress("DataClassPrivateConstructor")
 data class Vector1x4 private constructor(
     override val x: Double,
@@ -76,5 +79,16 @@ data class Vector1x4 private constructor(
         2 -> z
         3 -> w
         else -> throw IndexOutOfBoundsException("Index $j out of bounds for length 4")
+    }
+    
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double,
+    ): Boolean = when (other) {
+        !is Vector1x4 -> false
+        else -> x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) &&
+                y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) &&
+                z.equalsWithTolerance(other.z, absoluteTolerance = absoluteTolerance) &&
+                w.equalsWithTolerance(other.w, absoluteTolerance = absoluteTolerance)
     }
 }

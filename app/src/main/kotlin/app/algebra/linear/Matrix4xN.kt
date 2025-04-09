@@ -1,12 +1,13 @@
 package app.algebra.linear
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
 import app.fillByColumn
-import app.fillByRow
 import org.ujmp.core.Matrix
 
 data class Matrix4xN(
     val columns: List<Vector4x1>,
-) {
+) : NumericObject {
     init {
         require(columns.isNotEmpty())
     }
@@ -37,30 +38,19 @@ data class Matrix4xN(
     operator fun times(
         other: MatrixNx4,
     ): Matrix4x4 = Matrix4x4(
-        column0 = Vector4x1.of(
-            x = row0.dot(other.column0),
-            y = row1.dot(other.column0),
-            z = row2.dot(other.column0),
-            w = row3.dot(other.column0),
-        ),
-        column1 = Vector4x1.of(
-            x = row0.dot(other.column1),
-            y = row1.dot(other.column1),
-            z = row2.dot(other.column1),
-            w = row3.dot(other.column1),
-        ),
-        column2 = Vector4x1.of(
-            x = row0.dot(other.column2),
-            y = row1.dot(other.column2),
-            z = row2.dot(other.column2),
-            w = row3.dot(other.column2),
-        ),
-        column3 = Vector4x1.of(
-            x = row0.dot(other.column3),
-            y = row1.dot(other.column3),
-            z = row2.dot(other.column3),
-            w = row3.dot(other.column3),
-        ),
+        column0 = this * other.column0,
+        column1 = this * other.column1,
+        column2 = this * other.column2,
+        column3 = this * other.column3,
+    )
+
+    operator fun times(
+        vector: VectorNx1,
+    ): Vector4x1 = Vector4x1.of(
+        x = row0.dot(vector),
+        y = row1.dot(vector),
+        z = row2.dot(vector),
+        w = row3.dot(vector),
     )
 
     fun toUjmpMatrix(): Matrix = Matrix.Factory.fillByColumn(
@@ -68,4 +58,12 @@ data class Matrix4xN(
         columnHeight = 4,
         buildColumn = { v -> v.toArray() },
     )
+
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double,
+    ): Boolean = when (other) {
+        !is Matrix4xN -> false
+        else -> columns.equalsWithTolerance(other.columns, absoluteTolerance = absoluteTolerance)
+    }
 }

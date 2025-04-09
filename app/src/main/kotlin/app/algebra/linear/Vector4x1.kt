@@ -1,5 +1,8 @@
 package app.algebra.linear
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
+
 @Suppress("DataClassPrivateConstructor")
 data class Vector4x1 private constructor(
     override val x: Double,
@@ -51,4 +54,15 @@ data class Vector4x1 private constructor(
             z = this.z,
             w = this.w,
         )
+
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double,
+    ): Boolean = when (other) {
+        !is Vector4x1 -> false
+        else -> x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) &&
+                y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) &&
+                z.equalsWithTolerance(other.z, absoluteTolerance = absoluteTolerance) &&
+                w.equalsWithTolerance(other.w, absoluteTolerance = absoluteTolerance)
+    }
 }

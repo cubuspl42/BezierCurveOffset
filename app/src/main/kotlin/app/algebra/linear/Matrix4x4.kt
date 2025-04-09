@@ -1,5 +1,6 @@
 package app.algebra.linear
 
+import app.algebra.NumericObject
 import app.fillByColumn
 import org.ujmp.core.Matrix
 
@@ -8,7 +9,7 @@ data class Matrix4x4(
     val column1: Vector4x1,
     val column2: Vector4x1,
     val column3: Vector4x1,
-) {
+) : NumericObject {
     data class LuDecomposition(
         val l: Matrix4x4,
         val u: Matrix4x4,
@@ -455,4 +456,26 @@ data class Matrix4x4(
             column.toArray()
         },
     )
+
+    operator fun times(other: Matrix4xN): Matrix4xN = Matrix4xN(
+        columns = other.columns.map { column -> this * column },
+    )
+
+    private operator fun times(vector: Vector4x1) = Vector4x1.of(
+        x = row0.dot(vector),
+        y = row1.dot(vector),
+        z = row2.dot(vector),
+        w = row3.dot(vector),
+    )
+
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double,
+    ): Boolean = when (other) {
+        !is Matrix4x4 -> false
+        else -> column0.equalsWithTolerance(other.column0, absoluteTolerance) &&
+                column1.equalsWithTolerance(other.column1, absoluteTolerance) &&
+                column2.equalsWithTolerance(other.column2, absoluteTolerance) &&
+                column3.equalsWithTolerance(other.column3, absoluteTolerance)
+    }
 }

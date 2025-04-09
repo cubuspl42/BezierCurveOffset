@@ -1,11 +1,12 @@
 package app.algebra.linear
 
+import app.algebra.assertEqualsWithTolerance
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class Matrix4xNTests {
     @Test
-    fun testTimes() {
+    fun testTimesMatrix() {
         val matrixA = Matrix4xN(
             columns = listOf(
                 Vector4x1.of(1.0, 2.0, 3.0, 4.0),
@@ -40,6 +41,41 @@ class Matrix4xNTests {
         assertEquals(
             expected = expected,
             actual = result,
+        )
+    }
+
+    fun testTimesVector() {
+        val matrixA = Matrix4xN(
+            columns = listOf(
+                Vector4x1.of(1.0, 2.0, 3.0, 4.0),
+                Vector4x1.of(5.0, 6.0, 7.0, 8.0),
+                Vector4x1.of(9.0, 10.0, 11.0, 12.0),
+                Vector4x1.of(13.0, 14.0, 15.0, 16.0),
+                Vector4x1.of(17.0, 18.0, 19.0, 20.0),
+                Vector4x1.of(21.0, 22.0, 23.0, 24.0),
+            ),
+        )
+
+        val vectorB = VectorNx1.of(
+            1.0,
+            2.0,
+            3.0,
+            4.0,
+            5.0,
+            6.0,
+        )
+
+        val result = matrixA * vectorB
+
+        assertEqualsWithTolerance(
+            expected = Vector4x1.of(
+                x = 301.0,
+                y = 322.0,
+                z = 343.0,
+                w = 364.0,
+            ),
+            actual = result,
+            absoluteTolerance = 0.01,
         )
     }
 }

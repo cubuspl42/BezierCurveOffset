@@ -1,6 +1,8 @@
 package app.algebra.linear
 
-abstract class Vector4 {
+import app.algebra.NumericObject
+
+abstract class Vector4 : NumericObject {
     companion object {
         fun of(
             x: Double,

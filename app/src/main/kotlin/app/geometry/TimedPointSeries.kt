@@ -5,15 +5,11 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.sample
 import app.algebra.linear.MatrixNx4
 import app.algebra.linear.Vector1x4
-import app.algebra.linear.Vector4x1
 import app.algebra.linear.VectorNx1
 import app.fillCircle
-import app.fillColumnFrom
-import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.BezierCurve
+import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.TimeFunction
-import app.invSafe
-import org.ujmp.core.Matrix
 import java.awt.Color
 import java.awt.Graphics2D
 
@@ -93,31 +89,29 @@ data class TimedPointSeries(
         val aMatrix = bigTTransposedMatrix * bigTMatrix
 
         // (T^t * T)^-1
-        val bMatrix = aMatrix.toUjmpMatrix().invSafe()
+        val bMatrix = aMatrix.invert() ?: throw AssertionError("Matrix is not invertible")
 
         // (M^-1) * (T^t * T)^-1
-        val cMatrix = CubicBezierBinomial.characteristicInvertedMatrix.mtimes(bMatrix)
+        val cMatrix = CubicBezierBinomial.characteristicInvertedMatrix * bMatrix.calculate()
 
         // (M^-1) * (T^t * T)^-1 * T^t
-        val dMatrix = cMatrix.mtimes(bigTTransposedMatrix.toUjmpMatrix())
+        val dMatrix = cMatrix * bigTTransposedMatrix
 
         // P_x (weight X)
-        val weightXVector = dMatrix.mtimes(xVector.toUjmpMatrix())
+        val weightXVector = dMatrix * xVector
         // P_y (weight Y)
-        val weightYVector = dMatrix.mtimes(yVector.toUjmpMatrix())
+        val weightYVector = dMatrix * yVector
 
-        fun getWeight(i: Long): Point {
-            val x = weightXVector.getAsDouble(i, 0)
-            val y = weightYVector.getAsDouble(i, 0)
-
-            return Point.of(x, y)
-        }
+        val w0 = Point.of(weightXVector.x, weightYVector.x)
+        val w1 = Point.of(weightXVector.y, weightYVector.y)
+        val w2 = Point.of(weightXVector.z, weightYVector.z)
+        val w3 = Point.of(weightXVector.w, weightYVector.w)
 
         return CubicBezierCurve.of(
-            start = getWeight(0),
-            control0 = getWeight(1),
-            control1 = getWeight(2),
-            end = getWeight(3),
+            start = w0,
+            control0 = w1,
+            control1 = w2,
+            end = w3,
         )
     }
 
