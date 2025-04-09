@@ -222,8 +222,6 @@ data class Matrix4x4(
         )
     }
 
-    fun invertUjmp(): Matrix4x4? = toUjmpMatrix().invSafe().toMatrix4x4()
-
     /**
      * Checks if the matrix is upper triangular.
      */

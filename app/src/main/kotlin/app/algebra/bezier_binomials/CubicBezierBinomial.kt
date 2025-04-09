@@ -27,7 +27,7 @@ data class CubicBezierBinomial<V>(
             column3 = Vector4x1.of(1.0, 0.0, 0.0, 0.0),
         )
 
-        val characteristicInvertedMatrix = characteristicMatrix.invertUjmp() ?: error("Matrix is not invertible")
+        val characteristicInvertedMatrix = characteristicMatrix.invert() ?: error("Matrix is not invertible")
     }
 
     override fun findDerivative(): QuadraticBezierBinomial<V> {

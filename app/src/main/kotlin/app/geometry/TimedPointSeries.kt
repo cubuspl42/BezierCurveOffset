@@ -89,7 +89,7 @@ data class TimedPointSeries(
         val aMatrix = bigTTransposedMatrix * bigTMatrix
 
         // (T^t * T)^-1
-        val aMatrixInverted = aMatrix.invertUjmp() ?: throw AssertionError("Matrix is not invertible")
+        val aMatrixInverted = aMatrix.invert() ?: throw AssertionError("Matrix is not invertible")
 
         val bMatrix = aMatrixInverted
 

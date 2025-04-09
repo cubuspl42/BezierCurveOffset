@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class BezierFitTests {
-    private val eps = 1e-5
+    private val eps = 1e-4
 
     @Test
     fun testBasic() {

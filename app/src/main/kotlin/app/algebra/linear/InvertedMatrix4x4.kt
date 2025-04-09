@@ -24,5 +24,9 @@ data class InvertedMatrix4x4(
         return xMatrix
     }
 
+    operator fun times(
+        other: InvertedMatrix4x4,
+    ): Matrix4x4 = this * other.calculate()
+
     fun calculate(): Matrix4x4 = this * Matrix4x4.identity
 }
