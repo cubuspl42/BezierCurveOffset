@@ -14,6 +14,7 @@ import org.w3c.dom.svg.*
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.reader
+import kotlin.math.roundToInt
 
 val documentFactory: SAXSVGDocumentFactory = SAXSVGDocumentFactory(null)
 
@@ -184,17 +185,23 @@ fun main() {
     )!!
 
     val contourSpline = contourSplineResult.contourSpline
+
+    val contourBoundingBox = contourSpline.findBoundingBox()
+
     val offsetSplines = contourSplineResult.offsetResults.map { it.offsetSpline }
 
     val document = createSvgDocument().apply {
-        val document = this
-        val svgElement = documentSvgElement
+        documentSvgElement.apply {
+            viewBox = contourBoundingBox.toSvgViewBox()
+            width = contourBoundingBox.width.toInt()
+            height = contourBoundingBox.height.toInt()
+        }
 
-        svgElement.appendChild(
+        documentSvgElement.appendChild(
             spline.toDebugSvgPathGroup(document = this)
         )
 
-//        svgElement.appendChild(
+//        documentSvgElement.appendChild(
 //            SVGGElementUtils.of(
 //                document = document,
 //                elements = offsetSplines.map {
@@ -203,7 +210,7 @@ fun main() {
 //            )
 //        )
 
-        svgElement.appendChild(
+        documentSvgElement.appendChild(
             contourSpline.toDebugSvgPathGroup(document = this)
         )
     }

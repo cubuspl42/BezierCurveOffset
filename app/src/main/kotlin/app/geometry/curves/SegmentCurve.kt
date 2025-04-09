@@ -3,6 +3,7 @@ package app.geometry.curves
 import app.SVGGElementUtils
 import app.createPathElement
 import app.fill
+import app.geometry.BoundingBox
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.transformations.Transformation
@@ -90,6 +91,8 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
             startKnot = start,
             edge = edge,
         )
+
+    abstract fun findBoundingBox(): BoundingBox
 
     abstract val start: Point
 

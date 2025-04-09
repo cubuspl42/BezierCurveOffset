@@ -174,6 +174,10 @@ data class Point private constructor(
     fun transformVia(
         transformation: Transformation,
     ): Point = transformation.transform(this)
+
+    fun translateVia(
+        translation: Translation,
+    ): Point = translation.translate(this)
 }
 
 fun Path2D.moveTo(p: Point) {

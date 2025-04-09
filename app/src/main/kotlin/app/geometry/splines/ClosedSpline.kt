@@ -1,9 +1,10 @@
 package app.geometry.splines
 
 import app.dump
-import app.geometry.transformations.Transformation
-import app.geometry.curves.bezier.BezierCurve
+import app.geometry.BoundingBox
 import app.geometry.curves.SegmentCurve
+import app.geometry.curves.bezier.BezierCurve
+import app.geometry.transformations.Transformation
 import app.withNext
 import app.withNextCyclic
 
@@ -79,10 +80,17 @@ class ClosedSpline<out CurveT : SegmentCurve<CurveT>>(
     override val rightEdgeNode: Node
         get() = segments.first()
 
+    fun findBoundingBox(): BoundingBox = BoundingBox.unionAll(
+        subCurves.map {
+            it.findBoundingBox()
+        },
+    )
+
     fun transformVia(
         transformation: Transformation,
     ) = ClosedSpline(
-        segments = segments.map { it.transformVia(transformation) })
+        segments = segments.map { it.transformVia(transformation) },
+    )
 
     /**
      * Find the contour of this spline.

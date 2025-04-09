@@ -78,7 +78,7 @@ data class CubicBezierCurve private constructor(
         }
     }
 
-    fun findBoundingBox(): BoundingBox {
+    override fun findBoundingBox(): BoundingBox {
         val startPoint = curveFunction.startValue
         val endPoint = curveFunction.endValue
 
@@ -94,7 +94,7 @@ data class CubicBezierCurve private constructor(
         val yMin = potentialYExtrema.min()
         val yMax = potentialYExtrema.max()
 
-        return BoundingBox.fromExtrema(
+        return BoundingBox.of(
             xMin = xMin,
             xMax = xMax,
             yMin = yMin,

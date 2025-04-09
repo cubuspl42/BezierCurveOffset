@@ -1,7 +1,6 @@
 package app
 
 import org.apache.batik.anim.dom.SVGDOMImplementation
-import org.apache.batik.anim.dom.SVGGraphicsElement
 import org.w3c.dom.*
 import org.w3c.dom.css.CSSStyleDeclaration
 import org.w3c.dom.svg.*
@@ -80,8 +79,39 @@ var SVGElement.stroke: String
         setAttribute("stroke", value)
     }
 
+var SVGElement.viewBox: SvgViewBox
+    get() = SvgViewBox.fromSvgString(getAttribute("viewBox"))
+    set(value) {
+        setAttribute("viewBox", value.toSvgString())
+    }
+
+data class SvgViewBox(
+    val xMin: Double,
+    val yMin: Double,
+    val width: Double,
+    val height: Double,
+) {
+    companion object {
+        fun fromSvgString(
+            viewBox: String,
+        ): SvgViewBox {
+            val parts = viewBox.split(" ")
+            require(parts.size == 4) { "Invalid viewBox format" }
+            return SvgViewBox(
+                xMin = parts[0].toDouble(),
+                yMin = parts[1].toDouble(),
+                width = parts[2].toDouble(),
+                height = parts[3].toDouble(),
+            )
+        }
+    }
+
+    fun toSvgString(): String = "$xMin $yMin $width $height"
+}
+
 val SVGDocument.documentSvgElement: SVGElement
     get() = documentElement as SVGElement
+
 
 fun SVGDocument.createSvgElement(qualifiedName: String): Element = createElementNS(
     SVGDOMImplementation.SVG_NAMESPACE_URI,

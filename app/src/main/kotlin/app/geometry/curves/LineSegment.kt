@@ -1,6 +1,7 @@
 package app.geometry.curves
 
 import app.fillCircle
+import app.geometry.BoundingBox
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
@@ -124,6 +125,11 @@ data class LineSegment(
             offset = offset,
         )
     }
+
+    override fun findBoundingBox(): BoundingBox = BoundingBox.of(
+        pointA = start,
+        pointB = end,
+    )
 
     override val edge: SegmentCurve.Edge<LineSegment> = Edge
 
