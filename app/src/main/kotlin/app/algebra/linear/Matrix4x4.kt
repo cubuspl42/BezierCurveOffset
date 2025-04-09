@@ -2,6 +2,7 @@ package app.algebra.linear
 
 import app.algebra.NumericObject
 import app.fillByColumn
+import app.invSafe
 import org.ujmp.core.Matrix
 
 data class Matrix4x4(
@@ -27,6 +28,13 @@ data class Matrix4x4(
             column1 = Vector4x1.of(0.0, 1.0, 0.0, 0.0),
             column2 = Vector4x1.of(0.0, 0.0, 1.0, 0.0),
             column3 = Vector4x1.of(0.0, 0.0, 0.0, 1.0),
+        )
+
+        val zero: Matrix4x4 = Matrix4x4(
+            column0 = Vector4x1.of(0.0, 0.0, 0.0, 0.0),
+            column1 = Vector4x1.of(0.0, 0.0, 0.0, 0.0),
+            column2 = Vector4x1.of(0.0, 0.0, 0.0, 0.0),
+            column3 = Vector4x1.of(0.0, 0.0, 0.0, 0.0),
         )
 
         fun of(
@@ -202,6 +210,8 @@ data class Matrix4x4(
             lupDecomposition = lupDecomposition,
         )
     }
+
+    fun invertUjmp(): Matrix4x4? = toUjmpMatrix().invSafe().toMatrix4x4()
 
     /**
      * Checks if the matrix is upper triangular.
@@ -478,4 +488,36 @@ data class Matrix4x4(
                 column2.equalsWithTolerance(other.column2, absoluteTolerance) &&
                 column3.equalsWithTolerance(other.column3, absoluteTolerance)
     }
+}
+
+fun Matrix.toMatrix4x4(): Matrix4x4 {
+    require(rowCount == 4L) { "Matrix must have 4 rows" }
+    require(columnCount == 4L) { "Matrix must have 4 columns" }
+
+    return Matrix4x4.of(
+        row0 = Vector1x4.of(
+            x = getAsDouble(0, 0),
+            y = getAsDouble(0, 1),
+            z = getAsDouble(0, 2),
+            w = getAsDouble(0, 3),
+        ),
+        row1 = Vector1x4.of(
+            x = getAsDouble(1, 0),
+            y = getAsDouble(1, 1),
+            z = getAsDouble(1, 2),
+            w = getAsDouble(1, 3),
+        ),
+        row2 = Vector1x4.of(
+            x = getAsDouble(2, 0),
+            y = getAsDouble(2, 1),
+            z = getAsDouble(2, 2),
+            w = getAsDouble(2, 3),
+        ),
+        row3 = Vector1x4.of(
+            x = getAsDouble(3, 0),
+            y = getAsDouble(3, 1),
+            z = getAsDouble(3, 2),
+            w = getAsDouble(3, 3),
+        ),
+    )
 }

@@ -4,6 +4,7 @@ import app.algebra.assertEqualsWithTolerance
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
 class Matrix4x4Tests {
     @Test
@@ -266,6 +267,13 @@ class Matrix4x4Tests {
             ),
             actual = xMatrix,
             absoluteTolerance = 0.001,
+        )
+    }
+
+    @Test
+    fun testInvertSingular() {
+        assertNull(
+            actual = Matrix4x4.zero.invert(),
         )
     }
 
