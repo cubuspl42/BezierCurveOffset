@@ -1,11 +1,18 @@
 package app.geometry.splines
 
+import app.WrappedSvgPathSeg
+import app.asList
 import app.dump
+import app.elementWiseAs
 import app.geometry.BoundingBox
 import app.geometry.curves.SegmentCurve
 import app.geometry.transformations.Transformation
+import app.uncons
 import app.withNext
 import app.withNextCyclic
+import app.withPrevious
+import org.w3c.dom.svg.SVGPathElement
+import org.w3c.dom.svg.SVGPathSeg
 
 class ClosedSpline<
         out CurveT : SegmentCurve<CurveT>,
@@ -161,3 +168,33 @@ class ClosedSpline<
 
 val ClosedSpline<*, ClosedSpline.ContourEdgeMetadata>.globalOffsetDeviation
     get() = segments.mapNotNull { it.edgeMetadata.offsetDeviation }.max()
+
+fun SVGPathElement.toClosedSpline(): ClosedSpline<*, *> {
+    val svgPathSegs = pathSegList.asList()
+
+    require(svgPathSegs.last().pathSegType == SVGPathSeg.PATHSEG_CLOSEPATH)
+
+    val pathSegs = svgPathSegs.dropLast(1).map {
+        WrappedSvgPathSeg.fromSvgPathSeg(it)
+    }
+
+    val (firstPathSeg, tailPathSegs) = pathSegs.uncons()!!
+
+    val originPathSeg = firstPathSeg as WrappedSvgPathSeg.MoveTo
+    val edgePathSegs = tailPathSegs.elementWiseAs<WrappedSvgPathSeg.CurveTo>()
+
+    val segments = edgePathSegs.withPrevious(
+        outerLeft = originPathSeg,
+    ).map { (prevPathSeg, pathSeg) ->
+        val startKnot = prevPathSeg.finalPoint
+        Spline.Segment(
+            startKnot = startKnot,
+            edge = pathSeg.toEdge(startKnot),
+            edgeMetadata = null,
+        )
+    }
+
+    return ClosedSpline(
+        segments = segments,
+    )
+}
