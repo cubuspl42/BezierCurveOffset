@@ -1,4 +1,4 @@
-package app.algebra.linear
+package app.algebra.linear.matrices.matrix4
 
 data class InvertedMatrix4x4(
     /**

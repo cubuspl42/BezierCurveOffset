@@ -1,4 +1,7 @@
-package app.algebra.linear
+package app.algebra.linear.matrices.matrix4
+
+import app.algebra.linear.Vector4
+import app.algebra.linear.VectorOrientation
 
 data class SquareMatrix4Data<Vo : VectorOrientation>(
     val vector0: Vector4<Vo>,

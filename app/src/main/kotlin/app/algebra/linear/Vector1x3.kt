@@ -1,5 +1,7 @@
 package app.algebra.linear
 
+import app.algebra.linear.matrices.matrix3.Matrix3x3
+
 typealias Vector1x3 = Vector3<VectorOrientation.Horizontal>
 
 fun Vector1x3.dot(

@@ -1,6 +1,10 @@
-package app.algebra.linear
+package app.algebra.linear.matrices.matrix3
 
 import app.algebra.NumericObject
+import app.algebra.linear.Vector1x3
+import app.algebra.linear.Vector3
+import app.algebra.linear.Vector3x1
+import app.algebra.linear.VectorOrientation
 
 class ColumnMajorMatrix3x3(
     private val data: SquareMatrix3Data<VectorOrientation.Vertical>,

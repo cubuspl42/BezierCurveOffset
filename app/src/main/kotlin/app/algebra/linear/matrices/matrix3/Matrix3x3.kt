@@ -1,18 +1,21 @@
-package app.algebra.linear
+package app.algebra.linear.matrices.matrix3
 
 import app.algebra.NumericObject
-import app.indexOfMaxBy
-import kotlin.math.absoluteValue
+import app.algebra.linear.Vector1x3
+import app.algebra.linear.Vector3
+import app.algebra.linear.Vector3x1
+import app.algebra.linear.dot
+import app.algebra.linear.times
 
 sealed class Matrix3x3 : NumericObject {
     companion object {
-        val zero = Matrix3x3.rowMajor(
+        val zero = rowMajor(
             row0 = Vector3.horizontal(0.0, 0.0, 0.0),
             row1 = Vector3.horizontal(0.0, 0.0, 0.0),
             row2 = Vector3.horizontal(0.0, 0.0, 0.0),
         )
 
-        val identity = Matrix3x3.rowMajor(
+        val identity = rowMajor(
             row0 = Vector3.horizontal(1.0, 0.0, 0.0),
             row1 = Vector3.horizontal(0.0, 1.0, 0.0),
             row2 = Vector3.horizontal(0.0, 0.0, 1.0),
@@ -63,7 +66,7 @@ sealed class Matrix3x3 : NumericObject {
         else -> true
     }
 
-    fun toColumnMajor(): ColumnMajorMatrix3x3 = Matrix3x3.columnMajor(
+    fun toColumnMajor(): ColumnMajorMatrix3x3 = columnMajor(
         column0 = column0,
         column1 = column1,
         column2 = column2,
@@ -73,7 +76,7 @@ sealed class Matrix3x3 : NumericObject {
 
     operator fun times(
         vector: Vector3x1,
-    ): Vector3x1 = Vector3x1.of(
+    ): Vector3x1 = Vector3.of(
         x = row0.dot(vector),
         y = row1.dot(vector),
         z = row2.dot(vector),
@@ -82,7 +85,7 @@ sealed class Matrix3x3 : NumericObject {
     @JvmName("timesRm")
     operator fun times(
         other: Matrix3x3,
-    ): RowMajorMatrix3x3 = Matrix3x3.rowMajor(
+    ): RowMajorMatrix3x3 = rowMajor(
         row0 = row0 * other,
         row1 = row1 * other,
         row2 = row2 * other,

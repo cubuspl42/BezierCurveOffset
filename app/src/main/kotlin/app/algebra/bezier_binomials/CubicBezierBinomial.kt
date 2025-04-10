@@ -1,6 +1,6 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.linear.Matrix4x4
+import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.Vector2
 import app.algebra.linear.Vector4
 import app.algebra.linear.VectorSpace

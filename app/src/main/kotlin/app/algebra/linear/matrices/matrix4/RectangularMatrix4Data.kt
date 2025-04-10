@@ -1,4 +1,7 @@
-package app.algebra.linear
+package app.algebra.linear.matrices.matrix4
+
+import app.algebra.linear.Vector4
+import app.algebra.linear.VectorOrientation
 
 data class RectangularMatrix4Data<Vo : VectorOrientation>(
     val vectors: List<Vector4<Vo>>,

@@ -1,5 +1,6 @@
 package app.algebra.linear
 
+import app.algebra.linear.matrices.matrix3.Matrix3x3
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

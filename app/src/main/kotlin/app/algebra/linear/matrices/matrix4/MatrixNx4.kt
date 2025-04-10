@@ -1,9 +1,10 @@
-package app.algebra.linear
+package app.algebra.linear.matrices.matrix4
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
-import app.fillByRow
-import org.ujmp.core.Matrix
+import app.algebra.linear.Vector1x4
+import app.algebra.linear.VectorNx1
+import app.algebra.linear.VectorOrientation
 
 class MatrixNx4(
     private val data: RectangularMatrix4Data<VectorOrientation.Horizontal>,

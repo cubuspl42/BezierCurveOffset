@@ -1,19 +1,24 @@
-package app.algebra.linear
+package app.algebra.linear.matrices.matrix4
 
 import app.algebra.NumericObject
+import app.algebra.linear.Vector1x4
+import app.algebra.linear.Vector4
+import app.algebra.linear.Vector4x1
+import app.algebra.linear.dot
+import app.algebra.linear.times
 import app.indexOfMaxBy
 import kotlin.math.absoluteValue
 
 sealed class Matrix4x4 : NumericObject {
     companion object {
-        val zero = Matrix4x4.rowMajor(
+        val zero = rowMajor(
             row0 = Vector4(0.0, 0.0, 0.0, 0.0),
             row1 = Vector4(0.0, 0.0, 0.0, 0.0),
             row2 = Vector4(0.0, 0.0, 0.0, 0.0),
             row3 = Vector4(0.0, 0.0, 0.0, 0.0),
         )
 
-        val identity = Matrix4x4.rowMajor(
+        val identity = rowMajor(
             row0 = Vector4(1.0, 0.0, 0.0, 0.0),
             row1 = Vector4(0.0, 1.0, 0.0, 0.0),
             row2 = Vector4(0.0, 0.0, 1.0, 0.0),
@@ -125,7 +130,7 @@ sealed class Matrix4x4 : NumericObject {
         require(i0 in 0 until 4) { "i0 must be between 0 and 3" }
         require(i1 in 0 until 4) { "i1 must be between 0 and 3" }
 
-        return Matrix4x4.rowMajor(
+        return rowMajor(
             row0 = when {
                 i0 == 0 -> this[i1]
                 i1 == 0 -> this[i0]
@@ -198,7 +203,7 @@ sealed class Matrix4x4 : NumericObject {
         val xColumn2 = solveByBackSubstitution(yVector = yMatrix.column2)
         val xColumn3 = solveByBackSubstitution(yVector = yMatrix.column3)
 
-        return Matrix4x4.columnMajor(
+        return columnMajor(
             column0 = xColumn0,
             column1 = xColumn1,
             column2 = xColumn2,
@@ -248,7 +253,7 @@ sealed class Matrix4x4 : NumericObject {
         val xColumn2 = solveByForwardSubstitution(yVector = yMatrix.column2)
         val xColumn3 = solveByForwardSubstitution(yVector = yMatrix.column3)
 
-        return Matrix4x4.columnMajor(
+        return columnMajor(
             column0 = xColumn0,
             column1 = xColumn1,
             column2 = xColumn2,
@@ -258,7 +263,7 @@ sealed class Matrix4x4 : NumericObject {
 
     /** Creates a pivot matrix for the current matrix. */
     fun pivotize(): RowMajorMatrix4x4 {
-        val p0 = Matrix4x4.identity
+        val p0 = identity
 
         // The index of max row for column 0
         val iMax0 = column0.toList().indexOfMaxBy { it.absoluteValue }
@@ -327,14 +332,14 @@ sealed class Matrix4x4 : NumericObject {
 
         val u44 = this[3, 3] - (u14 * l41 + u24 * l42 + u34 * l43)
 
-        val l = Matrix4x4.rowMajor(
+        val l = rowMajor(
             row0 = Vector4.horizontal(1.0, 0.0, 0.0, 0.0),
             row1 = Vector4.horizontal(l21, 1.0, 0.0, 0.0),
             row2 = Vector4.horizontal(l31, l32, 1.0, 0.0),
             row3 = Vector4.horizontal(l41, l42, l43, 1.0),
         )
 
-        val u = Matrix4x4.rowMajor(
+        val u = rowMajor(
             row0 = Vector4.horizontal(u11, u12, u13, u14),
             row1 = Vector4.horizontal(0.0, u22, u23, u24),
             row2 = Vector4.horizontal(0.0, 0.0, u33, u34),
@@ -347,7 +352,7 @@ sealed class Matrix4x4 : NumericObject {
         )
     }
 
-    fun toColumnMajor(): ColumnMajorMatrix4x4 = Matrix4x4.columnMajor(
+    fun toColumnMajor(): ColumnMajorMatrix4x4 = columnMajor(
         column0 = column0,
         column1 = column1,
         column2 = column2,
@@ -358,7 +363,7 @@ sealed class Matrix4x4 : NumericObject {
 
     operator fun times(
         vector: Vector4x1,
-    ): Vector4x1 = Vector4x1.of(
+    ): Vector4x1 = Vector4.of(
         x = row0.dot(vector),
         y = row1.dot(vector),
         z = row2.dot(vector),
@@ -368,7 +373,7 @@ sealed class Matrix4x4 : NumericObject {
     @JvmName("timesRm")
     operator fun times(
         other: Matrix4x4,
-    ): RowMajorMatrix4x4 = Matrix4x4.rowMajor(
+    ): RowMajorMatrix4x4 = rowMajor(
         row0 = row0 * other,
         row1 = row1 * other,
         row2 = row2 * other,

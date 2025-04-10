@@ -3,11 +3,11 @@ package app.geometry
 import app.algebra.bezier_binomials.CubicBezierBinomial
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.sample
-import app.algebra.linear.MatrixNx4
-import app.algebra.linear.RectangularMatrix4
+import app.algebra.linear.matrices.matrix4.MatrixNx4
+import app.algebra.linear.matrices.matrix4.RectangularMatrix4
 import app.algebra.linear.Vector4
 import app.algebra.linear.VectorNx1
-import app.algebra.linear.times
+import app.algebra.linear.matrices.matrix4.times
 import app.fillCircle
 import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.bezier.CubicBezierCurve

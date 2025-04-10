@@ -1,4 +1,7 @@
-package app.algebra.linear
+package app.algebra.linear.matrices.matrix3
+
+import app.algebra.linear.Vector3
+import app.algebra.linear.VectorOrientation
 
 data class SquareMatrix3Data<Vo : VectorOrientation>(
     val vector0: Vector3<Vo>,

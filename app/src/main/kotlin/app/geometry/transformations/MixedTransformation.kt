@@ -1,6 +1,6 @@
 package app.geometry.transformations
 
-import app.algebra.linear.Matrix3x3
+import app.algebra.linear.matrices.matrix3.Matrix3x3
 import app.algebra.linear.Vector1x3
 import app.algebra.linear.vectorXy
 import app.geometry.Point
