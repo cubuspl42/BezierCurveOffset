@@ -8,7 +8,7 @@ import app.algebra.linear.VectorOrientation
 
 class RowMajorMatrix4x4(
     private val data: SquareMatrix4Data<VectorOrientation.Horizontal>,
-) : Matrix4x4() {
+) : EagerMatrix4x4() {
     override fun get(
         i: Int,
         j: Int,

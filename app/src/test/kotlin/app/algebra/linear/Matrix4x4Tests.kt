@@ -382,9 +382,7 @@ class Matrix4x4Tests {
 
         val aMatrixInverted = assertNotNull(aMatrix.invert())
 
-        val bMatrix = aMatrixInverted.calculate()
-
-        val bMatrixExpected = Matrix4x4.rowMajor(
+        val aMatrixInvertedExpected = Matrix4x4.rowMajor(
             row0 = Vector4.horizontal(-0.0080, -0.1986, 0.2291, 0.2532),
             row1 = Vector4.horizontal(0.1849, 0.5667, -0.2693, -0.8239),
             row2 = Vector4.horizontal(0.3296, 0.1407, -0.3931, -0.3818),
@@ -392,8 +390,8 @@ class Matrix4x4Tests {
         ).toColumnMajor()
 
         assertEqualsWithTolerance(
-            expected = bMatrixExpected,
-            actual = bMatrix,
+            expected = aMatrixInvertedExpected,
+            actual = aMatrixInverted,
             absoluteTolerance = 0.001,
         )
     }
@@ -409,8 +407,6 @@ class Matrix4x4Tests {
 
         val aMatrixInverted = assertNotNull(aMatrix.invert())
 
-        val bMatrix = aMatrixInverted.calculate()
-
         assertEqualsWithTolerance(
             expected = Matrix4x4.rowMajor(
                 row0 = Vector4.horizontal(535.62246, -783.58183, 256.78892, -5.85127),
@@ -418,7 +414,7 @@ class Matrix4x4Tests {
                 row2 = Vector4.horizontal(256.78892, -395.73348, 145.44556, -6.09372),
                 row3 = Vector4.horizontal(-5.85127, 10.95458, -6.09372, 0.99269),
             ),
-            actual = bMatrix,
+            actual = aMatrixInverted,
             absoluteTolerance = 0.0001,
         )
     }

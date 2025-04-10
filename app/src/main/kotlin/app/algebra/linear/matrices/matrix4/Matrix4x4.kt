@@ -4,10 +4,6 @@ import app.algebra.NumericObject
 import app.algebra.linear.vectors.vector4.Vector1x4
 import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.linear.vectors.vector4.Vector4x1
-import app.algebra.linear.vectors.vector3.dot
-import app.algebra.linear.vectors.vector3.times
-import app.algebra.linear.vectors.vector4.dot
-import app.algebra.linear.vectors.vector4.times
 import app.indexOfMaxBy
 import kotlin.math.absoluteValue
 
@@ -363,24 +359,13 @@ sealed class Matrix4x4 : NumericObject {
 
     abstract val transposed: Matrix4x4
 
-    operator fun times(
+    abstract operator fun times(
         vector: Vector4x1,
-    ): Vector4x1 = Vector4.of(
-        x = row0.dot(vector),
-        y = row1.dot(vector),
-        z = row2.dot(vector),
-        w = row3.dot(vector),
-    )
+    ): Vector4x1
 
-    @JvmName("timesRm")
-    operator fun times(
+    abstract operator fun times(
         other: Matrix4x4,
-    ): RowMajorMatrix4x4 = rowMajor(
-        row0 = row0 * other,
-        row1 = row1 * other,
-        row2 = row2 * other,
-        row3 = row3 * other,
-    )
+    ): Matrix4x4
 
     @JvmName("timesRect")
     operator fun times(
