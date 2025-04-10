@@ -31,6 +31,22 @@ class ClosedSpline<
         abstract val offsetDeviation: Double?
     }
 
+    abstract class ContourOffsetStrategy<in EdgeMetadata> {
+        data class Constant(
+            val offset: Double,
+        ) : ContourOffsetStrategy<Any?>() {
+            override fun determineOffsetParams(
+                edgeMetadata: Any?,
+            ): SegmentCurve.OffsetSplineParams = SegmentCurve.OffsetSplineParams(
+                offset = offset,
+            )
+        }
+
+        abstract fun determineOffsetParams(
+            edgeMetadata: EdgeMetadata,
+        ): SegmentCurve.OffsetSplineParams
+    }
+
     companion object {
         fun interconnect(
             splines: List<OpenSpline<*, SegmentCurve.OffsetEdgeMetadata>>,
@@ -83,6 +99,14 @@ class ClosedSpline<
         segments = segments.map { it.transformVia(transformation) },
     )
 
+    fun findContourSpline(
+        offset: Double,
+    ): ClosedSpline<*, ContourEdgeMetadata>? = findContourSpline(
+        offsetStrategy = ContourOffsetStrategy.Constant(
+            offset = offset,
+        ),
+    )
+
     /**
      * Find the contour of this spline.
      *
@@ -90,11 +114,16 @@ class ClosedSpline<
      * to construct its contour
      */
     fun findContourSpline(
-        offset: Double,
+        offsetStrategy: ContourOffsetStrategy<EdgeMetadata>,
     ): ClosedSpline<*, ContourEdgeMetadata>? {
-        val offsetSplines = subCurves.mapNotNull { subCurve ->
+        val offsetSplines = subSegments.mapNotNull { subSegment ->
+            val subCurve = subSegment.segmentCurve
+            val edgeMetadata = subSegment.edgeMetadata
+
             subCurve.findOffsetSpline(
-                offset = offset,
+                params = offsetStrategy.determineOffsetParams(
+                    edgeMetadata = edgeMetadata,
+                ),
             )
         }
 

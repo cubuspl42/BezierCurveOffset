@@ -28,6 +28,16 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         abstract val globalDeviation: Double
     }
 
+    data class OffsetSplineParams(
+        val offset: Double,
+    )
+
+    fun findOffsetSpline(
+        params: OffsetSplineParams,
+    ): OpenSpline<*, OffsetEdgeMetadata>? = findOffsetSpline(
+        offset = params.offset,
+    )
+
     abstract fun findOffsetSpline(
         offset: Double,
     ): OpenSpline<*, OffsetEdgeMetadata>?
