@@ -18,7 +18,6 @@ dependencies {
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
-    implementation(libs.ujmp)
     implementation(libs.batik.anim)
     implementation(libs.batik.svg.dom)
 }
