@@ -38,10 +38,12 @@ sealed class Matrix4x4 : NumericObject {
             column2: Vector4x1,
             column3: Vector4x1,
         ): ColumnMajorMatrix4x4 = ColumnMajorMatrix4x4(
-            column0 = column0,
-            column1 = column1,
-            column2 = column2,
-            column3 = column3,
+            transposedMatrix = RowMajorMatrix4x4(
+                row0 = column0.transposed,
+                row1 = column1.transposed,
+                row2 = column2.transposed,
+                row3 = column3.transposed,
+            ),
         )
     }
 
@@ -57,8 +59,7 @@ sealed class Matrix4x4 : NumericObject {
     )
 
     protected fun equalsWithToleranceRowWise(
-        other: Matrix4x4,
-        absoluteTolerance: Double
+        other: Matrix4x4, absoluteTolerance: Double
     ): Boolean = when {
         !row0.equalsWithTolerance(other.row0, absoluteTolerance = absoluteTolerance) -> false
         !row1.equalsWithTolerance(other.row1, absoluteTolerance = absoluteTolerance) -> false
@@ -336,10 +337,7 @@ sealed class Matrix4x4 : NumericObject {
         column3 = column3,
     )
 
-    val transposed: ColumnMajorMatrix4x4
-        get() {
-            @Suppress("UNCHECKED_CAST") return this as ColumnMajorMatrix4x4
-        }
+    abstract val transposed: Matrix4x4
 
     operator fun times(
         vector: Vector4x1,

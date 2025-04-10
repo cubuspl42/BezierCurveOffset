@@ -3,42 +3,34 @@ package app.algebra.linear
 import app.algebra.NumericObject
 
 data class ColumnMajorMatrix4x4(
-    override val column0: Vector4x1,
-    override val column1: Vector4x1,
-    override val column2: Vector4x1,
-    override val column3: Vector4x1,
+    val transposedMatrix: RowMajorMatrix4x4,
 ) : Matrix4x4() {
+    override val transposed: Matrix4x4
+        get() = transposedMatrix
+
     override val row0: Vector1x4
-        get() = Vector1x4.of(
-            x = column0.x,
-            y = column1.x,
-            z = column2.x,
-            w = column3.x,
-        )
+        get() = transposedMatrix.column0.transposed
 
     override val row1: Vector1x4
-        get() = Vector1x4.of(
-            x = column0.y,
-            y = column1.y,
-            z = column2.y,
-            w = column3.y,
-        )
+        get() = transposedMatrix.column1.transposed
 
     override val row2: Vector1x4
-        get() = Vector1x4.of(
-            x = column0.z,
-            y = column1.z,
-            z = column2.z,
-            w = column3.z,
-        )
+        get() = transposedMatrix.column2.transposed
 
     override val row3: Vector1x4
-        get() = Vector1x4.of(
-            x = column0.w,
-            y = column1.w,
-            z = column2.w,
-            w = column3.w,
-        )
+        get() = transposedMatrix.column3.transposed
+
+    override val column0: Vector4x1
+        get() = transposedMatrix.row0.transposed
+
+    override val column1: Vector4x1
+        get() = transposedMatrix.row1.transposed
+
+    override val column2: Vector4x1
+        get() = transposedMatrix.row2.transposed
+
+    override val column3: Vector4x1
+        get() = transposedMatrix.row3.transposed
 
     override fun equalsWithTolerance(
         other: NumericObject,
