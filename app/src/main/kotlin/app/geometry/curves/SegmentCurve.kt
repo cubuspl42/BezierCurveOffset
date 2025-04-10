@@ -8,8 +8,6 @@ import app.geometry.BoundingBox
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.transformations.Transformation
-import app.geometry.curves.bezier.BezierCurve
-import app.geometry.curves.bezier.BezierCurve.OffsetStrategy
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.toDebugControlSvgPathGroupCubic
 import app.geometry.curves.bezier.toSvgPathSegCubic
@@ -31,12 +29,10 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
     }
 
     abstract fun findOffsetSpline(
-        strategy: BezierCurve.OffsetStrategy,
         offset: Double,
     ): OpenSpline<*, OffsetEdgeMetadata>?
 
     abstract fun findOffsetSplineRecursive(
-        strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
     ): OpenSpline<*, OffsetEdgeMetadata>?

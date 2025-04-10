@@ -3,7 +3,6 @@ package app.geometry.splines
 import app.dump
 import app.geometry.BoundingBox
 import app.geometry.curves.SegmentCurve
-import app.geometry.curves.bezier.BezierCurve
 import app.geometry.transformations.Transformation
 import app.withNext
 import app.withNextCyclic
@@ -91,12 +90,10 @@ class ClosedSpline<
      * to construct its contour
      */
     fun findContourSpline(
-        strategy: BezierCurve.OffsetStrategy,
         offset: Double,
     ): ClosedSpline<*, ContourEdgeMetadata>? {
         val offsetSplines = subCurves.mapNotNull { subCurve ->
             subCurve.findOffsetSpline(
-                strategy = strategy,
                 offset = offset,
             )
         }

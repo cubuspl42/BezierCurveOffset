@@ -41,24 +41,8 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         abstract val deviation: Double
     }
 
-    sealed class OffsetStrategy {
-        /**
-         * Approximate the offset curve of the given curve using this strategy
-         *
-         * @return The approximated offset curve, or null if approximating a
-         * continuous curve using this strategy wasn't possible because of the
-         * missing normal directions. If the [curve] is non-degenerate, it
-         * theoretically should always be possible to approximate a continuous
-         * offset curve.
-         */
-        abstract fun approximateOffsetCurve(
-            curve: BezierCurve,
-            offset: Double,
-        ): BezierCurve?
-    }
-
-    data object BestFitOffsetStrategy : OffsetStrategy() {
-        override fun approximateOffsetCurve(
+    data object BestFitOffsetStrategy {
+        fun approximateOffsetCurve(
             curve: BezierCurve,
             offset: Double,
         ): BezierCurve? {
@@ -156,18 +140,15 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     }
 
     final override fun findOffsetSpline(
-        strategy: OffsetStrategy,
         offset: Double,
     ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
         val initialOffsetCurveResult = findApproximatedOffsetCurve(
-            strategy = strategy,
             offset = offset,
         ) ?: run {
             // If we couldn't find a single initial offset curve, it means that
             // this curve is degenerate. Splitting at the critical points should
             // fix this.
             return splitAtCriticalPointsAndFindOffsetSplineRecursive(
-                strategy = strategy,
                 offset = offset,
             )
         }
@@ -182,7 +163,6 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
                 // We weren't lucky, let's do the actual work. Splitting at the critical
                 // points is a good start for subdividing, so let's try that.
                 splitAtCriticalPointsAndFindOffsetSplineRecursive(
-                    strategy = strategy,
                     offset = offset,
                 )
             }
@@ -190,12 +170,10 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     }
 
     override fun findOffsetSplineRecursive(
-        strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
     ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
         val offsetCurveResult = findApproximatedOffsetCurve(
-            strategy = strategy,
             offset = offset,
         ) ?: run {
             // If we couldn't construct a continuous offset curve approximation
@@ -219,7 +197,6 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
             else -> subdivideAndFindOffsetSplineRecursive(
                 offset = offset,
                 subdivisionLevel = subdivisionLevel,
-                strategy = strategy,
             ) ?: run {
                 // If we couldn't find the offset curve by subdividing because
                 // the results were too tiny, let's  return the best known one
@@ -238,7 +215,6 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
      * always be possible to generate a continuous offset curve.
      */
     fun findApproximatedOffsetCurve(
-        strategy: OffsetStrategy,
         offset: Double,
     ): OffsetCurveApproximationResult? {
         // TODO: Figure out the handling of tiny curves where the distance
@@ -250,7 +226,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
 
         // TODO: Check for collinear control points up front?
 
-        val approximatedOffsetCurve = strategy.approximateOffsetCurve(
+        val approximatedOffsetCurve = BestFitOffsetStrategy.approximateOffsetCurve(
             curve = this,
             offset = offset,
         ) ?: return null
@@ -294,7 +270,6 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
      * to construct its offset spline
      */
     private fun splitAtCriticalPointsAndFindOffsetSplineRecursive(
-        strategy: OffsetStrategy,
         offset: Double,
     ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
         val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
@@ -315,7 +290,6 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
                 // so we give up for this segment. Again, let the spline
                 // merging handle that.
                 splitCurve.findOffsetSplineRecursive(
-                    strategy = strategy,
                     offset = offset,
                     subdivisionLevel = 0,
                 )
@@ -336,7 +310,6 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
             // If this curve has no critical points, it theoretically shouldn't
             // be degenerate
             return subdivideAndFindOffsetSplineRecursive(
-                strategy = strategy,
                 offset = offset,
                 subdivisionLevel = 0,
             )
@@ -412,7 +385,6 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
      * to construct its offset spline
      */
     private fun subdivideAndFindOffsetSplineRecursive(
-        strategy: OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
     ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
@@ -427,13 +399,11 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         // As this curve is theoretically non-degenerate, each sub-curve of this
         // curve should also be theoretically non-degenerate
         val firstSubSplitCurve = leftSplitCurve.findOffsetSplineRecursive(
-            strategy = strategy,
             offset = offset,
             subdivisionLevel = nextSubDivisionLevel,
         ) ?: return null
 
         val secondSubSplitCurve = rightSplitCurve.findOffsetSplineRecursive(
-            strategy = strategy,
             offset = offset,
             subdivisionLevel = nextSubDivisionLevel,
         ) ?: return null

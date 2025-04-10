@@ -321,7 +321,6 @@ class CubicBezierSegmentCurveTests {
 
         assertNull(
             bezierCurve.findOffsetSpline(
-                strategy = BezierCurve.BestFitOffsetStrategy,
                 offset = Double.MIN_VALUE,
             ),
         )
@@ -338,7 +337,6 @@ class CubicBezierSegmentCurveTests {
 
         assertNull(
             bezierCurve.findOffsetSpline(
-                strategy = BezierCurve.BestFitOffsetStrategy,
                 offset = Double.MIN_VALUE,
             ),
         )
@@ -355,7 +353,6 @@ class CubicBezierSegmentCurveTests {
 
         val offsetSplineResult = assertNotNull(
             bezierCurve.findOffsetSpline(
-                strategy = BezierCurve.BestFitOffsetStrategy,
                 offset = 1.0,
             ),
         )
@@ -378,7 +375,6 @@ class CubicBezierSegmentCurveTests {
 
         val offsetSplineResult = assertNotNull(
             bezierCurve.findOffsetSpline(
-                strategy = BezierCurve.BestFitOffsetStrategy,
                 offset = 1.0,
             ),
         )

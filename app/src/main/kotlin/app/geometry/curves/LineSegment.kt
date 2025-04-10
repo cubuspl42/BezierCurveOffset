@@ -6,7 +6,6 @@ import app.geometry.BoundingBox
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
-import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.splines.OpenSpline
 import app.geometry.transformations.Transformation
@@ -107,7 +106,6 @@ data class LineSegment(
     }
 
     override fun findOffsetSpline(
-        strategy: BezierCurve.OffsetStrategy,
         offset: Double,
     ): OpenSpline<LineSegment, OffsetEdgeMetadata>? = findOffsetLineSegment(
         offset = offset,
@@ -116,14 +114,12 @@ data class LineSegment(
     )
 
     override fun findOffsetSplineRecursive(
-        strategy: BezierCurve.OffsetStrategy,
         offset: Double,
         subdivisionLevel: Int,
     ): OpenSpline<*, OffsetEdgeMetadata>? {
         // We ignore the subdivision level, because lineSegment offset is always optimal and safe to compute (unless it's
         // a point)
         return findOffsetSpline(
-            strategy = strategy,
             offset = offset,
         )
     }

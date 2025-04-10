@@ -28,7 +28,6 @@ import app.geometry.Point
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve.OffsetEdgeMetadata
 import app.geometry.curves.bezier.CubicBezierCurve
-import app.geometry.curves.bezier.BezierCurve
 import app.geometry.splines.ClosedSpline.ContourEdgeMetadata
 import kotlin.test.Ignore
 import kotlin.test.Test
@@ -397,7 +396,6 @@ class ClosedSplineTests {
 
         val contourSpline = assertNotNull(
             innerSpline.findContourSpline(
-                strategy = BezierCurve.BestFitOffsetStrategy,
                 offset = 10.0,
             ),
         )

@@ -4,7 +4,6 @@ import app.geometry.Point
 import app.geometry.curves.LineSegment
 import app.geometry.transformations.TotalTransformation
 import app.geometry.curves.bezier.CubicBezierCurve
-import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.SegmentCurve
 import app.geometry.splines.*
 import app.geometry.transformations.transformation
@@ -14,7 +13,6 @@ import org.w3c.dom.svg.*
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.reader
-import kotlin.math.roundToInt
 
 val documentFactory: SAXSVGDocumentFactory = SAXSVGDocumentFactory(null)
 
@@ -181,7 +179,6 @@ fun main() {
     println(spline.dump())
 
     val contourSpline = spline.findContourSpline(
-        strategy = BezierCurve.BestFitOffsetStrategy,
         offset = 40.0,
     )!!
 
