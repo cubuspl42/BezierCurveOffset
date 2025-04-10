@@ -16,11 +16,11 @@ import kotlin.io.path.reader
 
 val documentFactory: SAXSVGDocumentFactory = SAXSVGDocumentFactory(null)
 
-sealed class PathSeg {
+sealed class WrappedSvgPathSeg {
     companion object {
         fun fromSvgPathSeg(
             pathSeg: SVGPathSeg,
-        ): PathSeg {
+        ): WrappedSvgPathSeg {
             when (pathSeg.pathSegType) {
                 SVGPathSeg.PATHSEG_MOVETO_ABS -> {
                     val pathSegMovetoAbs = pathSeg as SVGPathSegMovetoAbs
@@ -68,7 +68,7 @@ sealed class PathSeg {
         }
     }
 
-    sealed class CurveTo : PathSeg() {
+    sealed class CurveTo : WrappedSvgPathSeg() {
         abstract fun toEdge(startKnot: Point): SegmentCurve.Edge<SegmentCurve<*>>
 
         final override val finalPoint: Point
@@ -79,7 +79,7 @@ sealed class PathSeg {
 
     data class MoveTo(
         override val finalPoint: Point,
-    ) : PathSeg()
+    ) : WrappedSvgPathSeg()
 
     data class LineTo(
         override val endPoint: Point,
@@ -113,13 +113,13 @@ fun SVGPathElement.toClosedSpline(): ClosedSpline<*, *> {
     require(svgPathSegs.last().pathSegType == SVGPathSeg.PATHSEG_CLOSEPATH)
 
     val pathSegs = svgPathSegs.dropLast(1).map {
-        PathSeg.fromSvgPathSeg(it)
+        WrappedSvgPathSeg.fromSvgPathSeg(it)
     }
 
     val (firstPathSeg, tailPathSegs) = pathSegs.uncons()!!
 
-    val originPathSeg = firstPathSeg as PathSeg.MoveTo
-    val edgePathSegs = tailPathSegs.elementWiseAs<PathSeg.CurveTo>()
+    val originPathSeg = firstPathSeg as WrappedSvgPathSeg.MoveTo
+    val edgePathSegs = tailPathSegs.elementWiseAs<WrappedSvgPathSeg.CurveTo>()
 
     val segments = edgePathSegs.withPrevious(
         outerLeft = originPathSeg,
