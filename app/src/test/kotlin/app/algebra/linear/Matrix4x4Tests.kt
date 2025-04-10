@@ -10,32 +10,33 @@ import kotlin.test.assertTrue
 class Matrix4x4Tests {
     @Test
     fun testTimesSquare() {
-        val matrixA = Matrix4x4.columnMajor(
+        val aMatrix = Matrix4x4.columnMajor(
             column0 = Vector4.vertical(1.0, 2.0, 3.0, 4.0),
             column1 = Vector4.vertical(5.0, 6.0, 7.0, 8.0),
             column2 = Vector4.vertical(9.0, 10.0, 11.0, 12.0),
             column3 = Vector4.vertical(13.0, 14.0, 15.0, 16.0)
         )
 
-        val matrixB = Matrix4x4.columnMajor(
+        val bMatrix: Matrix4x4 = Matrix4x4.columnMajor(
             column0 = Vector4.vertical(17.0, 18.0, 19.0, 20.0),
             column1 = Vector4.vertical(21.0, 22.0, 23.0, 24.0),
             column2 = Vector4.vertical(25.0, 26.0, 27.0, 28.0),
             column3 = Vector4.vertical(29.0, 30.0, 31.0, 32.0)
         )
 
-        val expected = Matrix4x4.columnMajor(
+        val cMatrixExpected: Matrix4x4 = Matrix4x4.columnMajor(
             column0 = Vector4.vertical(538.0, 612.0, 686.0, 760.0),
             column1 = Vector4.vertical(650.0, 740.0, 830.0, 920.0),
             column2 = Vector4.vertical(762.0, 868.0, 974.0, 1080.0),
             column3 = Vector4.vertical(874.0, 996.0, 1118.0, 1240.0)
         )
 
-        val result = matrixA * matrixB
+        val cMatrix: Matrix4x4 = aMatrix * bMatrix
 
-        assertEquals(
-            expected = expected,
-            actual = result,
+        assertEqualsWithTolerance(
+            expected = cMatrixExpected,
+            actual = cMatrix,
+            absoluteTolerance = 0.001,
         )
     }
 

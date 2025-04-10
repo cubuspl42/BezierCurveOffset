@@ -61,7 +61,7 @@ data class Matrix4xN(
 
 operator fun Matrix4xN.times(
     other: MatrixNx4,
-): CmMatrix4x4 = Matrix4x4.columnMajor(
+): ColumnMajorMatrix4x4 = Matrix4x4.columnMajor(
     column0 = this * other.column0,
     column1 = this * other.column1,
     column2 = this * other.column2,

@@ -4,7 +4,6 @@ import app.algebra.linear.Matrix4x4
 import app.algebra.linear.Vector2
 import app.algebra.linear.Vector4
 import app.algebra.linear.VectorSpace
-import app.algebra.linear.invert
 import app.geometry.Point
 import app.geometry.curves.LineSegment
 

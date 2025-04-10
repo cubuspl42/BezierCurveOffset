@@ -6,9 +6,7 @@ import app.algebra.bezier_binomials.sample
 import app.algebra.linear.MatrixNx4
 import app.algebra.linear.Vector4
 import app.algebra.linear.VectorNx1
-import app.algebra.linear.invert
 import app.algebra.linear.times
-import app.algebra.linear.toRowMajor
 import app.fillCircle
 import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.bezier.CubicBezierCurve
@@ -89,7 +87,7 @@ data class TimedPointSeries(
         val yVector = buildYVector()
 
         // T^t * T
-        val aMatrix = (bigTTransposedMatrix * bigTMatrix).toRowMajor()
+        val aMatrix = (bigTTransposedMatrix * bigTMatrix)
 
         // (T^t * T)^-1
         val aMatrixInverted = aMatrix.invert() ?: throw AssertionError("Matrix is not invertible")
