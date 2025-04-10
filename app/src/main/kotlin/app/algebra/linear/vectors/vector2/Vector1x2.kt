@@ -12,9 +12,3 @@ inline val Vector1x2.transposed: Vector2x1
     get() {
         @Suppress("UNCHECKED_CAST") return this as Vector2x1
     }
-
-val Vector1x2.vectorX: Double
-    get() = this.x
-
-val Vector1x2.vectorY: Double
-    get() = this.y
