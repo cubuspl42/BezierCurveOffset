@@ -6,7 +6,7 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.findFaster
 import app.algebra.bezier_binomials.findInterestingCriticalPoints
 import app.algebra.bezier_binomials.sample
-import app.algebra.linear.Vector2x1
+import app.algebra.linear.Vector2
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
@@ -217,7 +217,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         // control points needed to approximate the offset curve, but it's
         // not strictly necessary.
 
-        val approximatedOffsetCurve =  offsetTimedSeries.bestFitCurve() ?: return null
+        val approximatedOffsetCurve = offsetTimedSeries.bestFitCurve() ?: return null
 
         return object : OffsetCurveApproximationResult(
             offsetCurve = approximatedOffsetCurve,
@@ -399,7 +399,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         return firstSubSplitCurve.mergeWith(secondSubSplitCurve)
     }
 
-    abstract val basisFormula: DifferentiableBezierBinomial<Vector2x1>
+    abstract val basisFormula: DifferentiableBezierBinomial<Vector2<*>>
 
     abstract fun splitAt(
         t: Double,

@@ -1,73 +1,12 @@
 package app.algebra.linear
 
-/**
- * A three-dimensional vector
- */
-@Suppress("DataClassPrivateConstructor")
-data class Vector1x3 private constructor(
-    override val x: Double,
-    override val y: Double,
-    override val z: Double,
-) : Vector3() {
-    companion object {
-        fun of(
-            x: Double,
-            y: Double,
-            z: Double,
-        ): Vector1x3 = Vector1x3(
-            x = x,
-            y = y,
-            z = z,
-        )
+typealias Vector1x3 = Vector3<VectorOrientation.Horizontal>
 
-        val zero = Vector1x3.of(0.0, 0.0, 0.0)
+fun Vector1x3.dot(
+    other: Vector3x1,
+): Double = dotForced(other)
+
+inline val Vector1x3.transposed: Vector3x1
+    get() {
+        @Suppress("UNCHECKED_CAST") return this as Vector3x1
     }
-
-    val vectorXy: Vector2x1
-        get() = Vector2x1.of(
-            x = x,
-            y = y,
-        )
-
-    init {
-        require(x.isFinite())
-        require(y.isFinite())
-        require(z.isFinite())
-    }
-
-    operator fun plus(
-        other: Vector1x3,
-    ): Vector1x3 = Vector1x3.of(
-        x = x + other.x,
-        y = y + other.y,
-        z = z + other.z,
-    )
-
-    operator fun minus(
-        other: Vector1x3,
-    ): Vector1x3 = Vector1x3.of(
-        x = x - other.x,
-        y = y - other.y,
-        z = z - other.z,
-    )
-
-    fun dot(
-        other: Vector3x1,
-    ): Double = dotForced(other)
-}
-
-operator fun Double.times(
-    v: Vector1x3,
-): Vector1x3 = Vector1x3.of(
-    x = this * v.x,
-    y = this * v.y,
-    z = this * v.z,
-)
-
-operator fun Vector1x3.div(
-    divisor: Double,
-): Vector1x3 = Vector1x3.of(
-    x = x / divisor,
-    y = y / divisor,
-    z = z / divisor,
-)

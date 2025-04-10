@@ -2,6 +2,7 @@ package app.geometry.transformations
 
 import app.algebra.linear.Matrix3x3
 import app.algebra.linear.Vector1x3
+import app.algebra.linear.vectorXy
 import app.geometry.Point
 import app.get
 import org.w3c.dom.svg.SVGGElement
@@ -58,7 +59,7 @@ data class MixedTransformation private constructor(
     override fun transform(
         point: Point,
     ): Point = Point.of(
-        pv = tm.times(point.pv.toVec3()).vectorXy,
+        pv = tm.times(point.pv.toVec3().asVertical).vectorXy,
     )
 }
 

@@ -1,6 +1,7 @@
 package app.geometry.curves
 
 import app.algebra.NumericObject
+import app.algebra.linear.minus
 import app.fillCircle
 import app.geometry.BoundingBox
 import app.geometry.Direction

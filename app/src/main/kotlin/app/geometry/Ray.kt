@@ -1,6 +1,8 @@
 package app.geometry
 
-import app.algebra.linear.Vector2x1
+import app.algebra.linear.Vector2
+import app.algebra.linear.minus
+import app.algebra.linear.plus
 import app.fill
 import app.geometry.curves.LineSegment
 import app.geometry.curves.toSvgPath
@@ -23,7 +25,7 @@ data class Ray(
 ) {
     private fun evaluate(
         t: Double,
-    ): Vector2x1 {
+    ): Vector2<*> {
         if (t < 0) {
             throw IllegalArgumentException("t must be non-negative")
         }
@@ -41,10 +43,10 @@ data class Ray(
         )
     }
 
-    internal val sv: Vector2x1
+    internal val sv: Vector2<*>
         get() = startingPoint.pv
 
-    internal val dv: Vector2x1
+    internal val dv: Vector2<*>
         get() = direction.dv
 
     val containingLine: Line

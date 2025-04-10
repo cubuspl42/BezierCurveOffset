@@ -1,9 +1,10 @@
 package app.geometry
 
 import app.algebra.NumericObject
-import app.algebra.equalsWithTolerance
-import app.algebra.linear.Vector2x1
+import app.algebra.linear.Vector2
 import app.algebra.linear.div
+import app.algebra.linear.minus
+import app.algebra.linear.plus
 import app.equalsZeroApproximately
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.Translation
@@ -11,15 +12,15 @@ import java.awt.geom.Path2D
 
 @Suppress("DataClassPrivateConstructor")
 data class Point private constructor(
-    val pv: Vector2x1,
+    val pv: Vector2<*>,
 ) : NumericObject {
     companion object {
         val zero = Point(
-            pv = Vector2x1.zero,
+            pv = Vector2.zero<Nothing>(),
         )
 
         fun of(
-            pv: Vector2x1,
+            pv: Vector2<*>,
         ): Point = Point(
             pv = pv,
         )
@@ -28,7 +29,7 @@ data class Point private constructor(
             px: Double,
             py: Double,
         ): Point = of(
-            pv = Vector2x1.of(
+            pv = Vector2.of(
                 x = px,
                 y = py,
             ),
@@ -86,7 +87,7 @@ data class Point private constructor(
         px: Double,
         py: Double,
     ) : this(
-        pv = Vector2x1.of(
+        pv = Vector2.of(
             x = px,
             y = py,
         ),
@@ -164,7 +165,7 @@ data class Point private constructor(
     }
 
     // TODO: Nuke?
-    fun toVector(): Vector2x1 = Vector2x1.of(x, y)
+    fun toVector(): Vector2<*> = Vector2.of(x, y)
 
     fun projectOnto(line: Line): Point {
         val tr = translationTo(line.representativePoint).projectOnto(line.representativeDirection)

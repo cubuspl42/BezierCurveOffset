@@ -1,6 +1,9 @@
 package app.geometry
 
+import app.algebra.linear.Vector2
 import app.algebra.linear.Vector2x1
+import app.algebra.linear.minus
+import app.algebra.linear.plus
 
 /**
  * A line in 2D Euclidean space, described by the equation p = s + td
@@ -25,15 +28,15 @@ data class Line(
         ).containingLine
     }
 
-    val pv: Vector2x1
+    val pv: Vector2<*>
         get() = representativePoint.pv
 
-    val dv: Vector2x1
+    val dv: Vector2<*>
         get() = representativeDirection.dv
 
     private fun evaluate(
         t: Double,
-    ): Vector2x1 = pv + dv.scale(t)
+    ): Vector2<*> = pv + dv.scale(t)
 
     fun findIntersectionPoint(
         other: Line,

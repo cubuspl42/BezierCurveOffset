@@ -93,3 +93,30 @@ data class Vector4<out Vo : VectorOrientation> private constructor(
         else -> true
     }
 }
+
+val <Vo : VectorOrientation> Vector4<Vo>.vectorXy: Vector2<Vo>
+    get() = Vector2(
+        x = this.x,
+        y = this.y,
+    )
+
+
+val <Vo : VectorOrientation> Vector4<Vo>.vectorZw: Vector2<Vo>
+    get() = Vector2(
+        x = this.z,
+        y = this.w,
+    )
+
+val <Vo : VectorOrientation> Vector4<Vo>.vectorXyz: Vector3<Vo>
+    get() = Vector3(
+        x = this.x,
+        y = this.y,
+        z = this.z,
+    )
+
+val <Vo : VectorOrientation> Vector4<Vo>.vectorYzw: Vector3<Vo>
+    get() = Vector3(
+        x = this.y,
+        y = this.z,
+        z = this.w,
+    )

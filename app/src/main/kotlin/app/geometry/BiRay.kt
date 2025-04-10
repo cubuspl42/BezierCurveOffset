@@ -1,5 +1,6 @@
 package app.geometry
 
+import app.algebra.linear.Vector2
 import app.algebra.linear.Vector2x1
 
 /**
@@ -57,7 +58,7 @@ data class BiRay(
      */
     val bisectingRay: Ray?
         get() {
-            val b = Vector2x1.bisector(firstDirection.dv, secondDirection.dv)
+            val b = Vector2.bisector(firstDirection.dv, secondDirection.dv)
 
             val d = b.toDirection() ?: return null
 
