@@ -2,9 +2,9 @@ package app.algebra.linear.vectors.vector2
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
-import app.algebra.linear.vectors.vector3.Vector3
 import app.algebra.linear.VectorOrientation
 import app.algebra.linear.VectorSpace
+import app.algebra.linear.vectors.vector3.Vector3
 import app.geometry.Point
 import kotlin.math.sqrt
 
@@ -104,7 +104,8 @@ data class Vector2<out Vo : VectorOrientation>(
         get() = Vector2(x = -y, y = x)
 
     override fun equalsWithTolerance(
-        other: NumericObject, absoluteTolerance: Double
+        other: NumericObject,
+        absoluteTolerance: Double,
     ): Boolean = when {
         other !is Vector2<*> -> false
         !x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) -> false
