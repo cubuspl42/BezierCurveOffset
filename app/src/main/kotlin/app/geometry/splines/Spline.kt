@@ -115,6 +115,14 @@ sealed class Spline<
         }
     }
 
+    data class SubSegment<
+            out CurveT : SegmentCurve<CurveT>,
+            out EdgeMetadata,
+            >(
+        val edgeMetadata: EdgeMetadata,
+        val segmentCurve: CurveT,
+    )
+
     data class Terminator(
         val endKnot: Point,
     ) : Node {
@@ -134,17 +142,24 @@ sealed class Spline<
 
     abstract val rightEdgeNode: Node
 
-    val subCurves: List<CurveT> by lazy {
+    val subSegments: List<SubSegment<CurveT, EdgeMetadata>> by lazy {
         segments.mapWithNext(rightEdge = rightEdgeNode) { segment, nextNode ->
             val startKnot = segment.startKnot
             val endKnot = nextNode.frontKnot
             val edge = segment.edge
 
-            edge.bind(
-                startKnot = startKnot,
-                endKnot = endKnot,
+            SubSegment(
+                edgeMetadata = segment.edgeMetadata,
+                segmentCurve = edge.bind(
+                    startKnot = startKnot,
+                    endKnot = endKnot,
+                ),
             )
         }
+    }
+
+    val subCurves: List<CurveT> by lazy {
+        subSegments.map { it.segmentCurve }
     }
 }
 
