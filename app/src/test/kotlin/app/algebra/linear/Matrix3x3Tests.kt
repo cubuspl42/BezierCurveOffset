@@ -40,7 +40,7 @@ class Matrix3x3Tests {
             row2 = Vector3.horizontal(9.0, 10.0, 111.0),
         )
 
-        val bMatrix = Matrix3x3.columMajor(
+        val bMatrix = Matrix3x3.columnMajor(
             column0 = Vector3.vertical(-2.0, 3.0, 6.0),
             column1 = Vector3.vertical(-5.0, 4.0, 7.0),
             column2 = Vector3.vertical(12.0, -1.0, 8.0),

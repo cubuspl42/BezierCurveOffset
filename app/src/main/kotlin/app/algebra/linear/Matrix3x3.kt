@@ -1,48 +1,98 @@
 package app.algebra.linear
 
 import app.algebra.NumericObject
+import app.indexOfMaxBy
+import kotlin.math.absoluteValue
 
-data class Matrix3x3<out Vo : VectorOrientation>(
-    val vector0: Vector3<Vo>,
-    val vector1: Vector3<Vo>,
-    val vector2: Vector3<Vo>,
-) : NumericObject {
+sealed class Matrix3x3 : NumericObject {
     companion object {
-        fun <Vo : VectorOrientation> identity(): Matrix3x3<Vo> = Matrix3x3(
-            vector0 = Vector3(1.0, 0.0, 0.0),
-            vector1 = Vector3(0.0, 1.0, 0.0),
-            vector2 = Vector3(0.0, 0.0, 1.0),
+        val zero = Matrix3x3.rowMajor(
+            row0 = Vector3.horizontal(0.0, 0.0, 0.0),
+            row1 = Vector3.horizontal(0.0, 0.0, 0.0),
+            row2 = Vector3.horizontal(0.0, 0.0, 0.0),
+        )
+
+        val identity = Matrix3x3.rowMajor(
+            row0 = Vector3.horizontal(1.0, 0.0, 0.0),
+            row1 = Vector3.horizontal(0.0, 1.0, 0.0),
+            row2 = Vector3.horizontal(0.0, 0.0, 1.0),
         )
 
         fun rowMajor(
             row0: Vector1x3,
             row1: Vector1x3,
             row2: Vector1x3,
-        ): RmMatrix3x3 = Matrix3x3(
-            vector0 = row0,
-            vector1 = row1,
-            vector2 = row2,
+        ): RowMajorMatrix3x3 = RowMajorMatrix3x3(
+            data = SquareMatrix3Data(
+                vector0 = row0,
+                vector1 = row1,
+                vector2 = row2,
+            ),
         )
 
-        fun columMajor(
+        fun columnMajor(
             column0: Vector3x1,
             column1: Vector3x1,
             column2: Vector3x1,
-        ): CmMatrix3x3 = Matrix3x3(
-            vector0 = column0,
-            vector1 = column1,
-            vector2 = column2,
+        ): ColumnMajorMatrix3x3 = ColumnMajorMatrix3x3(
+            data = SquareMatrix3Data(
+                vector0 = column0,
+                vector1 = column1,
+                vector2 = column2,
+            ),
         )
     }
 
-    override fun equalsWithTolerance(
-        other: NumericObject,
-        absoluteTolerance: Double
+    final override fun equals(other: Any?): Boolean {
+        return equalsWithTolerance(
+            other = other as? NumericObject ?: return false,
+            absoluteTolerance = 0.0,
+        )
+    }
+
+    final override fun hashCode(): Int {
+        throw UnsupportedOperationException()
+    }
+
+    protected fun equalsWithToleranceRowWise(
+        other: Matrix3x3, absoluteTolerance: Double
     ): Boolean = when {
-        other !is Matrix3x3<*> -> false
-        !vector0.equalsWithTolerance(other.vector0, absoluteTolerance = absoluteTolerance) -> false
-        !vector1.equalsWithTolerance(other.vector1, absoluteTolerance = absoluteTolerance) -> false
-        !vector2.equalsWithTolerance(other.vector2, absoluteTolerance = absoluteTolerance) -> false
+        !row0.equalsWithTolerance(other.row0, absoluteTolerance = absoluteTolerance) -> false
+        !row1.equalsWithTolerance(other.row1, absoluteTolerance = absoluteTolerance) -> false
+        !row2.equalsWithTolerance(other.row2, absoluteTolerance = absoluteTolerance) -> false
         else -> true
     }
+
+    fun toColumnMajor(): ColumnMajorMatrix3x3 = Matrix3x3.columnMajor(
+        column0 = column0,
+        column1 = column1,
+        column2 = column2,
+    )
+
+    abstract val transposed: Matrix3x3
+
+    operator fun times(
+        vector: Vector3x1,
+    ): Vector3x1 = Vector3x1.of(
+        x = row0.dot(vector),
+        y = row1.dot(vector),
+        z = row2.dot(vector),
+    )
+
+    @JvmName("timesRm")
+    operator fun times(
+        other: Matrix3x3,
+    ): RowMajorMatrix3x3 = Matrix3x3.rowMajor(
+        row0 = row0 * other,
+        row1 = row1 * other,
+        row2 = row2 * other,
+    )
+
+    abstract val row0: Vector1x3
+    abstract val row1: Vector1x3
+    abstract val row2: Vector1x3
+
+    abstract val column0: Vector3x1
+    abstract val column1: Vector3x1
+    abstract val column2: Vector3x1
 }

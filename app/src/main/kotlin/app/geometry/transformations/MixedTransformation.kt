@@ -1,9 +1,7 @@
 package app.geometry.transformations
 
 import app.algebra.linear.Matrix3x3
-import app.algebra.linear.RmMatrix3x3
 import app.algebra.linear.Vector1x3
-import app.algebra.linear.times
 import app.algebra.linear.vectorXy
 import app.geometry.Point
 import app.get
@@ -12,11 +10,11 @@ import org.w3c.dom.svg.SVGMatrix
 
 @Suppress("DataClassPrivateConstructor")
 data class MixedTransformation private constructor(
-    val tm: RmMatrix3x3,
+    val tm: Matrix3x3,
 ) : Transformation() {
     companion object {
         val identity = MixedTransformation(
-            tm = Matrix3x3.identity(),
+            tm = Matrix3x3.identity,
         )
 
         fun of(
