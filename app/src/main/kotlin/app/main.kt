@@ -2,7 +2,7 @@ package app
 
 import app.geometry.Point
 import app.geometry.curves.LineSegment
-import app.geometry.transformations.TotalTransformation
+import app.geometry.transformations.MixedTransformation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.SegmentCurve
 import app.geometry.splines.*
@@ -17,7 +17,7 @@ import kotlin.io.path.reader
 val documentFactory: SAXSVGDocumentFactory = SAXSVGDocumentFactory(null)
 
 fun extractSplineFromElement(
-    transformation: TotalTransformation,
+    transformation: MixedTransformation,
     element: Element,
 ): ClosedSpline<*, *> = when (val singleChild = element.childElements.single()) {
     is SVGPathElement -> singleChild.toClosedSpline().transformVia(
@@ -44,7 +44,7 @@ fun extractSplineFromFile(
     val document = documentFactory.createDocument(uri, reader) as SVGDocument
     val svgElement = document.documentElement as SVGElement
     val pathElement = extractSplineFromElement(
-        transformation = TotalTransformation.identity, element = svgElement
+        transformation = MixedTransformation.identity, element = svgElement
     )
 
     return pathElement

@@ -2,18 +2,17 @@ package app.geometry.transformations
 
 import app.algebra.linear.Matrix3x3
 import app.algebra.linear.Vector1x3
-import app.algebra.linear.Vector3x1
 import app.geometry.Point
 import app.get
 import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGMatrix
 
 @Suppress("DataClassPrivateConstructor")
-data class TotalTransformation private constructor(
+data class MixedTransformation private constructor(
     val tm: Matrix3x3,
 ): Transformation() {
     companion object {
-        val identity = TotalTransformation(
+        val identity = MixedTransformation(
             tm = Matrix3x3.identity,
         )
 
@@ -24,7 +23,7 @@ data class TotalTransformation private constructor(
             d: Double,
             e: Double,
             f: Double,
-        ): TotalTransformation = TotalTransformation(
+        ): MixedTransformation = MixedTransformation(
             tm = Matrix3x3(
                 row0 = Vector1x3.of(
                     x = a,
@@ -51,8 +50,8 @@ data class TotalTransformation private constructor(
      * @param base - The transformation that comes before this transformation
      */
     fun applyOver(
-        base: TotalTransformation,
-    ): TotalTransformation = TotalTransformation(
+        base: MixedTransformation,
+    ): MixedTransformation = MixedTransformation(
         tm = tm * base.tm,
     )
 
@@ -63,10 +62,10 @@ data class TotalTransformation private constructor(
     )
 }
 
-val SVGGElement.transformation: TotalTransformation
+val SVGGElement.transformation: MixedTransformation
     get() = transform.baseVal[0].matrix.toTransformation()
 
-fun SVGMatrix.toTransformation(): TotalTransformation = TotalTransformation.of(
+fun SVGMatrix.toTransformation(): MixedTransformation = MixedTransformation.of(
     a = a.toDouble(),
     b = b.toDouble(),
     c = c.toDouble(),
