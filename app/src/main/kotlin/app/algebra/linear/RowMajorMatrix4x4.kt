@@ -8,6 +8,11 @@ data class RowMajorMatrix4x4(
     override val row2: Vector1x4,
     override val row3: Vector1x4,
 ) : Matrix4x4() {
+    override fun get(
+        i: Int,
+        j: Int,
+    ): Double = this[i][j]
+
     override val transposed: Matrix4x4
         get() = ColumnMajorMatrix4x4(
             transposedMatrix = this,

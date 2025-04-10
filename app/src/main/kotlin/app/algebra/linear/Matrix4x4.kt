@@ -68,6 +68,10 @@ sealed class Matrix4x4 : NumericObject {
         else -> true
     }
 
+    abstract operator fun get(
+        i: Int,
+        j: Int,
+    ): Double
 
     operator fun get(
         i: Int,
@@ -81,23 +85,23 @@ sealed class Matrix4x4 : NumericObject {
 
     /** Checks if the matrix is upper triangular. */
     fun isUpperTriangular(): Boolean {
-        val a21 = this[1][0]
-        val a31 = this[2][0]
-        val a32 = this[2][1]
-        val a41 = this[3][0]
-        val a42 = this[3][1]
-        val a43 = this[3][2]
+        val a21 = this[1, 0]
+        val a31 = this[2, 0]
+        val a32 = this[2, 1]
+        val a41 = this[3, 0]
+        val a42 = this[3, 1]
+        val a43 = this[3, 2]
         return a21 == 0.0 && a31 == 0.0 && a32 == 0.0 && a41 == 0.0 && a42 == 0.0 && a43 == 0.0
     }
 
     /** Checks if the matrix is lower triangular. */
     fun isLowerTriangular(): Boolean {
-        val a12 = this[0][1]
-        val a13 = this[0][2]
-        val a14 = this[0][3]
-        val a23 = this[1][2]
-        val a24 = this[1][3]
-        val a34 = this[2][3]
+        val a12 = this[0, 1]
+        val a13 = this[0, 2]
+        val a14 = this[0, 3]
+        val a23 = this[1, 2]
+        val a24 = this[1, 3]
+        val a34 = this[2, 3]
         return a12 == 0.0 && a13 == 0.0 && a14 == 0.0 && a23 == 0.0 && a24 == 0.0 && a34 == 0.0
     }
 
@@ -148,16 +152,16 @@ sealed class Matrix4x4 : NumericObject {
         val y2 = yVector[1]
         val y1 = yVector[0]
 
-        val a11 = this[0][0]
-        val a12 = this[0][1]
-        val a13 = this[0][2]
-        val a14 = this[0][3]
-        val a22 = this[1][1]
-        val a23 = this[1][2]
-        val a24 = this[1][3]
-        val a33 = this[2][2]
-        val a34 = this[2][3]
-        val a44 = this[3][3]
+        val a11 = this[0, 0]
+        val a12 = this[0, 1]
+        val a13 = this[0, 2]
+        val a14 = this[0, 3]
+        val a22 = this[1, 1]
+        val a23 = this[1, 2]
+        val a24 = this[1, 3]
+        val a33 = this[2, 2]
+        val a34 = this[2, 3]
+        val a44 = this[3, 3]
 
         val x4 = y4 / a44
         val x3 = (y3 - a34 * x4) / a33
@@ -198,16 +202,16 @@ sealed class Matrix4x4 : NumericObject {
         val y2 = yVector[1]
         val y1 = yVector[0]
 
-        val a11 = this[0][0]
-        val a21 = this[1][0]
-        val a22 = this[1][1]
-        val a31 = this[2][0]
-        val a32 = this[2][1]
-        val a33 = this[2][2]
-        val a41 = this[3][0]
-        val a42 = this[3][1]
-        val a43 = this[3][2]
-        val a44 = this[3][3]
+        val a11 = this[0, 0]
+        val a21 = this[1, 0]
+        val a22 = this[1, 1]
+        val a31 = this[2, 0]
+        val a32 = this[2, 1]
+        val a33 = this[2, 2]
+        val a41 = this[3, 0]
+        val a42 = this[3, 1]
+        val a43 = this[3, 2]
+        val a44 = this[3, 3]
 
         val x1 = y1 / a11
         val x2 = (y2 - a21 * x1) / a22
@@ -275,40 +279,40 @@ sealed class Matrix4x4 : NumericObject {
 
     /** Performs LU decomposition on the current matrix. */
     internal fun luDecompose(): LuDecomposition? {
-        val u11 = this[0][0]
-        val u12 = this[0][1]
-        val u13 = this[0][2]
-        val u14 = this[0][3]
+        val u11 = this[0, 0]
+        val u12 = this[0, 1]
+        val u13 = this[0, 2]
+        val u14 = this[0, 3]
 
         if (u11 == 0.0) {
             return null
         }
 
-        val l21 = this[1][0] / u11
-        val l31 = this[2][0] / u11
-        val l41 = this[3][0] / u11
+        val l21 = this[1, 0] / u11
+        val l31 = this[2, 0] / u11
+        val l41 = this[3, 0] / u11
 
-        val u22 = this[1][1] - u12 * l21
-        val u23 = this[1][2] - u13 * l21
-        val u24 = this[1][3] - u14 * l21
+        val u22 = this[1, 1] - u12 * l21
+        val u23 = this[1, 2] - u13 * l21
+        val u24 = this[1, 3] - u14 * l21
 
         if (u22 == 0.0) {
             return null
         }
 
-        val l32 = (this[2][1] - u12 * l31) / u22
-        val l42 = (this[3][1] - u12 * l41) / u22
+        val l32 = (this[2, 1] - u12 * l31) / u22
+        val l42 = (this[3, 1] - u12 * l41) / u22
 
-        val u33 = this[2][2] - (u13 * l31 + u23 * l32)
-        val u34 = this[2][3] - (u14 * l31 + u24 * l32)
+        val u33 = this[2, 2] - (u13 * l31 + u23 * l32)
+        val u34 = this[2, 3] - (u14 * l31 + u24 * l32)
 
         if (u33 == 0.0) {
             return null
         }
 
-        val l43 = (this[3][2] - u13 * l41 - u23 * l42) / u33
+        val l43 = (this[3, 2] - u13 * l41 - u23 * l42) / u33
 
-        val u44 = this[3][3] - (u14 * l41 + u24 * l42 + u34 * l43)
+        val u44 = this[3, 3] - (u14 * l41 + u24 * l42 + u34 * l43)
 
         val l = Matrix4x4.rowMajor(
             row0 = Vector4.horizontal(1.0, 0.0, 0.0, 0.0),
@@ -358,14 +362,12 @@ sealed class Matrix4x4 : NumericObject {
         row3 = row3 * other,
     )
 
-
     @JvmName("timesRect")
     operator fun times(
         other: Matrix4xN,
     ): Matrix4xN = Matrix4xN(
         columns = other.columns.map { column -> this * column },
     )
-
 
     abstract val row0: Vector1x4
     abstract val row1: Vector1x4
