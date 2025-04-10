@@ -75,6 +75,7 @@ sealed class Spline<
             Spline.Segment(
                 startKnot = ${startKnot.dump()},
                 edge = ${edge.dump()},
+                edgeMetadata = TODO(),
             )
         """.trimIndent()
 
