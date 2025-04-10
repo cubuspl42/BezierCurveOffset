@@ -2,6 +2,7 @@ package app.algebra.linear
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
+import app.algebra.linear.vectors.vector2.Vector2
 
 data class Vector4<out Vo : VectorOrientation> internal constructor(
     val x: Double,

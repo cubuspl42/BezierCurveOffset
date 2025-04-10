@@ -1,7 +1,7 @@
 package app.geometry
 
-import app.algebra.linear.Vector2
-import app.algebra.linear.unaryMinus
+import app.algebra.linear.vectors.vector2.Vector2
+import app.algebra.linear.vectors.vector2.unaryMinus
 
 /**
  * A direction in 2D Euclidean space, i.e. an infinite set of vectors with cross

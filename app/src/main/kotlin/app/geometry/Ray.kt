@@ -1,8 +1,8 @@
 package app.geometry
 
-import app.algebra.linear.Vector2
-import app.algebra.linear.minus
-import app.algebra.linear.plus
+import app.algebra.linear.vectors.vector2.Vector2
+import app.algebra.linear.vectors.vector2.minus
+import app.algebra.linear.vectors.vector2.plus
 import app.fill
 import app.geometry.curves.LineSegment
 import app.geometry.curves.toSvgPath

@@ -1,7 +1,10 @@
-package app.algebra.linear
+package app.algebra.linear.vectors.vector2
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
+import app.algebra.linear.Vector3
+import app.algebra.linear.VectorOrientation
+import app.algebra.linear.VectorSpace
 import app.geometry.Point
 import kotlin.math.sqrt
 
@@ -13,7 +16,7 @@ data class Vector2<out Vo : VectorOrientation>(
      * A vectors space of two-dimensional vectors
      */
     class Vector2VectorSpace<Vo : VectorOrientation> : VectorSpace<Vector2<Vo>>() {
-        override val zero: Vector2<Vo> = Vector2.zero()
+        override val zero: Vector2<Vo> = zero()
 
         override fun add(
             u: Vector2<Vo>,

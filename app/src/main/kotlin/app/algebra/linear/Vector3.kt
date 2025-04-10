@@ -2,6 +2,7 @@ package app.algebra.linear
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
+import app.algebra.linear.vectors.vector2.Vector2
 import kotlin.math.sqrt
 
 data class Vector3<out Vo : VectorOrientation>(

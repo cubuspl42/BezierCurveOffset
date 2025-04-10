@@ -1,10 +1,10 @@
 package app.geometry
 
 import app.algebra.NumericObject
-import app.algebra.linear.Vector2
-import app.algebra.linear.div
-import app.algebra.linear.minus
-import app.algebra.linear.plus
+import app.algebra.linear.vectors.vector2.Vector2
+import app.algebra.linear.vectors.vector2.div
+import app.algebra.linear.vectors.vector2.minus
+import app.algebra.linear.vectors.vector2.plus
 import app.equalsZeroApproximately
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.Translation

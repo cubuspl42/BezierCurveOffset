@@ -1,9 +1,8 @@
 package app.geometry
 
-import app.algebra.linear.Vector2
-import app.algebra.linear.Vector2x1
-import app.algebra.linear.minus
-import app.algebra.linear.plus
+import app.algebra.linear.vectors.vector2.Vector2
+import app.algebra.linear.vectors.vector2.minus
+import app.algebra.linear.vectors.vector2.plus
 
 /**
  * A line in 2D Euclidean space, described by the equation p = s + td

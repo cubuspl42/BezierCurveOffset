@@ -2,10 +2,9 @@ package app.geometry.curves.bezier
 
 import app.SVGGElementUtils
 import app.algebra.NumericObject
-import app.algebra.linear.Vector2x1
 import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
-import app.algebra.linear.Vector2
+import app.algebra.linear.vectors.vector2.Vector2
 import app.fill
 import app.fillCircle
 import app.geometry.*

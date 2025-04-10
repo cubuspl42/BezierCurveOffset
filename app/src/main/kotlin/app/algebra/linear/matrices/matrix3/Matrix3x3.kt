@@ -6,6 +6,8 @@ import app.algebra.linear.Vector3
 import app.algebra.linear.Vector3x1
 import app.algebra.linear.dot
 import app.algebra.linear.times
+import app.algebra.linear.vectors.vector2.dot
+import app.algebra.linear.vectors.vector2.times
 
 sealed class Matrix3x3 : NumericObject {
     companion object {

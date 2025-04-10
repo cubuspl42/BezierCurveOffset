@@ -6,7 +6,7 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.findFaster
 import app.algebra.bezier_binomials.findInterestingCriticalPoints
 import app.algebra.bezier_binomials.sample
-import app.algebra.linear.Vector2
+import app.algebra.linear.vectors.vector2.Vector2
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray

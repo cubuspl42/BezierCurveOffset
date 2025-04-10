@@ -1,9 +1,9 @@
 package app.geometry.transformations
 
-import app.algebra.linear.Vector2
-import app.algebra.linear.Vector2x1
-import app.algebra.linear.plus
-import app.algebra.linear.times
+import app.algebra.linear.vectors.vector2.Vector2
+import app.algebra.linear.vectors.vector2.Vector2x1
+import app.algebra.linear.vectors.vector2.plus
+import app.algebra.linear.vectors.vector2.times
 import app.geometry.Direction
 import app.geometry.Point
 

@@ -1,7 +1,7 @@
 package app.algebra.bezier_binomials
 
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
-import app.algebra.linear.Vector2
+import app.algebra.linear.vectors.vector2.Vector2
 import app.geometry.lineTo
 import app.geometry.moveTo
 import app.linspace
