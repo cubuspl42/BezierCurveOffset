@@ -41,22 +41,6 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         abstract val deviation: Double
     }
 
-    data object BestFitOffsetStrategy {
-        fun approximateOffsetCurve(
-            curve: BezierCurve,
-            offset: Double,
-        ): BezierCurve? {
-            val offsetTimedSeries = curve.findOffsetTimedSeries(offset = offset) ?: return null
-
-            // The computed timed point series could (should?) be improved using
-            // the Hoschek's method. It would likely minimize the number of
-            // control points needed to approximate the offset curve, but it's
-            // not strictly necessary.
-
-            return offsetTimedSeries.bestFitCurve()
-        }
-    }
-
     companion object {
         fun bindRay(
             pointFunction: TimeFunction<Point>,
@@ -226,10 +210,14 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
 
         // TODO: Check for collinear control points up front?
 
-        val approximatedOffsetCurve = BestFitOffsetStrategy.approximateOffsetCurve(
-            curve = this,
-            offset = offset,
-        ) ?: return null
+        val offsetTimedSeries = findOffsetTimedSeries(offset = offset) ?: return null
+
+        // The computed timed point series could (should?) be improved using
+        // the Hoschek's method. It would likely minimize the number of
+        // control points needed to approximate the offset curve, but it's
+        // not strictly necessary.
+
+        val approximatedOffsetCurve =  offsetTimedSeries.bestFitCurve() ?: return null
 
         return object : OffsetCurveApproximationResult(
             offsetCurve = approximatedOffsetCurve,
