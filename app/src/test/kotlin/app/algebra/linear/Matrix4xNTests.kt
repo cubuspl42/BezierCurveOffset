@@ -7,7 +7,7 @@ import kotlin.test.assertEquals
 class Matrix4xNTests {
     @Test
     fun testTimesMatrix() {
-        val matrixA = Matrix4xN(
+        val matrixA = RectangularMatrix4.horizontal(
             columns = listOf(
                 Vector4.vertical(1.0, 2.0, 3.0, 4.0),
                 Vector4.vertical(5.0, 6.0, 7.0, 8.0),
@@ -18,7 +18,7 @@ class Matrix4xNTests {
             )
         )
 
-        val matrixB = MatrixNx4(
+        val matrixB = RectangularMatrix4.vertical(
             rows = listOf(
                 Vector4.horizontal(17.0, 18.0, 19.0, 20.0),
                 Vector4.horizontal(21.0, 22.0, 23.0, 24.0),
@@ -46,7 +46,7 @@ class Matrix4xNTests {
 
     @Test
     fun testTimesVector() {
-        val matrixA = Matrix4xN(
+        val matrixA = RectangularMatrix4.horizontal(
             columns = listOf(
                 Vector4.vertical(1.0, 2.0, 3.0, 4.0),
                 Vector4.vertical(5.0, 6.0, 7.0, 8.0),

@@ -378,7 +378,7 @@ sealed class Matrix4x4 : NumericObject {
     @JvmName("timesRect")
     operator fun times(
         other: Matrix4xN,
-    ): Matrix4xN = Matrix4xN(
+    ): Matrix4xN = RectangularMatrix4.horizontal(
         columns = other.columns.map { column -> this * column },
     )
 

@@ -4,6 +4,7 @@ import app.algebra.bezier_binomials.CubicBezierBinomial
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.sample
 import app.algebra.linear.MatrixNx4
+import app.algebra.linear.RectangularMatrix4
 import app.algebra.linear.Vector4
 import app.algebra.linear.VectorNx1
 import app.algebra.linear.times
@@ -136,7 +137,7 @@ data class TimedPointSeries(
         xs = timedPoints.map { it.point.y },
     )
 
-    private fun buildBigTMatrix(): MatrixNx4 = MatrixNx4(
+    private fun buildBigTMatrix(): MatrixNx4 = RectangularMatrix4.vertical(
         rows = timedPoints.map { timedPoint ->
             val t = timedPoint.t
 

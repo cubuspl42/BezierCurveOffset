@@ -5,12 +5,11 @@ import app.algebra.equalsWithTolerance
 import app.fillByColumn
 import org.ujmp.core.Matrix
 
-data class Matrix4xN(
-    val columns: List<Vector4x1>,
+class Matrix4xN(
+    private val data: RectangularMatrix4Data<VectorOrientation.Vertical>,
 ) : NumericObject {
-    init {
-        require(columns.isNotEmpty())
-    }
+    val columns: List<Vector4x1>
+        get() = data.vectors
 
     val row0: Vector1xN
         get() = Vector1xN(
@@ -35,6 +34,11 @@ data class Matrix4xN(
     val width: Int
         get() = columns.size
 
+    val transposed: MatrixNx4
+        get() = MatrixNx4(
+            data = data.interpretTransposed,
+        )
+
     operator fun times(
         vector: VectorNx1,
     ): Vector4x1 = Vector4.vertical(
@@ -42,12 +46,6 @@ data class Matrix4xN(
         y = row1.dot(vector),
         z = row2.dot(vector),
         w = row3.dot(vector),
-    )
-
-    fun toUjmpMatrix(): Matrix = Matrix.Factory.fillByColumn(
-        columnElements = columns,
-        columnHeight = 4,
-        buildColumn = { v -> v.toArray() },
     )
 
     override fun equalsWithTolerance(

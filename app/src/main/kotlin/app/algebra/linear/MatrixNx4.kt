@@ -1,14 +1,15 @@
 package app.algebra.linear
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
 import app.fillByRow
 import org.ujmp.core.Matrix
 
-data class MatrixNx4(
-    val rows: List<Vector1x4>,
-) {
-    init {
-        require(rows.isNotEmpty())
-    }
+class MatrixNx4(
+    private val data: RectangularMatrix4Data<VectorOrientation.Horizontal>,
+) : NumericObject {
+    val rows: List<Vector1x4>
+        get() = data.vectors
 
     val column0: VectorNx1
         get() = VectorNx1(
@@ -35,14 +36,14 @@ data class MatrixNx4(
 
     val transposed: Matrix4xN
         get() = Matrix4xN(
-            columns = rows.map { it.transposed },
+            data = data.interpretTransposed,
         )
 
-    fun toUjmpMatrix(): Matrix = Matrix.Factory.fillByRow(
-        rowElements = rows,
-        rowWidth = 4,
-    ) { row ->
-        row.toArray()
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double,
+    ): Boolean = when (other) {
+        !is MatrixNx4 -> false
+        else -> rows.equalsWithTolerance(other.rows, absoluteTolerance = absoluteTolerance)
     }
 }
-

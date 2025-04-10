@@ -49,7 +49,7 @@ class Matrix4x4Tests {
             row3 = Vector4.horizontal(13.0, 14.0, 15.0, 16.0)
         )
 
-        val bMatrix = Matrix4xN(
+        val bMatrix = RectangularMatrix4.horizontal(
             columns = listOf(
                 Vector4.vertical(17.0, 18.0, 19.0, 20.0),
                 Vector4.vertical(21.0, 22.0, 23.0, 24.0),
@@ -62,7 +62,7 @@ class Matrix4x4Tests {
 
         val cMatrix = aMatrix * bMatrix
 
-        val expectedMatrix = Matrix4xN(
+        val expectedMatrix = RectangularMatrix4.horizontal(
             columns = listOf(
                 // column-oriented!
                 Vector4.vertical(190.0, 486.0, 782.0, 1078.0),
