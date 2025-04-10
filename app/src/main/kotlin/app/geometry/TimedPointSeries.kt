@@ -88,15 +88,13 @@ data class TimedPointSeries(
         val yVector = buildYVector()
 
         // T^t * T
-        val aMatrix = (bigTTransposedMatrix * bigTMatrix)
+        val aMatrix = bigTTransposedMatrix * bigTMatrix
 
         // (T^t * T)^-1
         val aMatrixInverted = aMatrix.invert() ?: throw AssertionError("Matrix is not invertible")
 
-        val bMatrix = aMatrixInverted
-
         // (M^-1) * (T^t * T)^-1
-        val cMatrix = CubicBezierBinomial.characteristicInvertedMatrix * bMatrix
+        val cMatrix = CubicBezierBinomial.characteristicInvertedMatrix * aMatrixInverted
 
         // (M^-1) * (T^t * T)^-1 * T^t
         val dMatrix = cMatrix * bigTTransposedMatrix
