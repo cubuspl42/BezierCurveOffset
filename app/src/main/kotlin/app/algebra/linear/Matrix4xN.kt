@@ -36,15 +36,6 @@ data class Matrix4xN(
         get() = columns.size
 
     operator fun times(
-        other: MatrixNx4,
-    ): Matrix4x4 = Matrix4x4(
-        column0 = this * other.column0,
-        column1 = this * other.column1,
-        column2 = this * other.column2,
-        column3 = this * other.column3,
-    )
-
-    operator fun times(
         vector: VectorNx1,
     ): Vector4x1 = Vector4.vertical(
         x = row0.dot(vector),
@@ -67,3 +58,12 @@ data class Matrix4xN(
         else -> columns.equalsWithTolerance(other.columns, absoluteTolerance = absoluteTolerance)
     }
 }
+
+operator fun Matrix4xN.times(
+    other: MatrixNx4,
+): CmMatrix4x4 = Matrix4x4.columnMajor(
+    column0 = this * other.column0,
+    column1 = this * other.column1,
+    column2 = this * other.column2,
+    column3 = this * other.column3,
+)

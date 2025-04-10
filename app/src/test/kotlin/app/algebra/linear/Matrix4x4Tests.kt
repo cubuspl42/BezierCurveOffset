@@ -10,21 +10,21 @@ import kotlin.test.assertTrue
 class Matrix4x4Tests {
     @Test
     fun testTimesSquare() {
-        val matrixA = Matrix4x4(
+        val matrixA = Matrix4x4.columnMajor(
             column0 = Vector4.vertical(1.0, 2.0, 3.0, 4.0),
             column1 = Vector4.vertical(5.0, 6.0, 7.0, 8.0),
             column2 = Vector4.vertical(9.0, 10.0, 11.0, 12.0),
             column3 = Vector4.vertical(13.0, 14.0, 15.0, 16.0)
         )
 
-        val matrixB = Matrix4x4(
+        val matrixB = Matrix4x4.columnMajor(
             column0 = Vector4.vertical(17.0, 18.0, 19.0, 20.0),
             column1 = Vector4.vertical(21.0, 22.0, 23.0, 24.0),
             column2 = Vector4.vertical(25.0, 26.0, 27.0, 28.0),
             column3 = Vector4.vertical(29.0, 30.0, 31.0, 32.0)
         )
 
-        val expected = Matrix4x4(
+        val expected = Matrix4x4.columnMajor(
             column0 = Vector4.vertical(538.0, 612.0, 686.0, 760.0),
             column1 = Vector4.vertical(650.0, 740.0, 830.0, 920.0),
             column2 = Vector4.vertical(762.0, 868.0, 974.0, 1080.0),
@@ -215,16 +215,18 @@ class Matrix4x4Tests {
         )
 
         val xMatrix = aMatrix.solveByBackSubstitution(
-            yMatrix = yMatrix,
+            yMatrix = yMatrix.toColumnMajor(),
         )
 
+        val xMatrixExpected = Matrix4x4.rowMajor(
+            row0 = Vector4.horizontal(-4.2286, -4.2667, -4.3048, -4.3429),
+            row1 = Vector4.horizontal(0.9143, 1.0667, 1.2190, 1.3714),
+            row2 = Vector4.horizontal(-0.7143, -0.6667, -0.6190, -0.5714),
+            row3 = Vector4.horizontal(1.8571, 2.0000, 2.1429, 2.2857),
+        ).toColumnMajor()
+
         assertEqualsWithTolerance(
-            expected = Matrix4x4.rowMajor(
-                row0 = Vector4.horizontal(-4.2286, -4.2667, -4.3048, -4.3429),
-                row1 = Vector4.horizontal(0.9143, 1.0667, 1.2190, 1.3714),
-                row2 = Vector4.horizontal(-0.7143, -0.6667, -0.6190, -0.5714),
-                row3 = Vector4.horizontal(1.8571, 2.0000, 2.1429, 2.2857),
-            ),
+            expected = xMatrixExpected,
             actual = xMatrix,
             absoluteTolerance = 0.001,
         )
@@ -274,16 +276,18 @@ class Matrix4x4Tests {
         )
 
         val xMatrix = aMatrix.solveByForwardSubstitution(
-            yMatrix = yMatrix,
+            yMatrix = yMatrix.toColumnMajor(),
         )
 
+        val xMatrixExpected = Matrix4x4.rowMajor(
+            row0 = Vector4.horizontal(0.1429, 0.2857, 0.4286, 0.5714),
+            row1 = Vector4.horizontal(0.7619, 0.8571, 0.9524, 1.0476),
+            row2 = Vector4.horizontal(6.7619, 6.8571, 6.9524, 7.0476),
+            row3 = Vector4.horizontal(0.9167, 1.0000, 1.0833, 1.1667),
+        ).toColumnMajor()
+
         assertEqualsWithTolerance(
-            expected = Matrix4x4.rowMajor(
-                row0 = Vector4.horizontal(0.1429, 0.2857, 0.4286, 0.5714),
-                row1 = Vector4.horizontal(0.7619, 0.8571, 0.9524, 1.0476),
-                row2 = Vector4.horizontal(6.7619, 6.8571, 6.9524, 7.0476),
-                row3 = Vector4.horizontal(0.9167, 1.0000, 1.0833, 1.1667),
-            ),
+            expected = xMatrixExpected,
             actual = xMatrix,
             absoluteTolerance = 0.001,
         )
@@ -306,16 +310,18 @@ class Matrix4x4Tests {
         )
 
         val xMatrix = aMatrix.solveByForwardSubstitution(
-            yMatrix = yMatrix,
+            yMatrix = yMatrix.toColumnMajor(),
         )
 
+        val xMatrixExpected = Matrix4x4.rowMajor(
+            row0 = Vector4.horizontal(0.0, 1.0, 0.0, 0.0),
+            row1 = Vector4.horizontal(0.0, -0.8619, 1.0, 0.0),
+            row2 = Vector4.horizontal(0.0, -0.1311, -0.8724, 1.0),
+            row3 = Vector4.horizontal(1.0, -0.1629, 0.9602, -1.7977),
+        ).toColumnMajor()
+
         assertEqualsWithTolerance(
-            expected = Matrix4x4.rowMajor(
-                row0 = Vector4.horizontal(0.0, 1.0, 0.0, 0.0),
-                row1 = Vector4.horizontal(0.0, -0.8619, 1.0, 0.0),
-                row2 = Vector4.horizontal(0.0, -0.1311, -0.8724, 1.0),
-                row3 = Vector4.horizontal(1.0, -0.1629, 0.9602, -1.7977),
-            ),
+            expected = xMatrixExpected,
             actual = xMatrix,
             absoluteTolerance = 0.001,
         )
@@ -348,13 +354,15 @@ class Matrix4x4Tests {
 
         val cMatrix = aMatrixInverted * bMatrix
 
+        val cMatrixExpected = Matrix4x4.rowMajor(
+            row0 = Vector4.horizontal(4.2536, 0.0466, 7.6841, 5.1801),
+            row1 = Vector4.horizontal(-9.8332, -5.0723, -18.7341, -11.1410),
+            row2 = Vector4.horizontal(-7.3983, 0.0884, -10.0470, -8.3826),
+            row3 = Vector4.horizontal(10.3480, 7.2588, 16.4700, 11.8620),
+        ).toColumnMajor()
+
         assertEqualsWithTolerance(
-            expected = Matrix4x4.rowMajor(
-                row0 = Vector4.horizontal(4.2536, 0.0466, 7.6841, 5.1801),
-                row1 = Vector4.horizontal(-9.8332, -5.0723, -18.7341, -11.1410),
-                row2 = Vector4.horizontal(-7.3983, 0.0884, -10.0470, -8.3826),
-                row3 = Vector4.horizontal(10.3480, 7.2588, 16.4700, 11.8620),
-            ),
+            expected = cMatrixExpected,
             actual = cMatrix,
             absoluteTolerance = 0.001,
         )
@@ -373,13 +381,15 @@ class Matrix4x4Tests {
 
         val bMatrix = aMatrixInverted.calculate()
 
+        val bMatrixExpected = Matrix4x4.rowMajor(
+            row0 = Vector4.horizontal(-0.0080, -0.1986, 0.2291, 0.2532),
+            row1 = Vector4.horizontal(0.1849, 0.5667, -0.2693, -0.8239),
+            row2 = Vector4.horizontal(0.3296, 0.1407, -0.3931, -0.3818),
+            row3 = Vector4.horizontal(-0.2170, -0.3609, 0.1857, 0.8368),
+        ).toColumnMajor()
+
         assertEqualsWithTolerance(
-            expected = Matrix4x4.rowMajor(
-                row0 = Vector4.horizontal(-0.0080, -0.1986, 0.2291, 0.2532),
-                row1 = Vector4.horizontal(0.1849, 0.5667, -0.2693, -0.8239),
-                row2 = Vector4.horizontal(0.3296, 0.1407, -0.3931, -0.3818),
-                row3 = Vector4.horizontal(-0.2170, -0.3609, 0.1857, 0.8368),
-            ),
+            expected = bMatrixExpected,
             actual = bMatrix,
             absoluteTolerance = 0.001,
         )

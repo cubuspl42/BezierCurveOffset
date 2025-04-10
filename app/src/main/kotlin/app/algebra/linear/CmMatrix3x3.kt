@@ -40,40 +40,16 @@ operator fun CmMatrix3x3.times(
 operator fun CmMatrix3x3.times(
     other: RmMatrix3x3,
 ): RmMatrix3x3 = Matrix3x3.rowMajor(
-    row0 = Vector1x3.of(
-        row0.dot(other.column0),
-        row0.dot(other.column1),
-        row0.dot(other.column2),
-    ),
-    row1 = Vector1x3.of(
-        row1.dot(other.column0),
-        row1.dot(other.column1),
-        row1.dot(other.column2),
-    ),
-    row2 = Vector1x3.of(
-        row2.dot(other.column0),
-        row2.dot(other.column1),
-        row2.dot(other.column2),
-    ),
+    row0 = row0 * other,
+    row1 = row1 * other,
+    row2 = row2 * other,
 )
 
 @JvmName("timesCm")
 operator fun CmMatrix3x3.times(
     other: CmMatrix3x3,
 ): RmMatrix3x3 = Matrix3x3.rowMajor(
-    row0 = Vector1x3.of(
-        row0.dot(other.column0),
-        row0.dot(other.column1),
-        row0.dot(other.column2),
-    ),
-    row1 = Vector1x3.of(
-        row1.dot(other.column0),
-        row1.dot(other.column1),
-        row1.dot(other.column2),
-    ),
-    row2 = Vector1x3.of(
-        row2.dot(other.column0),
-        row2.dot(other.column1),
-        row2.dot(other.column2),
-    ),
+    row0 = row0 * other,
+    row1 = row1 * other,
+    row2 = row2 * other,
 )

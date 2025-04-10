@@ -29,7 +29,7 @@ class Matrix4xNTests {
             ),
         )
 
-        val expected = Matrix4x4(
+        val expected = Matrix4x4.columnMajor(
             column0 = Vector4.vertical(2062.0, 2224.0, 2386.0, 2548.0),
             column1 = Vector4.vertical(2128.0, 2296.0, 2464.0, 2632.0),
             column2 = Vector4.vertical(2194.0, 2368.0, 2542.0, 2716.0),

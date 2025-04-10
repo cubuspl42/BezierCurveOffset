@@ -4,6 +4,7 @@ import app.algebra.linear.Matrix4x4
 import app.algebra.linear.Vector2
 import app.algebra.linear.Vector4
 import app.algebra.linear.VectorSpace
+import app.algebra.linear.invert
 import app.geometry.Point
 import app.geometry.curves.LineSegment
 
@@ -18,11 +19,11 @@ data class CubicBezierBinomial<V>(
         /**
          * The characteristic matrix of the cubic Bézier curve.
          */
-        val characteristicMatrix = Matrix4x4(
-            column0 = Vector4.vertical(-1.0, 3.0, -3.0, 1.0),
-            column1 = Vector4.vertical(3.0, -6.0, 3.0, 0.0),
-            column2 = Vector4.vertical(-3.0, 3.0, 0.0, 0.0),
-            column3 = Vector4.vertical(1.0, 0.0, 0.0, 0.0),
+        val characteristicMatrix = Matrix4x4.rowMajor(
+            row0 = Vector4.horizontal(-1.0, 3.0, -3.0, 1.0),
+            row1 = Vector4.horizontal(3.0, -6.0, 3.0, 0.0),
+            row2 = Vector4.horizontal(-3.0, 3.0, 0.0, 0.0),
+            row3 = Vector4.horizontal(1.0, 0.0, 0.0, 0.0),
         )
 
         val characteristicInvertedMatrix = characteristicMatrix.invert() ?: error("Matrix is not invertible")

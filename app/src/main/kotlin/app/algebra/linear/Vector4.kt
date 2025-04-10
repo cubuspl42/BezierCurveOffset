@@ -3,8 +3,7 @@ package app.algebra.linear
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 
-@Suppress("DataClassPrivateConstructor")
-data class Vector4<out Vo : VectorOrientation> private constructor(
+data class Vector4<out Vo : VectorOrientation> internal constructor(
     val x: Double,
     val y: Double,
     val z: Double,
@@ -16,7 +15,7 @@ data class Vector4<out Vo : VectorOrientation> private constructor(
             y: Double,
             z: Double,
             w: Double,
-        ): Vector4<Nothing> = Vector4.of(
+        ): Vector4<Nothing> = Vector4(
             x = x,
             y = y,
             z = z,

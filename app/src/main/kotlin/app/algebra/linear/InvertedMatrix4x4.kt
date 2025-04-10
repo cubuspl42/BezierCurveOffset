@@ -7,14 +7,14 @@ data class InvertedMatrix4x4(
     val lupDecomposition: Matrix4x4.LupDecomposition,
 ) {
     operator fun times(
-        other: Matrix4x4,
-    ): Matrix4x4 {
+        other: RmMatrix4x4,
+    ): CmMatrix4x4 {
         val lMatrix = lupDecomposition.l
         val uMatrix = lupDecomposition.u
         val pMatrix = lupDecomposition.p
 
         val yMatrix = lMatrix.solveByForwardSubstitution(
-            yMatrix = pMatrix * other,
+            yMatrix = (pMatrix * other).toColumnMajor(),
         )
 
         val xMatrix = uMatrix.solveByBackSubstitution(
@@ -26,7 +26,7 @@ data class InvertedMatrix4x4(
 
     operator fun times(
         other: InvertedMatrix4x4,
-    ): Matrix4x4 = this * other.calculate()
+    ): CmMatrix4x4 = this * other.calculate().toRowMajor()
 
-    fun calculate(): Matrix4x4 = this * Matrix4x4.identity
+    fun calculate(): CmMatrix4x4 = this * Matrix4x4.identity
 }
