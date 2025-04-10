@@ -14,7 +14,31 @@ data class Vector3<out Vo : VectorOrientation>(
             x: Double,
             y: Double,
             z: Double,
-        ): Vector3<Nothing> = Vector3(x, y, z)
+        ): Vector3<Nothing> = Vector3(
+            x = x,
+            y = y,
+            z = z,
+        )
+
+        fun horizontal(
+            x: Double,
+            y: Double,
+            z: Double,
+        ): Vector1x3 = Vector3(
+            x = x,
+            y = y,
+            z = z,
+        )
+
+        fun vertical(
+            x: Double,
+            y: Double,
+            z: Double,
+        ): Vector3x1 = Vector3(
+            x = x,
+            y = y,
+            z = z,
+        )
     }
 
     init {

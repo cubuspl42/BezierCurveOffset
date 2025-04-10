@@ -1,7 +1,9 @@
 package app.geometry.transformations
 
 import app.algebra.linear.Matrix3x3
+import app.algebra.linear.RmMatrix3x3
 import app.algebra.linear.Vector1x3
+import app.algebra.linear.times
 import app.algebra.linear.vectorXy
 import app.geometry.Point
 import app.get
@@ -10,11 +12,11 @@ import org.w3c.dom.svg.SVGMatrix
 
 @Suppress("DataClassPrivateConstructor")
 data class MixedTransformation private constructor(
-    val tm: Matrix3x3,
-): Transformation() {
+    val tm: RmMatrix3x3,
+) : Transformation() {
     companion object {
         val identity = MixedTransformation(
-            tm = Matrix3x3.identity,
+            tm = Matrix3x3.identity(),
         )
 
         fun of(
@@ -25,7 +27,7 @@ data class MixedTransformation private constructor(
             e: Double,
             f: Double,
         ): MixedTransformation = MixedTransformation(
-            tm = Matrix3x3(
+            tm = Matrix3x3.rowMajor(
                 row0 = Vector1x3.of(
                     x = a,
                     y = c,
@@ -59,7 +61,7 @@ data class MixedTransformation private constructor(
     override fun transform(
         point: Point,
     ): Point = Point.of(
-        pv = tm.times(point.pv.toVec3().asVertical).vectorXy,
+        pv = (tm * point.pv.toVec3().asVertical).vectorXy,
     )
 }
 
