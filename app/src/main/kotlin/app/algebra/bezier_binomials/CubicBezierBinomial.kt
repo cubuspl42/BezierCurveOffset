@@ -2,12 +2,10 @@ package app.algebra.bezier_binomials
 
 import app.algebra.linear.Matrix4x4
 import app.algebra.linear.Vector2x1
-import app.algebra.linear.Vector4x1
+import app.algebra.linear.Vector4
 import app.algebra.linear.VectorSpace
 import app.geometry.Point
 import app.geometry.curves.LineSegment
-import app.invSafe
-import org.ujmp.core.Matrix
 
 data class CubicBezierBinomial<V>(
     internal val vectorSpace: VectorSpace<V>,
@@ -21,10 +19,10 @@ data class CubicBezierBinomial<V>(
          * The characteristic matrix of the cubic Bézier curve.
          */
         val characteristicMatrix = Matrix4x4(
-            column0 = Vector4x1.of(-1.0, 3.0, -3.0, 1.0),
-            column1 = Vector4x1.of(3.0, -6.0, 3.0, 0.0),
-            column2 = Vector4x1.of(-3.0, 3.0, 0.0, 0.0),
-            column3 = Vector4x1.of(1.0, 0.0, 0.0, 0.0),
+            column0 = Vector4.vertical(-1.0, 3.0, -3.0, 1.0),
+            column1 = Vector4.vertical(3.0, -6.0, 3.0, 0.0),
+            column2 = Vector4.vertical(-3.0, 3.0, 0.0, 0.0),
+            column3 = Vector4.vertical(1.0, 0.0, 0.0, 0.0),
         )
 
         val characteristicInvertedMatrix = characteristicMatrix.invert() ?: error("Matrix is not invertible")

@@ -1,94 +1,39 @@
 package app.algebra.linear
 
-import app.algebra.NumericObject
-import app.algebra.equalsWithTolerance
+typealias Vector1x4 = Vector4<VectorOrientation.Horizontal>
 
-@Suppress("DataClassPrivateConstructor")
-data class Vector1x4 private constructor(
-    override val x: Double,
-    override val y: Double,
-    override val z: Double,
-    override val w: Double,
-) : Vector4() {
-    companion object {
-        fun of(
-            x: Double,
-            y: Double,
-            z: Double,
-            w: Double,
-        ): Vector1x4 = Vector1x4(
-            x = x,
-            y = y,
-            z = z,
-            w = w,
-        )
+@JvmName("dotHv")
+fun Vector1x4.dot(
+    other: Vector4x1,
+): Double = dotForced(other)
 
-        val zero = Vector1x4.of(0.0, 0.0, 0.0, 0.0)
+inline val Vector1x4.transposed: Vector4x1
+    get() {
+        @Suppress("UNCHECKED_CAST") return this as Vector4x1
     }
 
-    init {
-        require(x.isFinite())
-        require(y.isFinite())
-        require(z.isFinite())
-        require(w.isFinite())
-    }
+val Vector1x4.vectorYzw: Vector1x3
+    get() = Vector1x3.of(
+        x = this.y,
+        y = this.z,
+        z = this.w,
+    )
 
-    val vectorXy: Vector1x2
-        get() = Vector1x2.of(
-            x = this.x,
-            y = this.y,
-        )
+val Vector1x4.vectorZw: Vector1x2
+    get() = Vector1x2.of(
+        x = this.z,
+        y = this.w,
+    )
 
-    val vectorXyz: Vector1x3
-        get() = Vector1x3.of(
-            x = this.x,
-            y = this.y,
-            z = this.z,
-        )
+val Vector1x4.vectorXyz: Vector1x3
+    get() = Vector1x3.of(
+        x = this.x,
+        y = this.y,
+        z = this.z,
+    )
 
-    val vectorYzw: Vector1x3
-        get() = Vector1x3.of(
-            x = this.y,
-            y = this.z,
-            z = this.w,
-        )
-
-    val vectorZw: Vector1x2
-        get() = Vector1x2.of(
-            x = this.z,
-            y = this.w,
-        )
-
-    val transposed: Vector4x1
-        get() = Vector4x1.of(
-            x = this.x,
-            y = this.y,
-            z = this.z,
-            w = this.w,
-        )
-
-    fun dot(
-        other: Vector4x1,
-    ): Double = dotForced(other)
-
-    operator fun get(
-        j: Int,
-    ): Double = when (j) {
-        0 -> x
-        1 -> y
-        2 -> z
-        3 -> w
-        else -> throw IndexOutOfBoundsException("Index $j out of bounds for length 4")
-    }
-    
-    override fun equalsWithTolerance(
-        other: NumericObject,
-        absoluteTolerance: Double,
-    ): Boolean = when (other) {
-        !is Vector1x4 -> false
-        else -> x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) &&
-                y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) &&
-                z.equalsWithTolerance(other.z, absoluteTolerance = absoluteTolerance) &&
-                w.equalsWithTolerance(other.w, absoluteTolerance = absoluteTolerance)
-    }
-}
+val Vector1x4.vectorXy: Vector1x2
+    get() = Vector1x2.of(
+        x = this.x,
+        y = this.y,
+    )

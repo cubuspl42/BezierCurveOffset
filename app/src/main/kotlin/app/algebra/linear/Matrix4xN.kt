@@ -46,7 +46,7 @@ data class Matrix4xN(
 
     operator fun times(
         vector: VectorNx1,
-    ): Vector4x1 = Vector4x1.of(
+    ): Vector4x1 = Vector4.vertical(
         x = row0.dot(vector),
         y = row1.dot(vector),
         z = row2.dot(vector),

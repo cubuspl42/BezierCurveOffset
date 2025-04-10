@@ -2,9 +2,7 @@ package app.algebra.linear
 
 import app.algebra.NumericObject
 import app.fillByColumn
-import app.indexOfMax
 import app.indexOfMaxBy
-import app.invSafe
 import org.ujmp.core.Matrix
 import kotlin.math.absoluteValue
 
@@ -27,20 +25,20 @@ data class Matrix4x4(
 
     companion object {
         val identity: Matrix4x4 = Matrix4x4(
-            column0 = Vector4x1.of(1.0, 0.0, 0.0, 0.0),
-            column1 = Vector4x1.of(0.0, 1.0, 0.0, 0.0),
-            column2 = Vector4x1.of(0.0, 0.0, 1.0, 0.0),
-            column3 = Vector4x1.of(0.0, 0.0, 0.0, 1.0),
+            column0 = Vector4.vertical(1.0, 0.0, 0.0, 0.0),
+            column1 = Vector4.vertical(0.0, 1.0, 0.0, 0.0),
+            column2 = Vector4.vertical(0.0, 0.0, 1.0, 0.0),
+            column3 = Vector4.vertical(0.0, 0.0, 0.0, 1.0),
         )
 
         val zero: Matrix4x4 = Matrix4x4(
-            column0 = Vector4x1.of(0.0, 0.0, 0.0, 0.0),
-            column1 = Vector4x1.of(0.0, 0.0, 0.0, 0.0),
-            column2 = Vector4x1.of(0.0, 0.0, 0.0, 0.0),
-            column3 = Vector4x1.of(0.0, 0.0, 0.0, 0.0),
+            column0 = Vector4.vertical(0.0, 0.0, 0.0, 0.0),
+            column1 = Vector4.vertical(0.0, 0.0, 0.0, 0.0),
+            column2 = Vector4.vertical(0.0, 0.0, 0.0, 0.0),
+            column3 = Vector4.vertical(0.0, 0.0, 0.0, 0.0),
         )
 
-        fun of(
+        fun columnMajor(
             column0: Vector4x1,
             column1: Vector4x1,
             column2: Vector4x1,
@@ -52,31 +50,31 @@ data class Matrix4x4(
             column3 = column3,
         )
 
-        fun of(
+        fun rowMajor(
             row0: Vector1x4,
             row1: Vector1x4,
             row2: Vector1x4,
             row3: Vector1x4,
         ): Matrix4x4 = Matrix4x4(
-            column0 = Vector4x1.of(
+            column0 = Vector4.vertical(
                 x = row0.x,
                 y = row1.x,
                 z = row2.x,
                 w = row3.x,
             ),
-            column1 = Vector4x1.of(
+            column1 = Vector4.vertical(
                 x = row0.y,
                 y = row1.y,
                 z = row2.y,
                 w = row3.y,
             ),
-            column2 = Vector4x1.of(
+            column2 = Vector4.vertical(
                 x = row0.z,
                 y = row1.z,
                 z = row2.z,
                 w = row3.z,
             ),
-            column3 = Vector4x1.of(
+            column3 = Vector4.vertical(
                 x = row0.w,
                 y = row1.w,
                 z = row2.w,
@@ -86,7 +84,7 @@ data class Matrix4x4(
     }
 
     val row0: Vector1x4
-        get() = Vector1x4.of(
+        get() = Vector4.horizontal(
             x = column0.x,
             y = column1.x,
             z = column2.x,
@@ -94,7 +92,7 @@ data class Matrix4x4(
         )
 
     val row1: Vector1x4
-        get() = Vector1x4.of(
+        get() = Vector4.horizontal(
             x = column0.y,
             y = column1.y,
             z = column2.y,
@@ -102,7 +100,7 @@ data class Matrix4x4(
         )
 
     val row2: Vector1x4
-        get() = Vector1x4.of(
+        get() = Vector4.horizontal(
             x = column0.z,
             y = column1.z,
             z = column2.z,
@@ -110,7 +108,7 @@ data class Matrix4x4(
         )
 
     val row3: Vector1x4
-        get() = Vector1x4.of(
+        get() = Vector4.horizontal(
             x = column0.w,
             y = column1.w,
             z = column2.w,
@@ -146,25 +144,25 @@ data class Matrix4x4(
     operator fun times(
         other: Matrix4x4,
     ): Matrix4x4 = Matrix4x4(
-        column0 = Vector4x1.of(
+        column0 = Vector4.vertical(
             x = row0.dot(other.column0),
             y = row1.dot(other.column0),
             z = row2.dot(other.column0),
             w = row3.dot(other.column0),
         ),
-        column1 = Vector4x1.of(
+        column1 = Vector4.vertical(
             x = row0.dot(other.column1),
             y = row1.dot(other.column1),
             z = row2.dot(other.column1),
             w = row3.dot(other.column1),
         ),
-        column2 = Vector4x1.of(
+        column2 = Vector4.vertical(
             x = row0.dot(other.column2),
             y = row1.dot(other.column2),
             z = row2.dot(other.column2),
             w = row3.dot(other.column2),
         ),
-        column3 = Vector4x1.of(
+        column3 = Vector4.vertical(
             x = row0.dot(other.column3),
             y = row1.dot(other.column3),
             z = row2.dot(other.column3),
@@ -183,7 +181,7 @@ data class Matrix4x4(
         require(i0 in 0 until 4) { "i0 must be between 0 and 3" }
         require(i1 in 0 until 4) { "i1 must be between 0 and 3" }
 
-        return Matrix4x4.of(
+        return Matrix4x4.rowMajor(
             row0 = when {
                 i0 == 0 -> rows[i1]
                 i1 == 0 -> rows[i0]
@@ -279,7 +277,7 @@ data class Matrix4x4(
         val x2 = (y2 - a24 * x4 - a23 * x3) / a22
         val x1 = (y1 - a14 * x4 - a13 * x3 - a12 * x2) / a11
 
-        return Vector4x1.of(
+        return Vector4.vertical(
             x = x1,
             y = x2,
             z = x3,
@@ -302,7 +300,7 @@ data class Matrix4x4(
         val xColumn2 = solveByBackSubstitution(yVector = yMatrix.column2)
         val xColumn3 = solveByBackSubstitution(yVector = yMatrix.column3)
 
-        return Matrix4x4.of(
+        return Matrix4x4.columnMajor(
             column0 = xColumn0,
             column1 = xColumn1,
             column2 = xColumn2,
@@ -336,7 +334,7 @@ data class Matrix4x4(
         val x3 = (y3 - a31 * x1 - a32 * x2) / a33
         val x4 = (y4 - a41 * x1 - a42 * x2 - a43 * x3) / a44
 
-        return Vector4x1.of(
+        return Vector4.vertical(
             x = x1,
             y = x2,
             z = x3,
@@ -359,7 +357,7 @@ data class Matrix4x4(
         val xColumn2 = solveByForwardSubstitution(yVector = yMatrix.column2)
         val xColumn3 = solveByForwardSubstitution(yVector = yMatrix.column3)
 
-        return Matrix4x4.of(
+        return Matrix4x4.columnMajor(
             column0 = xColumn0,
             column1 = xColumn1,
             column2 = xColumn2,
@@ -435,18 +433,18 @@ data class Matrix4x4(
 
         val u44 = this[3][3] - (u14 * l41 + u24 * l42 + u34 * l43)
 
-        val l = Matrix4x4.of(
-            row0 = Vector1x4.of(1.0, 0.0, 0.0, 0.0),
-            row1 = Vector1x4.of(l21, 1.0, 0.0, 0.0),
-            row2 = Vector1x4.of(l31, l32, 1.0, 0.0),
-            row3 = Vector1x4.of(l41, l42, l43, 1.0),
+        val l = Matrix4x4.rowMajor(
+            row0 = Vector4.horizontal(1.0, 0.0, 0.0, 0.0),
+            row1 = Vector4.horizontal(l21, 1.0, 0.0, 0.0),
+            row2 = Vector4.horizontal(l31, l32, 1.0, 0.0),
+            row3 = Vector4.horizontal(l41, l42, l43, 1.0),
         )
 
-        val u = Matrix4x4.of(
-            row0 = Vector1x4.of(u11, u12, u13, u14),
-            row1 = Vector1x4.of(0.0, u22, u23, u24),
-            row2 = Vector1x4.of(0.0, 0.0, u33, u34),
-            row3 = Vector1x4.of(0.0, 0.0, 0.0, u44),
+        val u = Matrix4x4.rowMajor(
+            row0 = Vector4.horizontal(u11, u12, u13, u14),
+            row1 = Vector4.horizontal(0.0, u22, u23, u24),
+            row2 = Vector4.horizontal(0.0, 0.0, u33, u34),
+            row3 = Vector4.horizontal(0.0, 0.0, 0.0, u44),
         )
 
         return LuDecomposition(
@@ -456,7 +454,7 @@ data class Matrix4x4(
     }
 
     val transposed: Matrix4x4
-        get() = Matrix4x4.of(
+        get() = Matrix4x4.rowMajor(
             row0 = column0.transposed,
             row1 = column1.transposed,
             row2 = column2.transposed,
@@ -480,7 +478,7 @@ data class Matrix4x4(
         columns = other.columns.map { column -> this * column },
     )
 
-    operator fun times(vector: Vector4x1) = Vector4x1.of(
+    operator fun times(vector: Vector4x1) = Vector4.vertical(
         x = row0.dot(vector),
         y = row1.dot(vector),
         z = row2.dot(vector),
@@ -503,26 +501,26 @@ fun Matrix.toMatrix4x4(): Matrix4x4 {
     require(rowCount == 4L) { "Matrix must have 4 rows" }
     require(columnCount == 4L) { "Matrix must have 4 columns" }
 
-    return Matrix4x4.of(
-        row0 = Vector1x4.of(
+    return Matrix4x4.rowMajor(
+        row0 = Vector4.horizontal(
             x = getAsDouble(0, 0),
             y = getAsDouble(0, 1),
             z = getAsDouble(0, 2),
             w = getAsDouble(0, 3),
         ),
-        row1 = Vector1x4.of(
+        row1 = Vector4.horizontal(
             x = getAsDouble(1, 0),
             y = getAsDouble(1, 1),
             z = getAsDouble(1, 2),
             w = getAsDouble(1, 3),
         ),
-        row2 = Vector1x4.of(
+        row2 = Vector4.horizontal(
             x = getAsDouble(2, 0),
             y = getAsDouble(2, 1),
             z = getAsDouble(2, 2),
             w = getAsDouble(2, 3),
         ),
-        row3 = Vector1x4.of(
+        row3 = Vector4.horizontal(
             x = getAsDouble(3, 0),
             y = getAsDouble(3, 1),
             z = getAsDouble(3, 2),

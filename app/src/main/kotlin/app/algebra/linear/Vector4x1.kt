@@ -1,71 +1,12 @@
 package app.algebra.linear
 
-import app.algebra.NumericObject
-import app.algebra.equalsWithTolerance
+typealias Vector4x1 = Vector4<VectorOrientation.Vertical>
 
-@Suppress("DataClassPrivateConstructor")
-data class Vector4x1 private constructor(
-    override val x: Double,
-    override val y: Double,
-    override val z: Double,
-    override val w: Double,
-) : Vector4() {
-    companion object {
-        fun of(
-            x: Double,
-            y: Double,
-            z: Double,
-            w: Double,
-        ): Vector4x1 = Vector4x1(
-            x = x,
-            y = y,
-            z = z,
-            w = w,
-        )
+fun Vector4x1.dot(
+    other: Vector1x4,
+): Double = dotForced(other)
 
-        val zero = Vector4x1.of(0.0, 0.0, 0.0, 0.0)
+inline val Vector4x1.transposed: Vector1x4
+    get() {
+        @Suppress("UNCHECKED_CAST") return this as Vector1x4
     }
-
-    init {
-        require(x.isFinite())
-        require(y.isFinite())
-        require(z.isFinite())
-        require(w.isFinite())
-    }
-
-    fun dot(
-        other: Vector1x4,
-    ): Double = dotForced(other)
-
-    operator fun get(
-        index: Int,
-    ): Double = when (index) {
-        0 -> x
-        1 -> y
-        2 -> z
-        3 -> w
-        else -> throw IndexOutOfBoundsException("Index $index out of bounds for length 4")
-    }
-
-    val transposed: Vector1x4
-        get() = Vector1x4.of(
-            x = this.x,
-            y = this.y,
-            z = this.z,
-            w = this.w,
-        )
-
-    fun toList(): List<Double> = listOf(x, y, z, w)
-
-    override fun equalsWithTolerance(
-        other: NumericObject,
-        absoluteTolerance: Double,
-    ): Boolean = when {
-        other !is Vector4x1 -> false
-        !x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) -> false
-        !y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) -> false
-        !z.equalsWithTolerance(other.z, absoluteTolerance = absoluteTolerance) -> false
-        !w.equalsWithTolerance(other.w, absoluteTolerance = absoluteTolerance) -> false
-        else -> true
-    }
-}
