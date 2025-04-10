@@ -4,8 +4,6 @@ import app.algebra.NumericObject
 import app.algebra.linear.vectors.vector4.Vector1x4
 import app.algebra.linear.vectors.vector4.Vector4x1
 
-// ...existing imports...
-
 sealed class LazyMatrix4x4 : Matrix4x4() {
     override val row0: Vector1x4
         get() = computed.row0
@@ -33,14 +31,13 @@ sealed class LazyMatrix4x4 : Matrix4x4() {
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double
-    ): Boolean {
-        return computed.equalsWithTolerance(other, absoluteTolerance)
-    }
+        absoluteTolerance: Double,
+    ): Boolean = computed.equalsWithTolerance(
+        other,
+        absoluteTolerance = absoluteTolerance,
+    )
 
-    override fun get(i: Int, j: Int): Double {
-        return computed[i, j]
-    }
+    override fun get(i: Int, j: Int): Double = computed[i, j]
 
     override val transposed: Matrix4x4
         get() = computed.transposed

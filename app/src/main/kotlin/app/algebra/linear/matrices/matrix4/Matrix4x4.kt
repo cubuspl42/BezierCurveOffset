@@ -52,7 +52,7 @@ sealed class Matrix4x4 : NumericObject {
         )
     }
 
-    data class LuDecomposition(
+    internal data class LuDecomposition(
         val l: RowMajorMatrix4x4,
         val u: RowMajorMatrix4x4,
     )
@@ -75,7 +75,8 @@ sealed class Matrix4x4 : NumericObject {
     }
 
     protected fun equalsWithToleranceRowWise(
-        other: Matrix4x4, absoluteTolerance: Double
+        other: Matrix4x4,
+        absoluteTolerance: Double,
     ): Boolean = when {
         !row0.equalsWithTolerance(other.row0, absoluteTolerance = absoluteTolerance) -> false
         !row1.equalsWithTolerance(other.row1, absoluteTolerance = absoluteTolerance) -> false
@@ -193,7 +194,7 @@ sealed class Matrix4x4 : NumericObject {
     }
 
     /** Solves the equation AX = Y using backward substitution column-wise. */
-    fun solveByBackSubstitution(yMatrix: ColumnMajorMatrix4x4): ColumnMajorMatrix4x4 {
+    fun solveByBackSubstitution(yMatrix: Matrix4x4): ColumnMajorMatrix4x4 {
         require(isUpperTriangular()) { "Matrix is not upper triangular" }
 
         val xColumn0 = solveByBackSubstitution(yVector = yMatrix.column0)
@@ -243,7 +244,7 @@ sealed class Matrix4x4 : NumericObject {
     }
 
     /** Solves the equation AX = Y using forward substitution column-wise. */
-    fun solveByForwardSubstitution(yMatrix: ColumnMajorMatrix4x4): ColumnMajorMatrix4x4 {
+    fun solveByForwardSubstitution(yMatrix: Matrix4x4): ColumnMajorMatrix4x4 {
         require(isLowerTriangular()) { "Matrix is not lower triangular" }
 
         val xColumn0 = solveByForwardSubstitution(yVector = yMatrix.column0)
@@ -349,13 +350,6 @@ sealed class Matrix4x4 : NumericObject {
             u = u,
         )
     }
-
-    fun toColumnMajor(): ColumnMajorMatrix4x4 = columnMajor(
-        column0 = column0,
-        column1 = column1,
-        column2 = column2,
-        column3 = column3,
-    )
 
     abstract val transposed: Matrix4x4
 

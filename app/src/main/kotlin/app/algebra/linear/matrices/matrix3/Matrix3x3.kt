@@ -66,12 +66,6 @@ sealed class Matrix3x3 : NumericObject {
         else -> true
     }
 
-    fun toColumnMajor(): ColumnMajorMatrix3x3 = columnMajor(
-        column0 = column0,
-        column1 = column1,
-        column2 = column2,
-    )
-
     abstract val transposed: Matrix3x3
 
     operator fun times(
