@@ -26,10 +26,12 @@ sealed class Matrix4x4 : NumericObject {
             row2: Vector1x4,
             row3: Vector1x4,
         ): RowMajorMatrix4x4 = RowMajorMatrix4x4(
-            row0 = row0,
-            row1 = row1,
-            row2 = row2,
-            row3 = row3,
+            data = SquareMatrix4Data(
+                vector0 = row0,
+                vector1 = row1,
+                vector2 = row2,
+                vector3 = row3,
+            ),
         )
 
         fun columnMajor(
@@ -38,11 +40,11 @@ sealed class Matrix4x4 : NumericObject {
             column2: Vector4x1,
             column3: Vector4x1,
         ): ColumnMajorMatrix4x4 = ColumnMajorMatrix4x4(
-            transposedMatrix = RowMajorMatrix4x4(
-                row0 = column0.transposed,
-                row1 = column1.transposed,
-                row2 = column2.transposed,
-                row3 = column3.transposed,
+            data = SquareMatrix4Data(
+                vector0 = column0,
+                vector1 = column1,
+                vector2 = column2,
+                vector3 = column3,
             ),
         )
     }
@@ -57,6 +59,17 @@ sealed class Matrix4x4 : NumericObject {
         val u: RowMajorMatrix4x4,
         val p: RowMajorMatrix4x4,
     )
+
+    final override fun equals(other: Any?): Boolean {
+        return equalsWithTolerance(
+            other = other as? NumericObject ?: return false,
+            absoluteTolerance = 0.0,
+        )
+    }
+
+    final override fun hashCode(): Int {
+        throw UnsupportedOperationException()
+    }
 
     protected fun equalsWithToleranceRowWise(
         other: Matrix4x4, absoluteTolerance: Double
@@ -378,5 +391,4 @@ sealed class Matrix4x4 : NumericObject {
     abstract val column1: Vector4x1
     abstract val column2: Vector4x1
     abstract val column3: Vector4x1
-
 }

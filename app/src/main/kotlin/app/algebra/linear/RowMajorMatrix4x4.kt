@@ -2,11 +2,8 @@ package app.algebra.linear
 
 import app.algebra.NumericObject
 
-data class RowMajorMatrix4x4(
-    override val row0: Vector1x4,
-    override val row1: Vector1x4,
-    override val row2: Vector1x4,
-    override val row3: Vector1x4,
+class RowMajorMatrix4x4(
+    private val data: SquareMatrix4Data<VectorOrientation.Horizontal>,
 ) : Matrix4x4() {
     override fun get(
         i: Int,
@@ -15,11 +12,23 @@ data class RowMajorMatrix4x4(
 
     override val transposed: Matrix4x4
         get() = ColumnMajorMatrix4x4(
-            transposedMatrix = this,
+            data = data.interpretTransposed,
         )
 
+    override val row0: Vector1x4
+        get() = data.vector0
+
+    override val row1: Vector1x4
+        get() = data.vector1
+
+    override val row2: Vector1x4
+        get() = data.vector2
+
+    override val row3: Vector1x4
+        get() = data.vector3
+
     override val column0: Vector4x1
-        get() = Vector4x1.of(
+        get() = Vector4.vertical(
             x = row0.x,
             y = row1.x,
             z = row2.x,
@@ -27,7 +36,7 @@ data class RowMajorMatrix4x4(
         )
 
     override val column1: Vector4x1
-        get() = Vector4x1.of(
+        get() = Vector4.vertical(
             x = row0.y,
             y = row1.y,
             z = row2.y,
@@ -35,7 +44,7 @@ data class RowMajorMatrix4x4(
         )
 
     override val column2: Vector4x1
-        get() = Vector4x1.of(
+        get() = Vector4.vertical(
             x = row0.z,
             y = row1.z,
             z = row2.z,
@@ -43,7 +52,7 @@ data class RowMajorMatrix4x4(
         )
 
     override val column3: Vector4x1
-        get() = Vector4x1.of(
+        get() = Vector4.vertical(
             x = row0.w,
             y = row1.w,
             z = row2.w,

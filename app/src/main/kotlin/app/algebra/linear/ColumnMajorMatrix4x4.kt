@@ -2,8 +2,8 @@ package app.algebra.linear
 
 import app.algebra.NumericObject
 
-data class ColumnMajorMatrix4x4(
-    val transposedMatrix: RowMajorMatrix4x4,
+class ColumnMajorMatrix4x4(
+    private val data: SquareMatrix4Data<VectorOrientation.Vertical>,
 ) : Matrix4x4() {
     override fun get(
         i: Int,
@@ -45,31 +45,53 @@ data class ColumnMajorMatrix4x4(
     }
 
     override val transposed: Matrix4x4
-        get() = transposedMatrix
+        get() = RowMajorMatrix4x4(
+            data = data.interpretTransposed,
+        )
 
     override val row0: Vector1x4
-        get() = transposedMatrix.column0.transposed
+        get() = Vector4.horizontal(
+            x = column0.x,
+            y = column1.x,
+            z = column2.x,
+            w = column3.x,
+        )
 
     override val row1: Vector1x4
-        get() = transposedMatrix.column1.transposed
+        get() = Vector4.horizontal(
+            x = column0.y,
+            y = column1.y,
+            z = column2.y,
+            w = column3.y,
+        )
 
     override val row2: Vector1x4
-        get() = transposedMatrix.column2.transposed
+        get() = Vector4.horizontal(
+            x = column0.z,
+            y = column1.z,
+            z = column2.z,
+            w = column3.z,
+        )
 
     override val row3: Vector1x4
-        get() = transposedMatrix.column3.transposed
+        get() = Vector4.horizontal(
+            x = column0.w,
+            y = column1.w,
+            z = column2.w,
+            w = column3.w,
+        )
 
     override val column0: Vector4x1
-        get() = transposedMatrix.row0.transposed
+        get() = data.vector0
 
     override val column1: Vector4x1
-        get() = transposedMatrix.row1.transposed
+        get() = data.vector1
 
     override val column2: Vector4x1
-        get() = transposedMatrix.row2.transposed
+        get() = data.vector2
 
     override val column3: Vector4x1
-        get() = transposedMatrix.row3.transposed
+        get() = data.vector3
 
     override fun equalsWithTolerance(
         other: NumericObject,
