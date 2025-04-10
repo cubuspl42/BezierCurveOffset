@@ -1,4 +1,6 @@
-package app.algebra.linear
+package app.algebra.linear.vectors.vector3
+
+import app.algebra.linear.VectorOrientation
 
 typealias Vector3x1 = Vector3<VectorOrientation.Vertical>
 

@@ -1,4 +1,6 @@
-package app.algebra.linear
+package app.algebra.linear.vectors.vectorN
+
+import app.algebra.linear.VectorOrientation
 
 data class VectorN<out Vo : VectorOrientation> internal constructor(
     val xs: List<Double>
@@ -18,13 +20,13 @@ data class VectorN<out Vo : VectorOrientation> internal constructor(
 
         fun vertical(
             xs: List<Double>,
-        ): VectorNx1= VectorNx1(
+        ): VectorNx1 = VectorNx1(
             xs = xs,
         )
 
         fun vertical(
             vararg xs: Double,
-        ): VectorNx1= VectorNx1(
+        ): VectorNx1 = VectorNx1(
             xs = xs.toList(),
         )
     }

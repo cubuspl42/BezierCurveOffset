@@ -5,9 +5,9 @@ abstract class VectorSpace<V> {
         override val zero: Double = 0.0
 
         override fun add(
+            u: Double,
             v: Double,
-            w: Double,
-        ): Double = v + w
+        ): Double = u + v
 
         override fun scale(
             a: Double,

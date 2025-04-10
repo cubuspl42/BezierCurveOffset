@@ -2,8 +2,8 @@ package app.algebra.linear.matrices.matrix4
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
-import app.algebra.linear.Vector1x4
-import app.algebra.linear.VectorNx1
+import app.algebra.linear.vectors.vector4.Vector1x4
+import app.algebra.linear.vectors.vectorN.VectorNx1
 import app.algebra.linear.VectorOrientation
 
 class MatrixNx4(

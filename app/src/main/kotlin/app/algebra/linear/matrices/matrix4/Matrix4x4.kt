@@ -1,11 +1,13 @@
 package app.algebra.linear.matrices.matrix4
 
 import app.algebra.NumericObject
-import app.algebra.linear.Vector1x4
-import app.algebra.linear.Vector4
-import app.algebra.linear.Vector4x1
-import app.algebra.linear.dot
-import app.algebra.linear.times
+import app.algebra.linear.vectors.vector4.Vector1x4
+import app.algebra.linear.vectors.vector4.Vector4
+import app.algebra.linear.vectors.vector4.Vector4x1
+import app.algebra.linear.vectors.vector3.dot
+import app.algebra.linear.vectors.vector3.times
+import app.algebra.linear.vectors.vector4.dot
+import app.algebra.linear.vectors.vector4.times
 import app.indexOfMaxBy
 import kotlin.math.absoluteValue
 

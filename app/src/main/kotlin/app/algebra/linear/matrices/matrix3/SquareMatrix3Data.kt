@@ -1,6 +1,6 @@
 package app.algebra.linear.matrices.matrix3
 
-import app.algebra.linear.Vector3
+import app.algebra.linear.vectors.vector3.Vector3
 import app.algebra.linear.VectorOrientation
 
 data class SquareMatrix3Data<Vo : VectorOrientation>(

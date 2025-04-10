@@ -2,12 +2,13 @@ package app.algebra.linear.matrices.matrix4
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
-import app.algebra.linear.Vector1xN
-import app.algebra.linear.Vector4
-import app.algebra.linear.Vector4x1
-import app.algebra.linear.VectorNx1
+import app.algebra.linear.vectors.vectorN.Vector1xN
+import app.algebra.linear.vectors.vector4.Vector4
+import app.algebra.linear.vectors.vector4.Vector4x1
+import app.algebra.linear.vectors.vectorN.VectorNx1
 import app.algebra.linear.VectorOrientation
-import app.algebra.linear.dot
+import app.algebra.linear.vectors.vector3.dot
+import app.algebra.linear.vectors.vectorN.dot
 
 class Matrix4xN(
     private val data: RectangularMatrix4Data<VectorOrientation.Vertical>,

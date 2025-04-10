@@ -1,7 +1,8 @@
-package app.algebra.linear
+package app.algebra.linear.vectors.vector3
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
+import app.algebra.linear.VectorOrientation
 import app.algebra.linear.vectors.vector2.Vector2
 import kotlin.math.sqrt
 
@@ -56,7 +57,7 @@ data class Vector3<out Vo : VectorOrientation>(
 
     operator fun minus(
         other: Vector3<*>,
-    ): Vector3<Nothing> = Vector3.of(
+    ): Vector3<Nothing> = of(
         x = x - other.x,
         y = y - other.y,
         z = z - other.z,
@@ -64,7 +65,7 @@ data class Vector3<out Vo : VectorOrientation>(
 
     operator fun plus(
         other: Vector3<*>,
-    ): Vector3<Nothing> = Vector3.of(
+    ): Vector3<Nothing> = of(
         x = x + other.x,
         y = y + other.y,
         z = z + other.z,
@@ -76,7 +77,7 @@ data class Vector3<out Vo : VectorOrientation>(
 
     fun cross(
         other: Vector3<*>,
-    ): Vector3<Nothing> = Vector3.of(
+    ): Vector3<Nothing> = of(
         x = y * other.z - z * other.y,
         y = z * other.x - x * other.z,
         z = x * other.y - y * other.x,
@@ -86,7 +87,7 @@ data class Vector3<out Vo : VectorOrientation>(
         factor: Double,
     ): Vector3<Nothing> {
         require(factor.isFinite())
-        return Vector3.of(
+        return of(
             x = x * factor,
             y = y * factor,
             z = z * factor,

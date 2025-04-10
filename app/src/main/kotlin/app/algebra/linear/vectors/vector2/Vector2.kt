@@ -2,7 +2,7 @@ package app.algebra.linear.vectors.vector2
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
-import app.algebra.linear.Vector3
+import app.algebra.linear.vectors.vector3.Vector3
 import app.algebra.linear.VectorOrientation
 import app.algebra.linear.VectorSpace
 import app.geometry.Point

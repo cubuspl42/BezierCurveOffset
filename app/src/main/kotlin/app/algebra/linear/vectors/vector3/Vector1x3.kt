@@ -1,5 +1,6 @@
-package app.algebra.linear
+package app.algebra.linear.vectors.vector3
 
+import app.algebra.linear.VectorOrientation
 import app.algebra.linear.matrices.matrix3.Matrix3x3
 
 typealias Vector1x3 = Vector3<VectorOrientation.Horizontal>

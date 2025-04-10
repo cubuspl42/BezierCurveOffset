@@ -1,8 +1,10 @@
-package app.algebra.linear
+package app.algebra.linear.vectors.vector4
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
+import app.algebra.linear.VectorOrientation
 import app.algebra.linear.vectors.vector2.Vector2
+import app.algebra.linear.vectors.vector3.Vector3
 
 data class Vector4<out Vo : VectorOrientation> internal constructor(
     val x: Double,

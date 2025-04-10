@@ -1,13 +1,11 @@
 package app.algebra.linear.matrices.matrix3
 
 import app.algebra.NumericObject
-import app.algebra.linear.Vector1x3
-import app.algebra.linear.Vector3
-import app.algebra.linear.Vector3x1
-import app.algebra.linear.dot
-import app.algebra.linear.times
-import app.algebra.linear.vectors.vector2.dot
-import app.algebra.linear.vectors.vector2.times
+import app.algebra.linear.vectors.vector3.Vector1x3
+import app.algebra.linear.vectors.vector3.Vector3
+import app.algebra.linear.vectors.vector3.Vector3x1
+import app.algebra.linear.vectors.vector3.dot
+import app.algebra.linear.vectors.vector3.times
 
 sealed class Matrix3x3 : NumericObject {
     companion object {

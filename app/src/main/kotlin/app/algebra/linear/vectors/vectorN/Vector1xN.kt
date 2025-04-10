@@ -1,4 +1,6 @@
-package app.algebra.linear
+package app.algebra.linear.vectors.vectorN
+
+import app.algebra.linear.VectorOrientation
 
 typealias Vector1xN = VectorN<VectorOrientation.Horizontal>
 

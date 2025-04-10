@@ -4,6 +4,8 @@ import app.algebra.assertEqualsWithTolerance
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.matrices.matrix4.RectangularMatrix4
 import app.algebra.linear.matrices.matrix4.times
+import app.algebra.linear.vectors.vector4.Vector4
+import app.algebra.linear.vectors.vectorN.VectorN
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

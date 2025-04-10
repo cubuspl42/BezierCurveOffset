@@ -5,8 +5,8 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.sample
 import app.algebra.linear.matrices.matrix4.MatrixNx4
 import app.algebra.linear.matrices.matrix4.RectangularMatrix4
-import app.algebra.linear.Vector4
-import app.algebra.linear.VectorNx1
+import app.algebra.linear.vectors.vector4.Vector4
+import app.algebra.linear.vectors.vectorN.VectorNx1
 import app.algebra.linear.matrices.matrix4.times
 import app.fillCircle
 import app.geometry.curves.bezier.BezierCurve

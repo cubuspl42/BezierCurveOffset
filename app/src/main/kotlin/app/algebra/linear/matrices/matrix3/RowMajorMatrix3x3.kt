@@ -1,9 +1,9 @@
 package app.algebra.linear.matrices.matrix3
 
 import app.algebra.NumericObject
-import app.algebra.linear.Vector1x3
-import app.algebra.linear.Vector3
-import app.algebra.linear.Vector3x1
+import app.algebra.linear.vectors.vector3.Vector1x3
+import app.algebra.linear.vectors.vector3.Vector3
+import app.algebra.linear.vectors.vector3.Vector3x1
 import app.algebra.linear.VectorOrientation
 
 class RowMajorMatrix3x3(

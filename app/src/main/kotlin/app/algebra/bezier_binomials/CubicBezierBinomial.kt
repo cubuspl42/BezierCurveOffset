@@ -2,7 +2,7 @@ package app.algebra.bezier_binomials
 
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.Vector4
+import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.linear.VectorSpace
 import app.geometry.Point
 import app.geometry.curves.LineSegment

@@ -3,6 +3,7 @@ package app.algebra.linear
 import app.algebra.assertEqualsWithTolerance
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.matrices.matrix4.RectangularMatrix4
+import app.algebra.linear.vectors.vector4.Vector4
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull

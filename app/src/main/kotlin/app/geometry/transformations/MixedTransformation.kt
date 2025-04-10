@@ -1,8 +1,8 @@
 package app.geometry.transformations
 
 import app.algebra.linear.matrices.matrix3.Matrix3x3
-import app.algebra.linear.Vector1x3
-import app.algebra.linear.vectorXy
+import app.algebra.linear.vectors.vector3.Vector1x3
+import app.algebra.linear.vectors.vector3.vectorXy
 import app.geometry.Point
 import app.get
 import org.w3c.dom.svg.SVGGElement
