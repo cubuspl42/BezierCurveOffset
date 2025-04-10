@@ -1,9 +1,7 @@
 package app.algebra.linear
 
-data class Vector1xN(
-    override val xs: List<Double>,
-) : VectorN() {
-    fun dot(
-        other: VectorNx1,
-    ): Double = dotForced(other)
-}
+typealias Vector1xN = VectorN<VectorOrientation.Horizontal>
+
+fun Vector1xN.dot(
+    other: VectorNx1,
+): Double = dotForced(other)

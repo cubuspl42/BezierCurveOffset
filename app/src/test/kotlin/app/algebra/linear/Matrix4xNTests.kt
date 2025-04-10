@@ -44,6 +44,7 @@ class Matrix4xNTests {
         )
     }
 
+    @Test
     fun testTimesVector() {
         val matrixA = Matrix4xN(
             columns = listOf(
@@ -56,7 +57,7 @@ class Matrix4xNTests {
             ),
         )
 
-        val vectorB = VectorNx1.of(
+        val vectorB = VectorN.vertical(
             1.0,
             2.0,
             3.0,
