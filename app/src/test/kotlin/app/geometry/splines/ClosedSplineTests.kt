@@ -135,7 +135,7 @@ class ClosedSplineTests {
             splines = listOf(spline0, spline1),
         )
 
-        assertEquals(
+        assertEqualsWithTolerance(
             expected = listOf(
                 Spline.Segment(
                     startKnot = bezierSegment0.startKnot,
@@ -169,6 +169,7 @@ class ClosedSplineTests {
                 ),
             ),
             actual = interconnectedSpline.segments,
+            absoluteTolerance = eps,
         )
     }
 

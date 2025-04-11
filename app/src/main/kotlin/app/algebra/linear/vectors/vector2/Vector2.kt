@@ -55,6 +55,13 @@ data class Vector2<out Vo : VectorOrientation>(
         require(y.isFinite())
     }
 
+    val normalized: Vector2<Vo>
+        get() = if (lengthSquared == 0.0) {
+            zero()
+        } else {
+            this / length
+        }
+
     /**
      * The length^2 of this vector
      */

@@ -1,21 +1,21 @@
 package app.geometry
 
 import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
 import app.algebra.linear.vectors.vector2.Vector2
+import app.algebra.linear.vectors.vector2.minus
 import app.algebra.linear.vectors.vector2.unaryMinus
 
 /**
- * A direction in the 2D Euclidean space, i.e. an infinite set of non-zero vectors in which each pair (a, b) is pointing
- * in the exact same direction (b = ka, k > 0) or an infinite set of rays with the same defining angle.
+ * A direction in the 2D Euclidean space, i.e. a unit vector with a given direction and orientation.
  */
 @JvmInline
 value class Direction private constructor(
     /**
-     * One of the infinitely many vectors pointing in this direction, must not
-     * effectively be a zero vector
+     * The unit vector determining the direction
      */
     val dv: Vector2<*>,
-) : NumericObject {
+) : NumericObject, GeometricObject {
     companion object {
         /**
          * @return A direction described by [dv], or null if [dv] is effectively
@@ -25,20 +25,20 @@ value class Direction private constructor(
             dv: Vector2<*>,
         ): Direction? = when {
             dv.lengthSquared == 0.0 -> null
-            else -> {
-//                    require(dv.lengthSquared > 0.0001)
-
-                Direction(dv = dv)
-            }
+            else -> Direction(dv = dv.normalized)
         }
     }
 
     init {
-        require(dv.lengthSquared != 0.0)
+        require(
+            dv.lengthSquared.equalsWithTolerance(
+                1.0,
+                absoluteTolerance = 1e-6,
+            ),
+        )
     }
 
     val perpendicular: Direction
-        // If d is non-zero, its perpendicular vector will also be non-zero
         get() = Direction(dv = dv.perpendicular)
 
     val biDirection: BiDirection
@@ -58,12 +58,23 @@ value class Direction private constructor(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double
+        absoluteTolerance: Double,
     ): Boolean = when {
         other !is Direction -> false
         else -> angleBetween(other).isZeroWithRadialTolerance(
             tolerance = RadialTolerance.ofAbsoluteTolerance(absoluteTolerance)
         )
+    }
+
+    override fun equalsWithTolerance(
+        other: GeometricObject,
+        tolerance: GeometricTolerance,
+    ): Boolean = when {
+        other !is Direction -> false
+        else -> {
+            val deltaDv = other.dv - dv
+            deltaDv.lengthSquared < tolerance.directionDeltaSqTolerance
+        }
     }
 }
 

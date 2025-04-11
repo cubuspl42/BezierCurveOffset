@@ -23,10 +23,9 @@ data class Translation private constructor(
             distance: Double,
         ): Translation {
             require(distance.isFinite())
-
             val dv = direction.dv
             return Translation(
-                tv = dv.scale(distance / dv.length),
+                tv = distance * dv,
             )
         }
 
