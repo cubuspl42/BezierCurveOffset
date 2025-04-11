@@ -37,11 +37,11 @@ sealed class Spline<
 
     data class Segment<
             out CurveT : SegmentCurve<CurveT>,
-            out SegmentMetadata,
+            out Metadata,
             >(
         val startKnot: Point,
         val edge: SegmentCurve.Edge<CurveT>,
-        val segmentMetadata: SegmentMetadata,
+        val metadata: Metadata,
     ) : Node, NumericObject, Dumpbable {
         companion object {
             fun <Metadata> bezier(
@@ -55,7 +55,7 @@ sealed class Spline<
                     control0 = control0,
                     control1 = control1,
                 ),
-                segmentMetadata = metadata,
+                metadata = metadata,
             )
 
             fun <Metadata> lineSegment(
@@ -64,7 +64,7 @@ sealed class Spline<
             ): Segment<LineSegment, Metadata> = Segment(
                 startKnot = startKnot,
                 edge = LineSegment.Edge,
-                segmentMetadata = metadata,
+                metadata = metadata,
             )
         }
 
@@ -81,29 +81,29 @@ sealed class Spline<
 
         fun simplify(
             endKnot: Point,
-        ): Segment<*, SegmentMetadata> = Segment(
+        ): Segment<*, Metadata> = Segment(
             startKnot = startKnot,
             edge = edge.simplify(
                 startKnot = startKnot,
                 endKnot = endKnot,
             ),
-            segmentMetadata = segmentMetadata,
+            metadata = metadata,
         )
 
         fun transformVia(
             transformation: Transformation,
-        ): Segment<CurveT, SegmentMetadata> = Segment(
+        ): Segment<CurveT, Metadata> = Segment(
             startKnot = startKnot.transformVia(transformation = transformation),
             edge = edge.transformVia(transformation),
-            segmentMetadata = segmentMetadata,
+            metadata = metadata,
         )
 
         fun <NewSegmentMetadata> mapMetadata(
-            transform: (SegmentMetadata) -> NewSegmentMetadata,
+            transform: (Metadata) -> NewSegmentMetadata,
         ): Segment<CurveT, NewSegmentMetadata> = Segment(
             startKnot = startKnot,
             edge = edge,
-            segmentMetadata = transform(segmentMetadata),
+            metadata = transform(metadata),
         )
 
         override fun equalsWithTolerance(other: NumericObject, absoluteTolerance: Double): Boolean {
@@ -150,7 +150,7 @@ sealed class Spline<
             val edge = segment.edge
 
             SubSegment(
-                segmentMetadata = segment.segmentMetadata,
+                segmentMetadata = segment.metadata,
                 segmentCurve = edge.bind(
                     startKnot = startKnot,
                     endKnot = endKnot,

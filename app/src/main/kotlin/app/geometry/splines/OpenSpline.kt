@@ -78,4 +78,4 @@ fun <CurveT : SegmentCurve<CurveT>, SegmentMetadata> OpenSpline<CurveT, SegmentM
 )
 
 val <CurveT : SegmentCurve<CurveT>> OpenSpline<CurveT, SegmentCurve.OffsetSegmentMetadata>.globalDeviation
-    get() = segments.maxOf { it.segmentMetadata.globalDeviation }
+    get() = segments.maxOf { it.metadata.globalDeviation }

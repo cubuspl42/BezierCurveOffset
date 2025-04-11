@@ -51,7 +51,7 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         segmentMetadata: SegmentMetadata,
     ): OpenSpline<CurveT, SegmentMetadata> = OpenSpline(
         segments = listOf(
-            toSegment(segmentMetadata = segmentMetadata),
+            toSegment(metadata = segmentMetadata),
         ),
         terminator = Spline.Terminator(
             endKnot = end,
@@ -79,12 +79,12 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         ): Edge<CurveT>
     }
 
-    fun <SegmentMetadata> toSegment(
-        segmentMetadata: SegmentMetadata,
-    ): Spline.Segment<CurveT, SegmentMetadata> = Spline.Segment(
+    fun <Metadata> toSegment(
+        metadata: Metadata,
+    ): Spline.Segment<CurveT, Metadata> = Spline.Segment(
         startKnot = start,
         edge = edge,
-        segmentMetadata = segmentMetadata,
+        metadata = metadata,
     )
 
     abstract fun findBoundingBox(): BoundingBox

@@ -167,7 +167,7 @@ class ClosedSpline<
 }
 
 val ClosedSpline<*, ClosedSpline.ContourSegmentMetadata>.globalOffsetDeviation
-    get() = segments.mapNotNull { it.segmentMetadata.offsetDeviation }.max()
+    get() = segments.mapNotNull { it.metadata.offsetDeviation }.max()
 
 fun SVGPathElement.toClosedSpline(): ClosedSpline<*, *> {
     val svgPathSegs = pathSegList.asList()
@@ -190,7 +190,7 @@ fun SVGPathElement.toClosedSpline(): ClosedSpline<*, *> {
         Spline.Segment(
             startKnot = startKnot,
             edge = pathSeg.toEdge(startKnot),
-            segmentMetadata = null,
+            metadata = null,
         )
     }
 
