@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.SvgViewBox
+import app.geometry.transformations.Transformation
 import app.geometry.transformations.Translation
 import java.awt.geom.Rectangle2D
 
@@ -95,6 +96,13 @@ data class BoundingBox(
             yMax = yMax,
         )
     }
+
+    fun transformVia(
+        transformation: Transformation,
+    ): BoundingBox = BoundingBox.of(
+        pointA = transformation.transform(topLeft),
+        pointB = transformation.transform(bottomLeft),
+    )
 
     init {
         require(width >= 0)

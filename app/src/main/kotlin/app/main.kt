@@ -1,8 +1,10 @@
 package app
 
+import app.PatternSvg.Companion.mmToPtFactor
 import app.geometry.transformations.MixedTransformation
 import app.geometry.curves.SegmentCurve
 import app.geometry.splines.*
+import app.geometry.transformations.Scaling
 import app.geometry.transformations.transformation
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory
 import org.w3c.dom.Element
@@ -59,6 +61,9 @@ sealed interface SeamAllowanceKind {
     val widthMm: Double
 }
 
+
+
+
 fun main() {
     val patternSvg = PatternSvg.extractFromFile(
         filePath = Path("/Users/jakub/Temporary/Shape.svg"),
@@ -67,10 +72,6 @@ fun main() {
     val patternOutline = PatternOutline.fromPatternSvg(
         patternSvg = patternSvg,
     )
-
-//    val spline = patternSvg.splines.single().transformMetadata {
-//        SeamAllowanceKind.Small
-//    }
 
     val spline = patternOutline.closedSpline
 
@@ -89,23 +90,47 @@ fun main() {
         },
     )!!
 
+
+
+    exportSplinesPreview(
+        spline = spline,
+        contourSpline = contourSpline,
+    )
+}
+
+fun exportSplinesPreview(
+    spline: ClosedSpline<*, *>,
+    contourSpline: ClosedSpline<*, *>,
+) {
     val contourBoundingBox = contourSpline.findBoundingBox()
 
     println(contourBoundingBox)
 
+    val widthMm = 297.0
+    val heightMm = 210.0
+
+    val exportTransform = Scaling(
+        factor = mmToPtFactor,
+    )
+
     val document = createSvgDocument().apply {
         documentSvgElement.apply {
-            viewBox = contourBoundingBox.toSvgViewBox()
-            width = contourBoundingBox.width.toInt()
-            height = contourBoundingBox.height.toInt()
+            viewBox = SvgViewBox(
+                xMin = 0.0,
+                yMin = 0.0,
+                width = widthMm * mmToPtFactor,
+                height = heightMm * mmToPtFactor,
+            )
+            width = "${widthMm}mm"
+            height = "${heightMm}mm"
         }
 
         documentSvgElement.appendChild(
-            spline.toDebugSvgPathGroup(document = this)
+            spline.transformVia(exportTransform).toDebugSvgPathGroup(document = this)
         )
 
         documentSvgElement.appendChild(
-            contourSpline.toDebugSvgPathGroup(document = this)
+            contourSpline.transformVia(exportTransform).toDebugSvgPathGroup(document = this)
         )
     }
 

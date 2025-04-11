@@ -1,9 +1,11 @@
 package app.geometry.transformations
 
+import app.algebra.linear.matrices.matrix3.Matrix3x3
 import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector2.Vector2x1
 import app.algebra.linear.vectors.vector2.plus
 import app.algebra.linear.vectors.vector2.times
+import app.algebra.linear.vectors.vector3.Vector1x3
 import app.geometry.BiDirection
 import app.geometry.Direction
 import app.geometry.Point
@@ -44,6 +46,13 @@ data class Translation private constructor(
     override fun transform(
         point: Point,
     ): Point = translate(point = point)
+
+    override val transformationMatrix: Matrix3x3
+        get() = Matrix3x3.rowMajor(
+            row0 = Vector1x3.of(1.0, 0.0, tv.x),
+            row1 = Vector1x3.of(0.0, 1.0, tv.y),
+            row2 = Vector1x3.of(0.0, 0.0, 1.0),
+        )
 
     fun translate(point: Point): Point = Point.of(
         pv = point.pv + tv,

@@ -24,16 +24,16 @@ fun createSvgDocument(): SVGDocument {
     return impl.createDocument(svgNS, "svg", null) as SVGDocument
 }
 
-var SVGElement.width: Int
-    get() = getAttribute("width").toInt()
+var SVGElement.width: String
+    get() = getAttribute("width")
     set(value) {
-        setAttribute("width", value.toString())
+        setAttribute("width", value)
     }
 
-var SVGElement.height: Int
-    get() = getAttribute("height").toInt()
+var SVGElement.height: String
+    get() = getAttribute("height")
     set(value) {
-        setAttribute("height", value.toString())
+        setAttribute("height", value)
     }
 
 

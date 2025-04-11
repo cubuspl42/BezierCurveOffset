@@ -10,11 +10,11 @@ import org.w3c.dom.svg.SVGMatrix
 
 @Suppress("DataClassPrivateConstructor")
 data class MixedTransformation private constructor(
-    val tm: Matrix3x3,
+    override val transformationMatrix: Matrix3x3,
 ) : Transformation() {
     companion object {
         val identity = MixedTransformation(
-            tm = Matrix3x3.identity,
+            transformationMatrix = Matrix3x3.identity,
         )
 
         fun of(
@@ -25,7 +25,7 @@ data class MixedTransformation private constructor(
             e: Double,
             f: Double,
         ): MixedTransformation = MixedTransformation(
-            tm = Matrix3x3.rowMajor(
+            transformationMatrix = Matrix3x3.rowMajor(
                 row0 = Vector1x3.of(
                     x = a,
                     y = c,
@@ -51,15 +51,15 @@ data class MixedTransformation private constructor(
      * @param base - The transformation that comes before this transformation
      */
     fun applyOver(
-        base: MixedTransformation,
+        base: Transformation,
     ): MixedTransformation = MixedTransformation(
-        tm = tm * base.tm,
+        transformationMatrix = transformationMatrix * base.transformationMatrix,
     )
 
     override fun transform(
         point: Point,
     ): Point = Point.of(
-        pv = (tm * point.pv.toVec3().asVertical).vectorXy,
+        pv = (transformationMatrix * point.pv.toVec3().asVertical).vectorXy,
     )
 }
 

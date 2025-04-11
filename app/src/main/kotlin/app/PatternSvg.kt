@@ -4,6 +4,7 @@ import app.geometry.Point
 import app.geometry.splines.ClosedSpline
 import app.geometry.splines.toClosedSpline
 import app.geometry.transformations.MixedTransformation
+import app.geometry.transformations.Scaling
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.transformation
 import org.w3c.dom.Element
@@ -44,8 +45,13 @@ data class PatternSvg(
     }
 
     companion object {
+        private const val inchToMmFactor = 25.4
+        private const val density = 300.0
+        private const val ptToMmFactor = inchToMmFactor / density
+        const val mmToPtFactor = density / inchToMmFactor
+
         fun visitElement(
-            transformation: MixedTransformation,
+            transformation: Transformation,
             element: Element,
             splines: MutableSet<ClosedSpline<*, *>>,
             markers: MutableSet<Marker>,
@@ -99,7 +105,9 @@ data class PatternSvg(
 
             svgElement.childElements.forEach {
                 visitElement(
-                    transformation = MixedTransformation.identity,
+                    transformation = Scaling(
+                        factor = ptToMmFactor,
+                    ),
                     element = it,
                     splines = splines,
                     markers = markers,
