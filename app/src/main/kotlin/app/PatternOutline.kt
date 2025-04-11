@@ -1,8 +1,8 @@
 package app
 
+import app.PatternSvg.Marker
 import app.geometry.Point
 import app.geometry.curves.LineSegment
-import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.splines.ClosedSpline
 import app.geometry.splines.Spline
@@ -11,33 +11,24 @@ data class PatternOutline(
     val segments: List<Segment>,
 ) {
     companion object {
-        fun fromPatternSvg(
-            patternSvg: PatternSvg,
-        ): PatternOutline {
-            val spline = patternSvg.splines.single().transformMetadata { segment ->
-                patternSvg.getClosestMarker(
-                    position = segment.startKnot,
-                    maxDistance = 20.0,
+        fun fromMarkedSpline(
+            markedSpline: ClosedSpline<*, Marker?>,
+        ): PatternOutline = PatternOutline(
+            segments = markedSpline.segments.withPreviousCyclic().map { (prevSegment, segment) ->
+                val prevBezierEdge = prevSegment.edge as? CubicBezierCurve.Edge
+                val bezierEdge = segment.edge as? CubicBezierCurve.Edge
+
+                PatternOutline.Segment(
+                    originKnot = OuterKnot(
+                        rearHandlePosition = prevBezierEdge?.control1,
+                        knotPosition = segment.startKnot,
+                        frontHandlePosition = bezierEdge?.control1,
+                    ),
+                    innerKnots = emptyList(),
+                    seamAllowanceKind = SeamAllowanceKind.Small,
                 )
-            }
-
-            return PatternOutline(
-                segments = spline.segments.withPreviousCyclic().map { (prevSegment, segment) ->
-                    val prevBezierEdge = prevSegment.edge as? CubicBezierCurve.Edge
-                    val bezierEdge = segment.edge as? CubicBezierCurve.Edge
-
-                    PatternOutline.Segment(
-                        originKnot = OuterKnot(
-                            rearHandlePosition = prevBezierEdge?.control1,
-                            knotPosition = segment.startKnot,
-                            frontHandlePosition = bezierEdge?.control1,
-                        ),
-                        innerKnots = emptyList(),
-                        seamAllowanceKind = SeamAllowanceKind.Small,
-                    )
-                },
-            )
-        }
+            },
+        )
     }
 
     sealed class Knot {

@@ -1,6 +1,6 @@
 package app
 
-import app.PatternSvg.Companion.mmToPtFactor
+import app.PatternSvg.mmToPtFactor
 import app.geometry.transformations.MixedTransformation
 import app.geometry.curves.SegmentCurve
 import app.geometry.splines.*
@@ -65,12 +65,12 @@ sealed interface SeamAllowanceKind {
 
 
 fun main() {
-    val patternSvg = PatternSvg.extractFromFile(
+    val markedSpline = PatternSvg.extractFromFile(
         filePath = Path("/Users/jakub/Temporary/Shape.svg"),
     )
 
-    val patternOutline = PatternOutline.fromPatternSvg(
-        patternSvg = patternSvg,
+    val patternOutline = PatternOutline.fromMarkedSpline(
+        markedSpline = markedSpline,
     )
 
     val spline = patternOutline.closedSpline

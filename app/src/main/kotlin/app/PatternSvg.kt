@@ -3,7 +3,6 @@ package app
 import app.geometry.Point
 import app.geometry.splines.ClosedSpline
 import app.geometry.splines.toClosedSpline
-import app.geometry.transformations.MixedTransformation
 import app.geometry.transformations.Scaling
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.transformation
@@ -16,10 +15,7 @@ import org.w3c.dom.svg.SVGTextElement
 import java.nio.file.Path
 import kotlin.io.path.reader
 
-data class PatternSvg(
-    val splines: Set<ClosedSpline<*, *>>,
-    val markers: Set<Marker>,
-) {
+object PatternSvg {
     data class Marker(
         val position: Point,
         val name: String,
@@ -44,89 +40,103 @@ data class PatternSvg(
         }
     }
 
-    companion object {
-        private const val inchToMmFactor = 25.4
-        private const val density = 300.0
-        private const val ptToMmFactor = inchToMmFactor / density
-        const val mmToPtFactor = density / inchToMmFactor
+    private const val inchToMmFactor = 25.4
+    private const val density = 300.0
+    private const val ptToMmFactor = inchToMmFactor / density
+    const val mmToPtFactor = density / inchToMmFactor
 
-        fun visitElement(
-            transformation: Transformation,
-            element: Element,
-            splines: MutableSet<ClosedSpline<*, *>>,
-            markers: MutableSet<Marker>,
-        ) {
-            when (element) {
-                is SVGPathElement -> {
-                    splines.add(
-                        element.toClosedSpline().transformVia(
-                            transformation = transformation
-                        ),
-                    )
-                }
-
-                is SVGTextElement -> {
-                    markers.add(
-                        Marker.fromTextElement(
-                            transformation = transformation,
-                            textElement = element,
-                        ),
-                    )
-                }
-
-                is SVGGElement -> {
-                    val newTransformation = element.transformation.applyOver(base = transformation)
-
-                    element.childElements.forEach {
-                        visitElement(
-                            transformation = newTransformation,
-                            element = it,
-                            splines = splines,
-                            markers = markers,
-                        )
-                    }
-                }
-
-                else -> throw UnsupportedOperationException("Unsupported element: $element")
-            }
-        }
-
-        fun extractFromFile(
-            filePath: Path,
-        ): PatternSvg {
-            val reader = filePath.reader()
-            val uri = "file://Pattern.svg"
-
-            val document = documentFactory.createDocument(uri, reader) as SVGDocument
-            val svgElement = document.documentElement as SVGElement
-
-            val splines = mutableSetOf<ClosedSpline<*, *>>()
-            val markers = mutableSetOf<Marker>()
-
-            svgElement.childElements.forEach {
-                visitElement(
-                    transformation = Scaling(
-                        factor = ptToMmFactor,
+    private fun visitElement(
+        transformation: Transformation,
+        element: Element,
+        splines: MutableSet<ClosedSpline<*, *>>,
+        markers: MutableSet<Marker>,
+    ) {
+        when (element) {
+            is SVGPathElement -> {
+                splines.add(
+                    element.toClosedSpline().transformVia(
+                        transformation = transformation
                     ),
-                    element = it,
-                    splines = splines,
-                    markers = markers,
                 )
             }
 
-            return PatternSvg(
+            is SVGTextElement -> {
+                markers.add(
+                    Marker.fromTextElement(
+                        transformation = transformation,
+                        textElement = element,
+                    ),
+                )
+            }
+
+            is SVGGElement -> {
+                val newTransformation = element.transformation.applyOver(base = transformation)
+
+                element.childElements.forEach {
+                    visitElement(
+                        transformation = newTransformation,
+                        element = it,
+                        splines = splines,
+                        markers = markers,
+                    )
+                }
+            }
+
+            else -> throw UnsupportedOperationException("Unsupported element: $element")
+        }
+    }
+
+    fun extractFromFile(
+        filePath: Path,
+    ): ClosedSpline<*, Marker?> {
+        val reader = filePath.reader()
+        val uri = "file://Pattern.svg"
+
+        val document = documentFactory.createDocument(uri, reader) as SVGDocument
+        val svgElement = document.documentElement as SVGElement
+
+        val splines = mutableSetOf<ClosedSpline<*, *>>()
+        val markers = mutableSetOf<Marker>()
+
+        svgElement.childElements.forEach {
+            visitElement(
+                transformation = Scaling(
+                    factor = ptToMmFactor,
+                ),
+                element = it,
                 splines = splines,
                 markers = markers,
             )
         }
-    }
 
-    fun getClosestMarker(
-        position: Point,
-        maxDistance: Double,
-    ): Marker? = markers.minByOrNull { marker ->
-        marker.position.distanceTo(position)
-    }?.takeIf { closestMarker ->
-        closestMarker.position.distanceTo(position) < maxDistance
+        val spline = splines.single()
+
+        fun getClosestMarker(
+            position: Point,
+            maxDistance: Double,
+        ): Marker? = markers.minByOrNull { marker ->
+            marker.position.distanceTo(position)
+        }?.takeIf { closestMarker ->
+            closestMarker.position.distanceTo(position) < maxDistance
+        }
+
+        val markedSpline = spline.transformMetadata { segment ->
+            getClosestMarker(
+                position = segment.startKnot,
+                maxDistance = 20.0,
+            )
+        }
+
+        val nameGrouping = markedSpline.segments.groupingBy { it.metadata?.name }
+
+        nameGrouping.eachCount().forEach { (nameOrNull, count) ->
+            val name = nameOrNull ?: return@forEach
+
+            if (count > 1) {
+                throw IllegalArgumentException("Multiple segments tagged '$name'")
+            }
+        }
+
+        return markedSpline
     }
 }
