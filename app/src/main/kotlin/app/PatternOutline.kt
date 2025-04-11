@@ -40,7 +40,7 @@ data class PatternOutline(
                     originKnot = OuterKnot(
                         rearHandlePosition = prevBezierEdge?.control1,
                         knotPosition = segment.startKnot,
-                        frontHandlePosition = bezierEdge?.control1,
+                        frontHandlePosition = bezierEdge?.control0,
                     ),
                     innerKnots = emptyList(),
                     seamAllowanceKind = SeamAllowanceKind.Standard,
