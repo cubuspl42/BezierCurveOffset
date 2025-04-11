@@ -12,7 +12,7 @@ data class PatternOutline(
 ) {
     companion object {
         fun fromMarkedSpline(
-            markedSpline: ClosedSpline<*, Marker?>,
+            markedSpline: ClosedSpline<*, *, Marker?>,
         ): PatternOutline = PatternOutline(
             segments = markedSpline.segments.withPreviousCyclic().map { (prevSegment, segment) ->
                 val prevBezierEdge = prevSegment.edge as? CubicBezierCurve.Edge
@@ -78,7 +78,7 @@ data class PatternOutline(
             get() = listOf(originKnot) + innerKnots
     }
 
-    val closedSpline: ClosedSpline<*, SeamAllowanceKind>
+    val closedSpline: ClosedSpline<*, SeamAllowanceKind, *>
         get() = ClosedSpline(
             segments = segments.withNextCyclic().flatMap { (segment, nextSegment) ->
                 segment.knots.withNext(
@@ -101,7 +101,8 @@ data class PatternOutline(
                             )
                         },
 
-                        metadata = segment.seamAllowanceKind,
+                        edgeMetadata = segment.seamAllowanceKind,
+                        knotMetadata = null,
                     )
                 }
             },

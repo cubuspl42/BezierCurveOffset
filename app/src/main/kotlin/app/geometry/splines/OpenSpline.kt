@@ -8,21 +8,22 @@ import app.withPreviousOrNull
 
 class OpenSpline<
         out CurveT : SegmentCurve<CurveT>,
-        out SegmentMetadata,
+        out EdgeMetadata,
+        out KnotMetadata,
         >(
     /**
      * The path of links, must not be empty
      */
-    override val segments: List<Segment<CurveT, SegmentMetadata>>,
+    override val segments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>,
     /**
      * The plug node that terminates the path of links
      */
     val terminator: Spline.Terminator,
-) : Spline<CurveT, SegmentMetadata>() {
+) : Spline<CurveT, EdgeMetadata, KnotMetadata>() {
     companion object {
-        fun <CurveT : SegmentCurve<CurveT>, SegmentMetadata> merge(
-            splines: List<OpenSpline<CurveT, SegmentMetadata>>,
-        ): OpenSpline<CurveT, SegmentMetadata> {
+        fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> merge(
+            splines: List<OpenSpline<CurveT, EdgeMetadata, KnotMetadata>>,
+        ): OpenSpline<CurveT, EdgeMetadata, KnotMetadata> {
             require(splines.isNotEmpty())
 
             if (splines.size == 1) {
@@ -71,11 +72,11 @@ class OpenSpline<
 
 }
 
-fun <CurveT : SegmentCurve<CurveT>, SegmentMetadata> OpenSpline<CurveT, SegmentMetadata>.mergeWith(
-    other: OpenSpline<CurveT, SegmentMetadata>,
-): OpenSpline<CurveT, SegmentMetadata> = OpenSpline.merge(
+fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> OpenSpline<CurveT, EdgeMetadata, KnotMetadata>.mergeWith(
+    other: OpenSpline<CurveT, EdgeMetadata, KnotMetadata>,
+): OpenSpline<CurveT, EdgeMetadata, KnotMetadata> = OpenSpline.merge(
     splines = listOf(this, other),
 )
 
-val <CurveT : SegmentCurve<CurveT>> OpenSpline<CurveT, SegmentCurve.OffsetSegmentMetadata>.globalDeviation
-    get() = segments.maxOf { it.metadata.globalDeviation }
+val <CurveT : SegmentCurve<CurveT>> OpenSpline<CurveT, SegmentCurve.OffsetEdgeMetadata, *>.globalDeviation
+    get() = segments.maxOf { it.edgeMetadata.globalDeviation }

@@ -19,7 +19,8 @@ class OpenSplineTests {
                 startKnot = knot0Start,
                 control0 = control0,
                 control1 = control1,
-                metadata = null,
+                edgeMetadata = null,
+                knotMetadata = null,
             )
         )
 
@@ -52,13 +53,15 @@ class OpenSplineTests {
                 startKnot = Point.of(0.0, 0.0),
                 control0 = Point.of(1.0, 1.0),
                 control1 = Point.of(2.0, 1.0),
-                metadata = null,
+                edgeMetadata = null,
+                knotMetadata = null,
             ),
             Segment.bezier(
                 startKnot = Point.of(3.0, 0.0),
                 control0 = Point.of(4.0, 1.0),
                 control1 = Point.of(5.0, 1.0),
-                metadata = null,
+                edgeMetadata = null,
+                knotMetadata = null,
             ),
         )
 
@@ -103,14 +106,16 @@ class OpenSplineTests {
             startKnot = start,
             control0 = control0,
             control1 = control1,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val link1 = Spline.Segment.bezier(
             startKnot = knot0Joint,
             control0 = control2,
             control1 = control3,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val spline0 = OpenSpline(
@@ -173,14 +178,16 @@ class OpenSplineTests {
             startKnot = knot0Start,
             control0 = control0,
             control1 = control1,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val link1 = Spline.Segment.bezier(
             startKnot = knot1,
             control0 = control2,
             control1 = control3,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val terminator1 = Terminator(
@@ -196,14 +203,16 @@ class OpenSplineTests {
             startKnot = knot2Joint,
             control0 = control4,
             control1 = control5,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val link3 = Spline.Segment.bezier(
             startKnot = knot3,
             control0 = control6,
             control1 = control7,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val terminator2 = Terminator(
@@ -265,14 +274,16 @@ class OpenSplineTests {
             startKnot = knot0Start,
             control0 = control0,
             control1 = control1,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val link2 = Segment.bezier(
             startKnot = knot1,
             control0 = control2,
             control1 = control3,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val terminator1 = Terminator(
@@ -288,14 +299,16 @@ class OpenSplineTests {
             startKnot = knot2Joint,
             control0 = control4,
             control1 = control5,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val link4 = Segment.bezier(
             startKnot = knot3,
             control0 = control6,
             control1 = control7,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val terminator2 = Terminator(
@@ -311,14 +324,16 @@ class OpenSplineTests {
             startKnot = knot4Joint,
             control0 = control8,
             control1 = control9,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val link6 = Segment.bezier(
             startKnot = knot5,
             control0 = control10,
             control1 = control11,
-            metadata = null,
+            edgeMetadata = null,
+            knotMetadata = null,
         )
 
         val terminator3 = Terminator(

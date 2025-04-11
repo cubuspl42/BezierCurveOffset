@@ -20,8 +20,8 @@ import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 
 abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
-    abstract class OffsetSegmentMetadata {
-        object Precise : OffsetSegmentMetadata() {
+    abstract class OffsetEdgeMetadata {
+        object Precise : OffsetEdgeMetadata() {
             override val globalDeviation: Double = 0.0
         }
 
@@ -34,24 +34,24 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
 
     fun findOffsetSpline(
         params: OffsetSplineParams,
-    ): OpenSpline<*, OffsetSegmentMetadata>? = findOffsetSpline(
+    ): OpenSpline<*, OffsetEdgeMetadata, *>? = findOffsetSpline(
         offset = params.offset,
     )
 
     abstract fun findOffsetSpline(
         offset: Double,
-    ): OpenSpline<*, OffsetSegmentMetadata>?
+    ): OpenSpline<*, OffsetEdgeMetadata, *>?
 
     abstract fun findOffsetSplineRecursive(
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenSpline<*, OffsetSegmentMetadata>?
+    ): OpenSpline<*, OffsetEdgeMetadata, *>?
 
-    fun <SegmentMetadata> toSpline(
-        segmentMetadata: SegmentMetadata,
-    ): OpenSpline<CurveT, SegmentMetadata> = OpenSpline(
+    fun <EdgeMetadata> toSpline(
+        edgeMetadata: EdgeMetadata,
+    ): OpenSpline<CurveT, EdgeMetadata, *> = OpenSpline(
         segments = listOf(
-            toSegment(metadata = segmentMetadata),
+            toSegment(edgeMetadata = edgeMetadata),
         ),
         terminator = Spline.Terminator(
             endKnot = end,
@@ -79,12 +79,13 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         ): Edge<CurveT>
     }
 
-    fun <Metadata> toSegment(
-        metadata: Metadata,
-    ): Spline.Segment<CurveT, Metadata> = Spline.Segment(
+    fun <EdgeMetadata> toSegment(
+        edgeMetadata: EdgeMetadata,
+    ): Spline.Segment<CurveT, EdgeMetadata, *> = Spline.Segment(
         startKnot = start,
         edge = edge,
-        metadata = metadata,
+        edgeMetadata = edgeMetadata,
+        knotMetadata = null,
     )
 
     abstract fun findBoundingBox(): BoundingBox

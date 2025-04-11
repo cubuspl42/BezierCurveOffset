@@ -26,9 +26,9 @@ import app.component8
 import app.component9
 import app.geometry.Point
 import app.geometry.curves.LineSegment
-import app.geometry.curves.SegmentCurve.OffsetSegmentMetadata
+import app.geometry.curves.SegmentCurve.OffsetEdgeMetadata
 import app.geometry.curves.bezier.CubicBezierCurve
-import app.geometry.splines.ClosedSpline.ContourSegmentMetadata
+import app.geometry.splines.ClosedSpline.ContourEdgeMetadata
 import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -49,7 +49,8 @@ class ClosedSplineTests {
             startKnot = knot0Start,
             control0 = control0,
             control1 = control1,
-            metadata = OffsetSegmentMetadata.Precise,
+            edgeMetadata = OffsetEdgeMetadata.Precise,
+            knotMetadata = null,
         )
 
         val spline = OpenSpline(
@@ -70,17 +71,20 @@ class ClosedSplineTests {
                 Spline.Segment(
                     startKnot = bezierSegment0.startKnot,
                     edge = bezierSegment0.edge,
-                    metadata = ContourSegmentMetadata.Side(
-                        offsetMetadata = OffsetSegmentMetadata.Precise,
+                    edgeMetadata = ContourEdgeMetadata.Side(
+                        offsetMetadata = OffsetEdgeMetadata.Precise,
                     ),
+                    knotMetadata = null,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = knot1End,
-                    metadata = ContourSegmentMetadata.Corner,
+                    edgeMetadata = ContourEdgeMetadata.Corner,
+                    knotMetadata = null,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = Point.of(0.0, 1.0),
-                    metadata = ContourSegmentMetadata.Corner,
+                    edgeMetadata = ContourEdgeMetadata.Corner,
+                    knotMetadata = null,
                 ),
             ),
             actual = interconnectedSpline.segments,
@@ -103,14 +107,16 @@ class ClosedSplineTests {
             startKnot = knot0,
             control0 = control0,
             control1 = control1,
-            metadata = OffsetSegmentMetadata.Precise,
+            edgeMetadata = OffsetEdgeMetadata.Precise,
+            knotMetadata = null,
         )
 
         val bezierSegment1 = Spline.Segment.bezier(
             startKnot = knot2,
             control0 = control2,
             control1 = control3,
-            metadata = OffsetSegmentMetadata.Precise,
+            edgeMetadata = OffsetEdgeMetadata.Precise,
+            knotMetadata = null,
         )
 
         val spline0 = OpenSpline(
@@ -140,32 +146,38 @@ class ClosedSplineTests {
                 Spline.Segment(
                     startKnot = bezierSegment0.startKnot,
                     edge = bezierSegment0.edge,
-                    metadata = ContourSegmentMetadata.Side(
-                        offsetMetadata = OffsetSegmentMetadata.Precise,
+                    edgeMetadata = ContourEdgeMetadata.Side(
+                        offsetMetadata = OffsetEdgeMetadata.Precise,
                     ),
+                    knotMetadata = null,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = knot1,
-                    metadata = ContourSegmentMetadata.Corner,
+                    edgeMetadata = ContourEdgeMetadata.Corner,
+                    knotMetadata = null,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = Point.of(3.5, 0.25),
-                    metadata = ContourSegmentMetadata.Corner,
+                    edgeMetadata = ContourEdgeMetadata.Corner,
+                    knotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = bezierSegment1.startKnot,
                     edge = bezierSegment1.edge,
-                    metadata = ContourSegmentMetadata.Side(
-                        offsetMetadata = OffsetSegmentMetadata.Precise,
+                    edgeMetadata = ContourEdgeMetadata.Side(
+                        offsetMetadata = OffsetEdgeMetadata.Precise,
                     ),
+                    knotMetadata = null,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = knot3,
-                    metadata = ContourSegmentMetadata.Corner,
+                    edgeMetadata = ContourEdgeMetadata.Corner,
+                    knotMetadata = null,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = Point.of(-0.5, 0.25),
-                    metadata = ContourSegmentMetadata.Corner,
+                    edgeMetadata = ContourEdgeMetadata.Corner,
+                    knotMetadata = null,
                 ),
             ),
             actual = interconnectedSpline.segments,
@@ -194,21 +206,24 @@ class ClosedSplineTests {
             startKnot = knot0,
             control0 = control0,
             control1 = control1,
-            metadata = OffsetSegmentMetadata.Precise,
+            edgeMetadata = OffsetEdgeMetadata.Precise,
+            knotMetadata = null,
         )
 
         val bezierSegment1 = Spline.Segment.bezier(
             startKnot = knot2,
             control0 = control2,
             control1 = control3,
-            metadata = OffsetSegmentMetadata.Precise,
+            edgeMetadata = OffsetEdgeMetadata.Precise,
+            knotMetadata = null,
         )
 
         val bezierSegment2 = Spline.Segment.bezier(
             startKnot = knot4,
             control0 = control4,
             control1 = control5,
-            metadata = OffsetSegmentMetadata.Precise,
+            edgeMetadata = OffsetEdgeMetadata.Precise,
+            knotMetadata = null,
         )
 
         val spline0 = OpenSpline(
@@ -258,9 +273,10 @@ class ClosedSplineTests {
             expected = Spline.Segment(
                 startKnot = bezierSegment0.startKnot,
                 edge = bezierSegment0.edge,
-                metadata = ContourSegmentMetadata.Side(
-                    offsetMetadata = OffsetSegmentMetadata.Precise,
+                edgeMetadata = ContourEdgeMetadata.Side(
+                    offsetMetadata = OffsetEdgeMetadata.Precise,
                 ),
+                knotMetadata = null,
             ),
             actual = actualSegment0,
         )
@@ -268,7 +284,8 @@ class ClosedSplineTests {
         assertEquals(
             expected = Spline.Segment.lineSegment(
                 startKnot = knot1,
-                metadata = ContourSegmentMetadata.Corner,
+                edgeMetadata = ContourEdgeMetadata.Corner,
+                knotMetadata = null,
             ),
             actual = actualSegment1,
         )
@@ -276,7 +293,8 @@ class ClosedSplineTests {
         assertEquals(
             expected = Spline.Segment.lineSegment(
                 startKnot = Point.of(0.0, 7.5),
-                metadata = ContourSegmentMetadata.Corner,
+                edgeMetadata = ContourEdgeMetadata.Corner,
+                knotMetadata = null,
             ),
             actual = actualSegment2,
         )
@@ -285,9 +303,10 @@ class ClosedSplineTests {
             expected = Spline.Segment(
                 startKnot = bezierSegment1.startKnot,
                 edge = bezierSegment1.edge,
-                metadata = ContourSegmentMetadata.Side(
-                    offsetMetadata = OffsetSegmentMetadata.Precise,
+                edgeMetadata = ContourEdgeMetadata.Side(
+                    offsetMetadata = OffsetEdgeMetadata.Precise,
                 ),
+                knotMetadata = null,
             ),
             actual = actualSegment3,
         )
@@ -295,7 +314,8 @@ class ClosedSplineTests {
         assertEquals(
             expected = Spline.Segment.lineSegment(
                 startKnot = knot3,
-                metadata = ContourSegmentMetadata.Corner,
+                edgeMetadata = ContourEdgeMetadata.Corner,
+                knotMetadata = null,
             ),
             actual = actualSegment4,
         )
@@ -304,7 +324,8 @@ class ClosedSplineTests {
         assertEqualsWithTolerance(
             expected = Spline.Segment.lineSegment(
                 startKnot = Point.of(3.33, -0.33),
-                metadata = ContourSegmentMetadata.Corner,
+                edgeMetadata = ContourEdgeMetadata.Corner,
+                knotMetadata = null,
             ),
             actual = actualSegment5,
             absoluteTolerance = eps,
@@ -314,9 +335,10 @@ class ClosedSplineTests {
             expected = Spline.Segment(
                 startKnot = bezierSegment2.startKnot,
                 edge = bezierSegment2.edge,
-                metadata = ContourSegmentMetadata.Side(
-                    offsetMetadata = OffsetSegmentMetadata.Precise,
+                edgeMetadata = ContourEdgeMetadata.Side(
+                    offsetMetadata = OffsetEdgeMetadata.Precise,
                 ),
+                knotMetadata = null,
             ),
             actual = actualSegment6,
         )
@@ -324,7 +346,8 @@ class ClosedSplineTests {
         assertEquals(
             expected = Spline.Segment.lineSegment(
                 startKnot = knot5,
-                metadata = ContourSegmentMetadata.Corner,
+                edgeMetadata = ContourEdgeMetadata.Corner,
+                knotMetadata = null,
             ),
             actual = actualSegment7,
         )
@@ -332,7 +355,8 @@ class ClosedSplineTests {
         assertEqualsWithTolerance(
             expected = Spline.Segment.lineSegment(
                 startKnot = Point.of(-3.33, -0.33),
-                metadata = ContourSegmentMetadata.Corner,
+                edgeMetadata = ContourEdgeMetadata.Corner,
+                knotMetadata = null,
             ),
             actual = actualSegment8,
             absoluteTolerance = eps,
@@ -350,7 +374,8 @@ class ClosedSplineTests {
                         control0 = Point.of(13.32, 31.18),
                         control1 = Point.of(18.35, 72.59),
                     ),
-                    metadata = null,
+                    edgeMetadata = null,
+                    knotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(24.34, 78.87),
@@ -358,7 +383,8 @@ class ClosedSplineTests {
                         control0 = Point.of(53.47, 78.29),
                         control1 = Point.of(37.93, 65.40),
                     ),
-                    metadata = null,
+                    edgeMetadata = null,
+                    knotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(76.11, 65.90),
@@ -366,7 +392,8 @@ class ClosedSplineTests {
                         control0 = Point.of(71.17, 60.22),
                         control1 = Point.of(66.51, 49.56),
                     ),
-                    metadata = null,
+                    edgeMetadata = null,
+                    knotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(65.66, 43.91),
@@ -374,7 +401,8 @@ class ClosedSplineTests {
                         control0 = Point.of(55.22, 45.42),
                         control1 = Point.of(51.91, 43.18),
                     ),
-                    metadata = null,
+                    edgeMetadata = null,
+                    knotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(43.77, 46.24),
@@ -382,7 +410,8 @@ class ClosedSplineTests {
                         control0 = Point.of(42.30, 39.67),
                         control1 = Point.of(43.84, 25.10),
                     ),
-                    metadata = null,
+                    edgeMetadata = null,
+                    knotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(45.47, 20.40),
@@ -390,7 +419,8 @@ class ClosedSplineTests {
                         control0 = Point.of(35.84, 27.35),
                         control1 = Point.of(32.91, 26.87),
                     ),
-                    metadata = null,
+                    edgeMetadata = null,
+                    knotMetadata = null,
                 ),
             ),
         )

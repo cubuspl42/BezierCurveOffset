@@ -48,7 +48,7 @@ object PatternSvg {
     private fun visitElement(
         transformation: Transformation,
         element: Element,
-        splines: MutableSet<ClosedSpline<*, *>>,
+        splines: MutableSet<ClosedSpline<*, *, *>>,
         markers: MutableSet<Marker>,
     ) {
         when (element) {
@@ -88,14 +88,14 @@ object PatternSvg {
 
     fun extractFromFile(
         filePath: Path,
-    ): ClosedSpline<*, Marker?> {
+    ): ClosedSpline<*, *, Marker?> {
         val reader = filePath.reader()
         val uri = "file://Pattern.svg"
 
         val document = documentFactory.createDocument(uri, reader) as SVGDocument
         val svgElement = document.documentElement as SVGElement
 
-        val splines = mutableSetOf<ClosedSpline<*, *>>()
+        val splines = mutableSetOf<ClosedSpline<*, *, *>>()
         val markers = mutableSetOf<Marker>()
 
         svgElement.childElements.forEach {
@@ -120,14 +120,14 @@ object PatternSvg {
             closestMarker.position.distanceTo(position) < maxDistance
         }
 
-        val markedSpline = spline.transformMetadata { segment ->
+        val markedSpline = spline.transformKnotMetadata { segment ->
             getClosestMarker(
                 position = segment.startKnot,
                 maxDistance = 20.0,
             )
         }
 
-        val nameGrouping = markedSpline.segments.groupingBy { it.metadata?.name }
+        val nameGrouping = markedSpline.segments.groupingBy { it.knotMetadata?.name }
 
         nameGrouping.eachCount().forEach { (nameOrNull, count) ->
             val name = nameOrNull ?: return@forEach

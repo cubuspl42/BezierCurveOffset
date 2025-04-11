@@ -18,7 +18,7 @@ val documentFactory: SAXSVGDocumentFactory = SAXSVGDocumentFactory(null)
 fun extractSplineFromElement(
     transformation: MixedTransformation,
     element: Element,
-): ClosedSpline<*, *> = when (val singleChild = element.childElements.single()) {
+): ClosedSpline<*, *, *> = when (val singleChild = element.childElements.single()) {
     is SVGPathElement -> singleChild.toClosedSpline().transformVia(
         transformation = transformation
     )
@@ -36,7 +36,7 @@ fun extractSplineFromElement(
 
 fun extractSplineFromFile(
     filePath: Path,
-): ClosedSpline<*, *> {
+): ClosedSpline<*, *, *> {
     val reader = filePath.reader()
     val uri = "file://Bezier.svg"
 
@@ -80,9 +80,9 @@ fun main() {
     val contourSpline = spline.findContourSpline(
         offsetStrategy = object : ClosedSpline.ContourOffsetStrategy<SeamAllowanceKind>() {
             override fun determineOffsetParams(
-                segmentMetadata: SeamAllowanceKind,
+                edgeMetadata: SeamAllowanceKind,
             ): SegmentCurve.OffsetSplineParams {
-                val seamAllowanceKind = segmentMetadata
+                val seamAllowanceKind = edgeMetadata
                 return SegmentCurve.OffsetSplineParams(
                     offset = seamAllowanceKind.widthMm,
                 )
@@ -99,8 +99,8 @@ fun main() {
 }
 
 fun exportSplinesPreview(
-    spline: ClosedSpline<*, *>,
-    contourSpline: ClosedSpline<*, *>,
+    spline: ClosedSpline<*, *, *>,
+    contourSpline: ClosedSpline<*, *, *>,
 ) {
     val contourBoundingBox = contourSpline.findBoundingBox()
 
