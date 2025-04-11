@@ -62,7 +62,7 @@ value class Direction private constructor(
     ): Boolean = when {
         other !is Direction -> false
         else -> angleBetween(other).isZeroWithRadialTolerance(
-            tolerance = RadialTolerance.ofCos(cosEps = absoluteTolerance)
+            tolerance = RadialTolerance.ofAbsoluteTolerance(absoluteTolerance)
         )
     }
 }
