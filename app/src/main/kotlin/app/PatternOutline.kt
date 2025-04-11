@@ -1,6 +1,8 @@
 package app
 
 import app.geometry.Point
+import app.geometry.curves.LineSegment
+import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.splines.ClosedSpline
 import app.geometry.splines.Spline
@@ -8,31 +10,72 @@ import app.geometry.splines.Spline
 data class PatternOutline(
     val segments: List<Segment>,
 ) {
+    companion object {
+        fun fromPatternSvg(
+            patternSvg: PatternSvg,
+        ): PatternOutline {
+            val spline = patternSvg.splines.single().transformMetadata { segment ->
+                patternSvg.getClosestMarker(
+                    position = segment.startKnot,
+                    maxDistance = 20.0,
+                )
+            }
+
+            return PatternOutline(
+                segments = spline.segments.withPreviousCyclic().map { (prevSegment, segment) ->
+                    val prevBezierEdge = prevSegment.edge as? CubicBezierCurve.Edge
+                    val bezierEdge = segment.edge as? CubicBezierCurve.Edge
+
+                    PatternOutline.Segment(
+                        originKnot = OuterKnot(
+                            rearHandlePosition = prevBezierEdge?.control1,
+                            knotPosition = segment.startKnot,
+                            frontHandlePosition = bezierEdge?.control1,
+                        ),
+                        innerKnots = emptyList(),
+                        seamAllowanceKind = SeamAllowanceKind.Small,
+                    )
+                },
+            )
+        }
+    }
+
     sealed class Knot {
+        abstract val rearHandlePosition: Point?
         abstract val knotPosition: Point
-        abstract val readHandlePosition: Point
-        abstract val frontHandlePosition: Point
+        abstract val frontHandlePosition: Point?
     }
 
     data class OuterKnot(
+        override val rearHandlePosition: Point?,
         override val knotPosition: Point,
-        override val readHandlePosition: Point,
-        override val frontHandlePosition: Point,
+        override val frontHandlePosition: Point?,
     ) : Knot()
 
     data class InnerKnot(
         override val knotPosition: Point,
-        override val readHandlePosition: Point,
-        val frontStringLength: Double,
+        val handleRod: HandleRod?,
     ) : Knot() {
-        override val frontHandlePosition: Point
-            get() = knotPosition.translateVia(
-                readHandlePosition.translationTo(knotPosition).extend(frontStringLength),
+        data class HandleRod(
+            val rearHandlePosition: Point,
+            val frontStringLength: Double,
+        ) {
+            fun determineFrontHandlePosition(
+                knotPosition: Point,
+            ): Point = knotPosition.translateVia(
+                rearHandlePosition.translationTo(knotPosition).extend(frontStringLength),
             )
 
-        init {
-            require(frontStringLength > 0.0)
+            init {
+                require(frontStringLength > 0.0)
+            }
         }
+
+        override val rearHandlePosition: Point?
+            get() = handleRod?.rearHandlePosition
+
+        override val frontHandlePosition: Point?
+            get() = handleRod?.determineFrontHandlePosition(knotPosition = knotPosition)
     }
 
     data class Segment(
@@ -44,16 +87,29 @@ data class PatternOutline(
             get() = listOf(originKnot) + innerKnots
     }
 
-    val closedSpline: ClosedSpline<CubicBezierCurve, SeamAllowanceKind>
+    val closedSpline: ClosedSpline<*, SeamAllowanceKind>
         get() = ClosedSpline(
             segments = segments.withNextCyclic().flatMap { (segment, nextSegment) ->
                 segment.knots.withNext(
                     outerRight = nextSegment.originKnot,
                 ).map { (knot, nextKnot) ->
-                    Spline.Segment.bezier(
-                        startKnot = knot.knotPosition,
-                        control0 = knot.frontHandlePosition,
-                        control1 = nextKnot.readHandlePosition,
+                    val startKnot = knot.knotPosition
+                    val endKnot = nextKnot.knotPosition
+
+
+                    val firstControl = knot.frontHandlePosition
+                    val secondControl = nextKnot.rearHandlePosition
+
+                    Spline.Segment(
+                        startKnot = startKnot,
+                        edge = when {
+                            firstControl == null && secondControl == null -> LineSegment.Edge
+                            else -> CubicBezierCurve.Edge(
+                                control0 = firstControl ?: startKnot,
+                                control1 = secondControl ?: endKnot,
+                            )
+                        },
+
                         metadata = segment.seamAllowanceKind,
                     )
                 }

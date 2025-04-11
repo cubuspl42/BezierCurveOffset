@@ -114,6 +114,14 @@ sealed class Spline<
                 else -> true
             }
         }
+
+        fun <NewMetadata> replaceMetadata(
+            newMetadata: NewMetadata,
+        ): Segment<CurveT, NewMetadata> = Segment(
+            startKnot = startKnot,
+            edge = edge,
+            metadata = newMetadata,
+        )
     }
 
     data class SubSegment<

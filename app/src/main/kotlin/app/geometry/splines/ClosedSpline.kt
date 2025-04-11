@@ -144,6 +144,16 @@ class ClosedSpline<
         )
     }
 
+    fun <NewMetadata> transformMetadata(
+        transform: (Spline.Segment<CurveT, SegmentMetadata>) -> NewMetadata,
+    ): ClosedSpline<CurveT, NewMetadata> = ClosedSpline(
+        segments = segments.map { segment ->
+            segment.replaceMetadata(
+                newMetadata = transform(segment)
+            )
+        },
+    )
+
     val simplified: ClosedSpline<*, SegmentMetadata>
         get() {
             val segments = segments.withNext(
