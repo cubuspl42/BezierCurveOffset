@@ -168,7 +168,7 @@ data class Point private constructor(
     fun toVector(): Vector2<*> = Vector2.of(x, y)
 
     fun projectOnto(line: Line): Point {
-        val tr = translationTo(line.representativePoint).projectOnto(line.representativeDirection)
+        val tr = translationTo(line.representativePoint).projectOnto(line.biDirection)
         return tr.translate(line.representativePoint)
     }
 

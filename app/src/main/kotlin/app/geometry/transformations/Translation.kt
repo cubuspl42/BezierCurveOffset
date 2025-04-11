@@ -4,6 +4,7 @@ import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector2.Vector2x1
 import app.algebra.linear.vectors.vector2.plus
 import app.algebra.linear.vectors.vector2.times
+import app.geometry.BiDirection
 import app.geometry.Direction
 import app.geometry.Point
 
@@ -49,9 +50,9 @@ data class Translation private constructor(
     )
 
     fun projectOnto(
-        direction: Direction,
+        biDirection: BiDirection,
     ): Translation {
-        val dv = direction.dv
+        val dv = biDirection.dv
         return Translation(
             tv = (tv.dotForced(dv) / dv.lengthSquared) * dv
         )

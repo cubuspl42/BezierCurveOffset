@@ -2,13 +2,13 @@ package app.geometry
 
 import app.algebra.NumericObject
 import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.vectors.vector2.minus
 
 /**
  * A bi-direction in the 2D Euclidean space, i.e. a pair of opposite directions, or a unit vector with a given direction
  * paired with its opposite vector.
  */
-class BiDirection internal constructor(
+@JvmInline
+value class BiDirection internal constructor(
     /**
      * One of two directions of this bi-direction
      */
@@ -28,18 +28,13 @@ class BiDirection internal constructor(
         }
     }
 
+    val dv: Vector2<*>
+        get() = representativeDirection.dv
+
     val perpendicular: BiDirection
         get() = BiDirection(
             representativeDirection = representativeDirection.perpendicular,
         )
-
-    override fun hashCode(): Int {
-        throw UnsupportedOperationException()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        throw UnsupportedOperationException()
-    }
 
     override fun equalsWithTolerance(
         other: NumericObject,

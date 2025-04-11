@@ -13,9 +13,9 @@ data class Line(
      */
     val representativePoint: Point,
     /**
-     * One of two directions of this line
+     * The bi-direction of this line
      */
-    val representativeDirection: Direction,
+    val biDirection: BiDirection,
 ) {
     companion object {
         fun inDirection(
@@ -31,7 +31,7 @@ data class Line(
         get() = representativePoint.pv
 
     val dv: Vector2<*>
-        get() = representativeDirection.dv
+        get() = biDirection.dv
 
     private fun evaluate(
         t: Double,

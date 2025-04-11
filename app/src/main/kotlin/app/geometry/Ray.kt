@@ -52,14 +52,14 @@ data class Ray(
     val containingLine: Line
         get() = Line(
             representativePoint = startingPoint,
-            representativeDirection = direction,
+            biDirection = direction.biDirection,
         )
 
     val perpendicularLine: Line
         get() = Line(
             representativePoint = startingPoint,
             // If d is non-zero, its perpendicular vector will also be non-zero
-            representativeDirection = direction.perpendicular,
+            biDirection = direction.perpendicular.biDirection,
         )
 
     val opposite: Ray
