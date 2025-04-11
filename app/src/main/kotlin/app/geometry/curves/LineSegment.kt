@@ -108,16 +108,16 @@ data class LineSegment(
 
     override fun findOffsetSpline(
         offset: Double,
-    ): OpenSpline<LineSegment, OffsetEdgeMetadata>? = findOffsetLineSegment(
+    ): OpenSpline<LineSegment, OffsetSegmentMetadata>? = findOffsetLineSegment(
         offset = offset,
     )?.toSpline(
-        edgeMetadata = OffsetEdgeMetadata.Precise,
+        segmentMetadata = OffsetSegmentMetadata.Precise,
     )
 
     override fun findOffsetSplineRecursive(
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenSpline<*, OffsetEdgeMetadata>? {
+    ): OpenSpline<*, OffsetSegmentMetadata>? {
         // We ignore the subdivision level, because lineSegment offset is always optimal and safe to compute (unless it's
         // a point)
         return findOffsetSpline(

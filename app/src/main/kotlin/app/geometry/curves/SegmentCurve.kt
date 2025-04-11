@@ -20,8 +20,8 @@ import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 
 abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
-    abstract class OffsetEdgeMetadata {
-        object Precise : OffsetEdgeMetadata() {
+    abstract class OffsetSegmentMetadata {
+        object Precise : OffsetSegmentMetadata() {
             override val globalDeviation: Double = 0.0
         }
 
@@ -34,24 +34,24 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
 
     fun findOffsetSpline(
         params: OffsetSplineParams,
-    ): OpenSpline<*, OffsetEdgeMetadata>? = findOffsetSpline(
+    ): OpenSpline<*, OffsetSegmentMetadata>? = findOffsetSpline(
         offset = params.offset,
     )
 
     abstract fun findOffsetSpline(
         offset: Double,
-    ): OpenSpline<*, OffsetEdgeMetadata>?
+    ): OpenSpline<*, OffsetSegmentMetadata>?
 
     abstract fun findOffsetSplineRecursive(
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenSpline<*, OffsetEdgeMetadata>?
+    ): OpenSpline<*, OffsetSegmentMetadata>?
 
-    fun <EdgeMetadata> toSpline(
-        edgeMetadata: EdgeMetadata,
-    ): OpenSpline<CurveT, EdgeMetadata> = OpenSpline(
+    fun <SegmentMetadata> toSpline(
+        segmentMetadata: SegmentMetadata,
+    ): OpenSpline<CurveT, SegmentMetadata> = OpenSpline(
         segments = listOf(
-            toSegment(edgeMetadata = edgeMetadata),
+            toSegment(segmentMetadata = segmentMetadata),
         ),
         terminator = Spline.Terminator(
             endKnot = end,
@@ -79,12 +79,12 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         ): Edge<CurveT>
     }
 
-    fun <EdgeMetadata> toSegment(
-        edgeMetadata: EdgeMetadata,
-    ): Spline.Segment<CurveT, EdgeMetadata> = Spline.Segment(
+    fun <SegmentMetadata> toSegment(
+        segmentMetadata: SegmentMetadata,
+    ): Spline.Segment<CurveT, SegmentMetadata> = Spline.Segment(
         startKnot = start,
         edge = edge,
-        edgeMetadata = edgeMetadata,
+        segmentMetadata = segmentMetadata,
     )
 
     abstract fun findBoundingBox(): BoundingBox

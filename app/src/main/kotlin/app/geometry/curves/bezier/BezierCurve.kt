@@ -27,9 +27,9 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
             val approximationRatingSampleCount = 16
         }
 
-        fun toOffsetSplineApproximationResult(): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata> =
+        fun toOffsetSplineApproximationResult(): OpenSpline<CubicBezierCurve, OffsetSegmentMetadata> =
             offsetCurve.toSpline(
-                edgeMetadata = object : OffsetEdgeMetadata() {
+                segmentMetadata = object : OffsetSegmentMetadata() {
                     override val globalDeviation: Double
                         get() = deviation
                 },
@@ -125,7 +125,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
 
     final override fun findOffsetSpline(
         offset: Double,
-    ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
+    ): OpenSpline<CubicBezierCurve, OffsetSegmentMetadata>? {
         val initialOffsetCurveResult = findApproximatedOffsetCurve(
             offset = offset,
         ) ?: run {
@@ -156,7 +156,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     override fun findOffsetSplineRecursive(
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
+    ): OpenSpline<CubicBezierCurve, OffsetSegmentMetadata>? {
         val offsetCurveResult = findApproximatedOffsetCurve(
             offset = offset,
         ) ?: run {
@@ -259,7 +259,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
      */
     private fun splitAtCriticalPointsAndFindOffsetSplineRecursive(
         offset: Double,
-    ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
+    ): OpenSpline<CubicBezierCurve, OffsetSegmentMetadata>? {
         val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
 
         if (criticalPoints.isNotEmpty()) {
@@ -375,7 +375,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     private fun subdivideAndFindOffsetSplineRecursive(
         offset: Double,
         subdivisionLevel: Int,
-    ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata>? {
+    ): OpenSpline<CubicBezierCurve, OffsetSegmentMetadata>? {
         val (leftSplitCurve, rightSplitCurve) = splitAt(t = 0.5) ?: run {
             // If the t-value 0.5 is too close to 0 or 1 to even split the curve,
             // this curve is just too tiny to generate the offset spline for it

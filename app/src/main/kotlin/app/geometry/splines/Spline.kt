@@ -25,7 +25,7 @@ import java.awt.geom.Path2D
  */
 sealed class Spline<
         out CurveT : SegmentCurve<CurveT>,
-        out EdgeMetadata,
+        out SegmentMetadata,
         > {
     sealed interface Node {
         /**
@@ -37,11 +37,11 @@ sealed class Spline<
 
     data class Segment<
             out CurveT : SegmentCurve<CurveT>,
-            out EdgeMetadata,
+            out SegmentMetadata,
             >(
         val startKnot: Point,
         val edge: SegmentCurve.Edge<CurveT>,
-        val edgeMetadata: EdgeMetadata,
+        val segmentMetadata: SegmentMetadata,
     ) : Node, NumericObject, Dumpbable {
         companion object {
             fun <Metadata> bezier(
@@ -55,7 +55,7 @@ sealed class Spline<
                     control0 = control0,
                     control1 = control1,
                 ),
-                edgeMetadata = metadata,
+                segmentMetadata = metadata,
             )
 
             fun <Metadata> lineSegment(
@@ -64,7 +64,7 @@ sealed class Spline<
             ): Segment<LineSegment, Metadata> = Segment(
                 startKnot = startKnot,
                 edge = LineSegment.Edge,
-                edgeMetadata = metadata,
+                segmentMetadata = metadata,
             )
         }
 
@@ -75,35 +75,35 @@ sealed class Spline<
             Spline.Segment(
                 startKnot = ${startKnot.dump()},
                 edge = ${edge.dump()},
-                edgeMetadata = TODO(),
+                segmentMetadata = TODO(),
             )
         """.trimIndent()
 
         fun simplify(
             endKnot: Point,
-        ): Segment<*, EdgeMetadata> = Segment(
+        ): Segment<*, SegmentMetadata> = Segment(
             startKnot = startKnot,
             edge = edge.simplify(
                 startKnot = startKnot,
                 endKnot = endKnot,
             ),
-            edgeMetadata = edgeMetadata,
+            segmentMetadata = segmentMetadata,
         )
 
         fun transformVia(
             transformation: Transformation,
-        ): Segment<CurveT, EdgeMetadata> = Segment(
+        ): Segment<CurveT, SegmentMetadata> = Segment(
             startKnot = startKnot.transformVia(transformation = transformation),
             edge = edge.transformVia(transformation),
-            edgeMetadata = edgeMetadata,
+            segmentMetadata = segmentMetadata,
         )
 
-        fun <NewEdgeMetadata> mapMetadata(
-            transform: (EdgeMetadata) -> NewEdgeMetadata,
-        ): Segment<CurveT, NewEdgeMetadata> = Segment(
+        fun <NewSegmentMetadata> mapMetadata(
+            transform: (SegmentMetadata) -> NewSegmentMetadata,
+        ): Segment<CurveT, NewSegmentMetadata> = Segment(
             startKnot = startKnot,
             edge = edge,
-            edgeMetadata = transform(edgeMetadata),
+            segmentMetadata = transform(segmentMetadata),
         )
 
         override fun equalsWithTolerance(other: NumericObject, absoluteTolerance: Double): Boolean {
@@ -118,9 +118,9 @@ sealed class Spline<
 
     data class SubSegment<
             out CurveT : SegmentCurve<CurveT>,
-            out EdgeMetadata,
+            out SegmentMetadata,
             >(
-        val edgeMetadata: EdgeMetadata,
+        val segmentMetadata: SegmentMetadata,
         val segmentCurve: CurveT,
     )
 
@@ -131,7 +131,7 @@ sealed class Spline<
             get() = endKnot
     }
 
-    val firstSegment: Segment<CurveT, EdgeMetadata>
+    val firstSegment: Segment<CurveT, SegmentMetadata>
         get() = segments.first()
 
     /**
@@ -139,18 +139,18 @@ sealed class Spline<
      */
     abstract val nodes: Iterable<Node>
 
-    abstract val segments: Iterable<Segment<CurveT, EdgeMetadata>>
+    abstract val segments: Iterable<Segment<CurveT, SegmentMetadata>>
 
     abstract val rightEdgeNode: Node
 
-    val subSegments: List<SubSegment<CurveT, EdgeMetadata>> by lazy {
+    val subSegments: List<SubSegment<CurveT, SegmentMetadata>> by lazy {
         segments.mapWithNext(rightEdge = rightEdgeNode) { segment, nextNode ->
             val startKnot = segment.startKnot
             val endKnot = nextNode.frontKnot
             val edge = segment.edge
 
             SubSegment(
-                edgeMetadata = segment.edgeMetadata,
+                segmentMetadata = segment.segmentMetadata,
                 segmentCurve = edge.bind(
                     startKnot = startKnot,
                     endKnot = endKnot,

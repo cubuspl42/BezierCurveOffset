@@ -16,21 +16,21 @@ import org.w3c.dom.svg.SVGPathSeg
 
 class ClosedSpline<
         out CurveT : SegmentCurve<CurveT>,
-        out EdgeMetadata,
+        out SegmentMetadata,
         >(
     /**
      * The cyclic chain of links, must not be empty
      */
-    override val segments: List<Segment<CurveT, EdgeMetadata>>,
-) : Spline<CurveT, EdgeMetadata>() {
-    sealed class ContourEdgeMetadata {
-        data object Corner : ContourEdgeMetadata() {
+    override val segments: List<Segment<CurveT, SegmentMetadata>>,
+) : Spline<CurveT, SegmentMetadata>() {
+    sealed class ContourSegmentMetadata {
+        data object Corner : ContourSegmentMetadata() {
             override val offsetDeviation = null
         }
 
         data class Side(
-            val offsetMetadata: SegmentCurve.OffsetEdgeMetadata,
-        ) : ContourEdgeMetadata() {
+            val offsetMetadata: SegmentCurve.OffsetSegmentMetadata,
+        ) : ContourSegmentMetadata() {
             override val offsetDeviation: Double
                 get() = offsetMetadata.globalDeviation
         }
@@ -38,42 +38,42 @@ class ClosedSpline<
         abstract val offsetDeviation: Double?
     }
 
-    abstract class ContourOffsetStrategy<in EdgeMetadata> {
+    abstract class ContourOffsetStrategy<in SegmentMetadata> {
         data class Constant(
             val offset: Double,
         ) : ContourOffsetStrategy<Any?>() {
             override fun determineOffsetParams(
-                edgeMetadata: Any?,
+                segmentMetadata: Any?,
             ): SegmentCurve.OffsetSplineParams = SegmentCurve.OffsetSplineParams(
                 offset = offset,
             )
         }
 
         abstract fun determineOffsetParams(
-            edgeMetadata: EdgeMetadata,
+            segmentMetadata: SegmentMetadata,
         ): SegmentCurve.OffsetSplineParams
     }
 
     companion object {
         fun interconnect(
-            splines: List<OpenSpline<*, SegmentCurve.OffsetEdgeMetadata>>,
-        ): ClosedSpline<*, ContourEdgeMetadata> {
+            splines: List<OpenSpline<*, SegmentCurve.OffsetSegmentMetadata>>,
+        ): ClosedSpline<*, ContourSegmentMetadata> {
             require(splines.isNotEmpty())
 
             val segments = splines.withNextCyclic().flatMap { (spline, nextSpline) ->
                 spline.segments.map { segment ->
-                    segment.mapMetadata { offsetEdgeMetadata ->
-                        ContourEdgeMetadata.Side(offsetMetadata = offsetEdgeMetadata)
+                    segment.mapMetadata { offsetSegmentMetadata ->
+                        ContourSegmentMetadata.Side(offsetMetadata = offsetSegmentMetadata)
                     }
                 } + listOfNotNull(
                     Segment.lineSegment(
                         startKnot = spline.terminator.endKnot,
-                        metadata = ContourEdgeMetadata.Corner,
+                        metadata = ContourSegmentMetadata.Corner,
                     ),
                     spline.backRay!!.intersect(nextSpline.frontRay!!)?.let { intersectionPoint ->
                         Segment.lineSegment(
                             startKnot = intersectionPoint,
-                            metadata = ContourEdgeMetadata.Corner,
+                            metadata = ContourSegmentMetadata.Corner,
                         )
                     },
                 )
@@ -108,7 +108,7 @@ class ClosedSpline<
 
     fun findContourSpline(
         offset: Double,
-    ): ClosedSpline<*, ContourEdgeMetadata>? = findContourSpline(
+    ): ClosedSpline<*, ContourSegmentMetadata>? = findContourSpline(
         offsetStrategy = ContourOffsetStrategy.Constant(
             offset = offset,
         ),
@@ -121,15 +121,15 @@ class ClosedSpline<
      * to construct its contour
      */
     fun findContourSpline(
-        offsetStrategy: ContourOffsetStrategy<EdgeMetadata>,
-    ): ClosedSpline<*, ContourEdgeMetadata>? {
+        offsetStrategy: ContourOffsetStrategy<SegmentMetadata>,
+    ): ClosedSpline<*, ContourSegmentMetadata>? {
         val offsetSplines = subSegments.mapNotNull { subSegment ->
             val subCurve = subSegment.segmentCurve
-            val edgeMetadata = subSegment.edgeMetadata
+            val segmentMetadata = subSegment.segmentMetadata
 
             subCurve.findOffsetSpline(
                 params = offsetStrategy.determineOffsetParams(
-                    edgeMetadata = edgeMetadata,
+                    segmentMetadata = segmentMetadata,
                 ),
             )
         }
@@ -144,7 +144,7 @@ class ClosedSpline<
         )
     }
 
-    val simplified: ClosedSpline<*, EdgeMetadata>
+    val simplified: ClosedSpline<*, SegmentMetadata>
         get() {
             val segments = segments.withNext(
                 outerRight = rightEdgeNode,
@@ -154,7 +154,7 @@ class ClosedSpline<
                 )
             }
 
-            return ClosedSpline<SegmentCurve<*>, EdgeMetadata>(
+            return ClosedSpline<SegmentCurve<*>, SegmentMetadata>(
                 segments = segments,
             )
         }
@@ -166,8 +166,8 @@ class ClosedSpline<
     """.trimIndent()
 }
 
-val ClosedSpline<*, ClosedSpline.ContourEdgeMetadata>.globalOffsetDeviation
-    get() = segments.mapNotNull { it.edgeMetadata.offsetDeviation }.max()
+val ClosedSpline<*, ClosedSpline.ContourSegmentMetadata>.globalOffsetDeviation
+    get() = segments.mapNotNull { it.segmentMetadata.offsetDeviation }.max()
 
 fun SVGPathElement.toClosedSpline(): ClosedSpline<*, *> {
     val svgPathSegs = pathSegList.asList()
@@ -190,7 +190,7 @@ fun SVGPathElement.toClosedSpline(): ClosedSpline<*, *> {
         Spline.Segment(
             startKnot = startKnot,
             edge = pathSeg.toEdge(startKnot),
-            edgeMetadata = null,
+            segmentMetadata = null,
         )
     }
 
