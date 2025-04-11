@@ -49,6 +49,19 @@ data class Translation private constructor(
         pv = point.pv + tv,
     )
 
+    fun scale(
+        s: Double,
+    ): Translation {
+        require(s.isFinite())
+        return Translation(tv = s * tv)
+    }
+
+    fun extend(
+        deltaLength: Double,
+    ): Translation = Translation(
+        tv = tv + (1.0 + deltaLength / tv.length) * tv,
+    )
+
     fun projectOnto(
         biDirection: BiDirection,
     ): Translation {
