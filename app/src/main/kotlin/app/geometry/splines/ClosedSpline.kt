@@ -5,6 +5,7 @@ import app.asList
 import app.dump
 import app.elementWiseAs
 import app.geometry.BoundingBox
+import app.geometry.Point
 import app.geometry.curves.SegmentCurve
 import app.geometry.transformations.Transformation
 import app.uncons
@@ -54,6 +55,19 @@ class ClosedSpline<
             edgeMetadata: EdgeMetadata,
         ): SegmentCurve.OffsetSplineParams
     }
+
+    data class KnotChunk<
+            out CurveT : SegmentCurve<CurveT>,
+            out EdgeMetadata,
+            out KnotMetadata,
+            >(
+        val prevEdgeMetadata: EdgeMetadata,
+        val prevEdge: SegmentCurve.Edge<CurveT>,
+        val knotMetadata: KnotMetadata,
+        val knot: Point,
+        val nextEdgeMetadata: EdgeMetadata,
+        val nextEdge: SegmentCurve.Edge<CurveT>,
+    )
 
     companion object {
         fun interconnect(
@@ -169,6 +183,18 @@ class ClosedSpline<
 
             return ClosedSpline<SegmentCurve<*>, EdgeMetadata, KnotMetadata>(
                 segments = segments,
+            )
+        }
+
+    val knotChunks: List<KnotChunk<CurveT, EdgeMetadata, KnotMetadata>> =
+        segments.withPrevious(outerLeft = lastSegment).map { (prevSegment, segment) ->
+            KnotChunk(
+                prevEdgeMetadata = prevSegment.edgeMetadata,
+                prevEdge = prevSegment.edge,
+                knotMetadata = segment.startKnotMetadata,
+                knot = segment.startKnot,
+                nextEdgeMetadata = segment.edgeMetadata,
+                nextEdge = segment.edge,
             )
         }
 

@@ -68,7 +68,7 @@ data class Translation private constructor(
     fun extend(
         deltaLength: Double,
     ): Translation = Translation(
-        tv = tv + (1.0 + deltaLength / tv.length) * tv,
+        tv = (tv.length + deltaLength) / tv.length * tv,
     )
 
     fun projectOnto(

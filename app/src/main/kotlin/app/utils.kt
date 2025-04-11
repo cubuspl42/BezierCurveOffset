@@ -413,6 +413,34 @@ fun <T> List<T>.splitBy(
     return result
 }
 
+/**
+ * Shifts the elements of the list to the left until the first element that does not
+ * satisfy the given predicate is found. The elements that satisfy the predicate
+ * are moved to the end of the list.
+ *
+ * Example:
+ * ```
+ * val list = listOf('a', 'b', 'C', 'd', 'e', 'F')
+ * val result = list.shiftWhile { it.isLowerCase() }
+ * // result: ['C', 'd', 'e', 'F', 'a', 'b']
+ *
+ * @throw IllegalArgumentException if all elements satisfy the predicate
+ */
+fun <T> List<T>.shiftWhile(
+    predicate: (T) -> Boolean,
+): List<T> {
+    val index = this.indexOfFirstOrNull { !predicate(it) } ?: throw IllegalArgumentException()
+    val shifted = this.subList(index, size) + this.subList(0, index)
+    return shifted
+}
+
+fun <T> List<T>.indexOfFirstOrNull(
+    predicate: (T) -> Boolean,
+): Int? {
+    val index = this.indexOfFirst(predicate)
+    return if (index == -1) null else index
+}
+
 operator fun <E> List<E>.component6(): E = this[5]
 
 operator fun <E> List<E>.component7(): E = this[6]

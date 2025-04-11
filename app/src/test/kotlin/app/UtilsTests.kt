@@ -1,5 +1,6 @@
 package app
 
+import org.junit.jupiter.api.assertThrows
 import kotlin.math.absoluteValue
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -611,6 +612,44 @@ class UtilsTests {
                 listOf(8),
                 listOf(6, 1),
             ),
+            actual = result,
+        )
+    }
+
+    @Test
+    fun testShiftWhile_empty() {
+        assertThrows<IllegalArgumentException> {
+            emptyList<Char>().shiftWhile { it.isLowerCase() }
+        }
+    }
+
+    @Test
+    fun testShiftWhile_noMatching() {
+        val list = listOf('C', 'D', 'E', 'F')
+        val result = list.shiftWhile { it.isLowerCase() }
+
+        assertEquals(
+            expected = list,
+            actual = result,
+        )
+    }
+
+    @Test
+    fun testShiftWhile_allMatching() {
+        val list = listOf('a', 'b', 'c', 'd')
+
+        assertThrows<IllegalArgumentException> {
+            list.shiftWhile { it.isLowerCase() }
+        }
+    }
+
+    @Test
+    fun testShiftWhile_someMatching() {
+        val list = listOf('a', 'b', 'C', 'x', 'D', 'E', 'F')
+        val result = list.shiftWhile { it.isLowerCase() }
+
+        assertEquals(
+            expected = listOf('C', 'x', 'D', 'E', 'F', 'a', 'b'),
             actual = result,
         )
     }

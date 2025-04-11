@@ -85,26 +85,26 @@ fun main() {
                     firstKnotName = "B",
                     secondKnotName = "C",
                 ) to SegmentParams(
-                    seamAllowanceKind = SeamAllowanceKind.Tunnel,
+                    seamAllowanceKind = SeamAllowanceKind.Edging,
                 ),
                 EdgeHandle(
                     firstKnotName = "C",
                     secondKnotName = "D",
                 ) to SegmentParams(
-                    seamAllowanceKind = SeamAllowanceKind.Edging,
+                    seamAllowanceKind = SeamAllowanceKind.None,
                 ),
 
                 EdgeHandle(
                     firstKnotName = "D",
                     secondKnotName = "E",
                 ) to SegmentParams(
-                    seamAllowanceKind = SeamAllowanceKind.None,
+                    seamAllowanceKind = SeamAllowanceKind.Edging,
                 ),
                 EdgeHandle(
                     firstKnotName = "E",
                     secondKnotName = "F",
                 ) to SegmentParams(
-                    seamAllowanceKind = SeamAllowanceKind.Edging,
+                    seamAllowanceKind = SeamAllowanceKind.Tunnel,
                 ),
             ),
         ),

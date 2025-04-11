@@ -13,6 +13,7 @@ import app.geometry.lineTo
 import app.geometry.moveTo
 import app.geometry.transformations.Transformation
 import app.mapWithNext
+import app.withPrevious
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement
 import java.awt.Color
@@ -166,6 +167,9 @@ sealed class Spline<
 
     val firstSegment: Segment<CurveT, EdgeMetadata, KnotMetadata>
         get() = segments.first()
+
+    val lastSegment: Segment<CurveT, EdgeMetadata, KnotMetadata>
+        get() = segments.last()
 
     /**
      * Splines always have at least one node

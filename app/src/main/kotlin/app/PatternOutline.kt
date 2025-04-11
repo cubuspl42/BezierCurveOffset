@@ -31,22 +31,20 @@ data class PatternOutline(
         fun fromMarkedSpline(
             markedSpline: ClosedSpline<*, *, Marker?>,
             params: PatternOutlineParams,
-        ): PatternOutline = PatternOutline(
-            segments = markedSpline.segments.withPreviousCyclic().map { (prevSegment, segment) ->
-                val prevBezierEdge = prevSegment.edge as? CubicBezierCurve.Edge
-                val bezierEdge = segment.edge as? CubicBezierCurve.Edge
+        ): PatternOutline {
+            val intermediateSegments = IntermediateSegment.fromMarkedSpline(
+                markedSpline = markedSpline,
+            )
 
-                PatternOutline.Segment(
-                    originKnot = OuterKnot(
-                        rearHandlePosition = prevBezierEdge?.control1,
-                        knotPosition = segment.startKnot,
-                        frontHandlePosition = bezierEdge?.control0,
-                    ),
-                    innerKnots = emptyList(),
-                    seamAllowanceKind = SeamAllowanceKind.Standard,
-                )
-            },
-        )
+            return PatternOutline(
+                segments = intermediateSegments.withNextCyclic().map { (segment, nextSegment) ->
+                    segment.parametrize(
+                        nextSegment = nextSegment,
+                        outlineParams = params,
+                    )
+                },
+            )
+        }
     }
 
     sealed class Knot {
@@ -69,15 +67,43 @@ data class PatternOutline(
             val rearHandlePosition: Point,
             val frontStringLength: Double,
         ) {
+            companion object {
+                fun fromChunk(
+                    chunk: ClosedSpline.KnotChunk<*, *, *>,
+                ): HandleRod? {
+                    val prevBezierEdge = chunk.prevEdge as? CubicBezierCurve.Edge
+                    val knot = chunk.knot
+                    val nextBezierEdge = chunk.nextEdge as? CubicBezierCurve.Edge
+
+                    val rearControl = prevBezierEdge?.control1 ?: return null
+                    val frontControl = nextBezierEdge?.control0 ?: return null
+
+                    return HandleRod(
+                        rearHandlePosition = rearControl,
+                        frontStringLength = knot.distanceTo(frontControl),
+                    )
+                }
+            }
+
             fun determineFrontHandlePosition(
                 knotPosition: Point,
-            ): Point = knotPosition.translateVia(
-                rearHandlePosition.translationTo(knotPosition).extend(frontStringLength),
-            )
+            ): Point {
+                val direction = rearHandlePosition.directionTo(knotPosition)!!
+                return knotPosition.translateInDirection(
+                    direction = direction,
+                    distance = frontStringLength,
+                )
+            }
 
             init {
-                require(frontStringLength > 0.0)
+//                require(frontStringLength > 0.0)
             }
+        }
+
+        init {
+            require(
+                handleRod?.let { it.rearHandlePosition != knotPosition } ?: true,
+            )
         }
 
         override val rearHandlePosition: Point?
@@ -85,6 +111,65 @@ data class PatternOutline(
 
         override val frontHandlePosition: Point?
             get() = handleRod?.determineFrontHandlePosition(knotPosition = knotPosition)
+    }
+
+    data class IntermediateSegment(
+        val knotName: String,
+        val originKnot: OuterKnot,
+        val innerKnots: List<InnerKnot>,
+    ) {
+        companion object {
+            fun fromMarkedSpline(
+                markedSpline: ClosedSpline<*, *, Marker?>,
+            ): List<IntermediateSegment> {
+                val knotChunkGroups = markedSpline.knotChunks.shiftWhile {
+                    it.knotMetadata == null
+                }.splitBy {
+                    it.knotMetadata != null
+                }
+
+                return knotChunkGroups.map { knotChunkGroup ->
+                    val (firstChunk, otherChunks) = knotChunkGroup.uncons() ?: throw IllegalArgumentException()
+                    val firstKnotMarker = firstChunk.knotMetadata ?: throw IllegalArgumentException()
+
+                    val originRearEdge = firstChunk.prevEdge as? CubicBezierCurve.Edge
+                    val originFrontEdge = firstChunk.nextEdge as? CubicBezierCurve.Edge
+
+                    IntermediateSegment(
+                        knotName = firstKnotMarker.name,
+                        originKnot = OuterKnot(
+                            rearHandlePosition = originRearEdge?.control1,
+                            knotPosition = firstChunk.knot,
+                            frontHandlePosition = originFrontEdge?.control0,
+                        ),
+                        innerKnots = otherChunks.map { chunk ->
+                            InnerKnot(
+                                knotPosition = chunk.knot,
+                                handleRod = InnerKnot.HandleRod.fromChunk(chunk = chunk),
+                            )
+                        },
+                    )
+                }
+            }
+        }
+
+        fun parametrize(
+            nextSegment: IntermediateSegment,
+            outlineParams: PatternOutlineParams,
+        ): Segment {
+            val segmentParams = outlineParams.getSegmentParams(
+                edgeHandle = PatternOutlineParams.EdgeHandle(
+                    firstKnotName = knotName,
+                    secondKnotName = nextSegment.knotName,
+                ),
+            )
+
+            return Segment(
+                originKnot = originKnot,
+                innerKnots = innerKnots,
+                seamAllowanceKind = segmentParams?.seamAllowanceKind ?: SeamAllowanceKind.Standard,
+            )
+        }
     }
 
     data class Segment(
@@ -105,7 +190,6 @@ data class PatternOutline(
                     val startKnot = knot.knotPosition
                     val endKnot = nextKnot.knotPosition
 
-
                     val firstControl = knot.frontHandlePosition
                     val secondControl = nextKnot.rearHandlePosition
 
@@ -118,7 +202,6 @@ data class PatternOutline(
                                 control1 = secondControl ?: endKnot,
                             )
                         },
-
                         edgeMetadata = segment.seamAllowanceKind,
                         startKnotMetadata = null,
                     )
