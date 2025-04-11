@@ -49,15 +49,15 @@ data class Ray(
     internal val dv: Vector2<*>
         get() = direction.dv
 
-    val containingLine: Line
-        get() = Line(
-            representativePoint = startingPoint,
+    val containingLine: BoundLine
+        get() = BoundLine(
+            originPoint = startingPoint,
             biDirection = direction.biDirection,
         )
 
-    val perpendicularLine: Line
-        get() = Line(
-            representativePoint = startingPoint,
+    val perpendicularLine: BoundLine
+        get() = BoundLine(
+            originPoint = startingPoint,
             // If d is non-zero, its perpendicular vector will also be non-zero
             biDirection = direction.perpendicular.biDirection,
         )

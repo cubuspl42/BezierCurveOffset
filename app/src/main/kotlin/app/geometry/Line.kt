@@ -5,26 +5,27 @@ import app.algebra.linear.vectors.vector2.minus
 import app.algebra.linear.vectors.vector2.plus
 
 /**
- * A line in 2D Euclidean space, described by the equation p = s + td
+ * A line in 2D Euclidean space
  */
-data class Line(
+abstract class Line {
     /**
      * One of the infinitely many points lying on the line
      */
-    val representativePoint: Point,
+    abstract val representativePoint: Point
+
     /**
      * The bi-direction of this line
      */
-    val biDirection: BiDirection,
-) {
+    abstract val biDirection: BiDirection
+
     companion object {
         fun inDirection(
             point: Point,
             direction: Direction,
-        ): Line = Ray.inDirection(
+        ): Line = BoundLine.inDirection(
             point = point,
             direction = direction,
-        ).containingLine
+        )
     }
 
     val pv: Vector2<*>
