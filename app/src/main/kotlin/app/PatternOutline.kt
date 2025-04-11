@@ -120,7 +120,7 @@ data class PatternOutline(
                         },
 
                         edgeMetadata = segment.seamAllowanceKind,
-                        knotMetadata = null,
+                        startKnotMetadata = null,
                     )
                 }
             },

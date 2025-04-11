@@ -55,6 +55,7 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         ),
         terminator = Spline.Terminator(
             endKnot = end,
+            endKnotMetadata = null,
         ),
     )
 
@@ -85,7 +86,7 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         startKnot = start,
         edge = edge,
         edgeMetadata = edgeMetadata,
-        knotMetadata = null,
+        startKnotMetadata = null,
     )
 
     abstract fun findBoundingBox(): BoundingBox

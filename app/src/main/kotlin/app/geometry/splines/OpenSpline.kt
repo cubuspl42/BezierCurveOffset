@@ -18,7 +18,7 @@ class OpenSpline<
     /**
      * The plug node that terminates the path of links
      */
-    val terminator: Spline.Terminator,
+    val terminator: Spline.Terminator<KnotMetadata>,
 ) : Spline<CurveT, EdgeMetadata, KnotMetadata>() {
     companion object {
         fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> merge(
@@ -65,9 +65,9 @@ class OpenSpline<
     val backRay: Ray?
         get() = subCurves.last().backRay
 
-    override val nodes: List<Node> = segments + terminator
+    override val nodes: List<Node<KnotMetadata>> = segments + terminator
 
-    override val rightEdgeNode: Node
+    override val rightEdgeNode: Node<KnotMetadata>
         get() = terminator
 
 }

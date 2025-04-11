@@ -127,7 +127,7 @@ object PatternSvg {
             )
         }
 
-        val nameGrouping = markedSpline.segments.groupingBy { it.knotMetadata?.name }
+        val nameGrouping = markedSpline.segments.groupingBy { it.startKnotMetadata?.name }
 
         val countByName = nameGrouping.eachCount()
 

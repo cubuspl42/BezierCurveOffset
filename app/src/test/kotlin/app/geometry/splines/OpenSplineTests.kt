@@ -26,6 +26,7 @@ class OpenSplineTests {
 
         val terminator = Terminator(
             endKnot = knot1End,
+            endKnotMetadata = null,
         )
 
         val spline = OpenSpline(
@@ -67,6 +68,7 @@ class OpenSplineTests {
 
         val terminator = Terminator(
             endKnot = Point.of(6.0, 0.0),
+            endKnotMetadata = null,
         )
 
         val spline = OpenSpline(
@@ -124,6 +126,7 @@ class OpenSplineTests {
             ),
             terminator = Spline.Terminator(
                 endKnot = knot0Joint,
+                endKnotMetadata = null,
             ),
         )
 
@@ -133,6 +136,7 @@ class OpenSplineTests {
             ),
             terminator = Spline.Terminator(
                 endKnot = end,
+                endKnotMetadata = null,
             ),
         )
 
@@ -148,6 +152,7 @@ class OpenSplineTests {
         assertEquals(
             expected = Spline.Terminator(
                 endKnot = end,
+                endKnotMetadata = null,
             ),
             actual = mergedSpline.terminator,
         )
@@ -192,6 +197,7 @@ class OpenSplineTests {
 
         val terminator1 = Terminator(
             endKnot = knot2Joint,
+            endKnotMetadata = null,
         )
 
         val spline0 = OpenSpline(
@@ -217,6 +223,7 @@ class OpenSplineTests {
 
         val terminator2 = Terminator(
             endKnot = knot4End,
+            endKnotMetadata = null,
         )
 
         val spline1 = OpenSpline(
@@ -288,6 +295,7 @@ class OpenSplineTests {
 
         val terminator1 = Terminator(
             endKnot = knot2Joint,
+            endKnotMetadata = null,
         )
 
         val spline0 = OpenSpline(
@@ -313,6 +321,7 @@ class OpenSplineTests {
 
         val terminator2 = Terminator(
             endKnot = knot4Joint,
+            endKnotMetadata = null,
         )
 
         val spline1 = OpenSpline(
@@ -338,6 +347,7 @@ class OpenSplineTests {
 
         val terminator3 = Terminator(
             endKnot = knot6End,
+            endKnotMetadata = null,
         )
 
         val spline2 = OpenSpline(

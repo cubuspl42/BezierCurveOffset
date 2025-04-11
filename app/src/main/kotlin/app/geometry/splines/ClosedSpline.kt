@@ -92,9 +92,9 @@ class ClosedSpline<
         require(segments.isNotEmpty())
     }
 
-    override val nodes: List<Node> = segments
+    override val nodes: List<Node<KnotMetadata>> = segments
 
-    override val rightEdgeNode: Node
+    override val rightEdgeNode: Node<KnotMetadata>
         get() = segments.first()
 
     fun findBoundingBox(): BoundingBox = BoundingBox.unionAll(
@@ -126,8 +126,8 @@ class ClosedSpline<
     fun findContourSpline(
         offsetStrategy: ContourOffsetStrategy<EdgeMetadata>,
     ): ClosedSpline<*, ContourEdgeMetadata, *>? {
-        val offsetSplines = subSegments.mapNotNull { subSegment ->
-            val subCurve = subSegment.segmentCurve
+        val offsetSplines = edgeChunks.mapNotNull { subSegment ->
+            val subCurve = subSegment.edgeCurve
             val edgeMetadata = subSegment.edgeMetadata
 
             subCurve.findOffsetSpline(
@@ -204,7 +204,7 @@ fun SVGPathElement.toClosedSpline(): ClosedSpline<*, *, *> {
             startKnot = startKnot,
             edge = pathSeg.toEdge(startKnot),
             edgeMetadata = null,
-            knotMetadata = null,
+            startKnotMetadata = null,
         )
     }
 

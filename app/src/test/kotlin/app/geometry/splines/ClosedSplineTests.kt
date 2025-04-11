@@ -59,6 +59,7 @@ class ClosedSplineTests {
             ),
             terminator = Spline.Terminator(
                 endKnot = knot1End,
+                endKnotMetadata = null,
             ),
         )
 
@@ -74,7 +75,7 @@ class ClosedSplineTests {
                     edgeMetadata = ContourEdgeMetadata.Side(
                         offsetMetadata = OffsetEdgeMetadata.Precise,
                     ),
-                    knotMetadata = null,
+                    startKnotMetadata = null,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = knot1End,
@@ -125,6 +126,7 @@ class ClosedSplineTests {
             ),
             terminator = Spline.Terminator(
                 endKnot = knot1,
+                endKnotMetadata = null,
             ),
         )
 
@@ -134,6 +136,7 @@ class ClosedSplineTests {
             ),
             terminator = Spline.Terminator(
                 endKnot = knot3,
+                endKnotMetadata = null,
             ),
         )
 
@@ -149,7 +152,7 @@ class ClosedSplineTests {
                     edgeMetadata = ContourEdgeMetadata.Side(
                         offsetMetadata = OffsetEdgeMetadata.Precise,
                     ),
-                    knotMetadata = null,
+                    startKnotMetadata = null,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = knot1,
@@ -167,7 +170,7 @@ class ClosedSplineTests {
                     edgeMetadata = ContourEdgeMetadata.Side(
                         offsetMetadata = OffsetEdgeMetadata.Precise,
                     ),
-                    knotMetadata = null,
+                    startKnotMetadata = null,
                 ),
                 Spline.Segment.lineSegment(
                     startKnot = knot3,
@@ -232,6 +235,7 @@ class ClosedSplineTests {
             ),
             terminator = Spline.Terminator(
                 endKnot = knot1,
+                endKnotMetadata = null,
             ),
         )
 
@@ -241,6 +245,7 @@ class ClosedSplineTests {
             ),
             terminator = Spline.Terminator(
                 endKnot = knot3,
+                endKnotMetadata = null,
             ),
         )
 
@@ -250,6 +255,7 @@ class ClosedSplineTests {
             ),
             terminator = Spline.Terminator(
                 endKnot = knot5,
+                endKnotMetadata = null,
             ),
         )
 
@@ -276,7 +282,7 @@ class ClosedSplineTests {
                 edgeMetadata = ContourEdgeMetadata.Side(
                     offsetMetadata = OffsetEdgeMetadata.Precise,
                 ),
-                knotMetadata = null,
+                startKnotMetadata = null,
             ),
             actual = actualSegment0,
         )
@@ -306,7 +312,7 @@ class ClosedSplineTests {
                 edgeMetadata = ContourEdgeMetadata.Side(
                     offsetMetadata = OffsetEdgeMetadata.Precise,
                 ),
-                knotMetadata = null,
+                startKnotMetadata = null,
             ),
             actual = actualSegment3,
         )
@@ -338,7 +344,7 @@ class ClosedSplineTests {
                 edgeMetadata = ContourEdgeMetadata.Side(
                     offsetMetadata = OffsetEdgeMetadata.Precise,
                 ),
-                knotMetadata = null,
+                startKnotMetadata = null,
             ),
             actual = actualSegment6,
         )
@@ -375,7 +381,7 @@ class ClosedSplineTests {
                         control1 = Point.of(18.35, 72.59),
                     ),
                     edgeMetadata = null,
-                    knotMetadata = null,
+                    startKnotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(24.34, 78.87),
@@ -384,7 +390,7 @@ class ClosedSplineTests {
                         control1 = Point.of(37.93, 65.40),
                     ),
                     edgeMetadata = null,
-                    knotMetadata = null,
+                    startKnotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(76.11, 65.90),
@@ -393,7 +399,7 @@ class ClosedSplineTests {
                         control1 = Point.of(66.51, 49.56),
                     ),
                     edgeMetadata = null,
-                    knotMetadata = null,
+                    startKnotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(65.66, 43.91),
@@ -402,7 +408,7 @@ class ClosedSplineTests {
                         control1 = Point.of(51.91, 43.18),
                     ),
                     edgeMetadata = null,
-                    knotMetadata = null,
+                    startKnotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(43.77, 46.24),
@@ -411,7 +417,7 @@ class ClosedSplineTests {
                         control1 = Point.of(43.84, 25.10),
                     ),
                     edgeMetadata = null,
-                    knotMetadata = null,
+                    startKnotMetadata = null,
                 ),
                 Spline.Segment(
                     startKnot = Point.of(45.47, 20.40),
@@ -420,7 +426,7 @@ class ClosedSplineTests {
                         control1 = Point.of(32.91, 26.87),
                     ),
                     edgeMetadata = null,
-                    knotMetadata = null,
+                    startKnotMetadata = null,
                 ),
             ),
         )
