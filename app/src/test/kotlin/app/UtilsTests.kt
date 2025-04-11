@@ -559,4 +559,59 @@ class UtilsTests {
             },
         )
     }
+
+    @Test
+    fun testSplitBy_empty() {
+        val result = emptyList<Int>().splitBy { it % 2 == 0 }
+
+        assertEquals(
+            expected = emptyList(),
+            actual = result,
+        )
+    }
+
+    @Test
+    fun testSplitBy_noMatching() {
+        val list = listOf(1, 5, 9, 7, 3, 3, 9, 1)
+        val result = list.splitBy { it % 2 == 0 }
+
+        assertEquals(
+            expected = listOf(list),
+            actual = result,
+        )
+    }
+
+    @Test
+    fun testSplitBy_allMatching() {
+        val list = listOf(2, 4, 6, 8, 10)
+        val result = list.splitBy { it % 2 == 0 }
+
+        assertEquals(
+            expected = listOf(
+                listOf(2),
+                listOf(4),
+                listOf(6),
+                listOf(8),
+                listOf(10),
+            ),
+            actual = result,
+        )
+    }
+
+    @Test
+    fun testSplitBy_simple() {
+        val result = listOf(1, 5, 9, 2, 7, 3, 3, 4, 9, 2, 8, 6, 1).splitBy { it % 2 == 0 }
+
+        assertEquals(
+            expected = listOf(
+                listOf(1, 5, 9),
+                listOf(2, 7, 3, 3),
+                listOf(4, 9),
+                listOf(2),
+                listOf(8),
+                listOf(6, 1),
+            ),
+            actual = result,
+        )
+    }
 }

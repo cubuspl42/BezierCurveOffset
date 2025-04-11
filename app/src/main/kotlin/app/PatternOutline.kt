@@ -10,9 +10,27 @@ import app.geometry.splines.Spline
 data class PatternOutline(
     val segments: List<Segment>,
 ) {
+    data class PatternOutlineParams(
+        val segmentParamsByEdgeHandle: Map<EdgeHandle, SegmentParams>,
+    ) {
+        data class EdgeHandle(
+            val firstKnotName: String,
+            val secondKnotName: String,
+        )
+
+        data class SegmentParams(
+            val seamAllowanceKind: SeamAllowanceKind,
+        )
+
+        fun getSegmentParams(
+            edgeHandle: EdgeHandle,
+        ): SegmentParams? = segmentParamsByEdgeHandle[edgeHandle]
+    }
+
     companion object {
         fun fromMarkedSpline(
             markedSpline: ClosedSpline<*, *, Marker?>,
+            params: PatternOutlineParams,
         ): PatternOutline = PatternOutline(
             segments = markedSpline.segments.withPreviousCyclic().map { (prevSegment, segment) ->
                 val prevBezierEdge = prevSegment.edge as? CubicBezierCurve.Edge
@@ -25,7 +43,7 @@ data class PatternOutline(
                         frontHandlePosition = bezierEdge?.control1,
                     ),
                     innerKnots = emptyList(),
-                    seamAllowanceKind = SeamAllowanceKind.Small,
+                    seamAllowanceKind = SeamAllowanceKind.Standard,
                 )
             },
         )

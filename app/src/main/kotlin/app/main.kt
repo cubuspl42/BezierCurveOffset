@@ -1,5 +1,8 @@
 package app
 
+import app.PatternOutline.PatternOutlineParams
+import app.PatternOutline.PatternOutlineParams.EdgeHandle
+import app.PatternOutline.PatternOutlineParams.SegmentParams
 import app.PatternSvg.mmToPtFactor
 import app.geometry.transformations.MixedTransformation
 import app.geometry.curves.SegmentCurve
@@ -50,19 +53,24 @@ fun extractSplineFromFile(
 }
 
 sealed interface SeamAllowanceKind {
-    data object Small : SeamAllowanceKind {
+    data object None : SeamAllowanceKind {
+        override val widthMm = 0.0
+    }
+
+    data object Standard : SeamAllowanceKind {
         override val widthMm = 6.0
     }
 
-    data object Large : SeamAllowanceKind {
+    data object Tunnel : SeamAllowanceKind {
+        override val widthMm = 9.0
+    }
+
+    data object Edging : SeamAllowanceKind {
         override val widthMm = 12.0
     }
 
     val widthMm: Double
 }
-
-
-
 
 fun main() {
     val markedSpline = PatternSvg.extractFromFile(
@@ -71,6 +79,35 @@ fun main() {
 
     val patternOutline = PatternOutline.fromMarkedSpline(
         markedSpline = markedSpline,
+        params = PatternOutlineParams(
+            segmentParamsByEdgeHandle = mapOf(
+                EdgeHandle(
+                    firstKnotName = "B",
+                    secondKnotName = "C",
+                ) to SegmentParams(
+                    seamAllowanceKind = SeamAllowanceKind.Tunnel,
+                ),
+                EdgeHandle(
+                    firstKnotName = "C",
+                    secondKnotName = "D",
+                ) to SegmentParams(
+                    seamAllowanceKind = SeamAllowanceKind.Edging,
+                ),
+
+                EdgeHandle(
+                    firstKnotName = "D",
+                    secondKnotName = "E",
+                ) to SegmentParams(
+                    seamAllowanceKind = SeamAllowanceKind.None,
+                ),
+                EdgeHandle(
+                    firstKnotName = "E",
+                    secondKnotName = "F",
+                ) to SegmentParams(
+                    seamAllowanceKind = SeamAllowanceKind.Edging,
+                ),
+            ),
+        ),
     )
 
     val spline = patternOutline.closedSpline
@@ -89,8 +126,6 @@ fun main() {
             }
         },
     )!!
-
-
 
     exportSplinesPreview(
         spline = spline,

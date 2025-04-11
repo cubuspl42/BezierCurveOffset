@@ -123,13 +123,15 @@ object PatternSvg {
         val markedSpline = spline.transformKnotMetadata { segment ->
             getClosestMarker(
                 position = segment.startKnot,
-                maxDistance = 20.0,
+                maxDistance = 10.0,
             )
         }
 
         val nameGrouping = markedSpline.segments.groupingBy { it.knotMetadata?.name }
 
-        nameGrouping.eachCount().forEach { (nameOrNull, count) ->
+        val countByName = nameGrouping.eachCount()
+
+        countByName.forEach { (nameOrNull, count) ->
             val name = nameOrNull ?: return@forEach
 
             if (count > 1) {

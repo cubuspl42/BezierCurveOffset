@@ -379,6 +379,39 @@ fun <T, R : Comparable<R>> List<T>.indexOfMaxBy(
     return index
 }
 
+/**
+ * Splits the list into sub-lists based on the given predicate. The list is split
+ * into chunks where each chunk contains elements that satisfy the predicate as the first
+ * element.
+ *
+ * Example:
+ * ```
+ * val list = listOf(1, 7, 2, 3, 9, 4, 5, 9, 1)
+ * val result = list.splitBy { it % 2 == 0 }
+ * // result: [[1, 7], [2, 3, 9], [4, 5, 9, 1]]
+ */
+fun <T> List<T>.splitBy(
+    predicate: (T) -> Boolean,
+): List<List<T>> {
+    val result = mutableListOf<List<T>>()
+    val currentChunk = mutableListOf<T>()
+
+    for (item in this) {
+        if (predicate(item)) {
+            if (currentChunk.isNotEmpty()) {
+                result.add(currentChunk.toList())
+                currentChunk.clear()
+            }
+        }
+        currentChunk.add(item)
+    }
+
+    if (currentChunk.isNotEmpty()) {
+        result.add(currentChunk.toList())
+    }
+
+    return result
+}
 
 operator fun <E> List<E>.component6(): E = this[5]
 
