@@ -5,6 +5,12 @@ data class GeometricTolerance(
     val greatDistance: Double,
 ) {
     /**
+     * The tolerance for a distance between two points
+     */
+    val distanceTolerance: Double
+        get() = negligibleDistance
+
+    /**
      * The tolerance for the |l|^2, where l is a distance between two points
      */
     val distanceSqTolerance: Double = negligibleDistance * negligibleDistance

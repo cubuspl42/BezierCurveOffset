@@ -11,7 +11,7 @@ import app.geometry.transformations.Translation
 import java.awt.geom.Path2D
 
 @Suppress("DataClassPrivateConstructor")
-data class Point private constructor(
+data class Point internal constructor(
     val pv: Vector2<*>,
 ) : NumericObject {
     companion object {
@@ -101,6 +101,9 @@ data class Point private constructor(
         py = py.toDouble(),
     )
 
+    val pvRaw: RawVector
+        get() = pv.raw
+
     val x: Double
         get() = pv.x
 
@@ -163,6 +166,13 @@ data class Point private constructor(
             distance = distance,
         )
     }
+
+    fun castRay(
+        direction: Direction,
+    ): Ray = Ray.inDirection(
+        point = this,
+        direction = direction,
+    )
 
     // TODO: Nuke?
     fun toVector(): Vector2<*> = Vector2.of(x, y)

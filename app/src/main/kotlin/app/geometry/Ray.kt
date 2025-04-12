@@ -13,15 +13,8 @@ import org.w3c.dom.svg.SVGPathElement
 /**
  * A ray in 2D Euclidean space, described by the equation p = s + td for t >= 0
  */
-data class Ray(
-    /**
-     * The initial point of the ray
-     */
-    val startingPoint: Point,
-    /**
-     * The direction of this ray
-     */
-    val direction: Direction,
+class Ray(
+    private val rawLine: RawLine,
 ) {
     private fun evaluate(
         t: Double,
@@ -33,13 +26,25 @@ data class Ray(
         return sv + direction.dv.scale(t)
     }
 
+    /**
+     * The initial point of the ray
+     */
+    val startingPoint: Point = rawLine.p0.asPoint
+
+    /**
+     * The direction of this ray
+     */
+    val direction: Direction = rawLine.dv.asDirection!!
+
     companion object {
         fun inDirection(
             point: Point,
             direction: Direction,
         ): Ray = Ray(
-            startingPoint = point,
-            direction = direction,
+            rawLine = RawLine(
+                p0 = point.pvRaw,
+                dv = direction.dvRaw,
+            )
         )
     }
 
@@ -62,10 +67,7 @@ data class Ray(
         )
 
     val opposite: Ray
-        get() = Ray(
-            startingPoint = startingPoint,
-            direction = direction.opposite,
-        )
+        get() = startingPoint.castRay(direction.opposite)
 
     fun intersect(
         other: Ray,

@@ -6,6 +6,7 @@ import app.algebra.linear.VectorOrientation
 import app.algebra.linear.VectorSpace
 import app.algebra.linear.vectors.vector3.Vector3
 import app.geometry.Point
+import app.geometry.RawVector
 import kotlin.math.sqrt
 
 data class Vector2<out Vo : VectorOrientation>(
@@ -73,6 +74,12 @@ data class Vector2<out Vo : VectorOrientation>(
      */
     val length: Double
         get() = sqrt(lengthSquared)
+
+    val raw: RawVector
+        get() = RawVector(
+            x = x,
+            y = y,
+        )
 
     fun toVec3(
         z: Double = 1.0,

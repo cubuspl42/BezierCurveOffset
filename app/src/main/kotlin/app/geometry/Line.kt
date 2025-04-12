@@ -8,28 +8,29 @@ import app.algebra.linear.vectors.vector2.plus
  * A line in 2D Euclidean space
  */
 class Line(
-    private val representativeBoundLine: BoundLine,
+    private val rawLine: RawLine,
 ) {
+    // TODO: Nuke?
     /**
      * One of the infinitely many points lying on the line
      */
     val representativePoint: Point
-        get() = representativeBoundLine.originPoint
+        get() = rawLine.p0.asPoint
 
     /**
      * The bi-direction of this line
      */
     val biDirection: BiDirection
-        get() = representativeBoundLine.biDirection
+        get() = rawLine.dv.asBiDirection!!
 
     companion object {
         fun inDirection(
             point: Point,
             direction: Direction,
         ): Line = Line(
-            representativeBoundLine = BoundLine.inDirection(
-                point = point,
-                direction = direction,
+            rawLine = RawLine(
+                p0 = point.pvRaw,
+                dv = direction.dvRaw,
             ),
         )
     }
