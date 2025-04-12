@@ -1,34 +1,30 @@
 package app.geometry
 
-import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.vectors.vector2.minus
-import app.algebra.linear.vectors.vector2.plus
-
 /**
  * A line in 2D Euclidean space
  */
 class Line(
-    internal val rawLine: RawLine,
+    internal val lineEquation: LineEquation,
 ) {
     // TODO: Nuke?
     /**
      * One of the infinitely many points lying on the line
      */
     val representativePoint: Point
-        get() = rawLine.p0.asPoint
+        get() = lineEquation.p0.asPoint
 
     /**
      * The bi-direction of this line
      */
     val biDirection: BiDirection
-        get() = rawLine.dv.asBiDirection!!
+        get() = lineEquation.dv.asBiDirection!!
 
     companion object {
         fun inDirection(
             point: Point,
             direction: Direction,
         ): Line = Line(
-            rawLine = RawLine(
+            lineEquation = LineEquation(
                 p0 = point.pvRaw,
                 dv = direction.dvRaw,
             ),
@@ -42,15 +38,15 @@ class Line(
         get() = biDirection.dv
 
     val dvRaw: RawVector
-        get() = rawLine.dv
+        get() = lineEquation.dv
 
     fun findIntersectionPoint(
         other: Line,
     ): Point? {
-        val l0 = this.rawLine
-        val l1 = other.rawLine
+        val l0 = this.lineEquation
+        val l1 = other.lineEquation
 
-        val intersection = RawLine.findUniqueIntersection(
+        val intersection = LineEquation.findUniqueIntersection(
             l0 = l0,
             l1 = l1,
         ) ?: return null

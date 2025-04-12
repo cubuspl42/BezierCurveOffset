@@ -1,8 +1,5 @@
 package app.geometry
 
-import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.vectors.vector2.minus
-import app.algebra.linear.vectors.vector2.plus
 import app.fill
 import app.geometry.curves.LineSegment
 import app.geometry.curves.toSvgPath
@@ -14,24 +11,24 @@ import org.w3c.dom.svg.SVGPathElement
  * A ray in 2D Euclidean space, described by the equation p = s + td for t >= 0
  */
 class Ray(
-    private val rawLine: RawLine,
+    private val lineEquation: LineEquation,
 ) {
     /**
      * The initial point of the ray
      */
-    val startingPoint: Point = rawLine.p0.asPoint
+    val startingPoint: Point = lineEquation.p0.asPoint
 
     /**
      * The direction of this ray
      */
-    val direction: Direction = rawLine.dv.asDirection!!
+    val direction: Direction = lineEquation.dv.asDirection!!
 
     companion object {
         fun inDirection(
             point: Point,
             direction: Direction,
         ): Ray = Ray(
-            rawLine = RawLine(
+            lineEquation = LineEquation(
                 p0 = point.pvRaw,
                 dv = direction.dvRaw,
             )
@@ -62,10 +59,10 @@ class Ray(
     fun intersect(
         other: Ray,
     ): Point? {
-        val l0 = rawLine
-        val l1 = other.rawLine
+        val l0 = lineEquation
+        val l1 = other.lineEquation
 
-        val intersection = RawLine.findUniqueIntersection(
+        val intersection = LineEquation.findUniqueIntersection(
             l0 = l0,
             l1 = l1,
         ) ?: return null

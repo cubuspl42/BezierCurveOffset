@@ -13,28 +13,6 @@ data class Vector2<out Vo : VectorOrientation>(
     val x: Double,
     val y: Double,
 ) : NumericObject {
-    /**
-     * A vectors space of two-dimensional vectors
-     */
-    class Vector2VectorSpace<Vo : VectorOrientation> : VectorSpace<Vector2<Vo>>() {
-        override val zero: Vector2<Vo> = zero()
-
-        override fun add(
-            u: Vector2<Vo>,
-            v: Vector2<Vo>,
-        ): Vector2<Vo> = u + v
-
-        override fun subtract(
-            u: Vector2<Vo>,
-            v: Vector2<Vo>,
-        ): Vector2<Vo> = u - v
-
-        override fun scale(
-            a: Double,
-            v: Vector2<Vo>,
-        ): Vector2<Vo> = v.scale(a)
-    }
-
     companion object {
         fun <Vo : VectorOrientation> zero(): Vector2<Vo> = Vector2(x = 0.0, y = 0.0)
 
@@ -42,36 +20,12 @@ data class Vector2<out Vo : VectorOrientation>(
             x: Double,
             y: Double,
         ): Vector2<Nothing> = Vector2(x, y)
-
-        fun <Vo : VectorOrientation> bisector(
-            a: Vector2<Vo>,
-            b: Vector2<Vo>,
-        ): Vector2<Vo> = b.length * a + a.length * b
     }
 
     init {
         require(x.isFinite())
         require(y.isFinite())
     }
-
-    val normalized: Vector2<Vo>
-        get() = if (lengthSquared == 0.0) {
-            zero()
-        } else {
-            this / length
-        }
-
-    /**
-     * The length^2 of this vector
-     */
-    val lengthSquared: Double
-        get() = x * x + y * y
-
-    /**
-     * The length of this vector
-     */
-    val length: Double
-        get() = sqrt(lengthSquared)
 
     val raw: RawVector
         get() = RawVector(

@@ -1,10 +1,6 @@
 package app.geometry
 
-/**
- * A raw line, i.e. a line defined by a point and a direction vector, without
- * an interpretation whether that point and direction have a semantic meaning.
- */
-class RawLine(
+class LineEquation(
     /**
      * The starting point of the line
      */
@@ -26,8 +22,8 @@ class RawLine(
          * @return the intersection if it exists, or null if the lines are parallel
          */
         fun findUniqueIntersection(
-            l0: RawLine,
-            l1: RawLine,
+            l0: LineEquation,
+            l1: LineEquation,
         ): Intersection? {
             val det = l0.dv.cross(l1.dv)
             if (det == 0.0) return null // The lines are parallel

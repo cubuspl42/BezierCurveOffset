@@ -1,9 +1,6 @@
 package app.geometry
 
 import app.algebra.NumericObject
-import app.algebra.linear.VectorOrientation
-import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.vectors.vector2.Vector2x1
 import app.equalsZeroApproximately
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.Translation
@@ -174,7 +171,7 @@ data class Point internal constructor(
     )
 
     fun snapTo(line: Line): Point {
-        val l = line.rawLine
+        val l = line.lineEquation
         val pd = l.p0 - pvRaw
         val t = pd.findProjectionScale(l.dv)
         return l.evaluate(t = t).asPoint
