@@ -3,14 +3,13 @@ package app.geometry
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.VectorSpace
-import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector2.Vector2x1
 import kotlin.math.sqrt
 
 /**
- * A raw two-dimensional vector, i.e. a pair of two numbers (x, y) without an
- * interpretation of their meaning beyond that x corresponds to the X axis (the
- * first dimension) and y to the Y axis (the second dimension).
+ * A raw two-dimensional Euclidean vector, i.e. a pair of two numbers (x, y)
+ * without an interpretation of their meaning beyond that x corresponds to the X
+ * axis (the first dimension) and y to the Y axis (the second dimension).
  */
 data class RawVector(
     val x: Double,
@@ -98,8 +97,8 @@ data class RawVector(
         )
 
     val vertical: Vector2x1 = Vector2x1(
-        x = x,
-        y = y,
+        a0 = x,
+        a1 = y,
     )
 
     val asPoint: Point

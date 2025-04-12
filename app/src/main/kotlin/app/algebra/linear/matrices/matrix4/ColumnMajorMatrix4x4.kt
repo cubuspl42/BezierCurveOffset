@@ -14,34 +14,34 @@ class ColumnMajorMatrix4x4(
         j: Int,
     ): Double = when (i) {
         0 -> when (j) {
-            0 -> column0.x
-            1 -> column1.x
-            2 -> column2.x
-            3 -> column3.x
+            0 -> column0.a0
+            1 -> column1.a0
+            2 -> column2.a0
+            3 -> column3.a0
             else -> throw IndexOutOfBoundsException("Index out of bounds: $i, $j")
         }
 
         1 -> when (j) {
-            0 -> column0.y
-            1 -> column1.y
-            2 -> column2.y
-            3 -> column3.y
+            0 -> column0.a1
+            1 -> column1.a1
+            2 -> column2.a1
+            3 -> column3.a1
             else -> throw IndexOutOfBoundsException("Index out of bounds: $i, $j")
         }
 
         2 -> when (j) {
-            0 -> column0.z
-            1 -> column1.z
-            2 -> column2.z
-            3 -> column3.z
+            0 -> column0.a2
+            1 -> column1.a2
+            2 -> column2.a2
+            3 -> column3.a2
             else -> throw IndexOutOfBoundsException("Index out of bounds: $i, $j")
         }
 
         3 -> when (j) {
-            0 -> column0.w
-            1 -> column1.w
-            2 -> column2.w
-            3 -> column3.w
+            0 -> column0.a3
+            1 -> column1.a3
+            2 -> column2.a3
+            3 -> column3.a3
             else -> throw IndexOutOfBoundsException("Index out of bounds: $i, $j")
         }
 
@@ -55,34 +55,34 @@ class ColumnMajorMatrix4x4(
 
     override val row0: Vector1x4
         get() = Vector4.horizontal(
-            x = column0.x,
-            y = column1.x,
-            z = column2.x,
-            w = column3.x,
+            a00 = column0.a0,
+            a01 = column1.a0,
+            a02 = column2.a0,
+            a03 = column3.a0,
         )
 
     override val row1: Vector1x4
         get() = Vector4.horizontal(
-            x = column0.y,
-            y = column1.y,
-            z = column2.y,
-            w = column3.y,
+            a00 = column0.a1,
+            a01 = column1.a1,
+            a02 = column2.a1,
+            a03 = column3.a1,
         )
 
     override val row2: Vector1x4
         get() = Vector4.horizontal(
-            x = column0.z,
-            y = column1.z,
-            z = column2.z,
-            w = column3.z,
+            a00 = column0.a2,
+            a01 = column1.a2,
+            a02 = column2.a2,
+            a03 = column3.a2,
         )
 
     override val row3: Vector1x4
         get() = Vector4.horizontal(
-            x = column0.w,
-            y = column1.w,
-            z = column2.w,
-            w = column3.w,
+            a00 = column0.a3,
+            a01 = column1.a3,
+            a02 = column2.a3,
+            a03 = column3.a3,
         )
 
     override val column0: Vector4x1

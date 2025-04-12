@@ -12,9 +12,9 @@ fun Vector1x3.dot(
 operator fun Vector1x3.times(
     matrix: Matrix3x3,
 ): Vector1x3 = Vector3.horizontal(
-    x = this.dot(matrix.column0),
-    y = this.dot(matrix.column1),
-    z = this.dot(matrix.column2),
+    a00 = this.dot(matrix.column0),
+    a01 = this.dot(matrix.column1),
+    a02 = this.dot(matrix.column2),
 )
 
 inline val Vector1x3.transposed: Vector3x1

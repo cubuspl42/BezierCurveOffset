@@ -186,10 +186,10 @@ sealed class Matrix4x4 : NumericObject {
         val x1 = (y1 - a14 * x4 - a13 * x3 - a12 * x2) / a11
 
         return Vector4.vertical(
-            x = x1,
-            y = x2,
-            z = x3,
-            w = x4,
+            a00 = x1,
+            a10 = x2,
+            a20 = x3,
+            a30 = x4,
         )
     }
 
@@ -236,10 +236,10 @@ sealed class Matrix4x4 : NumericObject {
         val x4 = (y4 - a41 * x1 - a42 * x2 - a43 * x3) / a44
 
         return Vector4.vertical(
-            x = x1,
-            y = x2,
-            z = x3,
-            w = x4,
+            a00 = x1,
+            a10 = x2,
+            a20 = x3,
+            a30 = x4,
         )
     }
 

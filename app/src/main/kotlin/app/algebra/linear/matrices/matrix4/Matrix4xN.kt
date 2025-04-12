@@ -7,7 +7,6 @@ import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.linear.vectors.vector4.Vector4x1
 import app.algebra.linear.vectors.vectorN.VectorNx1
 import app.algebra.linear.VectorOrientation
-import app.algebra.linear.vectors.vector3.dot
 import app.algebra.linear.vectors.vectorN.dot
 
 class Matrix4xN(
@@ -18,22 +17,22 @@ class Matrix4xN(
 
     val row0: Vector1xN
         get() = Vector1xN(
-            xs = columns.map { it.x },
+            xs = columns.map { it.a0 },
         )
 
     val row1: Vector1xN
         get() = Vector1xN(
-            xs = columns.map { it.y },
+            xs = columns.map { it.a1 },
         )
 
     val row2: Vector1xN
         get() = Vector1xN(
-            xs = columns.map { it.z },
+            xs = columns.map { it.a2 },
         )
 
     val row3: Vector1xN
         get() = Vector1xN(
-            xs = columns.map { it.w },
+            xs = columns.map { it.a3 },
         )
 
     val width: Int
@@ -47,10 +46,10 @@ class Matrix4xN(
     operator fun times(
         vector: VectorNx1,
     ): Vector4x1 = Vector4.vertical(
-        x = row0.dot(vector),
-        y = row1.dot(vector),
-        z = row2.dot(vector),
-        w = row3.dot(vector),
+        a00 = row0.dot(vector),
+        a10 = row1.dot(vector),
+        a20 = row2.dot(vector),
+        a30 = row3.dot(vector),
     )
 
     override fun equalsWithTolerance(

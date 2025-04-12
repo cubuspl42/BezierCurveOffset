@@ -9,10 +9,10 @@ sealed class EagerMatrix4x4 : Matrix4x4() {
     final override operator fun times(
         vector: Vector4x1,
     ): Vector4x1 = Vector4.of(
-        x = row0.dot(vector),
-        y = row1.dot(vector),
-        z = row2.dot(vector),
-        w = row3.dot(vector),
+        a0 = row0.dot(vector),
+        a1 = row1.dot(vector),
+        a2 = row2.dot(vector),
+        a3 = row3.dot(vector),
     )
 
     final override operator fun times(

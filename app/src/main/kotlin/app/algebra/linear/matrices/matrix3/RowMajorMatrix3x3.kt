@@ -26,23 +26,23 @@ class RowMajorMatrix3x3(
 
     override val column0: Vector3x1
         get() = Vector3.vertical(
-            x = row0.x,
-            y = row1.x,
-            z = row2.x,
+            a00 = row0.a0,
+            a10 = row1.a0,
+            a20 = row2.a0,
         )
 
     override val column1: Vector3x1
         get() = Vector3.vertical(
-            x = row0.y,
-            y = row1.y,
-            z = row2.y,
+            a00 = row0.a1,
+            a10 = row1.a1,
+            a20 = row2.a1,
         )
 
     override val column2: Vector3x1
         get() = Vector3.vertical(
-            x = row0.z,
-            y = row1.z,
-            z = row2.z,
+            a00 = row0.a2,
+            a10 = row1.a2,
+            a20 = row2.a2,
         )
 
     override fun equalsWithTolerance(

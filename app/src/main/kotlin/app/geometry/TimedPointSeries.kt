@@ -104,10 +104,10 @@ data class TimedPointSeries(
         // P_y (weight Y)
         val weightYVector = dMatrix * yVector
 
-        val w0 = Point.of(weightXVector.x, weightYVector.x)
-        val w1 = Point.of(weightXVector.y, weightYVector.y)
-        val w2 = Point.of(weightXVector.z, weightYVector.z)
-        val w3 = Point.of(weightXVector.w, weightYVector.w)
+        val w0 = Point.of(weightXVector.a0, weightYVector.a0)
+        val w1 = Point.of(weightXVector.a1, weightYVector.a1)
+        val w2 = Point.of(weightXVector.a2, weightYVector.a2)
+        val w3 = Point.of(weightXVector.a3, weightYVector.a3)
 
         return CubicBezierCurve.of(
             start = w0,
@@ -140,10 +140,10 @@ data class TimedPointSeries(
             val t = timedPoint.t
 
             Vector4.horizontal(
-                x = t * t * t,
-                y = t * t,
-                z = t,
-                w = 1.0,
+                a00 = t * t * t,
+                a01 = t * t,
+                a02 = t,
+                a03 = 1.0,
             )
         },
     )

@@ -1,8 +1,10 @@
 package app.geometry.transformations
 
+import app.algebra.equalsWithTolerance
 import app.algebra.linear.matrices.matrix3.Matrix3x3
 import app.algebra.linear.vectors.vector3.Vector1x3
-import app.algebra.linear.vectors.vector3.vectorXy
+import app.algebra.linear.vectors.vector3.Vector3x1
+import app.algebra.linear.vectors.vector3.vector2
 import app.geometry.Point
 import app.get
 import org.w3c.dom.svg.SVGGElement
@@ -27,19 +29,19 @@ data class MixedTransformation private constructor(
         ): MixedTransformation = MixedTransformation(
             transformationMatrix = Matrix3x3.rowMajor(
                 row0 = Vector1x3.of(
-                    x = a,
-                    y = c,
-                    z = e,
+                    a0 = a,
+                    a1 = c,
+                    a2 = e,
                 ),
                 row1 = Vector1x3.of(
-                    x = b,
-                    y = d,
-                    z = f,
+                    a0 = b,
+                    a1 = d,
+                    a2 = f,
                 ),
                 row2 = Vector1x3.of(
-                    x = 0.0,
-                    y = 0.0,
-                    z = 1.0,
+                    a0 = 0.0,
+                    a1 = 0.0,
+                    a2 = 1.0,
                 ),
             ),
         )
@@ -59,8 +61,14 @@ data class MixedTransformation private constructor(
     override fun transform(
         point: Point,
     ): Point {
-        val pt = transformationMatrix * point.pv.vertical.toVec3()
-        return Point.of(pv = pt.vectorXy.raw)
+        // The transformed point in the homogeneous coordinates
+        val pt: Vector3x1 = transformationMatrix * point.pv.vertical.toVec3()
+
+        if(!pt.a2.equalsWithTolerance(1.0, absoluteTolerance = 0.0001)) {
+            throw AssertionError()
+        }
+
+        return Point.of(pv = pt.vector2.raw)
     }
 }
 

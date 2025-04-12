@@ -75,10 +75,10 @@ class Matrix4xNTests {
 
         assertEqualsWithTolerance(
             expected = Vector4.vertical(
-                x = 301.0,
-                y = 322.0,
-                z = 343.0,
-                w = 364.0,
+                a00 = 301.0,
+                a10 = 322.0,
+                a20 = 343.0,
+                a30 = 364.0,
             ),
             actual = result,
             absoluteTolerance = 0.01,

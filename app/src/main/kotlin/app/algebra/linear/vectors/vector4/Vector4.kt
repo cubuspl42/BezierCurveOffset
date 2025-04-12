@@ -7,118 +7,88 @@ import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector3.Vector3
 
 data class Vector4<out Vo : VectorOrientation> internal constructor(
-    val x: Double,
-    val y: Double,
-    val z: Double,
-    val w: Double,
+    val a0: Double,
+    val a1: Double,
+    val a2: Double,
+    val a3: Double,
 ) : NumericObject {
     companion object {
         fun of(
-            x: Double,
-            y: Double,
-            z: Double,
-            w: Double,
+            a0: Double,
+            a1: Double,
+            a2: Double,
+            a3: Double,
         ): Vector4<Nothing> = Vector4(
-            x = x,
-            y = y,
-            z = z,
-            w = w,
+            a0 = a0,
+            a1 = a1,
+            a2 = a2,
+            a3 = a3,
         )
 
         fun vertical(
-            x: Double,
-            y: Double,
-            z: Double,
-            w: Double,
+            a00: Double,
+            a10: Double,
+            a20: Double,
+            a30: Double,
         ): Vector4x1 = Vector4(
-            x = x,
-            y = y,
-            z = z,
-            w = w,
+            a0 = a00,
+            a1 = a10,
+            a2 = a20,
+            a3 = a30,
         )
 
         fun horizontal(
-            x: Double,
-            y: Double,
-            z: Double,
-            w: Double,
+            a00: Double,
+            a01: Double,
+            a02: Double,
+            a03: Double,
         ): Vector1x4 = Vector4(
-            x = x,
-            y = y,
-            z = z,
-            w = w,
+            a0 = a00,
+            a1 = a01,
+            a2 = a02,
+            a3 = a03,
         )
     }
 
     init {
-        require(x.isFinite())
-        require(y.isFinite())
-        require(z.isFinite())
-        require(w.isFinite())
+        require(a0.isFinite())
+        require(a1.isFinite())
+        require(a2.isFinite())
+        require(a3.isFinite())
     }
 
-
     fun toArray(): DoubleArray = doubleArrayOf(
-        x,
-        y,
-        z,
-        w,
+        a0,
+        a1,
+        a2,
+        a3,
     )
 
     fun dotForced(
         other: Vector4<*>,
-    ): Double = x * other.x + y * other.y + z * other.z + w * other.w
-
+    ): Double = a0 * other.a0 + a1 * other.a1 + a2 * other.a2 + a3 * other.a3
 
     operator fun get(
         index: Int,
     ): Double = when (index) {
-        0 -> x
-        1 -> y
-        2 -> z
-        3 -> w
+        0 -> a0
+        1 -> a1
+        2 -> a2
+        3 -> a3
         else -> throw IndexOutOfBoundsException("Index $index out of bounds for length 4")
     }
 
-
-    fun toList(): List<Double> = listOf(x, y, z, w)
+    fun toList(): List<Double> = listOf(a0, a1, a2, a3)
 
     override fun equalsWithTolerance(
         other: NumericObject,
         absoluteTolerance: Double,
     ): Boolean = when {
         other !is Vector4<*> -> false
-        !x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) -> false
-        !y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) -> false
-        !z.equalsWithTolerance(other.z, absoluteTolerance = absoluteTolerance) -> false
-        !w.equalsWithTolerance(other.w, absoluteTolerance = absoluteTolerance) -> false
+        !a0.equalsWithTolerance(other.a0, absoluteTolerance = absoluteTolerance) -> false
+        !a1.equalsWithTolerance(other.a1, absoluteTolerance = absoluteTolerance) -> false
+        !a2.equalsWithTolerance(other.a2, absoluteTolerance = absoluteTolerance) -> false
+        !a3.equalsWithTolerance(other.a3, absoluteTolerance = absoluteTolerance) -> false
         else -> true
     }
 }
-
-val <Vo : VectorOrientation> Vector4<Vo>.vectorXy: Vector2<Vo>
-    get() = Vector2(
-        x = this.x,
-        y = this.y,
-    )
-
-
-val <Vo : VectorOrientation> Vector4<Vo>.vectorZw: Vector2<Vo>
-    get() = Vector2(
-        x = this.z,
-        y = this.w,
-    )
-
-val <Vo : VectorOrientation> Vector4<Vo>.vectorXyz: Vector3<Vo>
-    get() = Vector3(
-        x = this.x,
-        y = this.y,
-        z = this.z,
-    )
-
-val <Vo : VectorOrientation> Vector4<Vo>.vectorYzw: Vector3<Vo>
-    get() = Vector3(
-        x = this.y,
-        y = this.z,
-        z = this.w,
-    )

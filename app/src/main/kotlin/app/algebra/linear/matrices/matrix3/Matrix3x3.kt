@@ -71,9 +71,9 @@ sealed class Matrix3x3 : NumericObject {
     operator fun times(
         vector: Vector3x1,
     ): Vector3x1 = Vector3.of(
-        x = row0.dot(vector),
-        y = row1.dot(vector),
-        z = row2.dot(vector),
+        a0 = row0.dot(vector),
+        a1 = row1.dot(vector),
+        a2 = row2.dot(vector),
     )
 
     @JvmName("timesRm")

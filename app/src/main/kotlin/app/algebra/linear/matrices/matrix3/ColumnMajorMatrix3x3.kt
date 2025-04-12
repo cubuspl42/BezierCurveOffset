@@ -16,23 +16,23 @@ class ColumnMajorMatrix3x3(
 
     override val row0: Vector1x3
         get() = Vector3.horizontal(
-            x = column0.x,
-            y = column1.x,
-            z = column2.x,
+            a00 = column0.a0,
+            a01 = column1.a0,
+            a02 = column2.a0,
         )
 
     override val row1: Vector1x3
         get() = Vector3.horizontal(
-            x = column0.y,
-            y = column1.y,
-            z = column2.y,
+            a00 = column0.a1,
+            a01 = column1.a1,
+            a02 = column2.a1,
         )
 
     override val row2: Vector1x3
         get() = Vector3.horizontal(
-            x = column0.z,
-            y = column1.z,
-            z = column2.z,
+            a00 = column0.a2,
+            a01 = column1.a2,
+            a02 = column2.a2,
         )
 
     override val column0: Vector3x1

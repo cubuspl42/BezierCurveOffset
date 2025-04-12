@@ -33,34 +33,34 @@ class RowMajorMatrix4x4(
 
     override val column0: Vector4x1
         get() = Vector4.vertical(
-            x = row0.x,
-            y = row1.x,
-            z = row2.x,
-            w = row3.x,
+            a00 = row0.a0,
+            a10 = row1.a0,
+            a20 = row2.a0,
+            a30 = row3.a0,
         )
 
     override val column1: Vector4x1
         get() = Vector4.vertical(
-            x = row0.y,
-            y = row1.y,
-            z = row2.y,
-            w = row3.y,
+            a00 = row0.a1,
+            a10 = row1.a1,
+            a20 = row2.a1,
+            a30 = row3.a1,
         )
 
     override val column2: Vector4x1
         get() = Vector4.vertical(
-            x = row0.z,
-            y = row1.z,
-            z = row2.z,
-            w = row3.z,
+            a00 = row0.a2,
+            a10 = row1.a2,
+            a20 = row2.a2,
+            a30 = row3.a2,
         )
 
     override val column3: Vector4x1
         get() = Vector4.vertical(
-            x = row0.w,
-            y = row1.w,
-            z = row2.w,
-            w = row3.w,
+            a00 = row0.a3,
+            a10 = row1.a3,
+            a20 = row2.a3,
+            a30 = row3.a3,
         )
 
     override fun equalsWithTolerance(

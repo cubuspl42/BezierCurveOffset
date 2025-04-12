@@ -191,10 +191,10 @@ class Matrix4x4Tests {
 
         assertEqualsWithTolerance(
             expected = Vector4.vertical(
-                x = -1.0857,
-                y = 0.3429,
-                z = -0.1429,
-                w = 0.5714,
+                a00 = -1.0857,
+                a10 = 0.3429,
+                a20 = -0.1429,
+                a30 = 0.5714,
             ),
             actual = xVector,
             absoluteTolerance = 0.001,
@@ -252,10 +252,10 @@ class Matrix4x4Tests {
 
         assertEqualsWithTolerance(
             expected = Vector4.vertical(
-                x = 0.1429,
-                y = 0.2619,
-                z = 1.7619,
-                w = 0.2917,
+                a00 = 0.1429,
+                a10 = 0.2619,
+                a20 = 1.7619,
+                a30 = 0.2917,
             ),
             actual = xVector,
             absoluteTolerance = 0.001,
