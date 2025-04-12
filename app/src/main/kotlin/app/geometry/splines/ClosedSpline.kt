@@ -6,6 +6,7 @@ import app.dump
 import app.elementWiseAs
 import app.geometry.BoundingBox
 import app.geometry.Point
+import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.transformations.Transformation
 import app.uncons
@@ -80,24 +81,33 @@ class ClosedSpline<
                     segment.mapEdgeMetadata { offsetEdgeMetadata ->
                         ContourEdgeMetadata.Side(offsetMetadata = offsetEdgeMetadata)
                     }
-                } + listOfNotNull(
-                    Segment.lineSegment(
-                        startKnot = spline.terminator.endKnot,
-                        edgeMetadata = ContourEdgeMetadata.Corner,
-                        knotMetadata = null,
-                    ),
-                    spline.backRay!!.findIntersection(nextSpline.frontRay!!)?.let { intersectionPoint ->
-                        Segment.lineSegment(
-                            startKnot = intersectionPoint,
-                            edgeMetadata = ContourEdgeMetadata.Corner,
-                            knotMetadata = null,
-                        )
-                    },
-                )
+                } + join(spline, nextSpline)
             }
 
             return ClosedSpline(
                 segments = segments,
+            )
+        }
+
+        private fun join(
+            prevSpline: OpenSpline<*, SegmentCurve.OffsetEdgeMetadata, *>,
+            nextSpline: OpenSpline<*, SegmentCurve.OffsetEdgeMetadata, *>,
+        ): List<Segment<LineSegment, ContourEdgeMetadata.Corner, Nothing?>> {
+            val rayIntersectionOrNull = prevSpline.backRay!!.findIntersection(nextSpline.frontRay!!)
+
+            return listOfNotNull(
+                Segment.lineSegment(
+                    startKnot = prevSpline.terminator.endKnot,
+                    edgeMetadata = ContourEdgeMetadata.Corner,
+                    knotMetadata = null,
+                ),
+                rayIntersectionOrNull?.let { rayIntersection ->
+                    Segment.lineSegment(
+                        startKnot = rayIntersection,
+                        edgeMetadata = ContourEdgeMetadata.Corner,
+                        knotMetadata = null,
+                    )
+                },
             )
         }
     }
