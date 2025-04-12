@@ -11,8 +11,8 @@ import app.geometry.transformations.Transformation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.toDebugControlSvgPathGroupCubic
 import app.geometry.curves.bezier.toSvgPathSegCubic
+import app.geometry.splines.MonoCurveSpline
 import app.geometry.splines.OpenSpline
-import app.geometry.splines.PolyCurveSpline
 import app.geometry.splines.Spline
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
@@ -47,18 +47,6 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         offset: Double,
         subdivisionLevel: Int,
     ): OpenSpline<*, OffsetEdgeMetadata, *>?
-
-    fun <EdgeMetadata> toSpline(
-        edgeMetadata: EdgeMetadata,
-    ): OpenSpline<CurveT, EdgeMetadata, *> = PolyCurveSpline(
-        innerSegments = listOf(
-            toSegment(edgeMetadata = edgeMetadata),
-        ),
-        terminator = Spline.Terminator(
-            endKnot = end,
-            endKnotMetadata = null,
-        ),
-    )
 
     abstract class Edge<out CurveT : SegmentCurve<CurveT>> : NumericObject {
         abstract fun bind(
@@ -104,6 +92,15 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
 
     abstract val simplified: SegmentCurve<*>
 }
+
+fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata> CurveT.toSpline(
+    edgeMetadata: EdgeMetadata,
+): MonoCurveSpline<CurveT, EdgeMetadata, *> = MonoCurveSpline(
+    curve = this,
+    startKnotMetadata = null,
+    edgeMetadata = edgeMetadata,
+    endKnotMetadata = null,
+)
 
 fun SegmentCurve<*>.toDebugSvgPathGroup(
     document: SVGDocument,

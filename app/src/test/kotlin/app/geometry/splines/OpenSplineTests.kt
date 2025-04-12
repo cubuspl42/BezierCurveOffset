@@ -30,7 +30,7 @@ class OpenSplineTests {
         )
 
         val spline = OpenSpline.of(
-            segments = segments,
+            innerSegments = segments,
             terminator = terminator,
         )
 
@@ -72,7 +72,7 @@ class OpenSplineTests {
         )
 
         val spline = OpenSpline.of(
-            segments = segments,
+            innerSegments = segments,
             terminator = terminator,
         )
 
@@ -121,7 +121,7 @@ class OpenSplineTests {
         )
 
         val spline0 = OpenSpline.of(
-            segments = listOf(
+            innerSegments = listOf(
                 segment0,
             ),
             terminator = Spline.Terminator(
@@ -131,7 +131,7 @@ class OpenSplineTests {
         )
 
         val spline1 = OpenSpline.of(
-            segments = listOf(
+            innerSegments = listOf(
                 link1
             ),
             terminator = Spline.Terminator(
@@ -201,7 +201,7 @@ class OpenSplineTests {
         )
 
         val spline0 = OpenSpline.of(
-            segments = listOf(segment0, link1),
+            innerSegments = listOf(segment0, link1),
             terminator = terminator1,
         )
 
@@ -227,7 +227,7 @@ class OpenSplineTests {
         )
 
         val spline1 = OpenSpline.of(
-            segments = listOf(link2, link3),
+            innerSegments = listOf(link2, link3),
             terminator = terminator2,
         )
 
@@ -299,7 +299,7 @@ class OpenSplineTests {
         )
 
         val spline0 = OpenSpline.of(
-            segments = listOf(link1, link2),
+            innerSegments = listOf(link1, link2),
             terminator = terminator1,
         )
 
@@ -325,7 +325,7 @@ class OpenSplineTests {
         )
 
         val spline1 = OpenSpline.of(
-            segments = listOf(link3, link4),
+            innerSegments = listOf(link3, link4),
             terminator = terminator2,
         )
 
@@ -351,7 +351,7 @@ class OpenSplineTests {
         )
 
         val spline2 = OpenSpline.of(
-            segments = listOf(link5, link6),
+            innerSegments = listOf(link5, link6),
             terminator = terminator3,
         )
 

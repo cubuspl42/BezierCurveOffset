@@ -74,7 +74,7 @@ data class TimedPointSeries(
         }
     }
 
-    fun bestFitCurve(): BezierCurve {
+    fun bestFitCurve(): CubicBezierCurve {
         // T
         val bigTMatrix = buildBigTMatrix()
 

@@ -200,7 +200,7 @@ sealed class Spline<
         }
     }
 
-    val subCurves: List<CurveT> by lazy {
+    open val subCurves: List<CurveT> by lazy {
         edgeChunks.map { it.edgeCurve }
     }
 }

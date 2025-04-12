@@ -13,13 +13,27 @@ abstract class OpenSpline<
         > : Spline<CurveT, EdgeMetadata, KnotMetadata>() {
     companion object {
         fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> of(
-            segments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>,
+            innerSegments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>,
             terminator: Terminator<KnotMetadata>,
-        ): OpenSpline<CurveT, EdgeMetadata, KnotMetadata> {
-            require(segments.isNotEmpty())
+        ): OpenSpline<CurveT, EdgeMetadata, KnotMetadata> = when (innerSegments.size) {
+            0 -> throw IllegalArgumentException()
 
-            return PolyCurveSpline(
-                innerSegments = segments,
+            1 -> {
+                val segment = innerSegments.single()
+
+                MonoCurveSpline(
+                    curve = segment.edge.bind(
+                        startKnot = segment.startKnot,
+                        endKnot = terminator.endKnot,
+                    ),
+                    startKnotMetadata = segment.startKnotMetadata,
+                    edgeMetadata = segment.edgeMetadata,
+                    endKnotMetadata = terminator.endKnotMetadata,
+                )
+            }
+
+            else -> PolyCurveSpline(
+                innerSegments = innerSegments,
                 terminator = terminator,
             )
         }
@@ -51,7 +65,7 @@ abstract class OpenSpline<
             val lastSpline = splines.last()
             val terminalNode = lastSpline.terminator
 
-            return PolyCurveSpline(
+            return OpenSpline.of(
                 innerSegments = segments,
                 terminator = terminalNode,
             )

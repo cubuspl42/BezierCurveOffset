@@ -12,6 +12,7 @@ import app.geometry.RawVector
 import app.geometry.Ray
 import app.geometry.TimedPointSeries
 import app.geometry.curves.SegmentCurve
+import app.geometry.curves.toSpline
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.mergeWith
 import app.partitionSorted
@@ -21,7 +22,7 @@ import app.partitionSorted
  */
 sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     abstract class OffsetCurveApproximationResult(
-        val offsetCurve: BezierCurve,
+        val offsetCurve: CubicBezierCurve,
     ) {
         companion object {
             val approximationRatingSampleCount = 16

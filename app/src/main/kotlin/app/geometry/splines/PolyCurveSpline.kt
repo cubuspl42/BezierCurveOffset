@@ -17,7 +17,7 @@ class PolyCurveSpline<
     override val terminator: Spline.Terminator<KnotMetadata>,
 ) : OpenSpline<CurveT, EdgeMetadata, KnotMetadata>() {
     init {
-        require(innerSegments.size >= 1) {
+        require(innerSegments.size >= 2) {
             "PolyCurveSpline must have at least two segments"
         }
     }

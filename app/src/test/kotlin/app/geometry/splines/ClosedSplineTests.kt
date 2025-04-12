@@ -54,7 +54,7 @@ class ClosedSplineTests {
         )
 
         val spline = OpenSpline.of(
-            segments = listOf(
+            innerSegments = listOf(
                 bezierSegment0,
             ),
             terminator = Spline.Terminator(
@@ -121,7 +121,7 @@ class ClosedSplineTests {
         )
 
         val spline0 = OpenSpline.of(
-            segments = listOf(
+            innerSegments = listOf(
                 bezierSegment0,
             ),
             terminator = Spline.Terminator(
@@ -131,7 +131,7 @@ class ClosedSplineTests {
         )
 
         val spline1 = OpenSpline.of(
-            segments = listOf(
+            innerSegments = listOf(
                 bezierSegment1,
             ),
             terminator = Spline.Terminator(
@@ -230,7 +230,7 @@ class ClosedSplineTests {
         )
 
         val spline0 = OpenSpline.of(
-            segments = listOf(
+            innerSegments = listOf(
                 bezierSegment0,
             ),
             terminator = Spline.Terminator(
@@ -240,7 +240,7 @@ class ClosedSplineTests {
         )
 
         val spline1 = OpenSpline.of(
-            segments = listOf(
+            innerSegments = listOf(
                 bezierSegment1,
             ),
             terminator = Spline.Terminator(
@@ -250,7 +250,7 @@ class ClosedSplineTests {
         )
 
         val spline2 = OpenSpline.of(
-            segments = listOf(
+            innerSegments = listOf(
                 bezierSegment2,
             ),
             terminator = Spline.Terminator(
