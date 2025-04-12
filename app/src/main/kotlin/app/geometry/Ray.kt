@@ -52,14 +52,14 @@ data class Ray(
     val containingLine: BoundLine
         get() = BoundLine(
             originPoint = startingPoint,
-            biDirection = direction.biDirection,
+            direction = direction,
         )
 
     val perpendicularLine: BoundLine
         get() = BoundLine(
             originPoint = startingPoint,
             // If d is non-zero, its perpendicular vector will also be non-zero
-            biDirection = direction.perpendicular.biDirection,
+            direction = direction.perpendicular,
         )
 
     val opposite: Ray
