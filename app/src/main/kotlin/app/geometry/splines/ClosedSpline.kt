@@ -86,7 +86,7 @@ class ClosedSpline<
                         edgeMetadata = ContourEdgeMetadata.Corner,
                         knotMetadata = null,
                     ),
-                    spline.backRay!!.intersect(nextSpline.frontRay!!)?.let { intersectionPoint ->
+                    spline.backRay!!.findIntersection(nextSpline.frontRay!!)?.let { intersectionPoint ->
                         Segment.lineSegment(
                             startKnot = intersectionPoint,
                             edgeMetadata = ContourEdgeMetadata.Corner,

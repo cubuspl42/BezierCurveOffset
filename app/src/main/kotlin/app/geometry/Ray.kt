@@ -56,19 +56,19 @@ class Ray(
     val opposite: Ray
         get() = startingPoint.castRay(direction.opposite)
 
-    fun intersect(
+    fun findIntersection(
         other: Ray,
     ): Point? {
         val l0 = lineEquation
         val l1 = other.lineEquation
 
-        val intersection = LineEquation.findUniqueIntersection(
+        val solution = LineEquation.solveIntersection(
             l0 = l0,
             l1 = l1,
         ) ?: return null
 
-        val t0 = intersection.t0
-        val t1 = intersection.t1
+        val t0 = solution.t0
+        val t1 = solution.t1
 
         return when {
             t0 > 0.0 && t1 > 0.0 -> {

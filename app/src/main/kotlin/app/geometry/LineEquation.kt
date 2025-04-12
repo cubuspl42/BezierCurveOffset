@@ -10,7 +10,7 @@ class LineEquation(
      */
     internal val dv: RawVector,
 ) {
-    data class Intersection(
+    data class IntersectionSolution(
         val t0: Double,
         val t1: Double,
     )
@@ -21,10 +21,10 @@ class LineEquation(
          *
          * @return the intersection if it exists, or null if the lines are parallel
          */
-        fun findUniqueIntersection(
+        fun solveIntersection(
             l0: LineEquation,
             l1: LineEquation,
-        ): Intersection? {
+        ): IntersectionSolution? {
             val det = l0.dv.cross(l1.dv)
             if (det == 0.0) return null // The lines are parallel
 
@@ -32,7 +32,7 @@ class LineEquation(
             val t0 = pd.cross(l1.dv) / det
             val t1 = pd.cross(l0.dv) / det
 
-            return Intersection(
+            return IntersectionSolution(
                 t0 = t0,
                 t1 = t1,
             )

@@ -40,22 +40,22 @@ class Line(
     val dvRaw: RawVector
         get() = lineEquation.dv
 
-    fun findIntersectionPoint(
+    fun findIntersection(
         other: Line,
     ): Point? {
         val l0 = this.lineEquation
         val l1 = other.lineEquation
 
-        val intersection = LineEquation.findUniqueIntersection(
+        val solution = LineEquation.solveIntersection(
             l0 = l0,
             l1 = l1,
         ) ?: return null
 
-        val p0 = l0.evaluate(t = intersection.t0)
+        val p0 = l0.evaluate(t = solution.t0)
 
         assert(
             p0.equalsWithTolerance(
-                l1.evaluate(t = intersection.t1),
+                l1.evaluate(t = solution.t1),
                 absoluteTolerance = 0.0001,
             ),
         )
