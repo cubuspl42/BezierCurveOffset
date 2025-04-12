@@ -12,6 +12,7 @@ import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.toDebugControlSvgPathGroupCubic
 import app.geometry.curves.bezier.toSvgPathSegCubic
 import app.geometry.splines.OpenSpline
+import app.geometry.splines.PolyCurveSpline
 import app.geometry.splines.Spline
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
@@ -49,8 +50,8 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
 
     fun <EdgeMetadata> toSpline(
         edgeMetadata: EdgeMetadata,
-    ): OpenSpline<CurveT, EdgeMetadata, *> = OpenSpline(
-        segments = listOf(
+    ): OpenSpline<CurveT, EdgeMetadata, *> = PolyCurveSpline(
+        innerSegments = listOf(
             toSegment(edgeMetadata = edgeMetadata),
         ),
         terminator = Spline.Terminator(

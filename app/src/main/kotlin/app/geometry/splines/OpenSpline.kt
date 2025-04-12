@@ -6,21 +6,24 @@ import app.geometry.curves.SegmentCurve
 import app.mapFirst
 import app.withPreviousOrNull
 
-class OpenSpline<
+abstract class OpenSpline<
         out CurveT : SegmentCurve<CurveT>,
         out EdgeMetadata,
         out KnotMetadata,
-        >(
-    /**
-     * The path of links, must not be empty
-     */
-    override val segments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>,
-    /**
-     * The plug node that terminates the path of links
-     */
-    val terminator: Spline.Terminator<KnotMetadata>,
-) : Spline<CurveT, EdgeMetadata, KnotMetadata>() {
+        > : Spline<CurveT, EdgeMetadata, KnotMetadata>() {
     companion object {
+        fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> of(
+            segments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>,
+            terminator: Terminator<KnotMetadata>,
+        ): OpenSpline<CurveT, EdgeMetadata, KnotMetadata> {
+            require(segments.isNotEmpty())
+
+            return PolyCurveSpline(
+                innerSegments = segments,
+                terminator = terminator,
+            )
+        }
+
         fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> merge(
             splines: List<OpenSpline<CurveT, EdgeMetadata, KnotMetadata>>,
         ): OpenSpline<CurveT, EdgeMetadata, KnotMetadata> {
@@ -48,16 +51,22 @@ class OpenSpline<
             val lastSpline = splines.last()
             val terminalNode = lastSpline.terminator
 
-            return OpenSpline(
-                segments = segments,
+            return PolyCurveSpline(
+                innerSegments = segments,
                 terminator = terminalNode,
             )
         }
     }
 
-    init {
-        require(segments.isNotEmpty())
-    }
+    final override val segments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>
+        get() = innerSegments
+
+    abstract val innerSegments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>
+
+    /**
+     * The plug node that terminates the path of links
+     */
+    abstract val terminator: Spline.Terminator<KnotMetadata>
 
     val frontRay: Ray?
         get() = subCurves.first().frontRay
@@ -65,11 +74,12 @@ class OpenSpline<
     val backRay: Ray?
         get() = subCurves.last().backRay
 
-    override val nodes: List<Node<KnotMetadata>> = segments + terminator
+    final override val nodes: List<Node<KnotMetadata>> by lazy {
+        segments + terminator
+    }
 
     override val rightEdgeNode: Node<KnotMetadata>
         get() = terminator
-
 }
 
 fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> OpenSpline<CurveT, EdgeMetadata, KnotMetadata>.mergeWith(

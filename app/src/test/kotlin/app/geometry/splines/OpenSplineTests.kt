@@ -29,7 +29,7 @@ class OpenSplineTests {
             endKnotMetadata = null,
         )
 
-        val spline = OpenSpline(
+        val spline = OpenSpline.of(
             segments = segments,
             terminator = terminator,
         )
@@ -71,7 +71,7 @@ class OpenSplineTests {
             endKnotMetadata = null,
         )
 
-        val spline = OpenSpline(
+        val spline = OpenSpline.of(
             segments = segments,
             terminator = terminator,
         )
@@ -120,7 +120,7 @@ class OpenSplineTests {
             knotMetadata = null,
         )
 
-        val spline0 = OpenSpline(
+        val spline0 = OpenSpline.of(
             segments = listOf(
                 segment0,
             ),
@@ -130,7 +130,7 @@ class OpenSplineTests {
             ),
         )
 
-        val spline1 = OpenSpline(
+        val spline1 = OpenSpline.of(
             segments = listOf(
                 link1
             ),
@@ -200,7 +200,7 @@ class OpenSplineTests {
             endKnotMetadata = null,
         )
 
-        val spline0 = OpenSpline(
+        val spline0 = OpenSpline.of(
             segments = listOf(segment0, link1),
             terminator = terminator1,
         )
@@ -226,7 +226,7 @@ class OpenSplineTests {
             endKnotMetadata = null,
         )
 
-        val spline1 = OpenSpline(
+        val spline1 = OpenSpline.of(
             segments = listOf(link2, link3),
             terminator = terminator2,
         )
@@ -298,7 +298,7 @@ class OpenSplineTests {
             endKnotMetadata = null,
         )
 
-        val spline0 = OpenSpline(
+        val spline0 = OpenSpline.of(
             segments = listOf(link1, link2),
             terminator = terminator1,
         )
@@ -324,7 +324,7 @@ class OpenSplineTests {
             endKnotMetadata = null,
         )
 
-        val spline1 = OpenSpline(
+        val spline1 = OpenSpline.of(
             segments = listOf(link3, link4),
             terminator = terminator2,
         )
@@ -350,7 +350,7 @@ class OpenSplineTests {
             endKnotMetadata = null,
         )
 
-        val spline2 = OpenSpline(
+        val spline2 = OpenSpline.of(
             segments = listOf(link5, link6),
             terminator = terminator3,
         )

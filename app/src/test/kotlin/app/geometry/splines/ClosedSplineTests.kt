@@ -53,7 +53,7 @@ class ClosedSplineTests {
             knotMetadata = null,
         )
 
-        val spline = OpenSpline(
+        val spline = OpenSpline.of(
             segments = listOf(
                 bezierSegment0,
             ),
@@ -120,7 +120,7 @@ class ClosedSplineTests {
             knotMetadata = null,
         )
 
-        val spline0 = OpenSpline(
+        val spline0 = OpenSpline.of(
             segments = listOf(
                 bezierSegment0,
             ),
@@ -130,7 +130,7 @@ class ClosedSplineTests {
             ),
         )
 
-        val spline1 = OpenSpline(
+        val spline1 = OpenSpline.of(
             segments = listOf(
                 bezierSegment1,
             ),
@@ -229,7 +229,7 @@ class ClosedSplineTests {
             knotMetadata = null,
         )
 
-        val spline0 = OpenSpline(
+        val spline0 = OpenSpline.of(
             segments = listOf(
                 bezierSegment0,
             ),
@@ -239,7 +239,7 @@ class ClosedSplineTests {
             ),
         )
 
-        val spline1 = OpenSpline(
+        val spline1 = OpenSpline.of(
             segments = listOf(
                 bezierSegment1,
             ),
@@ -249,7 +249,7 @@ class ClosedSplineTests {
             ),
         )
 
-        val spline2 = OpenSpline(
+        val spline2 = OpenSpline.of(
             segments = listOf(
                 bezierSegment2,
             ),
