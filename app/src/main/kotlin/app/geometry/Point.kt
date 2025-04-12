@@ -77,8 +77,8 @@ data class Point internal constructor(
             val projectionLine = bisectingRay.perpendicularLine
 
             return Pair(
-                a.projectOnto(projectionLine),
-                b.projectOnto(projectionLine),
+                a.snapTo(projectionLine),
+                b.snapTo(projectionLine),
             )
         }
     }
@@ -177,7 +177,7 @@ data class Point internal constructor(
     // TODO: Nuke?
     fun toVector(): Vector2<*> = Vector2.of(x, y)
 
-    fun projectOnto(line: Line): Point {
+    fun snapTo(line: Line): Point {
         val tr = translationTo(line.representativePoint).projectOnto(line.biDirection)
         return tr.translate(line.representativePoint)
     }
