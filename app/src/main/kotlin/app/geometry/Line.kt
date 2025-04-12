@@ -7,24 +7,30 @@ import app.algebra.linear.vectors.vector2.plus
 /**
  * A line in 2D Euclidean space
  */
-abstract class Line {
+class Line(
+    private val representativeBoundLine: BoundLine,
+) {
     /**
      * One of the infinitely many points lying on the line
      */
-    abstract val representativePoint: Point
+    val representativePoint: Point
+        get() = representativeBoundLine.originPoint
 
     /**
      * The bi-direction of this line
      */
-    abstract val biDirection: BiDirection
+    val biDirection: BiDirection
+        get() = representativeBoundLine.biDirection
 
     companion object {
         fun inDirection(
             point: Point,
             direction: Direction,
-        ): Line = BoundLine.inDirection(
-            point = point,
-            direction = direction,
+        ): Line = Line(
+            representativeBoundLine = BoundLine.inDirection(
+                point = point,
+                direction = direction,
+            ),
         )
     }
 
@@ -50,5 +56,13 @@ abstract class Line {
         return Point.of(
             pv = evaluate(u)
         )
+    }
+
+    override fun equals(other: Any?): Boolean {
+        throw UnsupportedOperationException()
+    }
+
+    override fun hashCode(): Int {
+        throw UnsupportedOperationException()
     }
 }

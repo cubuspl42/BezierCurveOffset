@@ -13,7 +13,7 @@ data class BoundLine(
      * The direction of this line
      */
     val direction: Direction,
-) : Line() {
+) {
     companion object {
         fun inDirection(
             point: Point,
@@ -24,9 +24,9 @@ data class BoundLine(
         )
     }
 
-    override val biDirection: BiDirection
+    val biDirection: BiDirection
         get() = direction.biDirection
 
-    override val representativePoint: Point
+    val representativePoint: Point
         get() = originPoint
 }
