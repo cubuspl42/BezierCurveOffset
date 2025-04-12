@@ -150,16 +150,9 @@ class ClosedSpline<
     fun findContourSpline(
         offsetStrategy: ContourOffsetStrategy<EdgeMetadata>,
     ): ClosedSpline<*, ContourEdgeMetadata, *>? {
-        val offsetSplines = edgeChunks.mapNotNull { subSegment ->
-            val subCurve = subSegment.edgeCurve
-            val edgeMetadata = subSegment.edgeMetadata
-
-            subCurve.findOffsetSpline(
-                params = offsetStrategy.determineOffsetParams(
-                    edgeMetadata = edgeMetadata,
-                ),
-            )
-        }
+        val offsetSplines = findOffsetSplines(
+            offsetStrategy = offsetStrategy,
+        )
 
         if (offsetSplines.isEmpty()) {
             // TODO: Return a circle?
@@ -168,6 +161,19 @@ class ClosedSpline<
 
         return ClosedSpline.interconnect(
             offsetSplines,
+        )
+    }
+
+    private fun findOffsetSplines(
+        offsetStrategy: ContourOffsetStrategy<EdgeMetadata>,
+    ) = edgeChunks.mapNotNull { subSegment ->
+        val subCurve = subSegment.edgeCurve
+        val edgeMetadata = subSegment.edgeMetadata
+
+        subCurve.findOffsetSpline(
+            params = offsetStrategy.determineOffsetParams(
+                edgeMetadata = edgeMetadata,
+            ),
         )
     }
 
