@@ -7,12 +7,17 @@ import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector2.Vector2x1
 import kotlin.math.sqrt
 
+/**
+ * A raw two-dimensional vector, i.e. a pair of two numbers (x, y) without an
+ * interpretation of their meaning beyond that x corresponds to the X axis (the
+ * first dimension) and y to the Y axis (the second dimension).
+ */
 data class RawVector(
     val x: Double,
     val y: Double,
 ) : NumericObject {
     /**
-     * A vectors space of two-dimensional raw vectors
+     * A vector space of two-dimensional raw vectors
      */
     object RawVectorSpace : VectorSpace<RawVector>() {
         override val zero: RawVector = Companion.zero
