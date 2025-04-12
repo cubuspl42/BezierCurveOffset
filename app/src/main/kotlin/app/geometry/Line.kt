@@ -8,7 +8,7 @@ import app.algebra.linear.vectors.vector2.plus
  * A line in 2D Euclidean space
  */
 class Line(
-    private val rawLine: RawLine,
+    internal val rawLine: RawLine,
 ) {
     // TODO: Nuke?
     /**
@@ -40,6 +40,10 @@ class Line(
 
     val dv: Vector2<*>
         get() = biDirection.dv
+
+
+    val dvRaw: RawVector
+        get() = rawLine.dv
 
     private fun evaluate(
         t: Double,

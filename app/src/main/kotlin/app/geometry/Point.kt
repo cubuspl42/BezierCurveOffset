@@ -178,8 +178,10 @@ data class Point internal constructor(
     fun toVector(): Vector2<*> = Vector2.of(x, y)
 
     fun snapTo(line: Line): Point {
-        val tr = translationTo(line.representativePoint).projectOnto(line.biDirection)
-        return tr.translate(line.representativePoint)
+        val l = line.rawLine
+        val pd = l.p0 - pvRaw
+        val t = pd.findProjectionScale(l.dv)
+        return l.evaluate(t).asPoint
     }
 
     fun dump(): String = "Point.of(${"%.2f".format(pv.x)}, ${"%.2f".format(pv.y)})"

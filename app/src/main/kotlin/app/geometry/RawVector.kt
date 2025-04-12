@@ -3,12 +3,21 @@ package app.geometry
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.vectors.vector2.Vector2
+import app.algebra.linear.vectors.vector2.times
+import app.geometry.transformations.Translation
 import kotlin.math.sqrt
 
 data class RawVector(
     val x: Double,
     val y: Double,
 ) : NumericObject {
+    companion object {
+        val zero = RawVector(
+            x = 0.0,
+            y = 0.0,
+        )
+    }
+
     operator fun plus(other: RawVector): RawVector = RawVector(
         x = x + other.x,
         y = y + other.y,
@@ -19,7 +28,7 @@ data class RawVector(
         y = y - other.y,
     )
 
-    operator fun RawVector.times(scalar: Double): RawVector = RawVector(
+    operator fun times(scalar: Double): RawVector = RawVector(
         x = x * scalar,
         y = y * scalar,
     )
@@ -64,6 +73,24 @@ data class RawVector(
         get() = Direction.of(
             dv = asVector2,
         )
+
+    /**
+     * Find the projection scale of this vector onto another vector
+     *
+     * @param b - the vector to project onto, must not be a zero vector
+     */
+    fun findProjectionScale(
+        b: RawVector,
+    ): Double = this.dot(b) / b.lengthSq
+
+    /**
+     * Project this vector onto another vector
+     *
+     * @param b - the vector to project onto, must not be a zero vector
+     */
+    fun projectOnto(
+        b: RawVector,
+    ): RawVector = findProjectionScale(b) * b
 
     override fun equalsWithTolerance(
         other: NumericObject, absoluteTolerance: Double

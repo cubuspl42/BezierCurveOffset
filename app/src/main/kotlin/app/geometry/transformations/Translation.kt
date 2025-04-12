@@ -9,6 +9,7 @@ import app.algebra.linear.vectors.vector3.Vector1x3
 import app.geometry.BiDirection
 import app.geometry.Direction
 import app.geometry.Point
+import app.geometry.RawVector
 
 @Suppress("DataClassPrivateConstructor")
 data class Translation private constructor(
