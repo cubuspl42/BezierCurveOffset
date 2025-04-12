@@ -31,15 +31,6 @@ class Line(
         )
     }
 
-    val pv: RawVector
-        get() = representativePoint.pvRaw
-
-    val dv: RawVector
-        get() = biDirection.dv
-
-    val dvRaw: RawVector
-        get() = lineEquation.dv
-
     fun findIntersection(
         other: Line,
     ): Point? {
@@ -56,7 +47,7 @@ class Line(
         assert(
             p0.equalsWithTolerance(
                 l1.evaluate(t = solution.t1),
-                absoluteTolerance = 0.0001,
+                absoluteTolerance = Constants.epsilon,
             ),
         )
 

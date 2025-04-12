@@ -5,6 +5,7 @@ import app.algebra.linear.matrices.matrix3.Matrix3x3
 import app.algebra.linear.vectors.vector3.Vector1x3
 import app.algebra.linear.vectors.vector3.Vector3x1
 import app.algebra.linear.vectors.vector3.vector2
+import app.geometry.Constants
 import app.geometry.Point
 import app.get
 import org.w3c.dom.svg.SVGGElement
@@ -64,7 +65,7 @@ data class MixedTransformation private constructor(
         // The transformed point in the homogeneous coordinates
         val pt: Vector3x1 = transformationMatrix * point.pv.vertical.toVec3()
 
-        if(!pt.a2.equalsWithTolerance(1.0, absoluteTolerance = 0.0001)) {
+        if (!pt.a2.equalsWithTolerance(1.0, absoluteTolerance = Constants.epsilon)) {
             throw AssertionError()
         }
 

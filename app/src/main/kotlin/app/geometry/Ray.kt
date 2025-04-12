@@ -1,5 +1,6 @@
 package app.geometry
 
+import app.algebra.equalsWithTolerance
 import app.fill
 import app.geometry.curves.LineSegment
 import app.geometry.curves.toSvgPath
@@ -77,7 +78,7 @@ class Ray(
                 assert(
                     p0.equalsWithTolerance(
                         l1.evaluate(t = t1),
-                        absoluteTolerance = 0.0001,
+                        absoluteTolerance = Constants.epsilon,
                     ),
                 )
 
@@ -91,7 +92,10 @@ class Ray(
 
     fun isParallelTo(
         other: Ray,
-    ): Boolean = dv.cross(other.dv) == 0.0
+    ): Boolean = dv.cross(other.dv).equalsWithTolerance(
+        0.0,
+        absoluteTolerance = Constants.epsilon,
+    )
 }
 
 fun Ray.toDebugPath(

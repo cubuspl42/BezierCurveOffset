@@ -135,7 +135,8 @@ data class RawVector(
     ): RawVector = findProjectionScale(b) * b
 
     override fun equalsWithTolerance(
-        other: NumericObject, absoluteTolerance: Double
+        other: NumericObject,
+        absoluteTolerance: Double,
     ): Boolean = when {
         other !is RawVector -> false
         !x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) -> false
