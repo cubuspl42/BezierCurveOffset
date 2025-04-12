@@ -100,12 +100,6 @@ data class Point internal constructor(
         py = py.toDouble(),
     )
 
-    val pvVertical: Vector2<VectorOrientation.Vertical>
-        get() = Vector2x1(
-            x = x,
-            y = y,
-        )
-
     val pvRaw: RawVector
         get() = pv
 

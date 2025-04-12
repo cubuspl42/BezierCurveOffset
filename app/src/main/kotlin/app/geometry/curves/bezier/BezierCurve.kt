@@ -6,9 +6,9 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.bezier_binomials.findFaster
 import app.algebra.bezier_binomials.findInterestingCriticalPoints
 import app.algebra.bezier_binomials.sample
-import app.algebra.linear.vectors.vector2.Vector2
 import app.geometry.Direction
 import app.geometry.Point
+import app.geometry.RawVector
 import app.geometry.Ray
 import app.geometry.TimedPointSeries
 import app.geometry.curves.SegmentCurve
@@ -62,7 +62,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     }
 
     val curveFunction: TimeFunction<Point> by lazy {
-        basisFormula.findFaster().map { it.toPoint() }
+        basisFormula.findFaster().map { it.asPoint }
     }
 
     fun findOffsetCurveFunction(
@@ -84,7 +84,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
      */
     val tangentFunction: TimeFunction<Direction?> by lazy {
         TimeFunction.wrap(basisFormula.findDerivative()).map {
-            Direction.of(it.raw)
+            Direction.of(it)
         }
     }
 
@@ -399,7 +399,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         return firstSubSplitCurve.mergeWith(secondSubSplitCurve)
     }
 
-    abstract val basisFormula: DifferentiableBezierBinomial<Vector2<*>>
+    abstract val basisFormula: DifferentiableBezierBinomial<RawVector>
 
     abstract fun splitAt(
         t: Double,

@@ -58,9 +58,10 @@ data class MixedTransformation private constructor(
 
     override fun transform(
         point: Point,
-    ): Point = Point.of(
-        pv = (transformationMatrix * point.pvVertical.toVec3()).vectorXy.raw,
-    )
+    ): Point {
+        val pt = transformationMatrix * point.pv.vertical.toVec3()
+        return Point.of(pv = pt.vectorXy.raw)
+    }
 }
 
 val SVGGElement.transformation: MixedTransformation

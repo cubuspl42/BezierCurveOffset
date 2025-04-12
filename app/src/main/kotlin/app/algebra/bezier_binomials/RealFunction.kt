@@ -2,6 +2,7 @@ package app.algebra.bezier_binomials
 
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.algebra.linear.vectors.vector2.Vector2
+import app.geometry.RawVector
 import app.geometry.lineTo
 import app.geometry.moveTo
 import app.linspace
@@ -49,11 +50,11 @@ fun <V : Any> SamplingStrategy.sample(
     }
 }.toList()
 
-fun RealFunction<Vector2<*>>.toPath2D(
+fun RealFunction<RawVector>.toPath2D(
     samplingStrategy: SamplingStrategy,
 ): Path2D {
     val points = sampleValues(strategy = samplingStrategy).map {
-        it.toPoint()
+        it.asPoint
     }
 
     return Path2D.Double().apply {

@@ -1,10 +1,10 @@
 package app.algebra.bezier_binomials
 
+import app.algebra.linear.VectorSpace
 import app.algebra.polynomials.Polynomial
 import app.algebra.polynomials.QuadraticPolynomial
-import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.VectorSpace
 import app.geometry.Point
+import app.geometry.RawVector
 import app.geometry.curves.LineSegment
 
 class QuadraticBezierBinomial<V>(
@@ -22,40 +22,40 @@ class QuadraticBezierBinomial<V>(
     }
 }
 
-val QuadraticBezierBinomial<Vector2<*>>.point0: Point
-    get() = this.weight0.toPoint()
+val QuadraticBezierBinomial<RawVector>.point0: Point
+    get() = this.weight0.asPoint
 
-val QuadraticBezierBinomial<Vector2<*>>.point1: Point
-    get() = this.weight1.toPoint()
+val QuadraticBezierBinomial<RawVector>.point1: Point
+    get() = this.weight1.asPoint
 
-val QuadraticBezierBinomial<Vector2<*>>.point2: Point
-    get() = this.weight2.toPoint()
+val QuadraticBezierBinomial<RawVector>.point2: Point
+    get() = this.weight2.asPoint
 
-val QuadraticBezierBinomial<Vector2<*>>.segmentsQuadratic: List<LineSegment>
+val QuadraticBezierBinomial<RawVector>.segmentsQuadratic: List<LineSegment>
     get() = listOf(lineSegment0, lineSegment1)
 
-val QuadraticBezierBinomial<Vector2<*>>.lineSegment0: LineSegment
+val QuadraticBezierBinomial<RawVector>.lineSegment0: LineSegment
     get() = LineSegment(start = point0, end = point1)
 
-val QuadraticBezierBinomial<Vector2<*>>.lineSegment1: LineSegment
+val QuadraticBezierBinomial<RawVector>.lineSegment1: LineSegment
     get() = LineSegment(start = point1, end = point2)
 
-fun QuadraticBezierBinomial<Vector2<*>>.findSkeletonQuadratic(
+fun QuadraticBezierBinomial<RawVector>.findSkeletonQuadratic(
     t: Double,
-): LinearBezierBinomial<Vector2<*>> {
+): LinearBezierBinomial<RawVector> {
     val subPoint0 = lineSegment0.linearlyInterpolate(t = t)
     val subPoint1 = lineSegment1.linearlyInterpolate(t = t)
 
     return LinearBezierBinomial(
         vectorSpace = vectorSpace,
-        weight0 = subPoint0.pv.asVector2,
-        weight1 = subPoint1.pv.asVector2,
+        weight0 = subPoint0.pv,
+        weight1 = subPoint1.pv,
     )
 }
 
-fun QuadraticBezierBinomial<Vector2<*>>.evaluateFastQuadratic(
+fun QuadraticBezierBinomial<RawVector>.evaluateFastQuadratic(
     t: Double,
-): Vector2<*> = findSkeletonQuadratic(t = t).evaluateLinear(t = t)
+): RawVector = findSkeletonQuadratic(t = t).evaluateLinear(t = t)
 
 fun QuadraticBezierBinomial<Double>.toPolynomialFormulaQuadratic(): Polynomial? = QuadraticPolynomial.of(
     a = weight0 - 2.0 * weight1 + weight2,
@@ -63,7 +63,7 @@ fun QuadraticBezierBinomial<Double>.toPolynomialFormulaQuadratic(): Polynomial? 
     c = weight0,
 )
 
-val QuadraticBezierBinomial<Vector2<*>>.componentXQuadratic
+val QuadraticBezierBinomial<RawVector>.componentXQuadratic
     get() = QuadraticBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.x,
@@ -71,7 +71,7 @@ val QuadraticBezierBinomial<Vector2<*>>.componentXQuadratic
         weight2 = weight2.x,
     )
 
-val QuadraticBezierBinomial<Vector2<*>>.componentYQuadratic
+val QuadraticBezierBinomial<RawVector>.componentYQuadratic
     get() = QuadraticBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.y,

@@ -35,7 +35,6 @@ data class Vector2<out Vo : VectorOrientation>(
         ): Vector2<Vo> = v.scale(a)
     }
 
-
     companion object {
         fun <Vo : VectorOrientation> zero(): Vector2<Vo> = Vector2(x = 0.0, y = 0.0)
 
@@ -125,8 +124,6 @@ data class Vector2<out Vo : VectorOrientation>(
         !y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) -> false
         else -> true
     }
-
-    fun toPoint() = Point.of(this.raw)
 }
 
 operator fun <Vo : VectorOrientation> Vector2<Vo>.plus(

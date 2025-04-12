@@ -2,13 +2,37 @@ package app.geometry
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
+import app.algebra.linear.VectorSpace
 import app.algebra.linear.vectors.vector2.Vector2
+import app.algebra.linear.vectors.vector2.Vector2x1
 import kotlin.math.sqrt
 
 data class RawVector(
     val x: Double,
     val y: Double,
 ) : NumericObject {
+    /**
+     * A vectors space of two-dimensional raw vectors
+     */
+    object RawVectorSpace : VectorSpace<RawVector>() {
+        override val zero: RawVector = Companion.zero
+
+        override fun add(
+            u: RawVector,
+            v: RawVector,
+        ): RawVector = u + v
+
+        override fun subtract(
+            u: RawVector,
+            v: RawVector,
+        ): RawVector = u - v
+
+        override fun scale(
+            a: Double,
+            v: RawVector,
+        ): RawVector = v * a
+    }
+
     companion object {
         val zero = RawVector(
             x = 0.0,
@@ -68,11 +92,10 @@ data class RawVector(
             y = x,
         )
 
-    val asVector2: Vector2<*>
-        get() = Vector2.of(
-            x = x,
-            y = y,
-        )
+    val vertical: Vector2x1 = Vector2x1(
+        x = x,
+        y = y,
+    )
 
     val asPoint: Point
         get() = Point(

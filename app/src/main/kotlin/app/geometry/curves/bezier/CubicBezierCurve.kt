@@ -118,7 +118,7 @@ data class CubicBezierCurve private constructor(
     ): Pair<CubicBezierCurve, CubicBezierCurve> {
         val skeleton0 = basisFormula.findSkeletonCubic(t = t)
         val skeleton1 = skeleton0.findSkeletonQuadratic(t = t)
-        val midPoint = skeleton1.evaluateLinear(t = t).toPoint()
+        val midPoint = skeleton1.evaluateLinear(t = t).asPoint
 
         return Pair(
             of(
@@ -186,7 +186,7 @@ data class CubicBezierCurve private constructor(
             color: Color,
         ) {
             criticalPoints.forEach { extremityT ->
-                val extremityPoint = basisFormula.evaluate(t = extremityT).toPoint()
+                val extremityPoint = basisFormula.evaluate(t = extremityT).asPoint
 
                 graphics2D.color = color
                 graphics2D.fillCircle(
@@ -230,11 +230,11 @@ data class CubicBezierCurve private constructor(
         }
 
     override val basisFormula = CubicBezierBinomial(
-        vectorSpace = Vector2.Vector2VectorSpace(),
-        weight0 = start.pv.asVector2,
-        weight1 = control0.pv.asVector2,
-        weight2 = control1.pv.asVector2,
-        weight3 = end.pv.asVector2,
+        vectorSpace = RawVector.RawVectorSpace,
+        weight0 = start.pv,
+        weight1 = control0.pv,
+        weight2 = control1.pv,
+        weight3 = end.pv,
     )
 
     val lineSegment0: LineSegment

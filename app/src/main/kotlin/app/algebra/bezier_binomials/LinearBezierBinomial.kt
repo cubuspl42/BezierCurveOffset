@@ -1,10 +1,10 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.VectorSpace
 import app.algebra.polynomials.LinearPolynomial
 import app.algebra.polynomials.Polynomial
 import app.geometry.Point
+import app.geometry.RawVector
 import app.geometry.curves.LineSegment
 
 data class LinearBezierBinomial<V>(
@@ -22,16 +22,16 @@ data class LinearBezierBinomial<V>(
     }
 }
 
-val LinearBezierBinomial<Vector2<*>>.point0: Point
-    get() = this.weight0.toPoint()
+val LinearBezierBinomial<RawVector>.point0: Point
+    get() = this.weight0.asPoint
 
-val LinearBezierBinomial<Vector2<*>>.point1: Point
-    get() = this.weight1.toPoint()
+val LinearBezierBinomial<RawVector>.point1: Point
+    get() = this.weight1.asPoint
 
-val LinearBezierBinomial<Vector2<*>>.lineSegment0: LineSegment
+val LinearBezierBinomial<RawVector>.lineSegment0: LineSegment
     get() = LineSegment(start = point0, end = point1)
 
-val LinearBezierBinomial<Vector2<*>>.segmentsLinear: List<LineSegment>
+val LinearBezierBinomial<RawVector>.segmentsLinear: List<LineSegment>
     get() = listOf(lineSegment0)
 
 fun LinearBezierBinomial<Double>.toPolynomialFormulaLinear(): Polynomial? = LinearPolynomial.of(
@@ -39,14 +39,14 @@ fun LinearBezierBinomial<Double>.toPolynomialFormulaLinear(): Polynomial? = Line
     b = weight0,
 )
 
-val LinearBezierBinomial<Vector2<*>>.componentXLinear
+val LinearBezierBinomial<RawVector>.componentXLinear
     get() = LinearBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.x,
         weight1 = weight1.x,
     )
 
-val LinearBezierBinomial<Vector2<*>>.componentYLinear
+val LinearBezierBinomial<RawVector>.componentYLinear
     get() = LinearBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.y,

@@ -1,12 +1,7 @@
 package app.geometry.transformations
 
 import app.algebra.linear.matrices.matrix3.Matrix3x3
-import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.vectors.vector2.Vector2x1
-import app.algebra.linear.vectors.vector2.plus
-import app.algebra.linear.vectors.vector2.times
 import app.algebra.linear.vectors.vector3.Vector1x3
-import app.geometry.BiDirection
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.RawVector

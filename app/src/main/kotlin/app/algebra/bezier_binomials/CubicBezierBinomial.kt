@@ -1,10 +1,10 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.linear.matrices.matrix4.Matrix4x4
-import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.linear.VectorSpace
+import app.algebra.linear.matrices.matrix4.Matrix4x4
+import app.algebra.linear.vectors.vector4.Vector4
 import app.geometry.Point
+import app.geometry.RawVector
 import app.geometry.curves.LineSegment
 
 data class CubicBezierBinomial<V>(
@@ -49,31 +49,31 @@ data class CubicBezierBinomial<V>(
     }
 }
 
-val CubicBezierBinomial<Vector2<*>>.point0: Point
-    get() = this.weight0.toPoint()
+val CubicBezierBinomial<RawVector>.point0: Point
+    get() = this.weight0.asPoint
 
-val CubicBezierBinomial<Vector2<*>>.point1: Point
-    get() = this.weight1.toPoint()
+val CubicBezierBinomial<RawVector>.point1: Point
+    get() = this.weight1.asPoint
 
-val CubicBezierBinomial<Vector2<*>>.point2: Point
-    get() = this.weight2.toPoint()
+val CubicBezierBinomial<RawVector>.point2: Point
+    get() = this.weight2.asPoint
 
-val CubicBezierBinomial<Vector2<*>>.point3: Point
-    get() = this.weight3.toPoint()
+val CubicBezierBinomial<RawVector>.point3: Point
+    get() = this.weight3.asPoint
 
-val CubicBezierBinomial<Vector2<*>>.segmentsCubic: List<LineSegment>
+val CubicBezierBinomial<RawVector>.segmentsCubic: List<LineSegment>
     get() = listOf(lineSegment0, lineSegment1, lineSegment2)
 
-val CubicBezierBinomial<Vector2<*>>.lineSegment0: LineSegment
+val CubicBezierBinomial<RawVector>.lineSegment0: LineSegment
     get() = LineSegment(start = point0, end = point1)
 
-val CubicBezierBinomial<Vector2<*>>.lineSegment1: LineSegment
+val CubicBezierBinomial<RawVector>.lineSegment1: LineSegment
     get() = LineSegment(start = point1, end = point2)
 
-val CubicBezierBinomial<Vector2<*>>.lineSegment2: LineSegment
+val CubicBezierBinomial<RawVector>.lineSegment2: LineSegment
     get() = LineSegment(start = point2, end = point3)
 
-val CubicBezierBinomial<Vector2<*>>.componentXCubic
+val CubicBezierBinomial<RawVector>.componentXCubic
     get() = CubicBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.x,
@@ -82,7 +82,7 @@ val CubicBezierBinomial<Vector2<*>>.componentXCubic
         weight3 = weight3.x,
     )
 
-val CubicBezierBinomial<Vector2<*>>.componentYCubic
+val CubicBezierBinomial<RawVector>.componentYCubic
     get() = CubicBezierBinomial(
         vectorSpace = VectorSpace.DoubleVectorSpace,
         weight0 = weight0.y,
@@ -91,21 +91,22 @@ val CubicBezierBinomial<Vector2<*>>.componentYCubic
         weight3 = weight3.y,
     )
 
-fun CubicBezierBinomial<Vector2<*>>.findSkeletonCubic(
+// TODO: Move to `BezierCurve` hierarchy
+fun CubicBezierBinomial<RawVector>.findSkeletonCubic(
     t: Double,
-): QuadraticBezierBinomial<Vector2<*>> {
+): QuadraticBezierBinomial<RawVector> {
     val subPoint0 = lineSegment0.linearlyInterpolate(t = t)
     val subPoint1 = lineSegment1.linearlyInterpolate(t = t)
     val subPoint2 = lineSegment2.linearlyInterpolate(t = t)
 
     return QuadraticBezierBinomial(
         vectorSpace = vectorSpace,
-        weight0 = subPoint0.pv.asVector2,
-        weight1 = subPoint1.pv.asVector2,
-        weight2 = subPoint2.pv.asVector2,
+        weight0 = subPoint0.pv,
+        weight1 = subPoint1.pv,
+        weight2 = subPoint2.pv,
     )
 }
 
-fun CubicBezierBinomial<Vector2<*>>.evaluateFastCubic(
+fun CubicBezierBinomial<RawVector>.evaluateFastCubic(
     t: Double,
-): Vector2<*> = findSkeletonCubic(t = t).evaluateFastQuadratic(t = t)
+): RawVector = findSkeletonCubic(t = t).evaluateFastQuadratic(t = t)
