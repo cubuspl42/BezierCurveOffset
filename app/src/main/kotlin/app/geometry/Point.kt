@@ -181,7 +181,7 @@ data class Point internal constructor(
         val l = line.rawLine
         val pd = l.p0 - pvRaw
         val t = pd.findProjectionScale(l.dv)
-        return l.evaluate(t).asPoint
+        return l.evaluate(t = t).asPoint
     }
 
     fun dump(): String = "Point.of(${"%.2f".format(pv.x)}, ${"%.2f".format(pv.y)})"
@@ -194,6 +194,7 @@ data class Point internal constructor(
         translation: Translation,
     ): Point = translation.translate(this)
 
+    // TODO: Geometric tolerance
     override fun equalsWithTolerance(
         other: NumericObject,
         absoluteTolerance: Double

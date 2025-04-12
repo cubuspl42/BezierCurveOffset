@@ -41,7 +41,6 @@ class Line(
     val dv: Vector2<*>
         get() = biDirection.dv
 
-
     val dvRaw: RawVector
         get() = rawLine.dv
 
@@ -52,15 +51,24 @@ class Line(
     fun findIntersectionPoint(
         other: Line,
     ): Point? {
-        val det = dv.cross(other.dv)
-        if (det == 0.0) return null // The lines are parallel
+        val l0 = this.rawLine
+        val l1 = other.rawLine
 
-        val ds = other.pv - pv
-        val u = ds.cross(other.dv) / det
+        val intersection = RawLine.findUniqueIntersection(
+            l0 = l0,
+            l1 = l1,
+        ) ?: return null
 
-        return Point.of(
-            pv = evaluate(u)
+        val p0 = l0.evaluate(t = intersection.t0)
+
+        assert(
+            p0.equalsWithTolerance(
+                l1.evaluate(t = intersection.t1),
+                absoluteTolerance = 0.0001,
+            ),
         )
+
+        return p0.asPoint
     }
 
     override fun equals(other: Any?): Boolean {

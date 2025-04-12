@@ -72,17 +72,30 @@ class Ray(
     fun intersect(
         other: Ray,
     ): Point? {
-        val det = dv.cross(other.dv)
-        if (det == 0.0) return null // The rays are parallel
+        val l0 = rawLine
+        val l1 = other.rawLine
 
-        val sd = other.sv - sv
-        val u = sd.cross(other.dv) / det
-        val v = sd.cross(this.dv) / det
+        val intersection = RawLine.findUniqueIntersection(
+            l0 = l0,
+            l1 = l1,
+        ) ?: return null
+
+        val t0 = intersection.t0
+        val t1 = intersection.t1
 
         return when {
-            u > 0.0 && v > 0.0 -> Point.of(
-                pv = evaluate(t = u),
-            )
+            t0 > 0.0 && t1 > 0.0 -> {
+                val p0 = l0.evaluate(t = t0)
+
+                assert(
+                    p0.equalsWithTolerance(
+                        l1.evaluate(t = t1),
+                        absoluteTolerance = 0.0001,
+                    ),
+                )
+
+                p0.asPoint
+            }
 
             // The intersection point would lye outside the ray
             else -> null

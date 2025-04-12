@@ -296,13 +296,14 @@ class ClosedSplineTests {
             actual = actualSegment1,
         )
 
-        assertEquals(
+        assertEqualsWithTolerance(
             expected = Spline.Segment.lineSegment(
                 startKnot = Point.of(0.0, 7.5),
                 edgeMetadata = ContourEdgeMetadata.Corner,
                 knotMetadata = null,
             ),
             actual = actualSegment2,
+            absoluteTolerance = eps,
         )
 
         assertEquals(
