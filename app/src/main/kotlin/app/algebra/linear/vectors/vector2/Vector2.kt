@@ -48,7 +48,6 @@ data class Vector2<out Vo : VectorOrientation>(
             a: Vector2<Vo>,
             b: Vector2<Vo>,
         ): Vector2<Vo> = b.length * a + a.length * b
-
     }
 
     init {
@@ -127,7 +126,7 @@ data class Vector2<out Vo : VectorOrientation>(
         else -> true
     }
 
-    fun toPoint() = Point.of(this)
+    fun toPoint() = Point.of(this.raw)
 }
 
 operator fun <Vo : VectorOrientation> Vector2<Vo>.plus(

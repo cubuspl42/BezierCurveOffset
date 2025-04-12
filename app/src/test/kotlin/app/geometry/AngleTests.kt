@@ -16,7 +16,7 @@ class AngleTests {
 
         private fun buildVector(
             fi: Double,
-        ): Vector2<*> = Vector2.of(
+        ): RawVector = RawVector(
             x = cos(fi),
             y = sin(fi),
         )
@@ -36,7 +36,7 @@ class AngleTests {
             val vecFi = buildVector(fi)
 
             fun isZeroWithRadialTolerance(
-                other: Vector2<*>,
+                other: RawVector,
             ) = Angle(
                 a = vecFi,
                 b = other,
@@ -78,8 +78,8 @@ class AngleTests {
     @Test
     fun testAngleZero() {
         val angle = Angle(
-            a = Vector2.of(1.0, 0.0),
-            b = Vector2.of(1.1, 0.0),
+            a = RawVector(1.0, 0.0),
+            b = RawVector(1.1, 0.0),
         )
 
         val expectedFi = 0.0
@@ -108,8 +108,8 @@ class AngleTests {
     @Test
     fun testAngleAcute1() {
         val angle = Angle(
-            a = Vector2.of(1.0, 0.0),
-            b = Vector2.of(2.0, 1.0),
+            a = RawVector(1.0, 0.0),
+            b = RawVector(2.0, 1.0),
         )
 
         val expectedFi = 0.46365
@@ -140,8 +140,8 @@ class AngleTests {
     @Test
     fun testAngleOrthogonal() {
         val angle = Angle(
-            a = Vector2.of(1.0, 0.0),
-            b = Vector2.of(0.0, 1.0),
+            a = RawVector(1.0, 0.0),
+            b = RawVector(0.0, 1.0),
         )
 
         val expectedFi = Math.PI / 2
@@ -172,8 +172,8 @@ class AngleTests {
     @Test
     fun testAngleObtuse() {
         val angle = Angle(
-            a = Vector2.of(1.0, 0.0),
-            b = Vector2.of(-1.0, 1.0),
+            a = RawVector(1.0, 0.0),
+            b = RawVector(-1.0, 1.0),
         )
 
         /*
@@ -212,8 +212,8 @@ class AngleTests {
     @Test
     fun testAngleStraight() {
         val angle = Angle(
-            a = Vector2.of(1.0, 0.0),
-            b = Vector2.of(-1.0, 0.0),
+            a = RawVector(1.0, 0.0),
+            b = RawVector(-1.0, 0.0),
         )
 
         val expectedFi = Math.PI

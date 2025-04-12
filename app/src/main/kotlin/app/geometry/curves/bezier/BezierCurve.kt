@@ -84,7 +84,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
      */
     val tangentFunction: TimeFunction<Direction?> by lazy {
         TimeFunction.wrap(basisFormula.findDerivative()).map {
-            Direction.of(it)
+            Direction.of(it.raw)
         }
     }
 

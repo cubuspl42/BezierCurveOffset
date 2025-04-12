@@ -1,7 +1,6 @@
 package app.geometry.curves
 
 import app.algebra.NumericObject
-import app.algebra.linear.vectors.vector2.minus
 import app.fillCircle
 import app.geometry.BoundingBox
 import app.geometry.Direction
@@ -49,7 +48,7 @@ data class LineSegment(
     }
 
     val direction: Direction? = Direction.of(
-        end.pv - start.pv,
+        end.pvRaw - start.pvRaw,
     )
 
     fun linearlyInterpolate(t: Double): Point {
@@ -57,7 +56,7 @@ data class LineSegment(
 
         return start.transformVia(
             transformation = Translation.of(
-                tv = (end.pv - start.pv).scale(t),
+                tv = (end.pv - start.pv) * t,
             ),
         )
     }

@@ -3,18 +3,15 @@ package app.geometry
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.vectors.vector2.minus
-import app.algebra.linear.vectors.vector2.unaryMinus
 
 /**
  * A direction in the 2D Euclidean space, i.e. a unit vector with a given direction and orientation.
  */
-@JvmInline
-value class Direction private constructor(
+class Direction private constructor(
     /**
      * The unit vector determining the direction
      */
-    val dv: Vector2<*>,
+    internal val dv: RawVector,
 ) : NumericObject, GeometricObject {
     companion object {
         /**
@@ -22,7 +19,7 @@ value class Direction private constructor(
          * a zero vector
          */
         fun of(
-            dv: Vector2<*>,
+            dv: RawVector,
         ): Direction? = when {
             dv.lengthSquared == 0.0 -> null
             else -> Direction(dv = dv.normalized)
@@ -39,7 +36,7 @@ value class Direction private constructor(
     }
 
     val dvRaw: RawVector
-        get() = dv.raw
+        get() = dv
 
     val perpendicular: Direction
         get() = Direction(dv = dv.perpendicular)
@@ -80,5 +77,3 @@ value class Direction private constructor(
         }
     }
 }
-
-internal fun Vector2<*>.toDirection(): Direction? = Direction.of(dv = this)

@@ -10,14 +10,15 @@ import app.geometry.BiDirection
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.RawVector
+import app.geometry.times
 
 @Suppress("DataClassPrivateConstructor")
 data class Translation private constructor(
-    val tv: Vector2<*>,
+    val tv: RawVector,
 ) : Transformation() {
     companion object {
         fun of(
-            tv: Vector2<*>,
+            tv: RawVector,
         ): Translation = Translation(
             tv = tv,
         )
@@ -37,7 +38,7 @@ data class Translation private constructor(
             tx: Double,
             ty: Double,
         ): Translation = of(
-            tv = Vector2x1.of(
+            tv = RawVector(
                 x = tx,
                 y = ty,
             ),
@@ -71,13 +72,4 @@ data class Translation private constructor(
     ): Translation = Translation(
         tv = (tv.length + deltaLength) / tv.length * tv,
     )
-
-    fun projectOnto(
-        biDirection: BiDirection,
-    ): Translation {
-        val dv = biDirection.dv
-        return Translation(
-            tv = (tv.dotForced(dv) / dv.lengthSquared) * dv
-        )
-    }
 }

@@ -1,10 +1,9 @@
 package app.geometry
 
 import app.algebra.NumericObject
+import app.algebra.linear.VectorOrientation
 import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.vectors.vector2.div
-import app.algebra.linear.vectors.vector2.minus
-import app.algebra.linear.vectors.vector2.plus
+import app.algebra.linear.vectors.vector2.Vector2x1
 import app.equalsZeroApproximately
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.Translation
@@ -12,15 +11,15 @@ import java.awt.geom.Path2D
 
 @Suppress("DataClassPrivateConstructor")
 data class Point internal constructor(
-    val pv: Vector2<*>,
+    val pv: RawVector,
 ) : NumericObject {
     companion object {
-        val zero = Point(
-            pv = Vector2.zero<Nothing>(),
+        val origin = Point(
+            pv = RawVector.zero,
         )
 
         fun of(
-            pv: Vector2<*>,
+            pv: RawVector,
         ): Point = Point(
             pv = pv,
         )
@@ -29,7 +28,7 @@ data class Point internal constructor(
             px: Double,
             py: Double,
         ): Point = of(
-            pv = Vector2.of(
+            pv = RawVector(
                 x = px,
                 y = py,
             ),
@@ -87,7 +86,7 @@ data class Point internal constructor(
         px: Double,
         py: Double,
     ) : this(
-        pv = Vector2.of(
+        pv = RawVector(
             x = px,
             y = py,
         ),
@@ -101,8 +100,14 @@ data class Point internal constructor(
         py = py.toDouble(),
     )
 
+    val pvVertical: Vector2<VectorOrientation.Vertical>
+        get() = Vector2x1(
+            x = x,
+            y = y,
+        )
+
     val pvRaw: RawVector
-        get() = pv.raw
+        get() = pv
 
     val x: Double
         get() = pv.x
@@ -132,7 +137,7 @@ data class Point internal constructor(
     fun directionTo(
         other: Point,
     ): Direction? = Direction.of(
-        dv = other.pv - this.pv,
+        dv = other.pvRaw - this.pvRaw,
     )
 
     /**
@@ -173,9 +178,6 @@ data class Point internal constructor(
         point = this,
         direction = direction,
     )
-
-    // TODO: Nuke?
-    fun toVector(): Vector2<*> = Vector2.of(x, y)
 
     fun snapTo(line: Line): Point {
         val l = line.rawLine

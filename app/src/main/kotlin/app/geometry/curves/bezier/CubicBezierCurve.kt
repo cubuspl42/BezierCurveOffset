@@ -231,10 +231,10 @@ data class CubicBezierCurve private constructor(
 
     override val basisFormula = CubicBezierBinomial(
         vectorSpace = Vector2.Vector2VectorSpace(),
-        weight0 = start.toVector(),
-        weight1 = control0.toVector(),
-        weight2 = control1.toVector(),
-        weight3 = end.toVector(),
+        weight0 = start.pv.asVector2,
+        weight1 = control0.pv.asVector2,
+        weight2 = control1.pv.asVector2,
+        weight3 = end.pv.asVector2,
     )
 
     val lineSegment0: LineSegment

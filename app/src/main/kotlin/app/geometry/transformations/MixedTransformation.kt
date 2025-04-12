@@ -59,7 +59,7 @@ data class MixedTransformation private constructor(
     override fun transform(
         point: Point,
     ): Point = Point.of(
-        pv = (transformationMatrix * point.pv.toVec3().asVertical).vectorXy,
+        pv = (transformationMatrix * point.pvVertical.toVec3()).vectorXy.raw,
     )
 }
 

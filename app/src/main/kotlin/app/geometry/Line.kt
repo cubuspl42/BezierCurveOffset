@@ -35,18 +35,14 @@ class Line(
         )
     }
 
-    val pv: Vector2<*>
-        get() = representativePoint.pv
+    val pv: RawVector
+        get() = representativePoint.pvRaw
 
-    val dv: Vector2<*>
+    val dv: RawVector
         get() = biDirection.dv
 
     val dvRaw: RawVector
         get() = rawLine.dv
-
-    private fun evaluate(
-        t: Double,
-    ): Vector2<*> = pv + dv.scale(t)
 
     fun findIntersectionPoint(
         other: Line,

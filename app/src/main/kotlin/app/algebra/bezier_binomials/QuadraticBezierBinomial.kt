@@ -48,8 +48,8 @@ fun QuadraticBezierBinomial<Vector2<*>>.findSkeletonQuadratic(
 
     return LinearBezierBinomial(
         vectorSpace = vectorSpace,
-        weight0 = subPoint0.pv,
-        weight1 = subPoint1.pv,
+        weight0 = subPoint0.pv.asVector2,
+        weight1 = subPoint1.pv.asVector2,
     )
 }
 

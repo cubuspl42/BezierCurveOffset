@@ -16,16 +16,6 @@ import org.w3c.dom.svg.SVGPathElement
 class Ray(
     private val rawLine: RawLine,
 ) {
-    private fun evaluate(
-        t: Double,
-    ): Vector2<*> {
-        if (t < 0) {
-            throw IllegalArgumentException("t must be non-negative")
-        }
-
-        return sv + direction.dv.scale(t)
-    }
-
     /**
      * The initial point of the ray
      */
@@ -48,10 +38,10 @@ class Ray(
         )
     }
 
-    internal val sv: Vector2<*>
-        get() = startingPoint.pv
+    internal val sv: RawVector
+        get() = startingPoint.pvRaw
 
-    internal val dv: Vector2<*>
+    internal val dv: RawVector
         get() = direction.dv
 
     val containingLine: Line

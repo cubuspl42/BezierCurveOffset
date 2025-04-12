@@ -20,7 +20,7 @@ value class BiDirection internal constructor(
          * a zero vector
          */
         fun of(
-            dv: Vector2<*>,
+            dv: RawVector,
         ): BiDirection? = Direction.of(dv = dv)?.let {
             BiDirection(
                 representativeDirection = it,
@@ -28,8 +28,8 @@ value class BiDirection internal constructor(
         }
     }
 
-    val dv: Vector2<*>
-        get() = representativeDirection.dv
+    val dv: RawVector
+        get() = representativeDirection.dvRaw
 
     val perpendicular: BiDirection
         get() = BiDirection(

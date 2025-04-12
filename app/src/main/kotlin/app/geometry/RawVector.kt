@@ -3,8 +3,6 @@ package app.geometry
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.vectors.vector2.Vector2
-import app.algebra.linear.vectors.vector2.times
-import app.geometry.transformations.Translation
 import kotlin.math.sqrt
 
 data class RawVector(
@@ -16,6 +14,11 @@ data class RawVector(
             x = 0.0,
             y = 0.0,
         )
+
+        fun bisector(
+            a: RawVector,
+            b: RawVector,
+        ): RawVector = b.length * a + a.length * b
     }
 
     operator fun plus(other: RawVector): RawVector = RawVector(
@@ -47,13 +50,25 @@ data class RawVector(
 
     fun cross(other: RawVector): Double = x * other.y - y * other.x
 
-    val lengthSq: Double
+    val lengthSquared: Double
         get() = x * x + y * y
 
     val length: Double
-        get() = sqrt(lengthSq)
+        get() = sqrt(lengthSquared)
 
-    val asVector2: Vector2<Nothing>
+    val normalized: RawVector
+        get() = when (lengthSquared) {
+            0.0 -> zero
+            else -> this / length
+        }
+
+    val perpendicular: RawVector
+        get() = RawVector(
+            x = -y,
+            y = x,
+        )
+
+    val asVector2: Vector2<*>
         get() = Vector2.of(
             x = x,
             y = y,
@@ -61,17 +76,17 @@ data class RawVector(
 
     val asPoint: Point
         get() = Point(
-            pv = asVector2,
+            pv = this,
         )
 
     val asBiDirection: BiDirection?
         get() = BiDirection.of(
-            dv = asVector2,
+            dv = this,
         )
 
     val asDirection: Direction?
         get() = Direction.of(
-            dv = asVector2,
+            dv = this,
         )
 
     /**
@@ -81,7 +96,7 @@ data class RawVector(
      */
     fun findProjectionScale(
         b: RawVector,
-    ): Double = this.dot(b) / b.lengthSq
+    ): Double = this.dot(b) / b.lengthSquared
 
     /**
      * Project this vector onto another vector

@@ -1,29 +1,26 @@
 package app.geometry
 
-import app.algebra.linear.vectors.vector2.Vector2
-import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.acos
 import kotlin.math.sqrt
 
-// TODO: Base on directions?
 data class Angle(
-    val a: Vector2<*>,
-    val b: Vector2<*>,
+    val a: RawVector,
+    val b: RawVector,
 ) {
-    private val aDotB: Double = a.dotForced(b)
+    private val dotProduct: Double = a.dot(b)
 
     /**
      * Whether the angle between the two vectors is acute
      */
     val isAcute: Boolean
-        get() = aDotB > 0.0
+        get() = dotProduct > 0.0
 
     /**
      * The cos^2 of the angle between the two vectors
      */
     internal val cosSqFi: Double
-        get() = aDotB * aDotB / (a.lengthSquared * b.lengthSquared)
+        get() = dotProduct * dotProduct / (a.lengthSquared * b.lengthSquared)
 
     /**
      * The cos of the angle between the two vectors, assuming the angle is acute
@@ -35,7 +32,7 @@ data class Angle(
      * The cos of the angle between the two vectors (in the general case)
      */
     internal val cosFi: Double
-        get() = aDotB / (a.length * b.length)
+        get() = dotProduct / (a.length * b.length)
 
     /**
      * The angle between the two vectors in radians

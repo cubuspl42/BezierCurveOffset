@@ -100,9 +100,9 @@ fun CubicBezierBinomial<Vector2<*>>.findSkeletonCubic(
 
     return QuadraticBezierBinomial(
         vectorSpace = vectorSpace,
-        weight0 = subPoint0.pv,
-        weight1 = subPoint1.pv,
-        weight2 = subPoint2.pv,
+        weight0 = subPoint0.pv.asVector2,
+        weight1 = subPoint1.pv.asVector2,
+        weight2 = subPoint2.pv.asVector2,
     )
 }
 
