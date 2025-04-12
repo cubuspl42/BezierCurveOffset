@@ -6,19 +6,6 @@ package app.geometry
 class Line(
     internal val lineEquation: LineEquation,
 ) {
-    // TODO: Nuke?
-    /**
-     * One of the infinitely many points lying on the line
-     */
-    val representativePoint: Point
-        get() = lineEquation.p0.asPoint
-
-    /**
-     * The bi-direction of this line
-     */
-    val biDirection: BiDirection
-        get() = lineEquation.dv.asBiDirection!!
-
     companion object {
         fun inDirection(
             point: Point,
@@ -42,16 +29,16 @@ class Line(
             l1 = l1,
         ) ?: return null
 
-        val p0 = l0.evaluate(t = solution.t0)
+        val pi0 = l0.evaluate(t = solution.t0)
 
         assert(
-            p0.equalsWithTolerance(
+            pi0.equalsWithTolerance(
                 l1.evaluate(t = solution.t1),
                 absoluteTolerance = Constants.epsilon,
             ),
         )
 
-        return p0.asPoint
+        return pi0.asPoint
     }
 
     override fun equals(other: Any?): Boolean {

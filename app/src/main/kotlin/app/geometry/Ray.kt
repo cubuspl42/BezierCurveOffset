@@ -36,8 +36,6 @@ class Ray(
         )
     }
 
-    internal val sv: RawVector
-        get() = startingPoint.pvRaw
 
     internal val dv: RawVector
         get() = direction.dv
@@ -73,16 +71,16 @@ class Ray(
 
         return when {
             t0 > 0.0 && t1 > 0.0 -> {
-                val p0 = l0.evaluate(t = t0)
+                val pi0 = l0.evaluate(t = t0)
 
                 assert(
-                    p0.equalsWithTolerance(
+                    pi0.equalsWithTolerance(
                         l1.evaluate(t = t1),
                         absoluteTolerance = Constants.epsilon,
                     ),
                 )
 
-                p0.asPoint
+                pi0.asPoint
             }
 
             // The intersection point would lye outside the ray
