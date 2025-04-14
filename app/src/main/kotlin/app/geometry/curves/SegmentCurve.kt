@@ -5,6 +5,7 @@ import app.algebra.NumericObject
 import app.createPathElement
 import app.fill
 import app.geometry.BoundingBox
+import app.geometry.Curve
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.transformations.Transformation
@@ -20,7 +21,7 @@ import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 
-abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
+abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : Curve() {
     abstract class Edge<out CurveT : SegmentCurve<CurveT>> : NumericObject {
         abstract fun bind(
             startKnot: Point,
@@ -54,6 +55,43 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         val offset: Double,
     )
 
+    companion object {
+        val segmentTRange = 0.0..1.0
+
+        /**
+         * Finds the unique intersection of two lines in 2D space.
+         *
+         * @return the intersection if it exists, or null if the lines are parallel
+         */
+        fun findIntersection(
+            segmentCurve0: SegmentCurve<*>,
+            segmentCurve1: SegmentCurve<*>,
+        ): IntersectionDetails? = when {
+            segmentCurve0 is LineSegment && segmentCurve1 is LineSegment -> LineSegment.findIntersection(
+                lineSegment0 = segmentCurve0,
+                lineSegment1 = segmentCurve1,
+            )
+
+            segmentCurve0 is LineSegment && segmentCurve1 is CubicBezierCurve -> CubicBezierCurve.findIntersection(
+                lineSegment = segmentCurve0,
+                bezierCurve = segmentCurve1,
+            )
+
+            segmentCurve0 is CubicBezierCurve && segmentCurve1 is LineSegment -> CubicBezierCurve.findIntersection(
+                lineSegment = segmentCurve1,
+                bezierCurve = segmentCurve0,
+            )
+
+            segmentCurve0 is CubicBezierCurve && segmentCurve1 is CubicBezierCurve -> CubicBezierCurve.findIntersection(
+                bezierCurve0 = segmentCurve0,
+                bezierCurve1 = segmentCurve1,
+            )
+
+            // Shouldn't happen, we try to handle all combinations
+            else -> throw AssertionError("Unsupported segment curve pair: $segmentCurve0, $segmentCurve1")
+        }
+    }
+
     fun findOffsetSpline(
         params: OffsetSplineParams,
     ): OpenSpline<*, OffsetEdgeMetadata, *>? = findOffsetSpline(
@@ -63,18 +101,18 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
     /**
      * Evaluates the curve at the given parameter t, which must be in the range [0, 1].
      */
-    fun evaluate(
+    override fun evaluate(
         t: Double,
     ): Point {
-        if (t < 0 || t > 1) throw IllegalArgumentException("t must be in [0, 1], was: $t")
+        if (t !in segmentTRange) throw IllegalArgumentException("t must be in [0, 1], was: $t")
 
-        return evaluateDirectly(t = t)
+        return evaluateSegment(t = t)
     }
 
     /**
      * Evaluates the curve at the given parameter t, which is guaranteed to be in the range [0, 1].
      */
-    abstract fun evaluateDirectly(
+    abstract fun evaluateSegment(
         t: Double,
     ): Point
 

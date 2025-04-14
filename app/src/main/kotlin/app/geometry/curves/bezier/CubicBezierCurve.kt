@@ -87,6 +87,20 @@ data class CubicBezierCurve private constructor(
                 end = end,
             )
         }
+
+        fun findIntersection(
+            lineSegment: LineSegment,
+            bezierCurve: CubicBezierCurve,
+        ): IntersectionDetails? {
+            TODO()
+        }
+
+        fun findIntersection(
+            bezierCurve0: CubicBezierCurve,
+            bezierCurve1: CubicBezierCurve,
+        ): IntersectionDetails? {
+            TODO()
+        }
     }
 
     override fun findBoundingBox(): BoundingBox {
@@ -136,7 +150,7 @@ data class CubicBezierCurve private constructor(
         )
     }
 
-    override fun evaluateDirectly(
+    override fun evaluateSegment(
         t: Double,
     ): Point = basisFormula.evaluate(t = t).asPoint
 

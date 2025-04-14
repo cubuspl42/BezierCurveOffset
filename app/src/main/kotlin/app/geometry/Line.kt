@@ -5,7 +5,7 @@ package app.geometry
  */
 class Line(
     internal val lineEquation: LineEquation,
-) {
+) : Curve() {
     companion object {
         fun inDirection(
             point: Point,
@@ -40,6 +40,10 @@ class Line(
 
         return pi0.asPoint
     }
+
+    override fun evaluate(
+        t: Double,
+    ): Point = lineEquation.evaluate(t = t).asPoint
 
     override fun equals(other: Any?): Boolean {
         throw UnsupportedOperationException()

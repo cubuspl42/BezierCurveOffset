@@ -3,8 +3,11 @@ package app.geometry.curves
 import app.algebra.NumericObject
 import app.fillCircle
 import app.geometry.BoundingBox
+import app.geometry.Constants
 import app.geometry.Direction
+import app.geometry.LineEquation
 import app.geometry.Point
+import app.geometry.RawVector
 import app.geometry.Ray
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.splines.OpenSpline
@@ -47,11 +50,67 @@ data class LineSegment(
         override fun toString(): String = "LineSegment.Edge"
     }
 
+    companion object {
+        fun findIntersection(
+            lineSegment0: LineSegment,
+            lineSegment1: LineSegment,
+        ): IntersectionDetails? {
+            // Technically, when one or both of the lines are degenerate (are
+            // effectively points), we _could_ consider them intersecting if
+            // one of the points lies on another line segment / point, but for
+            // now we don't do that
+            val ls0 = lineSegment0.lineEquation ?: return null
+            val ls1 = lineSegment1.lineEquation ?: return null
+
+            val solution = LineEquation.solveIntersection(
+                l0 = ls0,
+                l1 = ls1,
+            ) ?: return null
+
+            val t0 = solution.t0
+            val t1 = solution.t1
+
+            return when {
+                t0 in segmentTRange && t1 in segmentTRange -> {
+                    val pi0 = ls0.evaluate(t = t0)
+
+                    assert(
+                        pi0.equalsWithTolerance(
+                            ls1.evaluate(t = t1),
+                            absoluteTolerance = Constants.epsilon,
+                        ),
+                    )
+
+                    return IntersectionDetails(
+                        t0 = t0,
+                        t1 = t1,
+                    )
+                }
+
+                // The intersection point would lye outside the line segment(s)
+                else -> null
+            }
+        }
+    }
+
+    private val dv: RawVector
+        get() = end.pv - start.pv
+
+    internal val lineEquation: LineEquation?
+        get() = when {
+            dv == RawVector.zero -> null
+
+            else -> LineEquation(
+                p0 = start.pv,
+                dv = dv,
+            )
+        }
+
     val direction: Direction? = Direction.of(
         end.pvRaw - start.pvRaw,
     )
 
-    override fun evaluateDirectly(
+    override fun evaluateSegment(
         t: Double,
     ): Point = start.transformVia(
         transformation = Translation.of(
