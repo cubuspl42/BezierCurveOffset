@@ -32,6 +32,9 @@ sealed class BezierBinomial<out V> : RealFunction<V>() {
 
     final override fun apply(x: Double): V = evaluate(t = x)
 
+    /**
+     * Evaluates the Bézier binomial at the given parameter t, which can be in the range [0, 1], but doesn't have to.
+     */
     abstract fun evaluate(t: Double): V
 }
 

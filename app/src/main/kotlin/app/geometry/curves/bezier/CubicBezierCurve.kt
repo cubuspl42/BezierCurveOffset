@@ -136,6 +136,10 @@ data class CubicBezierCurve private constructor(
         )
     }
 
+    override fun evaluateDirectly(
+        t: Double,
+    ): Point = basisFormula.evaluate(t = t).asPoint
+
     fun draw(
         graphics2D: Graphics2D,
         innerColor: Color = Color.BLACK,

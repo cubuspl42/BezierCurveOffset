@@ -95,9 +95,9 @@ val CubicBezierBinomial<RawVector>.componentYCubic
 fun CubicBezierBinomial<RawVector>.findSkeletonCubic(
     t: Double,
 ): QuadraticBezierBinomial<RawVector> {
-    val subPoint0 = lineSegment0.linearlyInterpolate(t = t)
-    val subPoint1 = lineSegment1.linearlyInterpolate(t = t)
-    val subPoint2 = lineSegment2.linearlyInterpolate(t = t)
+    val subPoint0 = lineSegment0.evaluate(t = t)
+    val subPoint1 = lineSegment1.evaluate(t = t)
+    val subPoint2 = lineSegment2.evaluate(t = t)
 
     return QuadraticBezierBinomial(
         vectorSpace = vectorSpace,

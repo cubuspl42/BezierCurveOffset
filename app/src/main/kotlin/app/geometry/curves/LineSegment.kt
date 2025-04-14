@@ -51,15 +51,13 @@ data class LineSegment(
         end.pvRaw - start.pvRaw,
     )
 
-    fun linearlyInterpolate(t: Double): Point {
-        if (t < 0 || t > 1) throw IllegalArgumentException("t must be in [0, 1], was: $t")
-
-        return start.transformVia(
-            transformation = Translation.of(
-                tv = (end.pv - start.pv) * t,
-            ),
-        )
-    }
+    override fun evaluateDirectly(
+        t: Double,
+    ): Point = start.transformVia(
+        transformation = Translation.of(
+            tv = (end.pv - start.pv) * t,
+        ),
+    )
 
     fun draw(
         graphics2D: Graphics2D,

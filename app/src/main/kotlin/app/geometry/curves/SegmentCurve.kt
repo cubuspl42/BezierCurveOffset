@@ -21,33 +21,6 @@ import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 
 abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
-    abstract class OffsetEdgeMetadata {
-        object Precise : OffsetEdgeMetadata() {
-            override val globalDeviation: Double = 0.0
-        }
-
-        abstract val globalDeviation: Double
-    }
-
-    data class OffsetSplineParams(
-        val offset: Double,
-    )
-
-    fun findOffsetSpline(
-        params: OffsetSplineParams,
-    ): OpenSpline<*, OffsetEdgeMetadata, *>? = findOffsetSpline(
-        offset = params.offset,
-    )
-
-    abstract fun findOffsetSpline(
-        offset: Double,
-    ): OpenSpline<*, OffsetEdgeMetadata, *>?
-
-    abstract fun findOffsetSplineRecursive(
-        offset: Double,
-        subdivisionLevel: Int,
-    ): OpenSpline<*, OffsetEdgeMetadata, *>?
-
     abstract class Edge<out CurveT : SegmentCurve<CurveT>> : NumericObject {
         abstract fun bind(
             startKnot: Point,
@@ -68,6 +41,51 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
             transformation: Transformation,
         ): Edge<CurveT>
     }
+
+    abstract class OffsetEdgeMetadata {
+        object Precise : OffsetEdgeMetadata() {
+            override val globalDeviation: Double = 0.0
+        }
+
+        abstract val globalDeviation: Double
+    }
+
+    data class OffsetSplineParams(
+        val offset: Double,
+    )
+
+    fun findOffsetSpline(
+        params: OffsetSplineParams,
+    ): OpenSpline<*, OffsetEdgeMetadata, *>? = findOffsetSpline(
+        offset = params.offset,
+    )
+
+    /**
+     * Evaluates the curve at the given parameter t, which must be in the range [0, 1].
+     */
+    fun evaluate(
+        t: Double,
+    ): Point {
+        if (t < 0 || t > 1) throw IllegalArgumentException("t must be in [0, 1], was: $t")
+
+        return evaluateDirectly(t = t)
+    }
+
+    /**
+     * Evaluates the curve at the given parameter t, which is guaranteed to be in the range [0, 1].
+     */
+    abstract fun evaluateDirectly(
+        t: Double,
+    ): Point
+
+    abstract fun findOffsetSpline(
+        offset: Double,
+    ): OpenSpline<*, OffsetEdgeMetadata, *>?
+
+    abstract fun findOffsetSplineRecursive(
+        offset: Double,
+        subdivisionLevel: Int,
+    ): OpenSpline<*, OffsetEdgeMetadata, *>?
 
     abstract fun findBoundingBox(): BoundingBox
 

@@ -43,8 +43,8 @@ val QuadraticBezierBinomial<RawVector>.lineSegment1: LineSegment
 fun QuadraticBezierBinomial<RawVector>.findSkeletonQuadratic(
     t: Double,
 ): LinearBezierBinomial<RawVector> {
-    val subPoint0 = lineSegment0.linearlyInterpolate(t = t)
-    val subPoint1 = lineSegment1.linearlyInterpolate(t = t)
+    val subPoint0 = lineSegment0.evaluate(t = t)
+    val subPoint1 = lineSegment1.evaluate(t = t)
 
     return LinearBezierBinomial(
         vectorSpace = vectorSpace,
