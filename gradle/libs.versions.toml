@@ -8,6 +8,7 @@ batik = "1.18"
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version = "5.11.3" }
 batik-anim = { module = "org.apache.xmlgraphics:batik-anim", version.ref = "batik" }
 batik-svg-dom = { module = "org.apache.xmlgraphics:batik-svg-dom", version.ref = "batik" }
+batik-css = { module = "org.apache.xmlgraphics:batik-css", version.ref = "batik" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.1.0" }

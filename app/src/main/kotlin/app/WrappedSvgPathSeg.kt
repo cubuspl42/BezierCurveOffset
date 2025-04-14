@@ -20,10 +20,7 @@ sealed class WrappedSvgPathSeg {
                     val pathSegMovetoAbs = pathSeg as SVGPathSegMovetoAbs
 
                     return MoveTo(
-                        finalPoint = Point.of(
-                            px = pathSegMovetoAbs.x.toDouble(),
-                            py = pathSegMovetoAbs.y.toDouble(),
-                        )
+                        finalPoint = pathSegMovetoAbs.p,
                     )
                 }
 

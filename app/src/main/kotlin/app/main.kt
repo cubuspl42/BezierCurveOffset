@@ -4,17 +4,25 @@ import app.PatternOutline.PatternOutlineParams
 import app.PatternOutline.PatternOutlineParams.EdgeHandle
 import app.PatternOutline.PatternOutlineParams.SegmentParams
 import app.PatternSvg.mmToPtFactor
-import app.geometry.transformations.MixedTransformation
 import app.geometry.curves.SegmentCurve
-import app.geometry.splines.*
+import app.geometry.splines.ClosedSpline
+import app.geometry.splines.toClosedSpline
+import app.geometry.splines.toDebugSvgPathGroup
+import app.geometry.transformations.MixedTransformation
 import app.geometry.transformations.Scaling
 import app.geometry.transformations.transformation
 import org.apache.batik.anim.dom.SAXSVGDocumentFactory
+import org.apache.batik.anim.dom.SVGDOMImplementation
 import org.w3c.dom.Element
-import org.w3c.dom.svg.*
+import org.w3c.dom.svg.SVGDocument
+import org.w3c.dom.svg.SVGElement
+import org.w3c.dom.svg.SVGGElement
+import org.w3c.dom.svg.SVGPathElement
 import java.nio.file.Path
 import kotlin.io.path.Path
 import kotlin.io.path.reader
+
+val svgDomImplementation: SVGDOMImplementation = SVGDOMImplementation.getDOMImplementation() as SVGDOMImplementation
 
 val documentFactory: SAXSVGDocumentFactory = SAXSVGDocumentFactory(null)
 

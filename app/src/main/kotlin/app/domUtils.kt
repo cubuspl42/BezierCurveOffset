@@ -1,13 +1,32 @@
 package app
 
+import app.geometry.Point
 import org.apache.batik.anim.dom.SVGDOMImplementation
-import org.w3c.dom.*
+import org.w3c.dom.DOMException
+import org.w3c.dom.Document
+import org.w3c.dom.Element
+import org.w3c.dom.Node
+import org.w3c.dom.NodeList
+import org.w3c.dom.css.CSSPrimitiveValue
 import org.w3c.dom.css.CSSStyleDeclaration
-import org.w3c.dom.svg.*
+import org.w3c.dom.css.RGBColor
+import org.w3c.dom.svg.SVGDocument
+import org.w3c.dom.svg.SVGElement
+import org.w3c.dom.svg.SVGGElement
+import org.w3c.dom.svg.SVGPathElement
+import org.w3c.dom.svg.SVGPathSeg
+import org.w3c.dom.svg.SVGPathSegCurvetoCubicAbs
+import org.w3c.dom.svg.SVGPathSegLinetoAbs
+import org.w3c.dom.svg.SVGPathSegList
+import org.w3c.dom.svg.SVGPathSegMovetoAbs
+import org.w3c.dom.svg.SVGTransform
+import org.w3c.dom.svg.SVGTransformList
+import java.awt.Color
 import java.nio.file.Path
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
+import kotlin.math.roundToInt
 
 fun NodeList.asList(): List<Node> = object : AbstractList<Node>() {
     override val size: Int
@@ -178,3 +197,60 @@ object SVGPathElementUtils {
         pathSegList.appendAllItems(this.buildPathSegs())
     }
 }
+
+val SVGPathSeg.asSVGPathSegMovetoAbs: SVGPathSegMovetoAbs?
+    get() = when {
+        pathSegType == SVGPathSeg.PATHSEG_MOVETO_ABS -> this as SVGPathSegMovetoAbs
+        else -> null
+    }
+
+val SVGPathSeg.asSVGPathSegLinetoAbs: SVGPathSegLinetoAbs?
+    get() = when {
+        pathSegType == SVGPathSeg.PATHSEG_LINETO_ABS -> this as SVGPathSegLinetoAbs
+        else -> null
+    }
+
+val SVGPathSeg.asSVGPathSegCurvetoCubicAbs: SVGPathSegCurvetoCubicAbs?
+    get() = when {
+        pathSegType == SVGPathSeg.PATHSEG_CURVETO_CUBIC_ABS -> this as SVGPathSegCurvetoCubicAbs
+        else -> null
+    }
+
+val SVGPathSegMovetoAbs.p: Point
+    get() = Point.of(
+        x.toDouble(),
+        y.toDouble(),
+    )
+
+val SVGPathSegLinetoAbs.p: Point
+    get() = Point.of(
+        x.toDouble(),
+        y.toDouble(),
+    )
+
+val SVGPathSegCurvetoCubicAbs.p: Point
+    get() = Point.of(
+        x.toDouble(),
+        y.toDouble(),
+    )
+
+val SVGPathSegCurvetoCubicAbs.p1: Point
+    get() = Point.of(
+        x1.toDouble(),
+        y1.toDouble(),
+    )
+
+val SVGPathSegCurvetoCubicAbs.p2: Point
+    get() = Point.of(
+        x2.toDouble(),
+        y2.toDouble(),
+    )
+
+fun CSSPrimitiveValue.getIntNumberValue(): Int = getFloatValue(CSSPrimitiveValue.CSS_NUMBER).roundToInt()
+
+val RGBColor.color: Color
+    get() = Color(
+        red.getIntNumberValue(),
+        green.getIntNumberValue(),
+        blue.getIntNumberValue(),
+    )

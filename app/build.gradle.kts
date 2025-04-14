@@ -20,6 +20,7 @@ dependencies {
 
     implementation(libs.batik.anim)
     implementation(libs.batik.svg.dom)
+    implementation(libs.batik.css)
 }
 
 java {

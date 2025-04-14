@@ -1,10 +1,14 @@
-package app.geometry.bezier_curves
+package app.geometry.curves.bezier
 
 import app.assertEquals
 import app.geometry.Point
+import app.geometry.SvgCurveExtractionUtils
+import app.geometry.curves.LineSegment
 import app.geometry.curves.bezier.BezierCurve
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.splines.globalDeviation
+import java.awt.Color
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -88,7 +92,7 @@ class CubicBezierSegmentCurveTests {
 
         assertEquals(
             expected = end,
-            actual = bezierCurve1.end
+            actual = bezierCurve1.end,
         )
     }
 
@@ -191,7 +195,7 @@ class CubicBezierSegmentCurveTests {
 
         assertEquals(
             expected = end,
-            actual = bezierCurve2.end
+            actual = bezierCurve2.end,
         )
     }
 
@@ -283,7 +287,7 @@ class CubicBezierSegmentCurveTests {
 
         assertEquals(
             expected = expectedSplitPoint1,
-            actual = bezierCurve1.end
+            actual = bezierCurve1.end,
         )
 
         assertEquals(
@@ -306,7 +310,7 @@ class CubicBezierSegmentCurveTests {
 
         assertEquals(
             expected = end,
-            actual = bezierCurve3.end
+            actual = bezierCurve3.end,
         )
     }
 
@@ -384,5 +388,30 @@ class CubicBezierSegmentCurveTests {
             actual = offsetSplineResult.globalDeviation,
             absoluteTolerance = eps,
         )
+    }
+
+    @Test
+    @Ignore
+    fun testFindIntersection_lineSegment() {
+        val extractedCurveSet = SvgCurveExtractionUtils.extractCurves(
+            clazz = CubicBezierSegmentCurveTests::class.java,
+            resourceName = "Curve1.svg",
+        )
+
+        val extractedOpenSpline = extractedCurveSet.getCurveByColor(
+            color = Color.blue,
+        ) as SvgCurveExtractionUtils.ExtractedOpenSpline
+
+        val bezierCurve = extractedOpenSpline.openSpline.subCurves.single() as CubicBezierCurve
+
+        val intersectionDetails = CubicBezierCurve.findIntersection(
+            lineSegment = LineSegment(
+                start = Point.origin,
+                end = Point.origin,
+            ),
+            bezierCurve = bezierCurve,
+        )
+
+        assertNotNull(intersectionDetails)
     }
 }
