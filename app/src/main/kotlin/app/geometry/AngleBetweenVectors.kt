@@ -4,7 +4,7 @@ import kotlin.math.abs
 import kotlin.math.acos
 import kotlin.math.sqrt
 
-data class Angle(
+data class AngleBetweenVectors(
     val a: RawVector,
     val b: RawVector,
 ) {
@@ -44,7 +44,7 @@ data class Angle(
         }
 
     fun equalsWithRadialTolerance(
-        other: Angle,
+        other: AngleBetweenVectors,
         tolerance: RadialTolerance,
     ): Boolean = when {
         isAcute != other.isAcute -> false

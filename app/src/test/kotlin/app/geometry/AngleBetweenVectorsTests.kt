@@ -1,6 +1,5 @@
 package app.geometry
 
-import app.algebra.linear.vectors.vector2.Vector2
 import org.junit.jupiter.api.Assertions.assertTrue
 import kotlin.math.PI
 import kotlin.math.cos
@@ -9,7 +8,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
-class AngleTests {
+class AngleBetweenVectorsTests {
     companion object {
         private const val eps = 1e-4
         private const val fiEps = eps * 2 * PI
@@ -37,7 +36,7 @@ class AngleTests {
 
             fun isZeroWithRadialTolerance(
                 other: RawVector,
-            ) = Angle(
+            ) = AngleBetweenVectors(
                 a = vecFi,
                 b = other,
             ).isZeroWithRadialTolerance(
@@ -77,7 +76,7 @@ class AngleTests {
 
     @Test
     fun testAngleZero() {
-        val angle = Angle(
+        val angle = AngleBetweenVectors(
             a = RawVector(1.0, 0.0),
             b = RawVector(1.1, 0.0),
         )
@@ -107,7 +106,7 @@ class AngleTests {
 
     @Test
     fun testAngleAcute1() {
-        val angle = Angle(
+        val angle = AngleBetweenVectors(
             a = RawVector(1.0, 0.0),
             b = RawVector(2.0, 1.0),
         )
@@ -139,7 +138,7 @@ class AngleTests {
 
     @Test
     fun testAngleOrthogonal() {
-        val angle = Angle(
+        val angle = AngleBetweenVectors(
             a = RawVector(1.0, 0.0),
             b = RawVector(0.0, 1.0),
         )
@@ -171,7 +170,7 @@ class AngleTests {
 
     @Test
     fun testAngleObtuse() {
-        val angle = Angle(
+        val angle = AngleBetweenVectors(
             a = RawVector(1.0, 0.0),
             b = RawVector(-1.0, 1.0),
         )
@@ -211,7 +210,7 @@ class AngleTests {
 
     @Test
     fun testAngleStraight() {
-        val angle = Angle(
+        val angle = AngleBetweenVectors(
             a = RawVector(1.0, 0.0),
             b = RawVector(-1.0, 0.0),
         )

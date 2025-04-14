@@ -2,7 +2,6 @@ package app.geometry
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
-import app.algebra.linear.vectors.vector2.Vector2
 
 /**
  * A direction in the 2D Euclidean space, i.e. a unit vector with a given direction and orientation.
@@ -51,7 +50,7 @@ class Direction private constructor(
 
     fun angleBetween(
         other: Direction
-    ): Angle = Angle(
+    ): AngleBetweenVectors = AngleBetweenVectors(
         a = dv,
         b = other.dv,
     )
