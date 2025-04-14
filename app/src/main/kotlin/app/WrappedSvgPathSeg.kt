@@ -4,6 +4,7 @@ import app.geometry.Point
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.splines.Spline
 import org.w3c.dom.svg.SVGPathSeg
 import org.w3c.dom.svg.SVGPathSegCurvetoCubicAbs
 import org.w3c.dom.svg.SVGPathSegLinetoAbs
@@ -62,7 +63,14 @@ sealed class WrappedSvgPathSeg {
     }
 
     sealed class CurveTo : WrappedSvgPathSeg() {
-        abstract fun toEdge(startKnot: Point): SegmentCurve.Edge<SegmentCurve<*>>
+        fun toSplineEdge(
+            startKnot: Point,
+        ) = Spline.Edge(
+            curveEdge = toCurveEdge(startKnot = startKnot),
+            metadata = null,
+        )
+
+        abstract fun toCurveEdge(startKnot: Point): SegmentCurve.Edge<SegmentCurve<*>>
 
         final override val finalPoint: Point
             get() = endPoint
@@ -77,7 +85,7 @@ sealed class WrappedSvgPathSeg {
     data class LineTo(
         override val endPoint: Point,
     ) : CurveTo() {
-        override fun toEdge(startKnot: Point): SegmentCurve.Edge<SegmentCurve<*>> = LineSegment.Edge
+        override fun toCurveEdge(startKnot: Point): SegmentCurve.Edge<SegmentCurve<*>> = LineSegment.Edge
     }
 
     data class CubicTo(
@@ -85,7 +93,7 @@ sealed class WrappedSvgPathSeg {
         val secondControl: Point,
         override val endPoint: Point,
     ) : CurveTo() {
-        override fun toEdge(
+        override fun toCurveEdge(
             startKnot: Point,
         ): SegmentCurve.Edge<SegmentCurve<*>> {
 //            require(startKnot.distanceTo(firstControl) > 0.001)

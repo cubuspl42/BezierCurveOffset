@@ -1,33 +1,34 @@
 package app.geometry.splines
 
 import app.WrappedSvgPathSeg
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
 import app.asList
-import app.dump
 import app.elementWiseAs
 import app.geometry.BoundingBox
-import app.geometry.Point
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.transformations.Transformation
 import app.uncons
-import app.withNext
+import app.untrail
 import app.withNextCyclic
 import app.withPrevious
+import app.withPreviousCyclic
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 
-class ClosedSpline<
+data class ClosedSpline<
         out CurveT : SegmentCurve<CurveT>,
         out EdgeMetadata,
         out KnotMetadata,
         >(
     /**
-     * The cyclic chain of links, must not be empty
+     * The cyclic chain of partial links, must not be empty
      */
-    override val segments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>,
+    val cyclicLinks: List<PartialLink<CurveT, EdgeMetadata, KnotMetadata>>,
 ) : Spline<CurveT, EdgeMetadata, KnotMetadata>() {
     sealed class ContourEdgeMetadata {
-        data object Corner : ContourEdgeMetadata() {
+        data object CornerEdge : ContourEdgeMetadata() {
             override val offsetDeviation = null
         }
 
@@ -39,6 +40,10 @@ class ClosedSpline<
         }
 
         abstract val offsetDeviation: Double?
+    }
+
+    sealed class ContourKnotMetadata {
+        data object Corner : ContourKnotMetadata()
     }
 
     abstract class ContourOffsetStrategy<in EdgeMetadata> {
@@ -57,55 +62,52 @@ class ClosedSpline<
         ): SegmentCurve.OffsetSplineParams
     }
 
-    data class KnotChunk<
-            out CurveT : SegmentCurve<CurveT>,
-            out EdgeMetadata,
-            out KnotMetadata,
-            >(
-        val prevEdgeMetadata: EdgeMetadata,
-        val prevEdge: SegmentCurve.Edge<CurveT>,
-        val knotMetadata: KnotMetadata,
-        val knot: Point,
-        val nextEdgeMetadata: EdgeMetadata,
-        val nextEdge: SegmentCurve.Edge<CurveT>,
-    )
-
     companion object {
         fun interconnect(
             splines: List<OpenSpline<*, SegmentCurve.OffsetEdgeMetadata, *>>,
         ): ClosedSpline<*, ContourEdgeMetadata, *> {
             require(splines.isNotEmpty())
 
-            val segments = splines.withNextCyclic().flatMap { (spline, nextSpline) ->
-                spline.segments.map { segment ->
-                    segment.mapEdgeMetadata { offsetEdgeMetadata ->
-                        ContourEdgeMetadata.Side(offsetMetadata = offsetEdgeMetadata)
+            val links = splines.withNextCyclic().flatMap { (spline, nextSpline) ->
+                spline.withoutLastKnot.map { link ->
+                    link.mapEdgeMetadata { offsetMetadata ->
+                        ContourEdgeMetadata.Side(offsetMetadata = offsetMetadata)
                     }
-                } + join(spline, nextSpline)
+                } + joinSplines(
+                    prevSpline = spline,
+                    nextSpline = nextSpline,
+                )
             }
 
             return ClosedSpline(
-                segments = segments,
+                cyclicLinks = links,
             )
         }
 
-        private fun join(
+        private fun joinSplines(
             prevSpline: OpenSpline<*, SegmentCurve.OffsetEdgeMetadata, *>,
             nextSpline: OpenSpline<*, SegmentCurve.OffsetEdgeMetadata, *>,
-        ): List<Segment<LineSegment, ContourEdgeMetadata.Corner, Nothing?>> {
+        ): List<PartialLink<LineSegment, ContourEdgeMetadata, *>> {
             val rayIntersectionOrNull = prevSpline.backRay!!.findIntersection(nextSpline.frontRay!!)
 
             return listOfNotNull(
-                Segment.lineSegment(
-                    startKnot = prevSpline.terminator.endKnot,
-                    edgeMetadata = ContourEdgeMetadata.Corner,
-                    knotMetadata = null,
+                PartialLink(
+                    startKnot = prevSpline.lastLink.endKnot,
+                    edge = Edge(
+                        curveEdge = LineSegment.Edge,
+                        metadata = ContourEdgeMetadata.CornerEdge,
+                    ),
                 ),
                 rayIntersectionOrNull?.let { rayIntersection ->
-                    Segment.lineSegment(
-                        startKnot = rayIntersection,
-                        edgeMetadata = ContourEdgeMetadata.Corner,
-                        knotMetadata = null,
+                    PartialLink(
+                        startKnot = Knot(
+                            point = rayIntersection,
+                            metadata = ContourKnotMetadata.Corner,
+                        ),
+                        edge = Edge(
+                            curveEdge = LineSegment.Edge,
+                            metadata = ContourEdgeMetadata.CornerEdge,
+                        ),
                     )
                 },
             )
@@ -113,13 +115,8 @@ class ClosedSpline<
     }
 
     init {
-        require(segments.isNotEmpty())
+        require(cyclicLinks.isNotEmpty())
     }
-
-    override val nodes: List<Node<KnotMetadata>> = segments
-
-    override val rightEdgeNode: Node<KnotMetadata>
-        get() = segments.first()
 
     fun findBoundingBox(): BoundingBox = BoundingBox.unionAll(
         subCurves.map {
@@ -130,7 +127,7 @@ class ClosedSpline<
     fun transformVia(
         transformation: Transformation,
     ) = ClosedSpline(
-        segments = segments.map { it.transformVia(transformation) },
+        cyclicLinks = cyclicLinks.map { it.transformVia(transformation) },
     )
 
     fun findContourSpline(
@@ -166,9 +163,9 @@ class ClosedSpline<
 
     private fun findOffsetSplines(
         offsetStrategy: ContourOffsetStrategy<EdgeMetadata>,
-    ) = edgeChunks.mapNotNull { subSegment ->
-        val subCurve = subSegment.edgeCurve
-        val edgeMetadata = subSegment.edgeMetadata
+    ): List<OpenSpline<*, SegmentCurve.OffsetEdgeMetadata, *>> = overlappingLinks.mapNotNull { link ->
+        val subCurve = link.curve
+        val edgeMetadata = link.edge.metadata
 
         subCurve.findOffsetSpline(
             params = offsetStrategy.determineOffsetParams(
@@ -178,79 +175,91 @@ class ClosedSpline<
     }
 
     fun <NewKnotMetadata> transformKnotMetadata(
-        transform: (Spline.Segment<CurveT, EdgeMetadata, KnotMetadata>) -> NewKnotMetadata,
+        transform: (Knot<KnotMetadata>) -> NewKnotMetadata,
     ): ClosedSpline<CurveT, EdgeMetadata, NewKnotMetadata> = ClosedSpline(
-        segments = segments.map { segment ->
-            segment.replaceKnotMetadata(
-                newKnotMetadata = transform(segment)
-            )
+        cyclicLinks.map { partialLink ->
+            partialLink.mapKnotMetadata {
+                transform(partialLink.startKnot)
+            }
         },
     )
 
+    override val overlappingLinks: List<CompleteLink<CurveT, EdgeMetadata, KnotMetadata>>
+        get() = cyclicLinks.withNextCyclic().map { (link, nextLink) ->
+            link.complete(nextLink = nextLink)
+        }
+
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double,
+    ): Boolean = when {
+        other !is ClosedSpline<*, *, *> -> false
+
+        !this.cyclicLinks.equalsWithTolerance(
+            other.cyclicLinks,
+            absoluteTolerance = absoluteTolerance,
+        ) -> false
+
+        else -> true
+    }
+
+    /**
+     * Map the sub-curves of this spline to a new type of curve.
+     *
+     * @param transform A function that transforms the sub-curve to a new
+     * sub-curve, preserving the start and the end knot.
+     */
+    private fun <NewCurveT : SegmentCurve<NewCurveT>> mapSubCurves(
+        transform: (CurveT) -> NewCurveT,
+    ): ClosedSpline<NewCurveT, EdgeMetadata, KnotMetadata> = ClosedSpline(
+        cyclicLinks = overlappingLinks.map { it.mapCurve(transform).withoutEndKnot },
+    )
+
     val simplified: ClosedSpline<*, EdgeMetadata, KnotMetadata>
-        get() {
-            val segments = segments.withNext(
-                outerRight = rightEdgeNode,
-            ).map { (segment, nextNode) ->
-                segment.simplify(
-                    endKnot = nextNode.frontKnot,
-                )
-            }
+        get() = mapSubCurves { it.simplified }
 
-            return ClosedSpline<SegmentCurve<*>, EdgeMetadata, KnotMetadata>(
-                segments = segments,
+    val joints: List<Joint<CurveT, EdgeMetadata, KnotMetadata>>
+        get() = cyclicLinks.withPreviousCyclic().map { (prevLink, link) ->
+            Joint(
+                rearEdge = prevLink.edge,
+                innerKnot = link.startKnot,
+                frontEdge = link.edge,
             )
         }
-
-    val knotChunks: List<KnotChunk<CurveT, EdgeMetadata, KnotMetadata>> =
-        segments.withPrevious(outerLeft = lastSegment).map { (prevSegment, segment) ->
-            KnotChunk(
-                prevEdgeMetadata = prevSegment.edgeMetadata,
-                prevEdge = prevSegment.edge,
-                knotMetadata = segment.startKnotMetadata,
-                knot = segment.startKnot,
-                nextEdgeMetadata = segment.edgeMetadata,
-                nextEdge = segment.edge,
-            )
-        }
-
-    fun dump() = """
-        ClosedSpline(
-            segments = ${segments.dump()},
-        )
-    """.trimIndent()
 }
 
 val ClosedSpline<*, ClosedSpline.ContourEdgeMetadata, *>.globalOffsetDeviation
-    get() = segments.mapNotNull { it.edgeMetadata.offsetDeviation }.max()
+    get() = cyclicLinks.mapNotNull { it.edge.metadata.offsetDeviation }.max()
 
 fun SVGPathElement.toClosedSpline(): ClosedSpline<*, *, *> {
-    val svgPathSegs = pathSegList.asList()
+    val (leadingSvgPathSegs, lastSvgPathSeg) = pathSegList.asList().untrail()!!
 
-    require(svgPathSegs.last().pathSegType == SVGPathSeg.PATHSEG_CLOSEPATH)
+    require(lastSvgPathSeg.pathSegType == SVGPathSeg.PATHSEG_CLOSEPATH)
 
-    val pathSegs = svgPathSegs.dropLast(1).map {
+    val pathSegs = leadingSvgPathSegs.map {
         WrappedSvgPathSeg.fromSvgPathSeg(it)
     }
 
-    val (firstPathSeg, tailPathSegs) = pathSegs.uncons()!!
+    val (firstPathSeg, trailingPathSegs) = pathSegs.uncons()!!
 
     val originPathSeg = firstPathSeg as WrappedSvgPathSeg.MoveTo
-    val edgePathSegs = tailPathSegs.elementWiseAs<WrappedSvgPathSeg.CurveTo>()
+    val edgePathSegs = trailingPathSegs.elementWiseAs<WrappedSvgPathSeg.CurveTo>()
 
-    val segments = edgePathSegs.withPrevious(
+    val cyclicLinks = edgePathSegs.withPrevious(
         outerLeft = originPathSeg,
     ).map { (prevPathSeg, pathSeg) ->
         val startKnot = prevPathSeg.finalPoint
-        Spline.Segment(
-            startKnot = startKnot,
-            edge = pathSeg.toEdge(startKnot),
-            edgeMetadata = null,
-            startKnotMetadata = null,
+
+        Spline.PartialLink(
+            startKnot = Spline.Knot(
+                point = startKnot,
+                metadata = null,
+            ),
+            edge = pathSeg.toSplineEdge(startKnot),
         )
     }
 
     return ClosedSpline(
-        segments = segments,
+        cyclicLinks = cyclicLinks,
     )
 }

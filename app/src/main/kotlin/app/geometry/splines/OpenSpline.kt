@@ -1,10 +1,9 @@
 package app.geometry.splines
 
-import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.curves.SegmentCurve
-import app.mapFirst
-import app.withPreviousOrNull
+import app.uncons
+import app.untrail
 
 abstract class OpenSpline<
         out CurveT : SegmentCurve<CurveT>,
@@ -13,87 +12,55 @@ abstract class OpenSpline<
         > : Spline<CurveT, EdgeMetadata, KnotMetadata>() {
     companion object {
         fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> of(
-            innerSegments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>,
-            terminator: Terminator<KnotMetadata>,
-        ): OpenSpline<CurveT, EdgeMetadata, KnotMetadata> = when (innerSegments.size) {
-            0 -> throw IllegalArgumentException()
+            leadingLinks: List<PartialLink<CurveT, EdgeMetadata, KnotMetadata>>,
+            lastLink: CompleteLink<CurveT, EdgeMetadata, KnotMetadata>,
+        ): OpenSpline<CurveT, EdgeMetadata, KnotMetadata> {
+            val (firstLink, innerLinks) = leadingLinks.uncons() ?: return MonoCurveSpline(
+                link = lastLink,
+            )
 
-            1 -> {
-                val segment = innerSegments.single()
-
-                MonoCurveSpline(
-                    curve = segment.edge.bind(
-                        startKnot = segment.startKnot,
-                        endKnot = terminator.endKnot,
-                    ),
-                    startKnotMetadata = segment.startKnotMetadata,
-                    edgeMetadata = segment.edgeMetadata,
-                    endKnotMetadata = terminator.endKnotMetadata,
-                )
-            }
-
-            else -> PolyCurveSpline(
-                innerSegments = innerSegments,
-                terminator = terminator,
+            return PolyCurveSpline(
+                firstLink = firstLink,
+                innerLinks = innerLinks,
+                lastLink = lastLink,
             )
         }
 
+        /**
+         * Merge a list of splines into a single spline, assuming the end of
+         * each spline is at the same point as the start of the next spline.
+         */
         fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> merge(
             splines: List<OpenSpline<CurveT, EdgeMetadata, KnotMetadata>>,
         ): OpenSpline<CurveT, EdgeMetadata, KnotMetadata> {
-            require(splines.isNotEmpty())
+            val (leadingSplines, lastSpline) = splines.untrail()
+                ?: throw IllegalArgumentException("Cannot merge empty list of splines")
 
-            if (splines.size == 1) {
-                return splines.single()
-            }
-
-            val segments = splines.withPreviousOrNull().flatMap { (prevSpline, spline) ->
-                when {
-                    prevSpline != null -> spline.segments.mapFirst { firstNode ->
-                        val prevSplineEndEndKnot = prevSpline.terminator.endKnot
-                        val splineStartKnot = firstNode.startKnot
-
-                        firstNode.copy(
-                            startKnot = Point.midPoint(prevSplineEndEndKnot, splineStartKnot),
-                        )
-                    }
-
-                    else -> spline.segments
-                }
-            }
-
-            val lastSpline = splines.last()
-            val terminalNode = lastSpline.terminator
+            val leadingLinks = leadingSplines.flatMap { spline ->
+                spline.withoutLastKnot
+            } + lastSpline.leadingLinks
 
             return OpenSpline.of(
-                innerSegments = segments,
-                terminator = terminalNode,
+                leadingLinks = leadingLinks,
+                lastLink = lastSpline.lastLink,
             )
         }
     }
 
-    final override val segments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>
-        get() = innerSegments
+    abstract val leadingLinks: List<PartialLink<CurveT, EdgeMetadata, KnotMetadata>>
 
-    abstract val innerSegments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>>
+    internal abstract val lastLink: CompleteLink<CurveT, EdgeMetadata, KnotMetadata>
 
     /**
-     * The plug node that terminates the path of links
+     * Cut the end tip of the last link (the complete link)
      */
-    abstract val terminator: Spline.Terminator<KnotMetadata>
+    abstract val withoutLastKnot: List<PartialLink<CurveT, EdgeMetadata, KnotMetadata>>
 
     val frontRay: Ray?
         get() = subCurves.first().frontRay
 
     val backRay: Ray?
         get() = subCurves.last().backRay
-
-    final override val nodes: List<Node<KnotMetadata>> by lazy {
-        segments + terminator
-    }
-
-    override val rightEdgeNode: Node<KnotMetadata>
-        get() = terminator
 }
 
 fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> OpenSpline<CurveT, EdgeMetadata, KnotMetadata>.mergeWith(
@@ -103,4 +70,4 @@ fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata, KnotMetadata> OpenSpline<Curve
 )
 
 val <CurveT : SegmentCurve<CurveT>> OpenSpline<CurveT, SegmentCurve.OffsetEdgeMetadata, *>.globalDeviation
-    get() = segments.maxOf { it.edgeMetadata.globalDeviation }
+    get() = overlappingLinks.maxOf { it.edge.metadata.globalDeviation }

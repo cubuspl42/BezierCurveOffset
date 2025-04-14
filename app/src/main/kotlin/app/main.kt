@@ -112,8 +112,6 @@ fun main() {
 
     val spline = patternOutline.closedSpline
 
-    println(spline.dump())
-
     val contourSpline = spline.findContourSpline(
         offsetStrategy = object : ClosedSpline.ContourOffsetStrategy<SeamAllowanceKind>() {
             override fun determineOffsetParams(

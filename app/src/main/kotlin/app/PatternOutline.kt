@@ -69,11 +69,11 @@ data class PatternOutline(
         ) {
             companion object {
                 fun fromChunk(
-                    chunk: ClosedSpline.KnotChunk<*, *, *>,
+                    chunk: Spline.Joint<*, *, *>,
                 ): HandleRod? {
-                    val prevBezierEdge = chunk.prevEdge as? CubicBezierCurve.Edge
-                    val knot = chunk.knot
-                    val nextBezierEdge = chunk.nextEdge as? CubicBezierCurve.Edge
+                    val prevBezierEdge = chunk.rearEdge.curveEdge as? CubicBezierCurve.Edge
+                    val knot = chunk.innerKnot.point
+                    val nextBezierEdge = chunk.frontEdge.curveEdge as? CubicBezierCurve.Edge
 
                     val rearControl = prevBezierEdge?.control1 ?: return null
                     val frontControl = nextBezierEdge?.control0 ?: return null
@@ -122,29 +122,29 @@ data class PatternOutline(
             fun fromMarkedSpline(
                 markedSpline: ClosedSpline<*, *, Marker?>,
             ): List<IntermediateSegment> {
-                val knotChunkGroups = markedSpline.knotChunks.shiftWhile {
-                    it.knotMetadata == null
+                val jointGroups = markedSpline.joints.shiftWhile {
+                    it.innerKnot.metadata == null
                 }.splitBy {
-                    it.knotMetadata != null
+                    it.innerKnot.metadata != null
                 }
 
-                return knotChunkGroups.map { knotChunkGroup ->
-                    val (firstChunk, otherChunks) = knotChunkGroup.uncons() ?: throw IllegalArgumentException()
-                    val firstKnotMarker = firstChunk.knotMetadata ?: throw IllegalArgumentException()
+                return jointGroups.map { jointGroup ->
+                    val (firstJoint, trailingJoints) = jointGroup.uncons() ?: throw IllegalArgumentException()
+                    val firstKnotMarker = firstJoint.innerKnot.metadata ?: throw IllegalArgumentException()
 
-                    val originRearEdge = firstChunk.prevEdge as? CubicBezierCurve.Edge
-                    val originFrontEdge = firstChunk.nextEdge as? CubicBezierCurve.Edge
+                    val originRearEdge = firstJoint.rearEdge.curveEdge as? CubicBezierCurve.Edge
+                    val originFrontEdge = firstJoint.frontEdge.curveEdge as? CubicBezierCurve.Edge
 
                     IntermediateSegment(
                         knotName = firstKnotMarker.name,
                         originKnot = OuterKnot(
                             rearHandlePosition = originRearEdge?.control1,
-                            knotPosition = firstChunk.knot,
+                            knotPosition = firstJoint.innerKnot.point,
                             frontHandlePosition = originFrontEdge?.control0,
                         ),
-                        innerKnots = otherChunks.map { chunk ->
+                        innerKnots = trailingJoints.map { chunk ->
                             InnerKnot(
-                                knotPosition = chunk.knot,
+                                knotPosition = chunk.innerKnot.point,
                                 handleRod = InnerKnot.HandleRod.fromChunk(chunk = chunk),
                             )
                         },
@@ -183,7 +183,7 @@ data class PatternOutline(
 
     val closedSpline: ClosedSpline<*, SeamAllowanceKind, *>
         get() = ClosedSpline(
-            segments = segments.withNextCyclic().flatMap { (segment, nextSegment) ->
+            cyclicLinks = segments.withNextCyclic().flatMap { (segment, nextSegment) ->
                 segment.knots.withNext(
                     outerRight = nextSegment.originKnot,
                 ).map { (knot, nextKnot) ->
@@ -193,17 +193,21 @@ data class PatternOutline(
                     val firstControl = knot.frontHandlePosition
                     val secondControl = nextKnot.rearHandlePosition
 
-                    Spline.Segment(
-                        startKnot = startKnot,
-                        edge = when {
-                            firstControl == null && secondControl == null -> LineSegment.Edge
-                            else -> CubicBezierCurve.Edge(
-                                control0 = firstControl ?: startKnot,
-                                control1 = secondControl ?: endKnot,
-                            )
-                        },
-                        edgeMetadata = segment.seamAllowanceKind,
-                        startKnotMetadata = null,
+                    Spline.PartialLink(
+                        startKnot = Spline.Knot(
+                            point = startKnot,
+                            metadata = null,
+                        ),
+                        edge = Spline.Edge(
+                            curveEdge = when {
+                                firstControl == null && secondControl == null -> LineSegment.Edge
+                                else -> CubicBezierCurve.Edge(
+                                    control0 = firstControl ?: startKnot,
+                                    control1 = secondControl ?: endKnot,
+                                )
+                            },
+                            metadata = segment.seamAllowanceKind,
+                        ),
                     )
                 }
             },

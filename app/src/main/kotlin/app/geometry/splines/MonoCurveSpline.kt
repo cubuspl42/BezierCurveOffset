@@ -1,5 +1,6 @@
 package app.geometry.splines
 
+import app.algebra.NumericObject
 import app.geometry.curves.SegmentCurve
 
 class MonoCurveSpline<
@@ -8,36 +9,33 @@ class MonoCurveSpline<
         out KnotMetadata,
         >(
     /**
-     * The single curve this spline consists of
+     * The single complete link this spline consists of
      */
-    private val curve: CurveT,
-    /**
-     * The metadata of the start knot
-     */
-    private val startKnotMetadata: KnotMetadata,
-    /**
-     * The metadata of the single edge
-     */
-    private val edgeMetadata: EdgeMetadata,
-    /**
-     * The metadata of the end knot
-     */
-    private val endKnotMetadata: KnotMetadata,
+    private val link: CompleteLink<CurveT, EdgeMetadata, KnotMetadata>,
 ) : OpenSpline<CurveT, EdgeMetadata, KnotMetadata>() {
-    override val subCurves: List<CurveT>
-        get() = listOf(curve)
+    override val leadingLinks: List<PartialLink<CurveT, EdgeMetadata, KnotMetadata>>
+        get() = emptyList()
 
-    override val innerSegments: List<Segment<CurveT, EdgeMetadata, KnotMetadata>> = listOf(
-        Segment(
-            startKnot = curve.start,
-            startKnotMetadata = startKnotMetadata,
-            edge = curve.edge,
-            edgeMetadata = edgeMetadata,
-        )
-    )
+    override val lastLink: CompleteLink<CurveT, EdgeMetadata, KnotMetadata>
+        get() = link
 
-    override val terminator: Terminator<KnotMetadata> = Terminator(
-        endKnot = curve.end,
-        endKnotMetadata = endKnotMetadata,
-    )
+    override val withoutLastKnot: List<PartialLink<CurveT, EdgeMetadata, KnotMetadata>>
+        get() = listOf(link.withoutEndKnot)
+
+    override val overlappingLinks: List<CompleteLink<CurveT, EdgeMetadata, KnotMetadata>>
+        get() = listOf(link)
+
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double,
+    ): Boolean = when {
+        other !is MonoCurveSpline<*, *, *> -> false
+
+        !link.equalsWithTolerance(
+            other.link,
+            absoluteTolerance = absoluteTolerance,
+        ) -> false
+
+        else -> true
+    }
 }

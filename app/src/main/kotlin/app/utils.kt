@@ -48,16 +48,35 @@ fun <T : Comparable<T>> List<T>.partitionSorted(): PartitioningResult<T>? {
 }
 
 data class Uncons<T>(
-    val head: T,
-    val tail: List<T>,
+    val firstElement: T,
+    val trailingElement: List<T>,
 )
 
 fun <T> List<T>.uncons(): Uncons<T>? = firstOrNull()?.let { head ->
     Uncons(
-        head = head,
-        tail = drop(1),
+        firstElement = head,
+        trailingElement = drop(1),
     )
 }
+
+data class Untrail<T>(
+    val leadingElements: List<T>,
+    val lastElement: T,
+)
+
+fun <T> List<T>.untrail(): Untrail<T>? = lastOrNull()?.let { foot ->
+    Untrail(
+        leadingElements = dropLast(1),
+        lastElement = foot,
+    )
+}
+
+//fun <T> List<T>.uncons(): Uncons<T>? = firstOrNull()?.let { head ->
+//    Uncons(
+//        head = head,
+//        tail = drop(1),
+//    )
+//}
 
 /**
  * Returns a list containing the results of applying the given [transform] function

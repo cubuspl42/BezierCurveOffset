@@ -1,372 +1,382 @@
 package app.geometry.splines
 
+import app.algebra.assertEqualsWithTolerance
 import app.geometry.Point
-import app.geometry.splines.Spline.Segment
-import app.geometry.splines.Spline.Terminator
+import app.geometry.curves.SegmentCurve
+import app.geometry.curves.bezier.CubicBezierCurve
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 class OpenSplineTests {
+    companion object {
+        private val eps = 10e-3
+
+        private fun <CurveT : SegmentCurve<CurveT>> SegmentCurve.Edge<CurveT>.withNoMetadata() = Spline.Edge(
+            curveEdge = this,
+            metadata = null,
+        )
+
+        private fun Point.withNoMetadata() = Spline.Knot(
+            point = this,
+            metadata = null,
+        )
+    }
+
     @Test
     fun testMerge_singleSpline_singleSubCurve() {
-        val knot0Start = Point.of(0.0, 0.0)
-        val control0 = Point.of(1.0, 1.0)
-        val control1 = Point.of(2.0, 1.0)
-        val knot1End = Point.of(3.0, 0.0)
+        val knot0 = Point.of(0.0, 0.0)
 
-        val segments = listOf(
-            Segment.bezier(
-                startKnot = knot0Start,
-                control0 = control0,
-                control1 = control1,
-                edgeMetadata = null,
-                knotMetadata = null,
-            )
+        val edge0 = CubicBezierCurve.Edge(
+            control0 = Point.of(1.0, 1.0),
+            control1 = Point.of(2.0, 1.0),
         )
 
-        val terminator = Terminator(
-            endKnot = knot1End,
-            endKnotMetadata = null,
-        )
+        val knot1 = Point.of(3.0, 0.0)
 
         val spline = OpenSpline.of(
-            innerSegments = segments,
-            terminator = terminator,
+            leadingLinks = emptyList(),
+            lastLink = Spline.CompleteLink(
+                startKnot = knot0.withNoMetadata(),
+                edge = edge0.withNoMetadata(),
+                endKnot = knot1.withNoMetadata(),
+            ),
         )
 
         val mergedSpline = OpenSpline.merge(listOf(spline))
 
-        assertEquals(
-            expected = segments,
-            actual = mergedSpline.segments,
-        )
-
-        assertEquals(
-            expected = terminator,
-            actual = mergedSpline.terminator,
+        assertEqualsWithTolerance(
+            expected = spline,
+            actual = mergedSpline,
+            absoluteTolerance = eps,
         )
     }
 
     @Test
     fun testMerge_singleSpline_multipleSubCurves() {
-        val segments = listOf(
-            Segment.bezier(
-                startKnot = Point.of(0.0, 0.0),
-                control0 = Point.of(1.0, 1.0),
-                control1 = Point.of(2.0, 1.0),
-                edgeMetadata = null,
-                knotMetadata = null,
-            ),
-            Segment.bezier(
-                startKnot = Point.of(3.0, 0.0),
-                control0 = Point.of(4.0, 1.0),
-                control1 = Point.of(5.0, 1.0),
-                edgeMetadata = null,
-                knotMetadata = null,
-            ),
-        )
+        val knot0 = Point.of(0.0, 0.0).withNoMetadata()
 
-        val terminator = Terminator(
-            endKnot = Point.of(6.0, 0.0),
-            endKnotMetadata = null,
-        )
+        val edge0 = CubicBezierCurve.Edge(
+            control0 = Point.of(1.0, 1.0),
+            control1 = Point.of(2.0, 1.0),
+        ).withNoMetadata()
+
+        val knot1 = Point.of(3.0, 0.0).withNoMetadata()
+
+        val edge1 = CubicBezierCurve.Edge(
+            control0 = Point.of(4.0, 1.0),
+            control1 = Point.of(5.0, 1.0),
+        ).withNoMetadata()
+
+        val knot2 = Point.of(6.0, 0.0).withNoMetadata()
 
         val spline = OpenSpline.of(
-            innerSegments = segments,
-            terminator = terminator,
+            leadingLinks = listOf(
+                Spline.PartialLink(
+                    startKnot = knot0,
+                    edge = edge0,
+                ),
+            ),
+            lastLink = Spline.CompleteLink(
+                startKnot = knot1,
+                edge = edge1,
+                endKnot = knot2,
+            ),
         )
 
         val mergedSpline = OpenSpline.merge(listOf(spline))
 
-        assertEquals(
-            expected = segments,
-            actual = mergedSpline.segments,
-        )
-
-        assertEquals(
-            expected = terminator,
-            actual = mergedSpline.terminator,
+        assertEqualsWithTolerance(
+            expected = spline,
+            actual = mergedSpline,
+            absoluteTolerance = eps,
         )
     }
 
     @Test
     fun testMerge_twoSplines_singleSubCurve() {
-        // Spline #0
-        val start = Point.of(0.0, 0.0)
-        val control0 = Point.of(1.0, 1.0)
-        val control1 = Point.of(2.0, 1.0)
+        val knot0 = Point.of(0.0, 0.0).withNoMetadata()
 
-        // The joint between splines #0 and #1
-        val knot0Joint = Point.of(3.0, 0.0)
+        val edge0 = CubicBezierCurve.Edge(
+            control0 = Point.of(1.0, 1.0),
+            control1 = Point.of(2.0, 1.0),
+        ).withNoMetadata()
 
-        // Spline #1
-        val control2 = Point.of(4.0, 1.0)
-        val control3 = Point.of(5.0, 1.0)
-        val end = Point.of(6.0, 0.0)
+        val knot1 = Point.of(3.0, 0.0).withNoMetadata()
 
-        val segment0 = Spline.Segment.bezier(
-            startKnot = start,
-            control0 = control0,
-            control1 = control1,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
+        val edge1 = CubicBezierCurve.Edge(
+            control0 = Point.of(5.0, 1.0),
+            control1 = Point.of(6.0, 1.0),
+        ).withNoMetadata()
 
-        val link1 = Spline.Segment.bezier(
-            startKnot = knot0Joint,
-            control0 = control2,
-            control1 = control3,
-            edgeMetadata = null,
-            knotMetadata = null,
+        val knot3 = Point.of(7.0, 0.0)
+
+        val lastLink = Spline.CompleteLink(
+            startKnot = knot1,
+            edge = edge1,
+            endKnot = knot3.withNoMetadata(),
         )
 
         val spline0 = OpenSpline.of(
-            innerSegments = listOf(
-                segment0,
-            ),
-            terminator = Spline.Terminator(
-                endKnot = knot0Joint,
-                endKnotMetadata = null,
+            leadingLinks = emptyList(),
+            lastLink = Spline.CompleteLink(
+                startKnot = knot0,
+                edge = edge0,
+                endKnot = knot1,
             ),
         )
 
         val spline1 = OpenSpline.of(
-            innerSegments = listOf(
-                link1
-            ),
-            terminator = Spline.Terminator(
-                endKnot = end,
-                endKnotMetadata = null,
-            ),
+            leadingLinks = emptyList(),
+            lastLink = lastLink,
         )
 
         val mergedSpline = OpenSpline.merge(
             splines = listOf(spline0, spline1),
         )
 
-        assertEquals(
-            expected = listOf(segment0, link1),
-            actual = mergedSpline.segments,
-        )
-
-        assertEquals(
-            expected = Spline.Terminator(
-                endKnot = end,
-                endKnotMetadata = null,
+        assertEqualsWithTolerance(
+            expected = OpenSpline.of(
+                leadingLinks = listOf(
+                    Spline.PartialLink(
+                        startKnot = knot0,
+                        edge = edge0,
+                    ),
+                ),
+                lastLink = lastLink,
             ),
-            actual = mergedSpline.terminator,
+            actual = mergedSpline,
+            absoluteTolerance = eps,
         )
     }
 
     @Test
     fun testMerge_twoSplines_multipleSubCurves() {
-        // Spline #0
-        val knot0Start = Point.of(0.0, 0.0)
-        val control0 = Point.of(1.0, 1.0)
-        val control1 = Point.of(2.0, 1.0)
-        val knot1 = Point.of(3.0, 0.0)
-        val control2 = Point.of(4.0, 1.0)
-        val control3 = Point.of(5.0, 1.0)
+        // spline #0
+        val knot0 = Point.of(0.0, 0.0).withNoMetadata()
 
-        // The joint between splines #0 and #1
-        val knot2Joint = Point.of(6.0, 0.0)
+        val edge0 = CubicBezierCurve.Edge(
+            control0 = Point.of(1.0, 1.0),
+            control1 = Point.of(2.0, 1.0),
+        ).withNoMetadata()
 
-        // Spline #1
-        val control4 = Point.of(7.0, 1.0)
-        val control5 = Point.of(8.0, 1.0)
-        val knot3 = Point.of(9.0, 0.0)
-        val control6 = Point.of(10.0, 1.0)
-        val control7 = Point.of(11.0, 1.0)
-        val knot4End = Point.of(12.0, 0.0)
+        val knot1 = Point.of(3.0, 0.0).withNoMetadata()
 
-        val segment0 = Spline.Segment.bezier(
-            startKnot = knot0Start,
-            control0 = control0,
-            control1 = control1,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
+        val edge1 = CubicBezierCurve.Edge(
+            control0 = Point.of(4.0, 1.0),
+            control1 = Point.of(5.0, 1.0),
+        ).withNoMetadata()
 
-        val link1 = Spline.Segment.bezier(
-            startKnot = knot1,
-            control0 = control2,
-            control1 = control3,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
+        // (shared)
+        val knot2 = Point.of(6.0, 0.0).withNoMetadata()
 
-        val terminator1 = Terminator(
-            endKnot = knot2Joint,
-            endKnotMetadata = null,
-        )
+        // (spline #1)
+        val edge2 = CubicBezierCurve.Edge(
+            control0 = Point.of(7.0, 1.0),
+            control1 = Point.of(8.0, 1.0),
+        ).withNoMetadata()
+
+        val knot3 = Point.of(9.0, 0.0).withNoMetadata()
+
+        val edge3 = CubicBezierCurve.Edge(
+            control0 = Point.of(10.0, 1.0),
+            control1 = Point.of(11.0, 1.0),
+        ).withNoMetadata()
+
+        val knot4 = Point.of(12.0, 0.0).withNoMetadata()
 
         val spline0 = OpenSpline.of(
-            innerSegments = listOf(segment0, link1),
-            terminator = terminator1,
-        )
-
-        val link2 = Spline.Segment.bezier(
-            startKnot = knot2Joint,
-            control0 = control4,
-            control1 = control5,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
-
-        val link3 = Spline.Segment.bezier(
-            startKnot = knot3,
-            control0 = control6,
-            control1 = control7,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
-
-        val terminator2 = Terminator(
-            endKnot = knot4End,
-            endKnotMetadata = null,
+            leadingLinks = listOf(
+                Spline.PartialLink(
+                    startKnot = knot0,
+                    edge = edge0,
+                ),
+            ),
+            lastLink = Spline.CompleteLink(
+                startKnot = knot1,
+                edge = edge1,
+                endKnot = knot2,
+            ),
         )
 
         val spline1 = OpenSpline.of(
-            innerSegments = listOf(link2, link3),
-            terminator = terminator2,
+            leadingLinks = listOf(
+                Spline.PartialLink(
+                    startKnot = knot2,
+                    edge = edge2,
+                ),
+            ),
+            lastLink = Spline.CompleteLink(
+                startKnot = knot3,
+                edge = edge3,
+                endKnot = knot4,
+            ),
         )
 
         val mergedSpline = OpenSpline.merge(
             splines = listOf(spline0, spline1),
         )
 
-        assertEquals(
-            expected = listOf(segment0, link1, link2, link3),
-            actual = mergedSpline.segments,
+        val expectedMergedSpline = OpenSpline.of(
+            leadingLinks = listOf(
+                Spline.PartialLink(
+                    startKnot = knot0,
+                    edge = edge0,
+                ),
+                Spline.PartialLink(
+                    startKnot = knot1,
+                    edge = edge1,
+                ),
+                Spline.PartialLink(
+                    startKnot = knot2,
+                    edge = edge2,
+                ),
+            ),
+            lastLink = Spline.CompleteLink(
+                startKnot = knot3,
+                edge = edge3,
+                endKnot = knot4,
+            ),
         )
 
-        assertEquals(
-            expected = terminator2,
-            actual = mergedSpline.terminator,
+        assertEqualsWithTolerance(
+            expected = expectedMergedSpline,
+            actual = mergedSpline,
+            absoluteTolerance = eps,
         )
     }
 
     @Test
     fun testMerge_multipleSplines_multipleSubCurves() {
-        // Spline #0
-        val knot0Start = Point.of(0.0, 0.0)
-        val control0 = Point.of(1.0, 1.0)
-        val control1 = Point.of(2.0, 1.0)
-        val knot1 = Point.of(3.0, 0.0)
-        val control2 = Point.of(4.0, 1.0)
-        val control3 = Point.of(5.0, 1.0)
+        // TODO: Use the Link API instead of the old Segment/Terminator API
 
-        // The joint between splines #0 and #1
-        val knot2Joint = Point.of(6.0, 0.0)
+        // spline #0
+        val knot0 = Point.of(0.0, 0.0).withNoMetadata()
 
-        // Spline #1
-        val control4 = Point.of(7.0, 1.0)
-        val control5 = Point.of(8.0, 1.0)
-        val knot3 = Point.of(9.0, 0.0)
-        val control6 = Point.of(10.0, 1.0)
-        val control7 = Point.of(11.0, 1.0)
+        val edge0 = CubicBezierCurve.Edge(
+            control0 = Point.of(1.0, 1.0),
+            control1 = Point.of(2.0, 1.0),
+        ).withNoMetadata()
 
-        // The joint between splines #1 and #2
-        val knot4Joint = Point.of(12.0, 0.0)
+        val knot1 = Point.of(3.0, 0.0).withNoMetadata()
 
-        // Spline #2
-        val control8 = Point.of(13.0, 1.0)
-        val control9 = Point.of(14.0, 1.0)
-        val knot5 = Point.of(15.0, 0.0)
-        val control10 = Point.of(16.0, 1.0)
-        val control11 = Point.of(17.0, 1.0)
-        val knot6End = Point.of(18.0, 0.0)
+        val edge1 = CubicBezierCurve.Edge(
+            control0 = Point.of(4.0, 1.0),
+            control1 = Point.of(5.0, 1.0),
+        ).withNoMetadata()
 
-        val link1 = Segment.bezier(
-            startKnot = knot0Start,
-            control0 = control0,
-            control1 = control1,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
+        // (shared)
+        val knot2 = Point.of(6.0, 0.0).withNoMetadata()
 
-        val link2 = Segment.bezier(
-            startKnot = knot1,
-            control0 = control2,
-            control1 = control3,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
+        // spline #1
+        val edge2 = CubicBezierCurve.Edge(
+            control0 = Point.of(7.0, 1.0),
+            control1 = Point.of(8.0, 1.0),
+        ).withNoMetadata()
 
-        val terminator1 = Terminator(
-            endKnot = knot2Joint,
-            endKnotMetadata = null,
-        )
+        val knot3 = Point.of(9.0, 0.0).withNoMetadata()
+
+        val edge3 = CubicBezierCurve.Edge(
+            control0 = Point.of(10.0, 1.0),
+            control1 = Point.of(11.0, 1.0),
+        ).withNoMetadata()
+
+        // (shared)
+        val knot4 = Point.of(12.0, 0.0).withNoMetadata()
+
+        // spline #2
+        val edge4 = CubicBezierCurve.Edge(
+            control0 = Point.of(13.0, 1.0),
+            control1 = Point.of(14.0, 1.0),
+        ).withNoMetadata()
+
+        val knot5 = Point.of(15.0, 0.0).withNoMetadata()
+
+        val edge5 = CubicBezierCurve.Edge(
+            control0 = Point.of(16.0, 1.0),
+            control1 = Point.of(17.0, 1.0),
+        ).withNoMetadata()
+
+        val knot6 = Point.of(18.0, 0.0).withNoMetadata()
 
         val spline0 = OpenSpline.of(
-            innerSegments = listOf(link1, link2),
-            terminator = terminator1,
-        )
-
-        val link3 = Segment.bezier(
-            startKnot = knot2Joint,
-            control0 = control4,
-            control1 = control5,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
-
-        val link4 = Segment.bezier(
-            startKnot = knot3,
-            control0 = control6,
-            control1 = control7,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
-
-        val terminator2 = Terminator(
-            endKnot = knot4Joint,
-            endKnotMetadata = null,
+            leadingLinks = listOf(
+                Spline.PartialLink(
+                    startKnot = knot0,
+                    edge = edge0,
+                ),
+            ),
+            lastLink = Spline.CompleteLink(
+                startKnot = knot1,
+                edge = edge1,
+                endKnot = knot2,
+            ),
         )
 
         val spline1 = OpenSpline.of(
-            innerSegments = listOf(link3, link4),
-            terminator = terminator2,
-        )
-
-        val link5 = Segment.bezier(
-            startKnot = knot4Joint,
-            control0 = control8,
-            control1 = control9,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
-
-        val link6 = Segment.bezier(
-            startKnot = knot5,
-            control0 = control10,
-            control1 = control11,
-            edgeMetadata = null,
-            knotMetadata = null,
-        )
-
-        val terminator3 = Terminator(
-            endKnot = knot6End,
-            endKnotMetadata = null,
+            leadingLinks = listOf(
+                Spline.PartialLink(
+                    startKnot = knot2,
+                    edge = edge2,
+                ),
+            ),
+            lastLink = Spline.CompleteLink(
+                startKnot = knot3,
+                edge = edge3,
+                endKnot = knot4,
+            ),
         )
 
         val spline2 = OpenSpline.of(
-            innerSegments = listOf(link5, link6),
-            terminator = terminator3,
+            leadingLinks = listOf(
+                Spline.PartialLink(
+                    startKnot = knot4,
+                    edge = edge4,
+                ),
+            ),
+            lastLink = Spline.CompleteLink(
+                startKnot = knot5,
+                edge = edge5,
+                endKnot = knot6,
+            ),
         )
 
         val mergedSpline = OpenSpline.merge(
-            listOf(spline0, spline1, spline2),
+            splines = listOf(spline0, spline1, spline2),
         )
 
-        assertEquals(
-            expected = listOf(link1, link2, link3, link4, link5, link6),
-            actual = mergedSpline.segments,
+        val expectedMergedSpline = OpenSpline.of(
+            leadingLinks = listOf(
+                Spline.PartialLink(
+                    startKnot = knot0,
+                    edge = edge0,
+                ),
+                Spline.PartialLink(
+                    startKnot = knot1,
+                    edge = edge1,
+                ),
+                Spline.PartialLink(
+                    startKnot = knot2,
+                    edge = edge2,
+                ),
+                Spline.PartialLink(
+                    startKnot = knot3,
+                    edge = edge3,
+                ),
+                Spline.PartialLink(
+                    startKnot = knot4,
+                    edge = edge4,
+                ),
+            ),
+            lastLink = Spline.CompleteLink(
+                startKnot = knot5,
+                edge = edge5,
+                endKnot = knot6,
+            ),
         )
 
-        assertEquals(
-            expected = terminator3,
-            actual = mergedSpline.terminator,
+        assertEqualsWithTolerance(
+            expected = expectedMergedSpline,
+            actual = mergedSpline,
+            absoluteTolerance = eps,
         )
     }
 }

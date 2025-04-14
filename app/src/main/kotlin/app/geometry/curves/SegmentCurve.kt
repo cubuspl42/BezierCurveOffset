@@ -69,15 +69,6 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
         ): Edge<CurveT>
     }
 
-    fun <EdgeMetadata> toSegment(
-        edgeMetadata: EdgeMetadata,
-    ): Spline.Segment<CurveT, EdgeMetadata, *> = Spline.Segment(
-        startKnot = start,
-        edge = edge,
-        edgeMetadata = edgeMetadata,
-        startKnotMetadata = null,
-    )
-
     abstract fun findBoundingBox(): BoundingBox
 
     abstract val start: Point
@@ -96,10 +87,20 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> {
 fun <CurveT : SegmentCurve<CurveT>, EdgeMetadata> CurveT.toSpline(
     edgeMetadata: EdgeMetadata,
 ): MonoCurveSpline<CurveT, EdgeMetadata, *> = MonoCurveSpline(
-    curve = this,
-    startKnotMetadata = null,
-    edgeMetadata = edgeMetadata,
-    endKnotMetadata = null,
+    link = Spline.CompleteLink(
+        startKnot = Spline.Knot(
+            point = start,
+            metadata = null,
+        ),
+        edge = Spline.Edge(
+            curveEdge = edge,
+            metadata = edgeMetadata,
+        ),
+        endKnot = Spline.Knot(
+            point = end,
+            metadata = null,
+        ),
+    ),
 )
 
 fun SegmentCurve<*>.toDebugSvgPathGroup(

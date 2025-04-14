@@ -120,14 +120,14 @@ object PatternSvg {
             closestMarker.position.distanceTo(position) < maxDistance
         }
 
-        val markedSpline = spline.transformKnotMetadata { segment ->
+        val markedSpline = spline.transformKnotMetadata { knot ->
             getClosestMarker(
-                position = segment.startKnot,
+                position = knot.point,
                 maxDistance = 10.0,
             )
         }
 
-        val nameGrouping = markedSpline.segments.groupingBy { it.startKnotMetadata?.name }
+        val nameGrouping = markedSpline.cyclicLinks.groupingBy { it.startKnot.metadata?.name }
 
         val countByName = nameGrouping.eachCount()
 
