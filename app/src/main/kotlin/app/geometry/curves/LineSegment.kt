@@ -178,17 +178,21 @@ data class LineSegment(
         )
     }
 
-    override val frontRay: Ray
-        get() = Ray.inDirection(
-            point = start,
-            direction = direction!!.opposite,
-        )
+    override val frontRay: Ray?
+        get() = direction?.opposite?.let {
+            Ray.inDirection(
+                point = start,
+                direction = it,
+            )
+        }
 
-    override val backRay: Ray
-        get() = Ray.inDirection(
-            point = end,
-            direction = direction!!,
-        )
+    override val backRay: Ray?
+        get() = direction?.let {
+            Ray.inDirection(
+                point = end,
+                direction = it,
+            )
+        }
 
     override val simplified: SegmentCurve<*>
         get() = this
