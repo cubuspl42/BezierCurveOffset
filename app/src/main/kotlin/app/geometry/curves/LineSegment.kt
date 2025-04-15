@@ -3,9 +3,10 @@ package app.geometry.curves
 import app.algebra.NumericObject
 import app.fillCircle
 import app.geometry.BoundingBox
-import app.geometry.Constants
+import app.geometry.Curve
+import app.geometry.Curve.IntersectionDetails
 import app.geometry.Direction
-import app.geometry.LineEquation
+import app.geometry.RawLine
 import app.geometry.Point
 import app.geometry.RawVector
 import app.geometry.Ray
@@ -31,7 +32,7 @@ data class LineSegment(
         override fun bind(
             startKnot: Point,
             endKnot: Point,
-        ): LineSegment = LineSegment(
+        ): LineSegment = LineSegment.of(
             start = startKnot,
             end = endKnot,
         )
@@ -51,62 +52,35 @@ data class LineSegment(
     }
 
     companion object {
+        fun of(
+            start: Point,
+            end: Point,
+        ): LineSegment = LineSegment(
+            start = start,
+            end = end,
+        )
+
         fun findIntersection(
             lineSegment0: LineSegment,
             lineSegment1: LineSegment,
-        ): IntersectionDetails? {
-            // Technically, when one or both of the lines are degenerate (are
-            // effectively points), we _could_ consider them intersecting if
-            // one of the points lies on another line segment / point, but for
-            // now we don't do that
-            val ls0 = lineSegment0.lineEquation ?: return null
-            val ls1 = lineSegment1.lineEquation ?: return null
-
-            val solution = LineEquation.solveIntersection(
-                l0 = ls0,
-                l1 = ls1,
-            ) ?: return null
-
-            val t0 = solution.t0
-            val t1 = solution.t1
-
-            return when {
-                t0 in segmentTRange && t1 in segmentTRange -> {
-                    val pi0 = ls0.evaluate(t = t0)
-
-                    return object : IntersectionDetails() {
-                        override val point: Point
-                            get() = ls0.evaluate(t = t0).asPoint
-
-                        override val t0: Double
-                            get() = solution.t0
-
-                        override val t1: Double
-                            get() = solution.t1
-                    }
-                }
-
-                // The intersection point would lye outside the line segment(s)
-                else -> null
-            }
+        ): IntersectionDetails<LineSegment, LineSegment>? {
+            return RawLine.findIntersection(
+                rawLine0 = lineSegment0.rawLine ?: return null,
+                rawLine1 = lineSegment1.rawLine ?: return null,
+            )?.filterLineSegmentIntersection0()?.filterLineSegmentIntersection1()
         }
     }
+
+    val rawLine: RawLine?
+        get() = RawLine.of(
+            start.pv, end.pv,
+        )
 
     private val dv: RawVector
         get() = end.pv - start.pv
 
-    internal val lineEquation: LineEquation?
-        get() = when {
-            dv == RawVector.zero -> null
-
-            else -> LineEquation(
-                p0 = start.pv,
-                dv = dv,
-            )
-        }
-
     val direction: Direction? = Direction.of(
-        end.pvRaw - start.pvRaw,
+        end.pv - start.pv,
     )
 
     override fun evaluateSegment(
@@ -149,7 +123,7 @@ data class LineSegment(
         direction: Direction,
         distance: Double,
     ): LineSegment? {
-        return LineSegment(
+        return LineSegment.of(
             start = start.translateInDirection(
                 direction = direction,
                 distance = distance,
@@ -192,7 +166,7 @@ data class LineSegment(
     ): LineSegment? {
         val offsetDirection = direction?.perpendicular ?: return null
 
-        return LineSegment(
+        return LineSegment.of(
             start = start.translateInDirection(
                 direction = offsetDirection,
                 distance = offset,
@@ -218,6 +192,20 @@ data class LineSegment(
 
     override val simplified: SegmentCurve<*>
         get() = this
+}
+
+internal fun <Curve1 : Curve> IntersectionDetails<RawLine, Curve1>.filterLineSegmentIntersection0(): IntersectionDetails<LineSegment, Curve1>? {
+    @Suppress("UNCHECKED_CAST") return when {
+        t0 in SegmentCurve.segmentTRange -> this as IntersectionDetails<LineSegment, Curve1>
+        else -> null
+    }
+}
+
+internal fun <Curve0 : Curve> IntersectionDetails<Curve0, RawLine>.filterLineSegmentIntersection1(): IntersectionDetails<Curve0, LineSegment>? {
+    @Suppress("UNCHECKED_CAST") return when {
+        t1 in SegmentCurve.segmentTRange -> this as IntersectionDetails<Curve0, LineSegment>
+        else -> null
+    }
 }
 
 private fun SegmentCurve<*>.toSvgPathSeg(

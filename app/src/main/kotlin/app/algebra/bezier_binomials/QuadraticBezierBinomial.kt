@@ -35,10 +35,10 @@ val QuadraticBezierBinomial<RawVector>.segmentsQuadratic: List<LineSegment>
     get() = listOf(lineSegment0, lineSegment1)
 
 val QuadraticBezierBinomial<RawVector>.lineSegment0: LineSegment
-    get() = LineSegment(start = point0, end = point1)
+    get() = LineSegment.of(start = point0, end = point1)
 
 val QuadraticBezierBinomial<RawVector>.lineSegment1: LineSegment
-    get() = LineSegment(start = point1, end = point2)
+    get() = LineSegment.of(start = point1, end = point2)
 
 fun QuadraticBezierBinomial<RawVector>.findSkeletonQuadratic(
     t: Double,

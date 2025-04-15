@@ -66,7 +66,7 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : Curve() {
         fun findIntersections(
             segmentCurve0: SegmentCurve<*>,
             segmentCurve1: SegmentCurve<*>,
-        ): Set<IntersectionDetails> = when {
+        ): Set<IntersectionDetails<*, *>> = when {
             segmentCurve0 is LineSegment && segmentCurve1 is LineSegment -> setOfNotNull(
                 LineSegment.findIntersection(
                     lineSegment0 = segmentCurve0,

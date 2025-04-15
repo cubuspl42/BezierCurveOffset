@@ -3,12 +3,13 @@ package app.algebra.bezier_binomials
 import app.algebra.polynomials.Polynomial
 import app.geometry.RawVector
 import app.geometry.curves.LineSegment
+import app.geometry.curves.bezier.RawTimeFunction
 import app.geometry.curves.bezier.TimeFunction
 
 /**
  * @param V - the type of the weights and the result
  */
-sealed class BezierBinomial<out V> : RealFunction<V>() {
+sealed class BezierBinomial<out V> : RawTimeFunction<V>() {
     data class CriticalPointSet(
         val criticalPointsX: Set<Double>,
         val criticalPointsY: Set<Double>,
@@ -29,13 +30,6 @@ sealed class BezierBinomial<out V> : RealFunction<V>() {
 
         private fun isInteresting(t: Double): Boolean = t > (0.0 + eps) && t < (1.0 - eps)
     }
-
-    final override fun apply(x: Double): V = evaluate(t = x)
-
-    /**
-     * Evaluates the Bézier binomial at the given parameter t, which can be in the range [0, 1], but doesn't have to.
-     */
-    abstract fun evaluate(t: Double): V
 }
 
 val BezierBinomial<RawVector>.lineSegments: List<LineSegment>

@@ -12,27 +12,27 @@ import org.w3c.dom.svg.SVGPathElement
  * A ray in 2D Euclidean space, described by the equation p = s + td for t >= 0
  */
 class Ray(
-    private val lineEquation: LineEquation,
+    private val rawLine: RawLine,
 ) {
     /**
      * The initial point of the ray
      */
-    val startingPoint: Point = lineEquation.p0.asPoint
+    val startingPoint: Point = rawLine.p0.asPoint
 
     /**
      * The direction of this ray
      */
-    val direction: Direction = lineEquation.dv.asDirection!!
+    val direction: Direction = rawLine.dv.asDirection!!
 
     companion object {
         fun inDirection(
             point: Point,
             direction: Direction,
         ): Ray = Ray(
-            lineEquation = LineEquation(
-                p0 = point.pvRaw,
-                dv = direction.dvRaw,
-            )
+            rawLine = RawLine.of(
+                p0 = point.pv,
+                p1 = point.pv + direction.dv,
+            )!!,
         )
     }
 
@@ -58,12 +58,12 @@ class Ray(
     fun findIntersection(
         other: Ray,
     ): Point? {
-        val l0 = lineEquation
-        val l1 = other.lineEquation
+        val l0 = rawLine
+        val l1 = other.rawLine
 
-        val solution = LineEquation.solveIntersection(
-            l0 = l0,
-            l1 = l1,
+        val solution = RawLine.findIntersection(
+            rawLine0 = l0,
+            rawLine1 = l1,
         ) ?: return null
 
         val t0 = solution.t0
@@ -80,7 +80,7 @@ class Ray(
                     ),
                 )
 
-                pi0.asPoint
+                pi0
             }
 
             // The intersection point would lye outside the ray
@@ -98,7 +98,7 @@ class Ray(
 
 fun Ray.toDebugPath(
     document: SVGDocument,
-): SVGPathElement = LineSegment(
+): SVGPathElement = LineSegment.of(
     start = startingPoint,
     end = startingPoint.translateInDirection(
         direction = direction,

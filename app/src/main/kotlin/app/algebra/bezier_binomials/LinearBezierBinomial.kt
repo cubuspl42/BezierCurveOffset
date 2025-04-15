@@ -29,7 +29,7 @@ val LinearBezierBinomial<RawVector>.point1: Point
     get() = this.weight1.asPoint
 
 val LinearBezierBinomial<RawVector>.lineSegment0: LineSegment
-    get() = LineSegment(start = point0, end = point1)
+    get() = LineSegment.of(start = point0, end = point1)
 
 val LinearBezierBinomial<RawVector>.segmentsLinear: List<LineSegment>
     get() = listOf(lineSegment0)

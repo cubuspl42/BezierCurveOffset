@@ -34,9 +34,6 @@ class Direction private constructor(
         )
     }
 
-    val dvRaw: RawVector
-        get() = dv
-
     val perpendicular: Direction
         get() = Direction(dv = dv.perpendicular)
 

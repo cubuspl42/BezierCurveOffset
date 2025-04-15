@@ -4,29 +4,29 @@ package app.geometry
  * A line in 2D Euclidean space
  */
 class Line(
-    internal val lineEquation: LineEquation,
+    internal val rawLine: RawLine,
 ) : Curve() {
     companion object {
         fun inDirection(
             point: Point,
             direction: Direction,
         ): Line = Line(
-            lineEquation = LineEquation(
-                p0 = point.pvRaw,
-                dv = direction.dvRaw,
-            ),
+            rawLine = RawLine.of(
+                p0 = point.pv,
+                p1 = point.pv +  direction.dv,
+            )!!,
         )
     }
 
     fun findIntersection(
         other: Line,
     ): Point? {
-        val l0 = this.lineEquation
-        val l1 = other.lineEquation
+        val l0 = this.rawLine
+        val l1 = other.rawLine
 
-        val solution = LineEquation.solveIntersection(
-            l0 = l0,
-            l1 = l1,
+        val solution = RawLine.findIntersection(
+            rawLine0 = l0,
+            rawLine1 = l1,
         ) ?: return null
 
         val pi0 = l0.evaluate(t = solution.t0)
@@ -38,12 +38,12 @@ class Line(
             ),
         )
 
-        return pi0.asPoint
+        return pi0
     }
 
     override fun evaluate(
         t: Double,
-    ): Point = lineEquation.evaluate(t = t).asPoint
+    ): Point = rawLine.evaluate(t = t)
 
     override fun equals(other: Any?): Boolean {
         throw UnsupportedOperationException()

@@ -4,7 +4,7 @@ package app.geometry
  * A directed line bound to a point in 2D Euclidean space
  */
 class BoundDirectedLine(
-    internal val lineEquation: LineEquation,
+    internal val rawLine: RawLine,
 ) {
     enum class Section {
         Front, Back;
@@ -25,22 +25,22 @@ class BoundDirectedLine(
             bindingPoint: Point,
             direction: Direction,
         ): BoundDirectedLine = BoundDirectedLine(
-            lineEquation = LineEquation(
-                p0 = bindingPoint.pvRaw,
-                dv = direction.dvRaw,
-            ),
+            rawLine = RawLine.of(
+                p0 = bindingPoint.pv,
+                p1 = bindingPoint.pv + direction.dv,
+            )!!,
         )
     }
 
     fun findIntersection(
         other: BoundDirectedLine,
     ): Intersection? {
-        val l0 = this.lineEquation
-        val l1 = other.lineEquation
+        val l0 = this.rawLine
+        val l1 = other.rawLine
 
-        val solution = LineEquation.solveIntersection(
-            l0 = l0,
-            l1 = l1,
+        val solution = RawLine.findIntersection(
+            rawLine0 = l0,
+            rawLine1 = l1,
         ) ?: return null
 
         val t0 = solution.t0
@@ -56,7 +56,7 @@ class BoundDirectedLine(
         )
 
         return Intersection(
-            point = pi0.asPoint,
+            point = pi0,
             section = Section.of(t = t0),
             otherSection = Section.of(t = t1),
         )

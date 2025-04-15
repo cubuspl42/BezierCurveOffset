@@ -29,7 +29,7 @@ value class BiDirection internal constructor(
     }
 
     val dv: RawVector
-        get() = representativeDirection.dvRaw
+        get() = representativeDirection.dv
 
     val perpendicular: BiDirection
         get() = BiDirection(

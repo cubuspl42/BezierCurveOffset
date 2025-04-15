@@ -417,17 +417,17 @@ class CubicBezierSegmentCurveTests {
 
         assertEqualsWithTolerance(
             expected = listOf(
-                object : Curve.IntersectionDetails() {
+                object : Curve.IntersectionDetails<LineSegment, CubicBezierCurve>() {
                     override val point: Point = Point.of(56.4, 121.4)
                     override val t0: Double = 0.1388
                     override val t1: Double = 0.097
                 },
-                object : Curve.IntersectionDetails() {
+                object : Curve.IntersectionDetails<LineSegment, CubicBezierCurve>() {
                     override val point: Point = Point.of(125.1, 138.2)
                     override val t0: Double = 0.4982
                     override val t1: Double = 0.5146
                 },
-                object : Curve.IntersectionDetails() {
+                object : Curve.IntersectionDetails<LineSegment, CubicBezierCurve>() {
                     override val point: Point = Point.of(191.7, 154.5)
                     override val t0: Double = 0.8466
                     override val t1: Double = 0.9314

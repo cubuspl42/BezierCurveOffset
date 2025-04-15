@@ -4,7 +4,7 @@ import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 
 abstract class Curve {
-    abstract class IntersectionDetails : GeometricObject, NumericObject {
+    abstract class IntersectionDetails<out Curve0 : Curve, out Curve1 : Curve> : GeometricObject, NumericObject {
         abstract val point: Point
 
         abstract val t0: Double
@@ -15,7 +15,7 @@ abstract class Curve {
             other: GeometricObject,
             tolerance: GeometricTolerance
         ): Boolean = when {
-            other !is IntersectionDetails -> false
+            other !is IntersectionDetails<*, *> -> false
             !point.equalsWithTolerance(other.point, absoluteTolerance = tolerance.distanceTolerance) -> false
             !t0.equalsWithTolerance(other.t0, absoluteTolerance = tolerance.distanceTolerance) -> false
             !t1.equalsWithTolerance(other.t1, absoluteTolerance = tolerance.distanceTolerance) -> false
@@ -26,7 +26,7 @@ abstract class Curve {
             other: NumericObject,
             absoluteTolerance: Double,
         ): Boolean = when {
-            other !is IntersectionDetails -> false
+            other !is IntersectionDetails<*, *> -> false
             !point.equalsWithTolerance(other.point, absoluteTolerance = absoluteTolerance) -> false
             !t0.equalsWithTolerance(other.t0, absoluteTolerance = absoluteTolerance) -> false
             !t1.equalsWithTolerance(other.t1, absoluteTolerance = absoluteTolerance) -> false

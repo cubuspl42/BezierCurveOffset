@@ -97,14 +97,11 @@ data class Point internal constructor(
         py = py.toDouble(),
     )
 
-    val pvRaw: RawVector
-        get() = pv
-
     val x: Double
-        get() = pv.x
+        get() = this.pv.x
 
     val y: Double
-        get() = pv.y
+        get() = this.pv.y
 
     fun translationTo(
         other: Point,
@@ -128,7 +125,7 @@ data class Point internal constructor(
     fun directionTo(
         other: Point,
     ): Direction? = Direction.of(
-        dv = other.pvRaw - this.pvRaw,
+        dv = other.pv - this.pv,
     )
 
     /**
@@ -171,13 +168,13 @@ data class Point internal constructor(
     )
 
     fun snapTo(line: Line): Point {
-        val l = line.lineEquation
-        val pd = l.p0 - pvRaw
+        val l = line.rawLine
+        val pd = l.p0 - this.pv
         val t = pd.findProjectionScale(l.dv)
-        return l.evaluate(t = t).asPoint
+        return l.evaluate(t = t)
     }
 
-    fun dump(): String = "Point.of(${"%.2f".format(pv.x)}, ${"%.2f".format(pv.y)})"
+    fun dump(): String = "Point.of(${"%.2f".format(this.pv.x)}, ${"%.2f".format(this.pv.y)})"
 
     fun transformVia(
         transformation: Transformation,

@@ -7,8 +7,10 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.fill
 import app.fillCircle
 import app.geometry.*
+import app.geometry.Curve.IntersectionDetails
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
+import app.geometry.curves.filterLineSegmentIntersection0
 import app.geometry.curves.toSvgPath
 import app.geometry.transformations.Rotation
 import app.geometry.transformations.Transformation
@@ -27,10 +29,7 @@ import java.awt.Graphics2D
  */
 @Suppress("DataClassPrivateConstructor")
 data class CubicBezierCurve private constructor(
-    override val start: Point,
-    val control0: Point,
-    val control1: Point,
-    override val end: Point,
+    internal val rawCubicBezierCurve: RawCubicBezierCurve,
 ) : BezierCurve() {
     data class Edge(
         val control0: Point,
@@ -77,55 +76,49 @@ data class CubicBezierCurve private constructor(
             control0: Point,
             control1: Point,
             end: Point,
-        ): CubicBezierCurve {
-//            require(start.distanceTo(control0) > 0.001)
-
-            return CubicBezierCurve(
-                start = start,
-                control0 = control0,
-                control1 = control1,
-                end = end,
-            )
-        }
+        ): CubicBezierCurve = CubicBezierCurve(
+            rawCubicBezierCurve = RawCubicBezierCurve.of(
+                point0 = start,
+                point1 = control0,
+                point2 = control1,
+                point3 = end,
+            ),
+        )
 
         fun findIntersections(
             lineSegment: LineSegment,
             bezierCurve: CubicBezierCurve,
-        ): Set<IntersectionDetails> {
-            val lineEquation = lineSegment.lineEquation!!
-            val p0 = lineEquation.p0
-            val dv = lineEquation.dv
-
-            val rotation = Rotation.byAngle(angle = -dv.angleBetweenXAxis())
-            val transformation = Translation.of(-p0).combineWith(rotation)
-
-            val transformedBezierCurve = bezierCurve.transformVia(
-                transformation = transformation,
-            )
-
-            val transformedBezierCurveY = transformedBezierCurve.basisFormula.componentYCubic
-            val roots = transformedBezierCurveY.findRoots()
-
-            return roots.map { t1 ->
-                object : IntersectionDetails() {
-                    override val point: Point
-                        get() = bezierCurve.evaluate(t = t1)
-
-                    override val t0: Double
-                        get() = lineEquation.findT(y = point.y)
-
-                    override val t1: Double = t1
-                }
+        ): Set<IntersectionDetails<LineSegment, CubicBezierCurve>> {
+            return RawCubicBezierCurve.findIntersections(
+                rawLine = lineSegment.rawLine ?: return emptySet(),
+                bezierCurve = bezierCurve.rawCubicBezierCurve,
+            ).mapNotNull {
+                it.filterLineSegmentIntersection0()?.filterCubicBezierCurveIntersection1()
             }.toSet()
         }
 
         fun findIntersections(
             bezierCurve0: CubicBezierCurve,
             bezierCurve1: CubicBezierCurve,
-        ): Set<IntersectionDetails> {
-            TODO()
-        }
+        ): Set<IntersectionDetails<CubicBezierCurve, CubicBezierCurve>> = RawCubicBezierCurve.findIntersections(
+            rawBezierCurve0 = bezierCurve0.rawCubicBezierCurve,
+            rawBezierCurve1 = bezierCurve1.rawCubicBezierCurve,
+        ).mapNotNull {
+            it.filterCubicBezierCurveIntersection0()?.filterCubicBezierCurveIntersection1()
+        }.toSet()
     }
+
+    override val start: Point
+        get() = rawCubicBezierCurve.point0
+
+    val control0: Point
+        get() = rawCubicBezierCurve.point1
+
+    val control1: Point
+        get() = rawCubicBezierCurve.point2
+
+    override val end: Point
+        get() = rawCubicBezierCurve.point3
 
     override fun findBoundingBox(): BoundingBox {
         val startPoint = curveFunction.startValue
@@ -263,7 +256,7 @@ data class CubicBezierCurve private constructor(
 
     override val simplified: SegmentCurve<*>
         get() = when {
-            start == control0 && control1 == end -> LineSegment(
+            start == control0 && control1 == end -> LineSegment.of(
                 start = start,
                 end = end,
             )
@@ -271,13 +264,8 @@ data class CubicBezierCurve private constructor(
             else -> this
         }
 
-    override val basisFormula = CubicBezierBinomial(
-        vectorSpace = RawVector.RawVectorSpace,
-        weight0 = start.pv,
-        weight1 = control0.pv,
-        weight2 = control1.pv,
-        weight3 = end.pv,
-    )
+    override val basisFormula: CubicBezierBinomial<RawVector>
+        get() = rawCubicBezierCurve.basisFormula
 
     val lineSegment0: LineSegment
         get() = basisFormula.lineSegment0
@@ -298,7 +286,7 @@ data class CubicBezierCurve private constructor(
 
     fun mapPointWise(
         transform: (Point) -> Point,
-    ): CubicBezierCurve = CubicBezierCurve(
+    ): CubicBezierCurve = CubicBezierCurve.of(
         start = transform(start),
         control0 = transform(control0),
         control1 = transform(control1),
@@ -308,7 +296,7 @@ data class CubicBezierCurve private constructor(
     fun mapPointWiseOrNull(
         transform: (Point) -> Point?,
     ): CubicBezierCurve? {
-        return CubicBezierCurve(
+        return CubicBezierCurve.of(
             start = transform(start) ?: return null,
             control0 = transform(control0) ?: return null,
             control1 = transform(control1) ?: return null,
@@ -344,6 +332,20 @@ data class CubicBezierCurve private constructor(
         translation: Translation,
     ): CubicBezierCurve = mapPointWise {
         it.transformVia(translation)
+    }
+}
+
+internal fun <Curve1 : Curve> IntersectionDetails<RawCubicBezierCurve, Curve1>.filterCubicBezierCurveIntersection0(): IntersectionDetails<CubicBezierCurve, Curve1>? {
+    @Suppress("UNCHECKED_CAST") return when {
+        t0 in SegmentCurve.segmentTRange -> this as IntersectionDetails<CubicBezierCurve, Curve1>
+        else -> null
+    }
+}
+
+internal fun <Curve0 : Curve> IntersectionDetails<Curve0, RawCubicBezierCurve>.filterCubicBezierCurveIntersection1(): IntersectionDetails<Curve0, CubicBezierCurve>? {
+    @Suppress("UNCHECKED_CAST") return when {
+        t1 in SegmentCurve.segmentTRange -> this as IntersectionDetails<Curve0, CubicBezierCurve>
+        else -> null
     }
 }
 
