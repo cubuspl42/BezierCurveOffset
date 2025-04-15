@@ -3,6 +3,8 @@ package app.algebra.bezier_binomials
 import app.algebra.linear.VectorSpace
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.vectors.vector4.Vector4
+import app.algebra.polynomials.CubicPolynomial
+import app.algebra.polynomials.Polynomial
 import app.geometry.Point
 import app.geometry.RawVector
 import app.geometry.curves.LineSegment
@@ -72,6 +74,13 @@ val CubicBezierBinomial<RawVector>.lineSegment1: LineSegment
 
 val CubicBezierBinomial<RawVector>.lineSegment2: LineSegment
     get() = LineSegment(start = point2, end = point3)
+
+fun CubicBezierBinomial<Double>.toPolynomialFormulaCubic(): Polynomial? = CubicPolynomial.of(
+    a = -weight0 + 3.0 * weight1 - 3.0 * weight2 + weight3,
+    b = 3.0 * weight0 - 6.0 * weight1 + 3.0 * weight2,
+    c = -3.0 * weight0 + 3.0 * weight1,
+    d = weight0,
+)
 
 val CubicBezierBinomial<RawVector>.componentXCubic
     get() = CubicBezierBinomial(

@@ -14,4 +14,10 @@ data class PrincipalAngleBetweenVectors(
 
     override val sinFi: Double
         get() = reference.cross(subject) / (reference.length * subject.length)
+
+    override val inverted: PrincipalAngle
+        get() = PrincipalAngleBetweenVectors(
+            reference = subject,
+            subject = reference,
+        )
 }

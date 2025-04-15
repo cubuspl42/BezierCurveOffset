@@ -71,6 +71,9 @@ data class MixedTransformation private constructor(
 
         return Point.of(pv = pt.vector2.raw)
     }
+
+    override val inverted: Transformation
+        get() = TODO("Not yet implemented")
 }
 
 val SVGGElement.transformation: MixedTransformation

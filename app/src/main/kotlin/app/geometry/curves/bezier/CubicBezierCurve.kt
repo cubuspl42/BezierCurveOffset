@@ -4,13 +4,13 @@ import app.SVGGElementUtils
 import app.algebra.NumericObject
 import app.algebra.bezier_binomials.*
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
-import app.algebra.linear.vectors.vector2.Vector2
 import app.fill
 import app.fillCircle
 import app.geometry.*
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.toSvgPath
+import app.geometry.transformations.Rotation
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.Translation
 import app.stroke
@@ -88,17 +88,41 @@ data class CubicBezierCurve private constructor(
             )
         }
 
-        fun findIntersection(
+        fun findIntersections(
             lineSegment: LineSegment,
             bezierCurve: CubicBezierCurve,
-        ): IntersectionDetails? {
-            TODO()
+        ): Set<IntersectionDetails> {
+            val lineEquation = lineSegment.lineEquation!!
+            val p0 = lineEquation.p0
+            val dv = lineEquation.dv
+
+            val rotation = Rotation.byAngle(angle = -dv.angleBetweenXAxis())
+            val transformation = Translation.of(-p0).combineWith(rotation)
+
+            val transformedBezierCurve = bezierCurve.transformVia(
+                transformation = transformation,
+            )
+
+            val transformedBezierCurveY = transformedBezierCurve.basisFormula.componentYCubic
+            val roots = transformedBezierCurveY.findRoots()
+
+            return roots.map { t1 ->
+                object : IntersectionDetails() {
+                    override val point: Point
+                        get() = bezierCurve.evaluate(t = t1)
+
+                    override val t0: Double
+                        get() = lineEquation.findT(y = point.y)
+
+                    override val t1: Double = t1
+                }
+            }.toSet()
         }
 
-        fun findIntersection(
+        fun findIntersections(
             bezierCurve0: CubicBezierCurve,
             bezierCurve1: CubicBezierCurve,
-        ): IntersectionDetails? {
+        ): Set<IntersectionDetails> {
             TODO()
         }
     }

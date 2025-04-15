@@ -44,4 +44,11 @@ class LineEquation(
     }
 
     fun evaluate(t: Double): RawVector = p0 + dv * t
+
+    /**
+     * @param y - an y-value
+     *
+     * @return the t-value of the point on the line with the given y-value
+     */
+    fun findT(y: Double): Double = (y - p0.y) / dv.y
 }

@@ -19,6 +19,7 @@ import org.w3c.dom.svg.SVGPathSegCurvetoCubicAbs
 import org.w3c.dom.svg.SVGPathSegLinetoAbs
 import org.w3c.dom.svg.SVGPathSegList
 import org.w3c.dom.svg.SVGPathSegMovetoAbs
+import org.w3c.dom.svg.SVGRectElement
 import org.w3c.dom.svg.SVGTransform
 import org.w3c.dom.svg.SVGTransformList
 import java.awt.Color
@@ -140,6 +141,8 @@ fun SVGDocument.createSvgElement(qualifiedName: String): Element = createElement
 fun SVGDocument.createPathElement(): SVGPathElement = createSvgElement("path") as SVGPathElement
 
 fun SVGDocument.createGElement(): SVGGElement = createSvgElement("g") as SVGGElement
+
+fun SVGDocument.createRectElement(): SVGRectElement = createSvgElement("rect") as SVGRectElement
 
 fun SVGPathSegList.asList(): List<SVGPathSeg> = object : AbstractList<SVGPathSeg>() {
     override val size: Int

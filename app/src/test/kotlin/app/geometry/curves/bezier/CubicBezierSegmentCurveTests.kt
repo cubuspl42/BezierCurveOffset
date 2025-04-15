@@ -1,14 +1,13 @@
 package app.geometry.curves.bezier
 
+import app.algebra.assertEqualsWithTolerance
 import app.assertEquals
+import app.geometry.Curve
 import app.geometry.Point
 import app.geometry.SvgCurveExtractionUtils
+import app.geometry.SvgCurveExtractionUtils.ExtractedPath
 import app.geometry.curves.LineSegment
-import app.geometry.curves.bezier.BezierCurve
-import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.splines.globalDeviation
-import java.awt.Color
-import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -391,27 +390,51 @@ class CubicBezierSegmentCurveTests {
     }
 
     @Test
-    @Ignore
     fun testFindIntersection_lineSegment() {
         val extractedCurveSet = SvgCurveExtractionUtils.extractCurves(
             clazz = CubicBezierSegmentCurveTests::class.java,
-            resourceName = "Curve1.svg",
+            resourceName = "lineBezierIntersection1.svg",
         )
 
-        val extractedOpenSpline = extractedCurveSet.getCurveByColor(
-            color = Color.blue,
+        val extractedBezier = extractedCurveSet.getCurveByColor(
+            color = ExtractedPath.blue,
         ) as SvgCurveExtractionUtils.ExtractedOpenSpline
 
-        val bezierCurve = extractedOpenSpline.openSpline.subCurves.single() as CubicBezierCurve
+        val bezierCurve = extractedBezier.openSpline.subCurves.single() as CubicBezierCurve
 
-        val intersectionDetails = CubicBezierCurve.findIntersection(
-            lineSegment = LineSegment(
-                start = Point.origin,
-                end = Point.origin,
-            ),
+        val extractedLine = extractedCurveSet.getCurveByColor(
+            color = ExtractedPath.red,
+        ) as SvgCurveExtractionUtils.ExtractedOpenSpline
+
+        val lineSegment = extractedLine.openSpline.subCurves.single() as LineSegment
+
+        val intersectionDetails = CubicBezierCurve.findIntersections(
+            lineSegment = lineSegment,
             bezierCurve = bezierCurve,
         )
 
-        assertNotNull(intersectionDetails)
+        val intersectionDetailsSorted = intersectionDetails.sortedBy { it.point.x }
+
+        assertEqualsWithTolerance(
+            expected = listOf(
+                object : Curve.IntersectionDetails() {
+                    override val point: Point = Point.of(56.4, 121.4)
+                    override val t0: Double = 0.1388
+                    override val t1: Double = 0.097
+                },
+                object : Curve.IntersectionDetails() {
+                    override val point: Point = Point.of(125.1, 138.2)
+                    override val t0: Double = 0.4982
+                    override val t1: Double = 0.5146
+                },
+                object : Curve.IntersectionDetails() {
+                    override val point: Point = Point.of(191.7, 154.5)
+                    override val t0: Double = 0.8466
+                    override val t1: Double = 0.9314
+                },
+            ),
+            actual = intersectionDetailsSorted,
+            absoluteTolerance = eps,
+        )
     }
 }

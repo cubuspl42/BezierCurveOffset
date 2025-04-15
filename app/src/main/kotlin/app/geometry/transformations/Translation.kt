@@ -10,7 +10,7 @@ import app.geometry.times
 @Suppress("DataClassPrivateConstructor")
 data class Translation private constructor(
     val tv: RawVector,
-) : Transformation() {
+) : SimpleTransformation() {
     companion object {
         fun of(
             tv: RawVector,
@@ -43,6 +43,11 @@ data class Translation private constructor(
     override fun transform(
         point: Point,
     ): Point = translate(point = point)
+
+    override val inverted: Translation
+        get() = Translation(
+            tv = -tv,
+        )
 
     override val transformationMatrix: Matrix3x3
         get() = Matrix3x3.rowMajor(

@@ -7,13 +7,18 @@ import app.geometry.times
 
 data class Scaling(
     val factor: Double,
-) : Transformation() {
+) : SimpleTransformation() {
     override fun transform(point: Point): Point {
         require(factor.isFinite())
         return Point.of(
             pv = factor * point.pv,
         )
     }
+
+    override val inverted: Scaling
+        get() = Scaling(
+            factor = 1.0 / factor,
+        )
 
     override val transformationMatrix: Matrix3x3
         get() = Matrix3x3.rowMajor(

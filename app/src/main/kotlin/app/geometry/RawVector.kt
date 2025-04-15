@@ -93,6 +93,12 @@ data class RawVector(
         )
     }
 
+    val reflectY: RawVector
+        get() = RawVector(
+            x = x,
+            y = -y,
+        )
+
     val lengthSquared: Double
         get() = x * x + y * y
 
@@ -148,6 +154,17 @@ data class RawVector(
     fun projectOnto(
         b: RawVector,
     ): RawVector = findProjectionScale(b) * b
+
+    fun angleBetween(
+        reference: RawVector
+    ): PrincipalAngleBetweenVectors = PrincipalAngleBetweenVectors(
+        reference = reference,
+        subject = this,
+    )
+
+    fun angleBetweenXAxis(): PrincipalAngleWithXAxis = PrincipalAngleWithXAxis(
+        subject = this,
+    )
 
     override fun equalsWithTolerance(
         other: NumericObject,

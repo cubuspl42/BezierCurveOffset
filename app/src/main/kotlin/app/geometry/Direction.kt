@@ -48,11 +48,10 @@ class Direction private constructor(
     val opposite: Direction
         get() = Direction(dv = -dv)
 
-    fun principalAngleBetween(
+    fun angleBetween(
         reference: Direction
-    ): PrincipalAngleBetweenVectors = PrincipalAngleBetweenVectors(
+    ): PrincipalAngleBetweenVectors = dv.angleBetween(
         reference = reference.dv,
-        subject = dv,
     )
 
     override fun equalsWithTolerance(
@@ -60,8 +59,9 @@ class Direction private constructor(
         absoluteTolerance: Double,
     ): Boolean = when {
         other !is Direction -> false
-        else -> principalAngleBetween(other).isZeroWithRadialTolerance(
-            tolerance = RadialTolerance.ofAbsoluteTolerance(absoluteTolerance)
+        else -> angleBetween(other).equalsWithRadialTolerance(
+            other = PrincipalAngle.Zero,
+            tolerance = RadialTolerance.ofAbsoluteTolerance(absoluteTolerance = absoluteTolerance),
         )
     }
 

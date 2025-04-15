@@ -48,8 +48,7 @@ val BezierBinomial<RawVector>.lineSegments: List<LineSegment>
 fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial? = when (this) {
     is LinearBezierBinomial<Double> -> this.toPolynomialFormulaLinear()
     is QuadraticBezierBinomial<Double> -> this.toPolynomialFormulaQuadratic()
-    // We shouldn't need cubic polynomials
-    is CubicBezierBinomial<Double> -> throw NotImplementedError()
+    is CubicBezierBinomial<Double> -> this.toPolynomialFormulaCubic()
 }
 
 fun BezierBinomial<RawVector>.findFaster(): TimeFunction<RawVector> {

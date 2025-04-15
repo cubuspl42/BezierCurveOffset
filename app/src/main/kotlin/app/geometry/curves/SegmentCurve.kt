@@ -63,26 +63,28 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : Curve() {
          *
          * @return the intersection if it exists, or null if the lines are parallel
          */
-        fun findIntersection(
+        fun findIntersections(
             segmentCurve0: SegmentCurve<*>,
             segmentCurve1: SegmentCurve<*>,
-        ): IntersectionDetails? = when {
-            segmentCurve0 is LineSegment && segmentCurve1 is LineSegment -> LineSegment.findIntersection(
-                lineSegment0 = segmentCurve0,
-                lineSegment1 = segmentCurve1,
+        ): Set<IntersectionDetails> = when {
+            segmentCurve0 is LineSegment && segmentCurve1 is LineSegment -> setOfNotNull(
+                LineSegment.findIntersection(
+                    lineSegment0 = segmentCurve0,
+                    lineSegment1 = segmentCurve1,
+                ),
             )
 
-            segmentCurve0 is LineSegment && segmentCurve1 is CubicBezierCurve -> CubicBezierCurve.findIntersection(
+            segmentCurve0 is LineSegment && segmentCurve1 is CubicBezierCurve -> CubicBezierCurve.findIntersections(
                 lineSegment = segmentCurve0,
                 bezierCurve = segmentCurve1,
             )
 
-            segmentCurve0 is CubicBezierCurve && segmentCurve1 is LineSegment -> CubicBezierCurve.findIntersection(
+            segmentCurve0 is CubicBezierCurve && segmentCurve1 is LineSegment -> CubicBezierCurve.findIntersections(
                 lineSegment = segmentCurve1,
                 bezierCurve = segmentCurve0,
             )
 
-            segmentCurve0 is CubicBezierCurve && segmentCurve1 is CubicBezierCurve -> CubicBezierCurve.findIntersection(
+            segmentCurve0 is CubicBezierCurve && segmentCurve1 is CubicBezierCurve -> CubicBezierCurve.findIntersections(
                 bezierCurve0 = segmentCurve0,
                 bezierCurve1 = segmentCurve1,
             )

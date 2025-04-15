@@ -74,17 +74,16 @@ data class LineSegment(
                 t0 in segmentTRange && t1 in segmentTRange -> {
                     val pi0 = ls0.evaluate(t = t0)
 
-                    assert(
-                        pi0.equalsWithTolerance(
-                            ls1.evaluate(t = t1),
-                            absoluteTolerance = Constants.epsilon,
-                        ),
-                    )
+                    return object : IntersectionDetails() {
+                        override val point: Point
+                            get() = ls0.evaluate(t = t0).asPoint
 
-                    return IntersectionDetails(
-                        t0 = t0,
-                        t1 = t1,
-                    )
+                        override val t0: Double
+                            get() = solution.t0
+
+                        override val t1: Double
+                            get() = solution.t1
+                    }
                 }
 
                 // The intersection point would lye outside the line segment(s)

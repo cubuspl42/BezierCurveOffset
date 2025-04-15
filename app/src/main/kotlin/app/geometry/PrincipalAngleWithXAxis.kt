@@ -11,4 +11,9 @@ data class PrincipalAngleWithXAxis(
 
     override val sinFi: Double
         get() = subject.y / subject.length
+
+    override val inverted: PrincipalAngle
+        get() = PrincipalAngleWithXAxis(
+            subject = subject.reflectY,
+        )
 }

@@ -1,25 +1,37 @@
 package app.geometry
 
+import app.PatternSvg.mmToPtFactor
+import app.SvgViewBox
 import app.asList
 import app.asSVGPathSegCurvetoCubicAbs
 import app.asSVGPathSegLinetoAbs
 import app.asSVGPathSegMovetoAbs
 import app.childElements
 import app.color
+import app.createPathElement
+import app.createRectElement
+import app.createSvgDocument
 import app.documentFactory
 import app.documentSvgElement
+import app.fill
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.curves.toDebugSvgPathGroup
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
+import app.geometry.splines.toDebugSvgPathGroup
+import app.height
 import app.mapCarrying
 import app.p
 import app.p1
 import app.p2
+import app.stroke
 import app.svgDomImplementation
 import app.uncons
 import app.untrail
+import app.viewBox
+import app.width
 import org.apache.batik.anim.dom.SVGOMDocument
 import org.w3c.dom.svg.SVGColor
 import org.w3c.dom.svg.SVGDocument
@@ -30,6 +42,11 @@ import java.io.Reader
 
 object SvgCurveExtractionUtils {
     sealed class ExtractedPath {
+        companion object {
+            val red = Color(0xCC0000)
+            val blue = Color(0x0000FF)
+        }
+
         abstract val color: Color
     }
 
@@ -184,5 +201,37 @@ object SvgCurveExtractionUtils {
         )
 
         throw UnsupportedOperationException("Unsupported path segment type: ${pathSeg.pathSegType}")
+    }
+
+    fun dumpCurve(
+        bezierCurve: CubicBezierCurve,
+    ): SVGDocument {
+        val boundingBox = bezierCurve.findBoundingBox()
+
+        return createSvgDocument().apply {
+            documentSvgElement.apply {
+                viewBox = SvgViewBox(
+                    xMin = boundingBox.xMin,
+                    yMin = boundingBox.yMin,
+                    width = boundingBox.width,
+                    height = boundingBox.height,
+                )
+                width = "${boundingBox.width}"
+                height = "${boundingBox.height}"
+            }
+
+            documentSvgElement.appendChild(
+                bezierCurve.toDebugSvgPathGroup(document = this)
+            )
+
+            documentSvgElement.appendChild(
+                this.createRectElement().apply {
+                    width.baseVal.value = boundingBox.xMax.toFloat()
+                    height.baseVal.value = boundingBox.yMax.toFloat()
+                    fill = "none"
+                    stroke = "black"
+                },
+            )
+        }
     }
 }
