@@ -264,20 +264,9 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
 
         if (criticalPoints.isNotEmpty()) {
-            val initialSplitSubCurves = splitAtMultiple(criticalPoints) ?: run {
-                // The curve was too tiny to split
-                return null
-            }
+            val initialSplitSubCurves = splitAtMultiple(criticalPoints)
 
             val subSplines = initialSplitSubCurves.mapNotNull { splitCurve ->
-                // After splitting at the critical points, each sub-curves should
-                // be theoretically non-degenerate, even if this curve is degenerate.
-                // The problem of gluing at the critical point is shifted onto
-                // the spline merging, but splines _have to_ support sharp corners
-                // on joints. If the given split curve is non-longitudinal (is a
-                // point), we know we can't generate an offset spline for it,
-                // so we give up for this segment. Again, let the spline
-                // merging handle that.
                 splitCurve.findOffsetSplineRecursive(
                     offset = offset,
                     subdivisionLevel = 0,
@@ -285,16 +274,12 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
             }
 
             if (subSplines.isEmpty()) {
-                // None of the split curve was even longitudinal, or all of the
-                // longitudinal sub-curves were too tiny to construct an offset
-                // spline for them
                 return null
             }
 
             return OpenSpline.merge(
-                subSplines
+                splines = subSplines,
             )
-
         } else {
             // If this curve has no critical points, it theoretically shouldn't
             // be degenerate
@@ -307,13 +292,10 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
 
     /**
      * @param tValues - a set of t-values to split at
-     *
-     * @return A spline consisting of curves resulting from splitting the curve
-     * at the given t-values, or null if the curve was too tiny to split
      */
     fun splitAtMultiple(
         tValues: Set<Double>,
-    ): List<BezierCurve>? {
+    ): List<BezierCurve> {
         if (tValues.isEmpty()) {
             return listOf(this)
         }
@@ -327,13 +309,10 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
 
     /**
      * @param tValuesSorted - a sorted list of t-values to split at
-     *
-     * @return A spline consisting of curves resulting from splitting the curve
-     * at the given t-values, or null if the curve was too tiny to split
      */
     fun splitAtMultipleSorted(
         tValuesSorted: List<Double>,
-    ): List<BezierCurve>? {
+    ): List<BezierCurve> {
         val partitioningResult =
             tValuesSorted.partitionSorted() ?: return listOf(this) // We're done, no more places to split
 
@@ -350,18 +329,13 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
 
         val leftSubSplitCurves = leftSplitCurve.splitAtMultipleSorted(
             tValuesSorted = leftCorrectedTValues,
-        ) ?: emptyList()
+        )
 
         val rightSubSplitCurves = rightSplitCurve.splitAtMultipleSorted(
             tValuesSorted = rightCorrectedTValues,
-        ) ?: emptyList()
+        )
 
         val subCurves = leftSubSplitCurves + rightSubSplitCurves
-
-        if (subCurves.isEmpty()) {
-            return null
-        }
-
         return subCurves
     }
 
@@ -377,11 +351,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         offset: Double,
         subdivisionLevel: Int,
     ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata, *>? {
-        val (leftSplitCurve, rightSplitCurve) = splitAt(t = 0.5) ?: run {
-            // If the t-value 0.5 is too close to 0 or 1 to even split the curve,
-            // this curve is just too tiny to generate the offset spline for it
-            return null
-        }
+        val (leftSplitCurve, rightSplitCurve) = splitAt(t = 0.5)
 
         val nextSubDivisionLevel = subdivisionLevel + 1
 
