@@ -4,6 +4,8 @@ import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.VectorSpace
 import app.algebra.linear.vectors.vector2.Vector2x1
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
@@ -77,6 +79,19 @@ data class RawVector(
     fun dot(other: RawVector): Double = x * other.x + y * other.y
 
     fun cross(other: RawVector): Double = x * other.y - y * other.x
+
+    /**
+     * @param fi - the angle in radians
+     */
+    fun rotate(fi: Double): RawVector {
+        val cosFi = cos(fi)
+        val sinFi = sin(fi)
+
+        return RawVector(
+            x = x * cosFi - y * sinFi,
+            y = x * sinFi + y * cosFi,
+        )
+    }
 
     val lengthSquared: Double
         get() = x * x + y * y
