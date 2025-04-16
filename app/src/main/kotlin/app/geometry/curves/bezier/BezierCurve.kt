@@ -14,6 +14,8 @@ import app.geometry.curves.toSpline
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.mergeWith
 import app.partitionSorted
+import app.utils.contains
+import app.utils.open
 
 /**
  * A Bézier curve
@@ -255,7 +257,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     private fun splitAtCriticalPointsAndFindOffsetSplineRecursive(
         offset: Double,
     ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata, *>? {
-        val criticalPointTValues = basisFormula.findCriticalPoints().allRoots
+        val criticalPointTValues = findCriticalPoints().allRoots
 
         if (criticalPointTValues.isNotEmpty()) {
             val initialSplitSubCurves = splitAtMultiple(criticalPointTValues)
@@ -365,7 +367,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     }
 
     protected fun findCriticalPoints(): ParametricPolynomial.RootSet =
-        basisFormula.findCriticalPoints().filter { it in segmentTRange }
+        basisFormula.findCriticalPoints().filter { it in segmentTRange.open }
 
     abstract val basisFormula: BezierBinomial
 
