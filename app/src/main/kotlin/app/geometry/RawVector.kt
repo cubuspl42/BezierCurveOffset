@@ -83,9 +83,15 @@ data class RawVector(
     /**
      * @param fi - the angle in radians
      */
-    fun rotate(fi: Double): RawVector {
-        val cosFi = cos(fi)
-        val sinFi = sin(fi)
+    fun rotate(
+        fi: Double,
+    ): RawVector = rotate(
+        angle = PrincipalAngle.Explicit(fi = fi),
+    )
+
+    fun rotate(angle: PrincipalAngle): RawVector {
+        val cosFi = angle.cosFi
+        val sinFi = angle.sinFi
 
         return RawVector(
             x = x * cosFi - y * sinFi,

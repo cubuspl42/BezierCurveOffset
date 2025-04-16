@@ -4,7 +4,6 @@ import app.algebra.linear.matrices.matrix3.Matrix3x3
 import app.algebra.linear.vectors.vector3.Vector1x3
 import app.geometry.Point
 import app.geometry.PrincipalAngle
-import app.geometry.times
 
 @Suppress("DataClassPrivateConstructor")
 data class Rotation private constructor(
@@ -21,8 +20,7 @@ data class Rotation private constructor(
     override fun transform(
         point: Point,
     ): Point = Point.of(
-        px = point.x * angle.cosFi - point.y * angle.sinFi,
-        py = point.x * angle.sinFi + point.y * angle.cosFi,
+        pv = point.pv.rotate(angle = angle),
     )
 
     override val inverted: Rotation

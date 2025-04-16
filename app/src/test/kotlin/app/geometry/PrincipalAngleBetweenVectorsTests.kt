@@ -13,6 +13,8 @@ class PrincipalAngleBetweenVectorsTests {
         reference: RawVector,
         fi: Double,
     ) {
+        require(fi >= 0.0 && fi <= 2 * PI)
+
         val subject = reference.rotate(fi)
 
         val angle = PrincipalAngleBetweenVectors(
@@ -32,13 +34,21 @@ class PrincipalAngleBetweenVectorsTests {
             absoluteTolerance = eps,
         )
 
+        val expectedFi = when {
+            fi <= PI -> fi
+            else -> fi - 2 * PI
+        }
+
         assertEquals(
-            expected = fi,
+            expected = expectedFi,
             actual = angle.fi,
             absoluteTolerance = eps,
         )
     }
 
+    /**
+     * Boundary between 4th and 1st quadrants (+X)
+     */
     @Test
     fun testAngleZero() {
         test(
@@ -47,6 +57,9 @@ class PrincipalAngleBetweenVectorsTests {
         )
     }
 
+    /**
+     * 1s quadrant
+     */
     @Test
     fun testAngleAcute1() {
         test(
@@ -55,6 +68,9 @@ class PrincipalAngleBetweenVectorsTests {
         )
     }
 
+    /**
+     * Boundary between 1st and 2nd quadrants (+Y)
+     */
     @Test
     fun testAngleOrthogonal() {
         test(
@@ -63,14 +79,20 @@ class PrincipalAngleBetweenVectorsTests {
         )
     }
 
+    /**
+     * 2nd quadrant
+     */
     @Test
     fun testAngleObtuse() {
         test(
             reference = RawVector(2.0, 3.0),
-            fi = 3 * PI / 8,
+            fi = 5 * PI / 8,
         )
     }
 
+    /**
+     * Boundary between 2nd and 3rd quadrants (-X)
+     */
     @Test
     fun testAngleStraight() {
         test(
@@ -79,11 +101,36 @@ class PrincipalAngleBetweenVectorsTests {
         )
     }
 
+    /**
+     * 3rd quadrant
+     */
     @Test
-    fun testAngleReflex() {
+    fun testAngleReflex1() {
         test(
             reference = RawVector(1.0, -2.0),
-            fi = 5 * PI / 8,
+            fi = 5 * PI / 4,
+        )
+    }
+
+    /**
+     * Boundary between 3rd and 4th quadrants (-Y)
+     */
+    @Test
+    fun testAngleReflexOrthogonal() {
+        test(
+            reference = RawVector(1.0, 2.0),
+            fi = 3 * PI / 2,
+        )
+    }
+
+    /**
+     * 4th quadrant
+     */
+    @Test
+    fun testAngleReflex2() {
+        test(
+            reference = RawVector(1.0, -2.0),
+            fi = 7 * PI / 4,
         )
     }
 }
