@@ -1,10 +1,11 @@
 package app.geometry.curves.bezier
 
-import app.algebra.bezier_binomials.*
-import app.geometry.*
-import app.geometry.transformations.Rotation
+import app.algebra.bezier_binomials.CubicBezierBinomial
+import app.algebra.bezier_binomials.toParametricPolynomial
+import app.geometry.Point
+import app.geometry.RawLine
+import app.geometry.RawVector
 import app.geometry.transformations.Transformation
-import app.geometry.transformations.Translation
 
 /**
  * A raw cubic Bézier curve (a Bézier curve of degree 3)
@@ -33,19 +34,9 @@ data class RawCubicBezierCurve private constructor(
             rawLine: RawLine,
             bezierCurve: RawCubicBezierCurve,
         ): Set<IntersectionDetails<RawLine, RawCubicBezierCurve>> {
-            val p0 = rawLine.p0
-            val dv = rawLine.dv
-
-            val angleBetweenXAxis = dv.angleBetweenXAxis() ?: return emptySet()
-            val rotation = Rotation.byAngle(angle = -angleBetweenXAxis)
-            val transformation = Translation.of(-p0).combineWith(rotation)
-
-            val transformedBezierCurve = bezierCurve.transformVia(
-                transformation = transformation,
-            )
-
-            val transformedBezierCurveY = transformedBezierCurve.basisFormula.componentYCubic
-            val roots = transformedBezierCurveY.findRoots()
+            val roots = rawLine.toGeneral().toBiLinearPolynomial().put(
+                bezierCurve.basisFormula.toParametricPolynomial(),
+            ).findRoots()
 
             return roots.map { t1 ->
                 object : IntersectionDetails<RawLine, RawCubicBezierCurve>() {

@@ -5,28 +5,43 @@ import app.algebra.bezier_binomials.RealFunction
 sealed class Polynomial : RealFunction<Double>() {
     fun solveFor(
         y: Double,
-    ): Set<Double> = shift(deltaY = -y).findRoots()
+    ): Set<Double> = (this - y).findRoots()
 
-    /**
-     * Solve ax^n + ... = a'x^n' ...
-     */
-    abstract fun solve(
-        polynomial: Polynomial,
-    ): Set<Double>
+    abstract operator fun plus(
+        constant: Double,
+    ): Polynomial
 
-    abstract fun solveLinear(
+    operator fun minus(
+        constant: Double,
+    ): Polynomial = this + (-constant)
+
+    abstract fun plusLinear(
         linearPolynomial: LinearPolynomial,
-    ): Set<Double>
+    ): Polynomial
 
-    abstract fun solveQuadratic(
+    abstract fun plusQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
-    ): Set<Double>
+    ): Polynomial
 
-    abstract fun solveCubic(
+    abstract fun plusCubic(
         cubicPolynomial: CubicPolynomial,
-    ): Set<Double>
+    ): Polynomial
 
-    abstract fun shift(deltaY: Double): Polynomial
+    abstract operator fun plus(
+        other: Polynomial,
+    ): Polynomial
+
+    operator fun minus(
+        other: Polynomial,
+    ): Polynomial = other + (-other)
+
+    abstract operator fun unaryMinus(): Polynomial
+
+    abstract operator fun times(factor: Double): Polynomial
 
     abstract fun findRoots(): Set<Double>
 }
+
+operator fun Double.times(
+    polynomial: Polynomial,
+): Polynomial = polynomial * this

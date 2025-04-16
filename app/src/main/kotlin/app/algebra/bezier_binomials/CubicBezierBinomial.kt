@@ -75,7 +75,7 @@ val CubicBezierBinomial<RawVector>.lineSegment1: LineSegment
 val CubicBezierBinomial<RawVector>.lineSegment2: LineSegment
     get() = LineSegment.of(start = point2, end = point3)
 
-fun CubicBezierBinomial<Double>.toPolynomialFormulaCubic(): Polynomial? = CubicPolynomial.of(
+fun CubicBezierBinomial<Double>.toPolynomialFormulaCubic(): Polynomial = CubicPolynomial.of(
     a = -weight0 + 3.0 * weight1 - 3.0 * weight2 + weight3,
     b = 3.0 * weight0 - 6.0 * weight1 + 3.0 * weight2,
     c = -3.0 * weight0 + 3.0 * weight1,

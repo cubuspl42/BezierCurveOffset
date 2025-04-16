@@ -1,5 +1,6 @@
 package app.algebra.bezier_binomials
 
+import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.polynomials.Polynomial
 import app.geometry.RawVector
 import app.geometry.curves.LineSegment
@@ -39,7 +40,7 @@ val BezierBinomial<RawVector>.lineSegments: List<LineSegment>
         is CubicBezierBinomial<RawVector> -> this.segmentsCubic
     }
 
-fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial? = when (this) {
+fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial = when (this) {
     is LinearBezierBinomial<Double> -> this.toPolynomialFormulaLinear()
     is QuadraticBezierBinomial<Double> -> this.toPolynomialFormulaQuadratic()
     is CubicBezierBinomial<Double> -> this.toPolynomialFormulaCubic()
@@ -73,7 +74,12 @@ val BezierBinomial<RawVector>.componentY: BezierBinomial<Double>
         is CubicBezierBinomial<RawVector> -> this.componentYCubic
     }
 
-fun BezierBinomial<Double>.findRoots(): Set<Double> = toPolynomialFormula()?.findRoots() ?: emptySet()
+fun BezierBinomial<RawVector>.toParametricPolynomial() = ParametricPolynomial(
+    xFunction = componentX.toPolynomialFormula(),
+    yFunction = componentY.toPolynomialFormula(),
+)
+
+fun BezierBinomial<Double>.findRoots(): Set<Double> = toPolynomialFormula().findRoots()
 
 fun DifferentiableBezierBinomial<RawVector>.findAllCriticalPoints(): BezierBinomial.CriticalPointSet {
     val derivative = findDerivative()

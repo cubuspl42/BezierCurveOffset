@@ -21,38 +21,41 @@ data class LinearPolynomial private constructor(
 
     override fun apply(x: Double): Double = a * x + b
 
-    override fun solve(
-        polynomial: Polynomial,
-    ): Set<Double> = polynomial.solveLinear(linearPolynomial = this)
+    override fun plus(
+        constant: Double,
+    ): LinearPolynomial = copy(
+        b = constant,
+    )
 
-    override fun solveLinear(
+    override fun plus(
+        other: Polynomial,
+    ): Polynomial = other.plusLinear(this)
+
+    override fun plusLinear(
         linearPolynomial: LinearPolynomial,
-    ): Set<Double> = copy(
-        a = a - linearPolynomial.a,
-        b = b - linearPolynomial.b,
-    ).findRoots()
+    ): Polynomial = LinearPolynomial.of(
+        a = a + linearPolynomial.a,
+        b = b + linearPolynomial.b,
+    )
 
-    override fun solveQuadratic(
+    override fun plusQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
-    ): Set<Double> = quadraticPolynomial.solveLinear(
-        linearPolynomial = -this,
-    )
+    ): QuadraticPolynomial = quadraticPolynomial.plusLinear(this)
 
-    override fun solveCubic(
-        cubicPolynomial: CubicPolynomial,
-    ): Set<Double> = cubicPolynomial.solveLinear(
-        linearPolynomial = -this,
-    )
+    override fun plusCubic(cubicPolynomial: CubicPolynomial): Polynomial {
+        TODO("Not yet implemented")
+    }
 
-    override fun shift(
-        deltaY: Double,
-    ): Polynomial = copy(
-        b = b + deltaY,
+    override fun times(
+        factor: Double,
+    ): Polynomial = LinearPolynomial.of(
+        a = a * factor,
+        b = b * factor,
     )
 
     override fun findRoots(): Set<Double> = setOf(findRoot())
 
-    operator fun unaryMinus(): LinearPolynomial = copy(
+    override operator fun unaryMinus(): LinearPolynomial = copy(
         a = -a,
         b = -b,
     )

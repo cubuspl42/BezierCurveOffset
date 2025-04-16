@@ -1,6 +1,22 @@
 package app.geometry
 
+import app.algebra.polynomials.BiLinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
+
+/**
+ * Represents a line in 2D space using the general line equation ax + by + c
+ */
+data class GeneralLineEquation(
+    val a: Double,
+    val b: Double,
+    val c: Double,
+) {
+    fun toBiLinearPolynomial(): BiLinearPolynomial = BiLinearPolynomial(
+        a0 = a,
+        a1 = b,
+        b = c,
+    )
+}
 
 class RawLine(
     /**
@@ -63,6 +79,12 @@ class RawLine(
     fun toParametricPolynomial(): ParametricPolynomial = ParametricPolynomial.linear(
         a = dv,
         b = p0,
+    )
+
+    fun toGeneral(): GeneralLineEquation = GeneralLineEquation(
+        a = dv.y,
+        b = -dv.x,
+        c = -(dv.y * p0.x + -dv.x * p0.y),
     )
 
     override fun evaluate(t: Double): Point = (p0 + dv * t).asPoint

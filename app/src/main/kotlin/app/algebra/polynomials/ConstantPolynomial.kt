@@ -12,33 +12,33 @@ data class ConstantPolynomial private constructor(
 
     override fun apply(x: Double): Double = a
 
-    override fun solve(
-        polynomial: Polynomial,
-    ): Set<Double> = solveFor(
-        y = a,
-    )
+    override fun plus(
+        constant: Double,
+    ): Polynomial = ConstantPolynomial(a + constant)
 
-    override fun solveLinear(
+    override fun plus(
+        other: Polynomial,
+    ): Polynomial = other + a
+
+    override fun plusLinear(
         linearPolynomial: LinearPolynomial,
-    ): Set<Double> = linearPolynomial.solveFor(y = -a)
+    ): Polynomial = linearPolynomial + a
 
-    override fun solveQuadratic(
+    override fun plusQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
-    ): Set<Double> = quadraticPolynomial.solveFor(y = -a)
+    ): Polynomial = quadraticPolynomial + a
 
-    override fun solveCubic(
+    override fun plusCubic(
         cubicPolynomial: CubicPolynomial,
-    ): Set<Double> = cubicPolynomial.solveFor(-a)
+    ): Polynomial = cubicPolynomial + a
 
-    override fun shift(
-        deltaY: Double,
-    ): Polynomial = copy(
-        a = a + deltaY,
-    )
+    override fun times(
+        factor: Double,
+    ): Polynomial = ConstantPolynomial.of(a = a * factor)
 
     override fun findRoots(): Set<Double> = emptySet()
 
-    operator fun unaryMinus(): ConstantPolynomial = copy(
+    override operator fun unaryMinus(): ConstantPolynomial = copy(
         a = -a,
     )
 }

@@ -25,41 +25,47 @@ data class QuadraticPolynomial private constructor(
 
     override fun apply(x: Double): Double = a * x * x + b * x + c
 
-    override fun solve(
-        polynomial: Polynomial,
-    ): Set<Double> = polynomial.solveQuadratic(quadraticPolynomial = this)
-
-    override fun solveLinear(
-        linearPolynomial: LinearPolynomial,
-    ): Set<Double> = copy(
-        b = b - linearPolynomial.a,
-        c = c - linearPolynomial.b,
-    ).findRoots()
-
-    override fun solveQuadratic(
-        quadraticPolynomial: QuadraticPolynomial,
-    ): Set<Double> = copy(
-        a = a - quadraticPolynomial.a,
-        b = b - quadraticPolynomial.b,
-        c = c - quadraticPolynomial.c,
-    ).findRoots()
-
-    override fun solveCubic(
-        cubicPolynomial: CubicPolynomial,
-    ): Set<Double> = cubicPolynomial.solveQuadratic(
-        quadraticPolynomial = -this,
+    override fun plus(
+        constant: Double,
+    ): Polynomial = copy(
+        c = c + constant,
     )
 
-    operator fun unaryMinus(): QuadraticPolynomial = copy(
+    override fun plus(
+        other: Polynomial,
+    ): Polynomial = other.plusQuadratic(this)
+
+    override fun plusLinear(
+        linearPolynomial: LinearPolynomial,
+    ): QuadraticPolynomial = copy(
+        b = b + linearPolynomial.a,
+        c = c + linearPolynomial.b,
+    )
+
+    override fun plusQuadratic(
+        quadraticPolynomial: QuadraticPolynomial,
+    ): Polynomial = QuadraticPolynomial.of(
+        a = a + quadraticPolynomial.a,
+        b = b + quadraticPolynomial.b,
+        c = c + quadraticPolynomial.c,
+    )
+
+    override fun plusCubic(
+        cubicPolynomial: CubicPolynomial,
+    ): CubicPolynomial = cubicPolynomial.plusQuadratic(this)
+
+    override fun times(
+        factor: Double,
+    ): Polynomial = QuadraticPolynomial.of(
+        a = a * factor,
+        b = b * factor,
+        c = c * factor,
+    )
+
+    override operator fun unaryMinus(): QuadraticPolynomial = copy(
         a = -a,
         b = -b,
         c = -c,
-    )
-
-    override fun shift(
-        deltaY: Double,
-    ): Polynomial = copy(
-        c = c + deltaY,
     )
 
     override fun findRoots(): Set<Double> {

@@ -29,44 +29,57 @@ data class CubicPolynomial private constructor(
         require(a != 0.0)
     }
 
-    /**
-     * Solve ax^3 + bx^2 + cx + d = a'x + b'
-     */
-    override fun solveLinear(
+    override operator fun plus(
+        constant: Double,
+    ): CubicPolynomial = copy(
+        d = d + constant,
+    )
+
+    override fun plus(
+        other: Polynomial,
+    ): Polynomial = other.plusCubic(this)
+
+    override fun plusLinear(
         linearPolynomial: LinearPolynomial,
-    ): Set<Double> = copy(
-        c = c - linearPolynomial.a,
-        d = d - linearPolynomial.b,
-    ).findRoots()
+    ): CubicPolynomial = copy(
+        c = c + linearPolynomial.a,
+        d = d + linearPolynomial.b,
+    )
 
-    override fun solveQuadratic(
+    override fun plusQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
-    ): Set<Double> = copy(
-        b = b - quadraticPolynomial.a,
-        c = c - quadraticPolynomial.b,
-        d = d - quadraticPolynomial.c,
-    ).findRoots()
+    ): CubicPolynomial = copy(
+        b = b + quadraticPolynomial.a,
+        c = c + quadraticPolynomial.b,
+        d = d + quadraticPolynomial.c,
+    )
 
-    override fun solveCubic(
+    override fun plusCubic(
         cubicPolynomial: CubicPolynomial,
-    ): Set<Double> = copy(
-        a = a - cubicPolynomial.a,
-        b = b - cubicPolynomial.b,
-        c = c - cubicPolynomial.c,
-        d = d - cubicPolynomial.d,
-    ).findRoots()
+    ): Polynomial = CubicPolynomial.of(
+        a = a + cubicPolynomial.a,
+        b = b + cubicPolynomial.b,
+        c = c + cubicPolynomial.c,
+        d = d + cubicPolynomial.d,
+    )
+
+    override fun unaryMinus(): CubicPolynomial = CubicPolynomial(
+        a = -a,
+        b = -b,
+        c = -c,
+        d = -d,
+    )
+
+    override fun times(
+        factor: Double,
+    ): Polynomial = CubicPolynomial.of(
+        a = a * factor,
+        b = b * factor,
+        c = c * factor,
+        d = d * factor,
+    )
 
     override fun apply(x: Double): Double = a * x * x * x + b * x * x + c * x + d
-
-    override fun solve(
-        polynomial: Polynomial,
-    ): Set<Double> = polynomial.solveCubic(cubicPolynomial = this)
-
-    override fun shift(
-        deltaY: Double,
-    ): Polynomial = copy(
-        d = d + deltaY,
-    )
 
     override fun findRoots(): Set<Double> {
         val f = (3.0 * a * c - b * b) / (3.0 * a * a)

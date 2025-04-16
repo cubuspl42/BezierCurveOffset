@@ -7,6 +7,11 @@ data class ParametricPolynomial(
     val xFunction: Polynomial,
     val yFunction: Polynomial,
 ) : RealFunction<RawVector>() {
+    data class SolutionSet(
+        val xSolutions: Set<Double>,
+        val ySolutions: Set<Double>,
+    )
+
     data class RootSet(
         val xRoots: Set<Double>,
         val yRoots: Set<Double>,

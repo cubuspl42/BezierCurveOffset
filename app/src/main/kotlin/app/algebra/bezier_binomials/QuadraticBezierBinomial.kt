@@ -57,7 +57,7 @@ fun QuadraticBezierBinomial<RawVector>.evaluateFastQuadratic(
     t: Double,
 ): RawVector = findSkeletonQuadratic(t = t).evaluateLinear(t = t)
 
-fun QuadraticBezierBinomial<Double>.toPolynomialFormulaQuadratic(): Polynomial? = QuadraticPolynomial.of(
+fun QuadraticBezierBinomial<Double>.toPolynomialFormulaQuadratic(): Polynomial = QuadraticPolynomial.of(
     a = weight0 - 2.0 * weight1 + weight2,
     b = 2.0 * (weight1 - weight0),
     c = weight0,
