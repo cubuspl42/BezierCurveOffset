@@ -2,6 +2,7 @@ package app.geometry.splines
 
 import app.SVGGElementUtils
 import app.algebra.NumericObject
+import app.geometry.BoundingBox
 import app.geometry.Point
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.toDebugSvgPathGroup
@@ -215,6 +216,14 @@ sealed class Spline<
         val innerKnot: Knot<KnotMetadata>,
         val frontEdge: Edge<CurveT, EdgeMetadata>,
     )
+
+    fun findBoundingBox(): BoundingBox {
+        val boundingBoxes = overlappingLinks.map { it.curve.findBoundingBox() }
+
+        return BoundingBox.unionAll(
+            boundingBoxes = boundingBoxes,
+        )
+    }
 
     /**
      * The complete links of this spline, overlapping at each knot

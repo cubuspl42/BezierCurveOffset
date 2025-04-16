@@ -2,14 +2,15 @@ package app.geometry.splines
 
 import app.algebra.assertEqualsWithTolerance
 import app.geometry.Point
+import app.geometry.SvgCurveExtractionUtils
 import app.geometry.curves.LineSegment
-import app.geometry.curves.SegmentCurve
 import app.geometry.curves.SegmentCurve.OffsetEdgeMetadata
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.splines.ClosedSpline.ContourEdgeMetadata
 import app.geometry.splines.ClosedSpline.ContourKnotMetadata
+import app.writeToFile
+import kotlin.io.path.Path
 import kotlin.test.Test
-import kotlin.test.assertEquals
 
 private val eps = 10e-3
 
@@ -49,17 +50,17 @@ class ClosedSplineTests {
 
     @Test
     fun testInterconnect_singleSpline() {
-        val knot0 = Point.of(-0.5, 0.0)
+        val knot0 = Point.of(-50.0, 0.0)
 
         val edge0 = Spline.Edge(
             curveEdge = CubicBezierCurve.Edge(
-                control0 = Point.of(-1.0, -1.0),
-                control1 = Point.of(1.0, -1.0),
+                control0 = Point.of(-100.0, -100.0),
+                control1 = Point.of(100.0, -100.0),
             ),
             metadata = OffsetEdgeMetadata.Precise,
         )
 
-        val knot1 = Point.of(0.5, 0.0)
+        val knot1 = Point.of(50.0, 0.0)
 
         val inputLink0 = Spline.CompleteLink(
             startKnot = knot0.withNoMetadata(),
@@ -76,31 +77,36 @@ class ClosedSplineTests {
             splines = listOf(spline),
         )
 
-        val corner0 = Point.of(0.0, 1.0)
+        val corner0 = Point.of(0.0, 100.0)
 
-        assertEquals<List<Spline.PartialLink<SegmentCurve<*>, *, *>>>(
-            expected = listOf(
-                inputLink0.withSideMetadata(),
-                knot1.withPreCornerMetadata(),
-                corner0.withCornerMetadata(),
-            ),
+        val expectedLinks = listOf(
+            inputLink0.withSideMetadata(),
+            knot1.withPreCornerMetadata(),
+            corner0.withCornerMetadata(),
+        )
+
+        assertEqualsWithTolerance(
+            expected = expectedLinks,
             actual = interconnectedSpline.cyclicLinks,
+            absoluteTolerance = eps,
         )
     }
 
     @Test
     fun testInterconnect_twoSplines() {
-        val knot0 = Point.of(0.0, 0.5)
+        val knot0 = Point.of(100.0, 150.0)
 
         val edge0 = Spline.Edge(
             curveEdge = CubicBezierCurve.Edge(
-                control0 = Point.of(1.0, 1.0),
-                control1 = Point.of(2.0, 1.0),
+                control0 = Point.of(200.0, 200.0),
+                control1 = Point.of(300.0, 200.0),
             ),
             metadata = OffsetEdgeMetadata.Precise,
         )
 
-        val knot1 = Point.of(3.0, 0.5)
+        val knot1 = Point.of(400.0, 150.0)
+
+        val expectedCorner0 = Point.of(500.0, 100.0)
 
         val inputLink0 = Spline.CompleteLink(
             startKnot = knot0.withNoMetadata(),
@@ -108,17 +114,19 @@ class ClosedSplineTests {
             endKnot = knot1.withNoMetadata(),
         )
 
-        val knot2 = Point.of(3.0, -0.5)
+        val knot2 = Point.of(400.0, 50.0)
 
         val edge1 = Spline.Edge(
             curveEdge = CubicBezierCurve.Edge(
-                control0 = Point.of(2.0, -1.0),
-                control1 = Point.of(1.0, -1.0),
+                control0 = Point.of(300.0, 0.0),
+                control1 = Point.of(200.0, 0.0),
             ),
             metadata = OffsetEdgeMetadata.Precise,
         )
 
-        val knot3 = Point.of(0.0, -0.5)
+        val knot3 = Point.of(100.0, 50.0)
+
+        val expectedCorner1 = Point.of(0.0, 100.0)
 
         val inputLink1 = Spline.CompleteLink(
             startKnot = knot2.withNoMetadata(),
@@ -143,11 +151,11 @@ class ClosedSplineTests {
         assertEqualsWithTolerance(
             expected = listOf(
                 inputLink0.withSideMetadata(),
-                knot0.withPreCornerMetadata(),
-                knot1.withCornerMetadata(),
+                knot1.withPreCornerMetadata(),
+                expectedCorner0.withCornerMetadata(),
                 inputLink1.withSideMetadata(),
-                knot2.withPreCornerMetadata(),
-                knot3.withCornerMetadata(),
+                knot3.withPreCornerMetadata(),
+                expectedCorner1.withCornerMetadata(),
             ),
             actual = interconnectedSpline.cyclicLinks,
             absoluteTolerance = eps,
@@ -156,17 +164,17 @@ class ClosedSplineTests {
 
     @Test
     fun testInterconnect_threeSplines() {
-        val knot0 = Point.of(-3.0, -1.0)
+        val knot0 = Point.of(100.0, 200.0)
 
         val edge0 = Spline.Edge(
             curveEdge = CubicBezierCurve.Edge(
-                control0 = Point.of(-2.5, -2.0),
-                control1 = Point.of(-1.5, -3.0),
+                control0 = Point.of(150.0, 100.0),
+                control1 = Point.of(250.0, 0.0),
             ),
             metadata = OffsetEdgeMetadata.Precise,
         )
 
-        val knot1 = Point.of(-0.5, 4.0)
+        val knot1 = Point.of(350.0, 100.0)
 
         val inputLink0 = Spline.CompleteLink(
             startKnot = knot0.withNoMetadata(),
@@ -174,17 +182,19 @@ class ClosedSplineTests {
             endKnot = knot1.withNoMetadata(),
         )
 
-        val knot2 = Point.of(0.5, 4.0)
+        val expectedCorner0 = Point.of(400.0, 150.0)
+
+        val knot2 = Point.of(450.0, 100.0)
 
         val edge1 = Spline.Edge(
             curveEdge = CubicBezierCurve.Edge(
-                control0 = Point.of(1.5, -3.0),
-                control1 = Point.of(2.5, -2.0),
+                control0 = Point.of(550.0, 0.0),
+                control1 = Point.of(650.0, 100.0),
             ),
             metadata = OffsetEdgeMetadata.Precise,
         )
 
-        val knot3 = Point.of(3.0, -1.0)
+        val knot3 = Point.of(700.0, 200.0)
 
         val inputLink1 = Spline.CompleteLink(
             startKnot = knot2.withNoMetadata(),
@@ -192,23 +202,27 @@ class ClosedSplineTests {
             endKnot = knot3.withNoMetadata(),
         )
 
-        val knot4 = Point.of(2.0, 1.0)
+        val expectedCorner1 = Point.of(733.33, 266.66)
+
+        val knot4 = Point.of(600.0, 400.0)
 
         val edge2 = Spline.Edge(
             curveEdge = CubicBezierCurve.Edge(
-                control0 = Point.of(1.0, 2.0),
-                control1 = Point.of(-1.0, 2.0),
+                control0 = Point.of(500.0, 500.0),
+                control1 = Point.of(300.0, 500.0),
             ),
             metadata = OffsetEdgeMetadata.Precise,
         )
 
-        val knot5 = Point.of(-2.0, 1.0)
+        val knot5 = Point.of(200.0, 400.0)
 
         val inputLink2 = Spline.CompleteLink(
             startKnot = knot4.withNoMetadata(),
             edge = edge2,
             endKnot = knot5.withNoMetadata(),
         )
+
+        val expectedCorner2 = Point.of(66.67, 266.67)
 
         val spline0 = OpenSpline.of(
             leadingLinks = emptyList(),
@@ -229,17 +243,23 @@ class ClosedSplineTests {
             splines = listOf(spline0, spline1, spline2),
         )
 
+        SvgCurveExtractionUtils.dumpSpline(
+            interconnectedSpline,
+        ).writeToFile(
+            filePath = Path("/Users/jakub/Temporary/interconnectedSpline3.svg"),
+        )
+
         val expectedInterconnectedSpline = ClosedSpline(
             listOf(
                 inputLink0.withSideMetadata(),
                 knot1.withPreCornerMetadata(),
-                knot2.withCornerMetadata(),
+                expectedCorner0.withCornerMetadata(),
                 inputLink1.withSideMetadata(),
                 knot3.withPreCornerMetadata(),
-                knot4.withCornerMetadata(),
+                expectedCorner1.withCornerMetadata(),
                 inputLink2.withSideMetadata(),
-                knot4.withPreCornerMetadata(),
-                knot5.withCornerMetadata(),
+                knot5.withPreCornerMetadata(),
+                expectedCorner2.withCornerMetadata(),
             ),
         )
 
@@ -250,3 +270,4 @@ class ClosedSplineTests {
         )
     }
 }
+

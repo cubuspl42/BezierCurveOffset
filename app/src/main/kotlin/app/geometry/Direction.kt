@@ -2,6 +2,7 @@ package app.geometry
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
+import app.geometry.Point.Companion
 
 /**
  * A direction in the 2D Euclidean space, i.e. a unit vector with a given direction and orientation.
@@ -23,6 +24,16 @@ class Direction private constructor(
             dv.lengthSquared == 0.0 -> null
             else -> Direction(dv = dv.normalized)
         }
+
+        fun of(
+            dx: Double,
+            dy: Double,
+        ): Direction? = of(
+            dv = RawVector(
+                x = dx,
+                y = dy,
+            ),
+        )
     }
 
     init {

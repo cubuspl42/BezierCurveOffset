@@ -1,5 +1,7 @@
 package app.algebra.polynomials
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
 import kotlin.math.acos
 import kotlin.math.cbrt
 import kotlin.math.cos
@@ -80,6 +82,17 @@ data class CubicPolynomial private constructor(
     )
 
     override fun apply(x: Double): Double = a * x * x * x + b * x * x + c * x + d
+
+    override fun equalsWithTolerance(
+        other: NumericObject, absoluteTolerance: Double
+    ): Boolean = when {
+        other !is CubicPolynomial -> false
+        !a.equalsWithTolerance(other.a, absoluteTolerance = absoluteTolerance) -> false
+        !b.equalsWithTolerance(other.b, absoluteTolerance = absoluteTolerance) -> false
+        !c.equalsWithTolerance(other.c, absoluteTolerance = absoluteTolerance) -> false
+        !d.equalsWithTolerance(other.d, absoluteTolerance = absoluteTolerance) -> false
+        else -> true
+    }
 
     override fun findRoots(): Set<Double> {
         val f = (3.0 * a * c - b * b) / (3.0 * a * a)

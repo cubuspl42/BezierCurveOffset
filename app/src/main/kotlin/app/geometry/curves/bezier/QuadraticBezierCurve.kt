@@ -1,14 +1,14 @@
 package app.geometry.curves.bezier
 
-import app.geometry.Curve
 import app.geometry.Point
 import app.geometry.curves.LineSegment
+import app.geometry.curves.QuasiSegmentCurve
 
 internal data class QuadraticBezierCurve(
     val start: Point,
     val control: Point,
     val end: Point,
-) : Curve() {
+) : QuasiSegmentCurve() {
     val lineSegment0: LineSegment
         get() = LineSegment.of(
             start = start,

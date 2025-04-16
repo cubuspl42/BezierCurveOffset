@@ -1,6 +1,7 @@
 package app.geometry
 
-import app.algebra.bezier_binomials.RealFunction
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.polynomials.Polynomial
 import app.algebra.polynomials.times
@@ -16,7 +17,7 @@ data class GeneralLineFunction(
     val a: Double,
     val b: Double,
     val c: Double,
-) : RealFunction<Double>() {
+) : NumericObject {
     fun put(
         x: Polynomial,
         y: Polynomial,
@@ -29,5 +30,15 @@ data class GeneralLineFunction(
         y = p.yFunction,
     )
 
-    override fun apply(x: Double): Double = a * x + b * x + c
+    fun apply(p: RawVector): Double = a * p.x + b * p.y + c
+
+    override fun equalsWithTolerance(
+        other: NumericObject, absoluteTolerance: Double
+    ): Boolean = when {
+        other !is GeneralLineFunction -> false
+        !a.equalsWithTolerance(other.a, absoluteTolerance = absoluteTolerance) -> false
+        !b.equalsWithTolerance(other.b, absoluteTolerance = absoluteTolerance) -> false
+        !c.equalsWithTolerance(other.c, absoluteTolerance = absoluteTolerance) -> false
+        else -> true
+    }
 }

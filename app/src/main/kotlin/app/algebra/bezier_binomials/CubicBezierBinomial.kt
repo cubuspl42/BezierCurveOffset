@@ -1,21 +1,18 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.linear.VectorSpace
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.vectors.vector4.Vector4
-import app.algebra.polynomials.CubicPolynomial
-import app.algebra.polynomials.Polynomial
-import app.geometry.Point
+import app.algebra.polynomials.ParametricPolynomial
+import app.geometry.ParametricLineFunction
 import app.geometry.RawVector
-import app.geometry.curves.LineSegment
+import app.geometry.times
 
-data class CubicBezierBinomial<V>(
-    internal val vectorSpace: VectorSpace<V>,
-    val weight0: V,
-    val weight1: V,
-    val weight2: V,
-    val weight3: V,
-) : DifferentiableBezierBinomial<V>() {
+data class CubicBezierBinomial(
+    val weight0: RawVector,
+    val weight1: RawVector,
+    val weight2: RawVector,
+    val weight3: RawVector,
+) : BezierBinomial() {
     companion object {
         /**
          * The characteristic matrix of the cubic Bézier curve.
@@ -30,72 +27,37 @@ data class CubicBezierBinomial<V>(
         val characteristicInvertedMatrix = characteristicMatrix.invert() ?: error("Matrix is not invertible")
     }
 
-    override fun findDerivative(): QuadraticBezierBinomial<V> {
-        fun scale3(v: V) = vectorSpace.scale(3.0, v)
+    /**
+     * Solve B(t) = L(t') for t
+     */
+    fun solve(
+        lineFunction: ParametricLineFunction,
+    ): Set<Double> = lineFunction.toGeneralLineFunction().put(
+        toParametricPolynomial(),
+    ).findRoots()
 
-        return QuadraticBezierBinomial(
-            vectorSpace = vectorSpace,
-            weight0 = scale3(vectorSpace.subtract(weight1, weight0)),
-            weight1 = scale3(vectorSpace.subtract(weight2, weight1)),
-            weight2 = scale3(vectorSpace.subtract(weight3, weight2)),
-        )
-    }
+    override fun findDerivative(): QuadraticBezierBinomial = QuadraticBezierBinomial(
+        3.0 * (weight1 - weight0),
+        3.0 * (weight2 - weight1),
+        3.0 * (weight3 - weight2),
+    )
 
-    override fun evaluate(t: Double): V {
-        val u = 1.0 - t
-        val c1 = vectorSpace.scale(u * u * u, weight0)
-        val c2 = vectorSpace.scale(3.0 * u * u * t, weight1)
-        val c3 = vectorSpace.scale(3.0 * u * t * t, weight2)
-        val c4 = vectorSpace.scale(t * t * t, weight3)
-        return vectorSpace.add(vectorSpace.add(c1, c2), vectorSpace.add(c3, c4))
+    override fun toParametricPolynomial() = ParametricPolynomial.cubic(
+        a = -weight0 + 3.0 * weight1 - 3.0 * weight2 + weight3,
+        b = 3.0 * weight0 - 6.0 * weight1 + 3.0 * weight2,
+        c = -3.0 * weight0 + 3.0 * weight1,
+        d = weight0,
+    )
+
+    override fun apply(x: Double): RawVector {
+        val u = 1.0 - x
+        val c1 = u * u * u * weight0
+        val c2 = 3.0 * u * u * x * weight1
+        val c3 = 3.0 * u * x * x * weight2
+        val c4 = x * x * x * weight3
+        return c1 + c2 + c3 + c4
     }
 }
 
-val CubicBezierBinomial<RawVector>.point0: Point
-    get() = this.weight0.asPoint
 
-val CubicBezierBinomial<RawVector>.point1: Point
-    get() = this.weight1.asPoint
 
-val CubicBezierBinomial<RawVector>.point2: Point
-    get() = this.weight2.asPoint
-
-val CubicBezierBinomial<RawVector>.point3: Point
-    get() = this.weight3.asPoint
-
-val CubicBezierBinomial<RawVector>.segmentsCubic: List<LineSegment>
-    get() = listOf(lineSegment0, lineSegment1, lineSegment2)
-
-val CubicBezierBinomial<RawVector>.lineSegment0: LineSegment
-    get() = LineSegment.of(start = point0, end = point1)
-
-val CubicBezierBinomial<RawVector>.lineSegment1: LineSegment
-    get() = LineSegment.of(start = point1, end = point2)
-
-val CubicBezierBinomial<RawVector>.lineSegment2: LineSegment
-    get() = LineSegment.of(start = point2, end = point3)
-
-fun CubicBezierBinomial<Double>.toPolynomialFormulaCubic(): Polynomial = CubicPolynomial.of(
-    a = -weight0 + 3.0 * weight1 - 3.0 * weight2 + weight3,
-    b = 3.0 * weight0 - 6.0 * weight1 + 3.0 * weight2,
-    c = -3.0 * weight0 + 3.0 * weight1,
-    d = weight0,
-)
-
-val CubicBezierBinomial<RawVector>.componentXCubic
-    get() = CubicBezierBinomial(
-        vectorSpace = VectorSpace.DoubleVectorSpace,
-        weight0 = weight0.x,
-        weight1 = weight1.x,
-        weight2 = weight2.x,
-        weight3 = weight3.x,
-    )
-
-val CubicBezierBinomial<RawVector>.componentYCubic
-    get() = CubicBezierBinomial(
-        vectorSpace = VectorSpace.DoubleVectorSpace,
-        weight0 = weight0.y,
-        weight1 = weight1.y,
-        weight2 = weight2.y,
-        weight3 = weight3.y,
-    )

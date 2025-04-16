@@ -168,10 +168,9 @@ data class Point internal constructor(
     )
 
     fun snapTo(line: Line): Point {
-        val l = line.rawLine
-        val pd = l.p0 - this.pv
-        val t = pd.findProjectionScale(l.dv)
-        return l.evaluate(t = t)
+        val pd = line.representativePoint.pv - this.pv
+        val t = pd.findProjectionScale(line.biDirection.dv)
+        return line.evaluate(t = t)
     }
 
     fun dump(): String = "Point.of(${"%.2f".format(this.pv.x)}, ${"%.2f".format(this.pv.y)})"
@@ -190,7 +189,7 @@ data class Point internal constructor(
         absoluteTolerance: Double
     ): Boolean = when {
         other !is Point -> false
-        !other.pv.equalsWithTolerance(other.pv, absoluteTolerance = absoluteTolerance) -> false
+        !pv.equalsWithTolerance(other.pv, absoluteTolerance = absoluteTolerance) -> false
         else -> true
     }
 }

@@ -1,5 +1,8 @@
 package app.algebra.polynomials
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
+
 @Suppress("DataClassPrivateConstructor")
 data class LinearPolynomial private constructor(
     val a: Double,
@@ -21,10 +24,19 @@ data class LinearPolynomial private constructor(
 
     override fun apply(x: Double): Double = a * x + b
 
+    override fun equalsWithTolerance(
+        other: NumericObject, absoluteTolerance: Double
+    ): Boolean = when {
+        other !is LinearPolynomial -> false
+        !a.equalsWithTolerance(other.a, absoluteTolerance = absoluteTolerance) -> false
+        !b.equalsWithTolerance(other.b, absoluteTolerance = absoluteTolerance) -> false
+        else -> true
+    }
+
     override fun plus(
         constant: Double,
     ): LinearPolynomial = copy(
-        b = constant,
+        b = b + constant,
     )
 
     override fun plus(

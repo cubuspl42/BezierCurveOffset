@@ -118,12 +118,6 @@ data class ClosedSpline<
         require(cyclicLinks.isNotEmpty())
     }
 
-    fun findBoundingBox(): BoundingBox = BoundingBox.unionAll(
-        subCurves.map {
-            it.findBoundingBox()
-        },
-    )
-
     fun transformVia(
         transformation: Transformation,
     ) = ClosedSpline(

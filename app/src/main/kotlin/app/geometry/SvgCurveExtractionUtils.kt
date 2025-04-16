@@ -18,6 +18,7 @@ import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.toDebugSvgPathGroup
+import app.geometry.splines.ClosedSpline
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
 import app.geometry.splines.toDebugSvgPathGroup
@@ -33,6 +34,7 @@ import app.untrail
 import app.viewBox
 import app.width
 import org.apache.batik.anim.dom.SVGOMDocument
+import org.apache.batik.css.engine.value.svg12.LineHeightValue
 import org.w3c.dom.svg.SVGColor
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGPathElement
@@ -201,6 +203,41 @@ object SvgCurveExtractionUtils {
         )
 
         throw UnsupportedOperationException("Unsupported path segment type: ${pathSeg.pathSegType}")
+    }
+
+    fun dumpSpline(
+        spline: ClosedSpline<*, *, *>,
+    ): SVGDocument {
+        val boundingBox = spline.findBoundingBox()
+
+        val computedWidth = boundingBox.xMax
+        val computedHeight = boundingBox.yMax
+
+        return createSvgDocument().apply {
+            documentSvgElement.apply {
+                viewBox = SvgViewBox(
+                    xMin = 0.0,
+                    yMin = 0.0,
+                    width = computedWidth,
+                    height = computedHeight,
+                )
+                this.width = "${computedWidth}px"
+                this.height = "${computedHeight}px"
+            }
+
+            documentSvgElement.appendChild(
+                spline.toDebugSvgPathGroup(document = this)
+            )
+
+            documentSvgElement.appendChild(
+                this.createRectElement().apply {
+                    this.width.baseVal.value = computedWidth.toFloat()
+                    this.height.baseVal.value = computedHeight.toFloat()
+                    fill = "none"
+                    stroke = "black"
+                },
+            )
+        }
     }
 
     fun dumpCurve(

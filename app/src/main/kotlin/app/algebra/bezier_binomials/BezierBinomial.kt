@@ -1,16 +1,6 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.polynomials.ParametricPolynomial
-import app.algebra.polynomials.Polynomial
-import app.geometry.RawVector
-import app.geometry.curves.LineSegment
-import app.geometry.curves.bezier.RawTimeFunction
-import app.geometry.curves.bezier.TimeFunction
-
-/**
- * @param V - the type of the weights and the result
- */
-sealed class BezierBinomial<out V> : RawTimeFunction<V>() {
+sealed class BezierBinomial : ParametricCurveFunction() {
     data class CriticalPointSet(
         val criticalPointsX: Set<Double>,
         val criticalPointsY: Set<Double>,
@@ -32,48 +22,3 @@ sealed class BezierBinomial<out V> : RawTimeFunction<V>() {
         private fun isInteresting(t: Double): Boolean = t > (0.0 + eps) && t < (1.0 - eps)
     }
 }
-
-val BezierBinomial<RawVector>.lineSegments: List<LineSegment>
-    get() = when (this) {
-        is LinearBezierBinomial<RawVector> -> this.segmentsLinear
-        is QuadraticBezierBinomial<RawVector> -> this.segmentsQuadratic
-        is CubicBezierBinomial<RawVector> -> this.segmentsCubic
-    }
-
-fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial = when (this) {
-    is LinearBezierBinomial<Double> -> this.toPolynomialFormulaLinear()
-    is QuadraticBezierBinomial<Double> -> this.toPolynomialFormulaQuadratic()
-    is CubicBezierBinomial<Double> -> this.toPolynomialFormulaCubic()
-}
-
-val BezierBinomial<RawVector>.componentX: BezierBinomial<Double>
-    get() = when (this) {
-        is LinearBezierBinomial<RawVector> -> this.componentXLinear
-        is QuadraticBezierBinomial<RawVector> -> this.componentXQuadratic
-        is CubicBezierBinomial<RawVector> -> this.componentXCubic
-    }
-
-val BezierBinomial<RawVector>.componentY: BezierBinomial<Double>
-    get() = when (this) {
-        is LinearBezierBinomial<RawVector> -> this.componentYLinear
-        is QuadraticBezierBinomial<RawVector> -> this.componentYQuadratic
-        is CubicBezierBinomial<RawVector> -> this.componentYCubic
-    }
-
-fun BezierBinomial<RawVector>.toParametricPolynomial() = ParametricPolynomial(
-    xFunction = componentX.toPolynomialFormula(),
-    yFunction = componentY.toPolynomialFormula(),
-)
-
-fun BezierBinomial<Double>.findRoots(): Set<Double> = toPolynomialFormula().findRoots()
-
-fun DifferentiableBezierBinomial<RawVector>.findAllCriticalPoints(): BezierBinomial.CriticalPointSet {
-    val derivative = findDerivative()
-    return BezierBinomial.CriticalPointSet(
-        criticalPointsX = derivative.componentX.findRoots(),
-        criticalPointsY = derivative.componentY.findRoots(),
-    )
-}
-
-fun DifferentiableBezierBinomial<RawVector>.findInterestingCriticalPoints(): BezierBinomial.CriticalPointSet =
-    findAllCriticalPoints().filterInteresting()

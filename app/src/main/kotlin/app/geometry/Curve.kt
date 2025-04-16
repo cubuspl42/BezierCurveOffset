@@ -2,9 +2,31 @@ package app.geometry
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
+import app.geometry.curves.LineSegment
 
 abstract class Curve {
     abstract class IntersectionDetails<out Curve0 : Curve, out Curve1 : Curve> : GeometricObject, NumericObject {
+        companion object {
+            fun build(
+                tValues0: Set<Double>,
+                curve0: Curve,
+                lineSegment1: LineSegment,
+            ): Set<Point> {
+                val tValuesOnSegment = tValues0.filter { curve0.containsTValue(t = it) }
+
+                val intersectionPoints = tValuesOnSegment.mapNotNull {
+                    val point = curve0.evaluate(t = it)
+
+                    when {
+                        lineSegment1.containsPoint(point) -> point
+                        else -> null
+                    }
+                }.toSet()
+
+                return intersectionPoints
+            }
+        }
+
         abstract val point: Point
 
         abstract val t0: Double
@@ -35,6 +57,8 @@ abstract class Curve {
 
         final override fun toString(): String = "IntersectionDetails(point=$point, t0=$t0, t1=$t1)"
     }
+
+    abstract fun containsTValue(t: Double): Boolean
 
     abstract fun evaluate(t: Double): Point
 }

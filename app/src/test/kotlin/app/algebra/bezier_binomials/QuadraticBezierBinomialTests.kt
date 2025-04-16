@@ -1,10 +1,9 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.linear.VectorSpace
-import app.algebra.polynomials.CubicPolynomial
-import app.algebra.polynomials.QuadraticPolynomial
+import app.algebra.assertEqualsWithTolerance
+import app.algebra.polynomials.ParametricPolynomial
+import app.geometry.RawVector
 import kotlin.test.Test
-import kotlin.test.assertEquals
 import kotlin.test.assertIs
 
 class QuadraticBezierBinomialTests {
@@ -13,22 +12,21 @@ class QuadraticBezierBinomialTests {
     @Test
     fun testToPolynomialFormulaCubic() {
         val bezierBinomial = QuadraticBezierBinomial(
-            vectorSpace = VectorSpace.DoubleVectorSpace,
-            weight0 = -11.0,
-            weight1 = 3.4,
-            weight2 = 14.2,
+            weight0 = RawVector(-11.0, 0.0),
+            weight1 = RawVector(3.4, 0.0),
+            weight2 = RawVector(14.2, 0.0),
         )
 
-        val quadraticPolynomial = assertIs<QuadraticPolynomial>(
-            bezierBinomial.toPolynomialFormulaQuadratic(),
+        val parametricPolynomial = assertIs<ParametricPolynomial>(
+            bezierBinomial.toParametricPolynomial(),
         )
 
         bezierBinomial.sample(
             strategy = RealFunction.SamplingStrategy(sampleCount = 10),
         ).forEach { sample ->
-            assertEquals(
+            assertEqualsWithTolerance(
                 expected = sample.value,
-                actual = quadraticPolynomial.apply(sample.x),
+                actual = parametricPolynomial.apply(sample.x),
                 absoluteTolerance = eps,
             )
         }

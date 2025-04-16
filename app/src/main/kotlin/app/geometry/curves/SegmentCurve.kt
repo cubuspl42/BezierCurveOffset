@@ -2,10 +2,10 @@ package app.geometry.curves
 
 import app.SVGGElementUtils
 import app.algebra.NumericObject
+import app.algebra.polynomials.ParametricPolynomial
 import app.createPathElement
 import app.fill
 import app.geometry.BoundingBox
-import app.geometry.Curve
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.transformations.Transformation
@@ -22,7 +22,7 @@ import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 
-abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : Curve() {
+abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : QuasiSegmentCurve() {
     abstract class Edge<out CurveT : SegmentCurve<CurveT>> : NumericObject {
         abstract fun bind(
             startKnot: Point,
@@ -57,8 +57,6 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : Curve() {
     )
 
     companion object {
-        val segmentTRange = 0.0..1.0
-
         /**
          * Finds the unique intersection of two lines in 2D space.
          *
@@ -67,12 +65,10 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : Curve() {
         fun findIntersections(
             segmentCurve0: SegmentCurve<*>,
             segmentCurve1: SegmentCurve<*>,
-        ): Set<IntersectionDetails<*, *>> = when {
-            segmentCurve0 is LineSegment && segmentCurve1 is LineSegment -> setOfNotNull(
-                LineSegment.findIntersection(
-                    lineSegment0 = segmentCurve0,
-                    lineSegment1 = segmentCurve1,
-                ),
+        ): Set<Point> = when {
+            segmentCurve0 is LineSegment && segmentCurve1 is LineSegment -> LineSegment.findIntersection(
+                lineSegment0 = segmentCurve0,
+                lineSegment1 = segmentCurve1,
             )
 
             segmentCurve0 is LineSegment && segmentCurve1 is CubicBezierCurve -> CubicBezierCurve.findIntersections(
@@ -116,6 +112,12 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : Curve() {
         override fun evaluateDirectly(
             t: Double,
         ): Point = this@SegmentCurve.evaluate(t = t)
+    }
+
+    protected fun Set<Double>.filterInSegmentRoots(): Set<Double> = this.filter { it in segmentTRange }.toSet()
+
+    protected fun ParametricPolynomial.RootSet.filterInSegmentRoots(): ParametricPolynomial.RootSet = this.filter {
+        it in segmentTRange
     }
 
     /**

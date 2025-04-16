@@ -6,7 +6,7 @@ import app.geometry.BoundingBox
 import app.geometry.Curve
 import app.geometry.Curve.IntersectionDetails
 import app.geometry.Direction
-import app.geometry.RawLine
+import app.geometry.ParametricLineFunction
 import app.geometry.Point
 import app.geometry.RawVector
 import app.geometry.Ray
@@ -63,18 +63,25 @@ data class LineSegment(
         fun findIntersection(
             lineSegment0: LineSegment,
             lineSegment1: LineSegment,
-        ): IntersectionDetails<LineSegment, LineSegment>? {
-            return RawLine.findIntersection(
-                rawLine0 = lineSegment0.rawLine ?: return null,
-                rawLine1 = lineSegment1.rawLine ?: return null,
-            )?.filterLineSegmentIntersection0()?.filterLineSegmentIntersection1()
+        ): Set<Point> {
+            val t = lineSegment0.toParametricLineFunction().solve(
+                other = lineSegment1.toParametricLineFunction(),
+            )
+
+            return IntersectionDetails.build(
+                tValues0 = setOfNotNull(t),
+                curve0 = lineSegment0,
+                lineSegment1 = lineSegment1,
+            )
         }
     }
 
-    val rawLine: RawLine?
-        get() = RawLine.of(
-            start.pv, end.pv,
-        )
+    fun toGeneralLineFunction() = toParametricLineFunction().toGeneralLineFunction()
+
+    fun toParametricLineFunction(): ParametricLineFunction = ParametricLineFunction(
+        d = dv,
+        s = start.pv,
+    )
 
     private val dv: RawVector
         get() = end.pv - start.pv
@@ -196,19 +203,13 @@ data class LineSegment(
 
     override val simplified: SegmentCurve<*>
         get() = this
-}
 
-internal fun <Curve1 : Curve> IntersectionDetails<RawLine, Curve1>.filterLineSegmentIntersection0(): IntersectionDetails<LineSegment, Curve1>? {
-    @Suppress("UNCHECKED_CAST") return when {
-        t0 in SegmentCurve.segmentTRange -> this as IntersectionDetails<LineSegment, Curve1>
-        else -> null
-    }
-}
 
-internal fun <Curve0 : Curve> IntersectionDetails<Curve0, RawLine>.filterLineSegmentIntersection1(): IntersectionDetails<Curve0, LineSegment>? {
-    @Suppress("UNCHECKED_CAST") return when {
-        t1 in SegmentCurve.segmentTRange -> this as IntersectionDetails<Curve0, LineSegment>
-        else -> null
+    fun containsPoint(
+        point: Point,
+    ): Boolean {
+        val t = toParametricLineFunction().solve(p = point.pv) ?: return false
+        return t in segmentTRange
     }
 }
 

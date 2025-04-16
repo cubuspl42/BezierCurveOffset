@@ -1,5 +1,7 @@
 package app.algebra.polynomials
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
 import kotlin.math.sqrt
 
 @Suppress("DataClassPrivateConstructor")
@@ -24,6 +26,17 @@ data class QuadraticPolynomial private constructor(
     }
 
     override fun apply(x: Double): Double = a * x * x + b * x + c
+
+    override fun equalsWithTolerance(
+        other: NumericObject,
+        absoluteTolerance: Double,
+    ): Boolean = when {
+        other !is QuadraticPolynomial -> false
+        !a.equalsWithTolerance(other.a, absoluteTolerance = absoluteTolerance) -> false
+        !b.equalsWithTolerance(other.b, absoluteTolerance = absoluteTolerance) -> false
+        !c.equalsWithTolerance(other.c, absoluteTolerance = absoluteTolerance) -> false
+        else -> true
+    }
 
     override fun plus(
         constant: Double,

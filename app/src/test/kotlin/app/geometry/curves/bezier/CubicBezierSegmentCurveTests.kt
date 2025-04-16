@@ -2,7 +2,6 @@ package app.geometry.curves.bezier
 
 import app.algebra.assertEqualsWithTolerance
 import app.assertEquals
-import app.geometry.Curve
 import app.geometry.Point
 import app.geometry.SvgCurveExtractionUtils
 import app.geometry.SvgCurveExtractionUtils.ExtractedPath
@@ -413,25 +412,13 @@ class CubicBezierSegmentCurveTests {
             bezierCurve = bezierCurve,
         )
 
-        val intersectionDetailsSorted = intersectionDetails.sortedBy { it.point.x }
+        val intersectionDetailsSorted = intersectionDetails.sortedBy { it.x }
 
         assertEqualsWithTolerance(
             expected = listOf(
-                object : Curve.IntersectionDetails<LineSegment, CubicBezierCurve>() {
-                    override val point: Point = Point.of(56.4, 121.4)
-                    override val t0: Double = 0.1388
-                    override val t1: Double = 0.097
-                },
-                object : Curve.IntersectionDetails<LineSegment, CubicBezierCurve>() {
-                    override val point: Point = Point.of(125.1, 138.2)
-                    override val t0: Double = 0.4982
-                    override val t1: Double = 0.5146
-                },
-                object : Curve.IntersectionDetails<LineSegment, CubicBezierCurve>() {
-                    override val point: Point = Point.of(191.7, 154.5)
-                    override val t0: Double = 0.8466
-                    override val t1: Double = 0.9314
-                },
+                Point.of(56.4104, 121.4349),
+                Point.of(125.0821, 138.2226),
+                Point.of(191.6589, 154.4981),
             ),
             actual = intersectionDetailsSorted,
             absoluteTolerance = eps,

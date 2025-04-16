@@ -12,30 +12,18 @@ import org.w3c.dom.svg.SVGPathElement
  * A ray in 2D Euclidean space, described by the equation p = s + td for t >= 0
  */
 class Ray(
-    private val rawLine: RawLine,
+    internal val startingPoint: Point,
+    internal val direction: Direction,
 ) {
-    /**
-     * The initial point of the ray
-     */
-    val startingPoint: Point = rawLine.p0.asPoint
-
-    /**
-     * The direction of this ray
-     */
-    val direction: Direction = rawLine.dv.asDirection!!
-
     companion object {
         fun inDirection(
             point: Point,
             direction: Direction,
         ): Ray = Ray(
-            rawLine = RawLine.of(
-                p0 = point.pv,
-                p1 = point.pv + direction.dv,
-            )!!,
+            startingPoint = point,
+            direction = direction,
         )
     }
-
 
     internal val dv: RawVector
         get() = direction.dv
@@ -58,35 +46,24 @@ class Ray(
     fun findIntersection(
         other: Ray,
     ): Point? {
-        val l0 = rawLine
-        val l1 = other.rawLine
+        val l0 = toParametricLineFunction()
+        val l1 = other.toParametricLineFunction()
 
-        val solution = RawLine.findIntersection(
-            rawLine0 = l0,
-            rawLine1 = l1,
-        ) ?: return null
+        val t0 = l0.solve(l1) ?: return null
+        if (t0 < 0.0) return null
 
-        val t0 = solution.t0
-        val t1 = solution.t1
+        val point = l0.apply(t0)
 
-        return when {
-            t0 > 0.0 && t1 > 0.0 -> {
-                val pi0 = l0.evaluate(t = t0)
+        val t1 = l1.solve(point) ?: return null
+        if (t1 < 0.0) return null
 
-                assert(
-                    pi0.equalsWithTolerance(
-                        l1.evaluate(t = t1),
-                        absoluteTolerance = Constants.epsilon,
-                    ),
-                )
-
-                pi0
-            }
-
-            // The intersection point would lye outside the ray
-            else -> null
-        }
+        return point.asPoint
     }
+
+    fun toParametricLineFunction(): ParametricLineFunction = ParametricLineFunction(
+        s = startingPoint.pv,
+        d = dv,
+    )
 
     fun isParallelTo(
         other: Ray,

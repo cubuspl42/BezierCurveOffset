@@ -1,13 +1,12 @@
 package app.geometry.curves.bezier
 
-import app.algebra.bezier_binomials.DifferentiableBezierBinomial
+import app.algebra.bezier_binomials.BezierBinomial
 import app.algebra.bezier_binomials.RealFunction
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
-import app.algebra.bezier_binomials.findInterestingCriticalPoints
 import app.algebra.bezier_binomials.sample
+import app.algebra.polynomials.ParametricPolynomial
 import app.geometry.Direction
 import app.geometry.Point
-import app.geometry.RawVector
 import app.geometry.Ray
 import app.geometry.TimedPointSeries
 import app.geometry.curves.SegmentCurve
@@ -256,10 +255,10 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     private fun splitAtCriticalPointsAndFindOffsetSplineRecursive(
         offset: Double,
     ): OpenSpline<CubicBezierCurve, OffsetEdgeMetadata, *>? {
-        val criticalPoints = basisFormula.findInterestingCriticalPoints().criticalPointsXY
+        val criticalPointTValues = basisFormula.findCriticalPoints().allRoots
 
-        if (criticalPoints.isNotEmpty()) {
-            val initialSplitSubCurves = splitAtMultiple(criticalPoints)
+        if (criticalPointTValues.isNotEmpty()) {
+            val initialSplitSubCurves = splitAtMultiple(criticalPointTValues)
 
             val subSplines = initialSplitSubCurves.mapNotNull { splitCurve ->
                 splitCurve.findOffsetSplineRecursive(
@@ -365,7 +364,10 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         return firstSubSplitCurve.mergeWith(secondSubSplitCurve)
     }
 
-    abstract val basisFormula: DifferentiableBezierBinomial<RawVector>
+    protected fun findCriticalPoints(): ParametricPolynomial.RootSet =
+        basisFormula.findCriticalPoints().filter { it in segmentTRange }
+
+    abstract val basisFormula: BezierBinomial
 
     abstract fun splitAt(
         t: Double,

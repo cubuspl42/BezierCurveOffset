@@ -1,5 +1,8 @@
 package app.algebra.polynomials
 
+import app.algebra.NumericObject
+import app.algebra.equalsWithTolerance
+
 @Suppress("DataClassPrivateConstructor")
 data class ConstantPolynomial private constructor(
     val a: Double,
@@ -11,6 +14,14 @@ data class ConstantPolynomial private constructor(
     }
 
     override fun apply(x: Double): Double = a
+
+    override fun equalsWithTolerance(
+        other: NumericObject, absoluteTolerance: Double
+    ): Boolean = when {
+        other !is ConstantPolynomial -> false
+        !a.equalsWithTolerance(other.a, absoluteTolerance = absoluteTolerance) -> false
+        else -> true
+    }
 
     override fun plus(
         constant: Double,
