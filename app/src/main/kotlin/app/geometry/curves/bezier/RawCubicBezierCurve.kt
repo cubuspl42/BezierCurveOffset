@@ -34,7 +34,7 @@ data class RawCubicBezierCurve private constructor(
             rawLine: RawLine,
             bezierCurve: RawCubicBezierCurve,
         ): Set<IntersectionDetails<RawLine, RawCubicBezierCurve>> {
-            val roots = rawLine.toGeneral().toBiLinearPolynomial().put(
+            val roots = rawLine.toGeneral().put(
                 bezierCurve.basisFormula.toParametricPolynomial(),
             ).findRoots()
 
