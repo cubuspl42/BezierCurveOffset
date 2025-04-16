@@ -19,7 +19,7 @@ data class CubicPolynomial private constructor(
             b: Double,
             c: Double,
             d: Double,
-        ): Polynomial? = when {
+        ): Polynomial = when {
             a == 0.0 -> QuadraticPolynomial.of(a = b, b = c, c = d)
             else -> CubicPolynomial(a = a, b = b, c = c, d = d)
         }
@@ -29,7 +29,38 @@ data class CubicPolynomial private constructor(
         require(a != 0.0)
     }
 
+    /**
+     * Solve ax^3 + bx^2 + cx + d = a'x + b'
+     */
+    override fun solveLinear(
+        linearPolynomial: LinearPolynomial,
+    ): Set<Double> = copy(
+        c = c - linearPolynomial.a,
+        d = d - linearPolynomial.b,
+    ).findRoots()
+
+    override fun solveQuadratic(
+        quadraticPolynomial: QuadraticPolynomial,
+    ): Set<Double> = copy(
+        b = b - quadraticPolynomial.a,
+        c = c - quadraticPolynomial.b,
+        d = d - quadraticPolynomial.c,
+    ).findRoots()
+
+    override fun solveCubic(
+        cubicPolynomial: CubicPolynomial,
+    ): Set<Double> = copy(
+        a = a - cubicPolynomial.a,
+        b = b - cubicPolynomial.b,
+        c = c - cubicPolynomial.c,
+        d = d - cubicPolynomial.d,
+    ).findRoots()
+
     override fun apply(x: Double): Double = a * x * x * x + b * x * x + c * x + d
+
+    override fun solve(
+        polynomial: Polynomial,
+    ): Set<Double> = polynomial.solveCubic(cubicPolynomial = this)
 
     override fun shift(
         deltaY: Double,
@@ -86,4 +117,3 @@ data class CubicPolynomial private constructor(
         }
     }
 }
-

@@ -13,7 +13,7 @@ data class QuadraticPolynomial private constructor(
             a: Double,
             b: Double,
             c: Double,
-        ): Polynomial? = when {
+        ): Polynomial = when {
             a == 0.0 -> LinearPolynomial.of(a = b, b = c)
             else -> QuadraticPolynomial(a = a, b = b, c = c)
         }
@@ -24,6 +24,37 @@ data class QuadraticPolynomial private constructor(
     }
 
     override fun apply(x: Double): Double = a * x * x + b * x + c
+
+    override fun solve(
+        polynomial: Polynomial,
+    ): Set<Double> = polynomial.solveQuadratic(quadraticPolynomial = this)
+
+    override fun solveLinear(
+        linearPolynomial: LinearPolynomial,
+    ): Set<Double> = copy(
+        b = b - linearPolynomial.a,
+        c = c - linearPolynomial.b,
+    ).findRoots()
+
+    override fun solveQuadratic(
+        quadraticPolynomial: QuadraticPolynomial,
+    ): Set<Double> = copy(
+        a = a - quadraticPolynomial.a,
+        b = b - quadraticPolynomial.b,
+        c = c - quadraticPolynomial.c,
+    ).findRoots()
+
+    override fun solveCubic(
+        cubicPolynomial: CubicPolynomial,
+    ): Set<Double> = cubicPolynomial.solveQuadratic(
+        quadraticPolynomial = -this,
+    )
+
+    operator fun unaryMinus(): QuadraticPolynomial = copy(
+        a = -a,
+        b = -b,
+        c = -c,
+    )
 
     override fun shift(
         deltaY: Double,

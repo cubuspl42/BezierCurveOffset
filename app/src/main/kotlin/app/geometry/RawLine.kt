@@ -1,5 +1,7 @@
 package app.geometry
 
+import app.algebra.polynomials.ParametricPolynomial
+
 class RawLine(
     /**
      * The starting point of the line
@@ -10,9 +12,7 @@ class RawLine(
      */
     internal val p1: RawVector,
 ) : Curve() {
-
     companion object {
-
         fun of(
             p0: RawVector,
             p1: RawVector,
@@ -53,13 +53,17 @@ class RawLine(
         }
     }
 
-
     internal val dv: RawVector
         get() = p1 - p0
 
     init {
         require(p0 != p1)
     }
+
+    fun toParametricPolynomial(): ParametricPolynomial = ParametricPolynomial.linear(
+        a = dv,
+        b = p0,
+    )
 
     override fun evaluate(t: Double): Point = (p0 + dv * t).asPoint
 
