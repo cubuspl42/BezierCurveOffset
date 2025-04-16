@@ -168,7 +168,7 @@ data class RawVector(
         subject = this,
     )
 
-    fun angleBetweenXAxis(): PrincipalAngleWithXAxis = PrincipalAngleWithXAxis(
+    fun angleBetweenXAxis(): PrincipalAngle? = PrincipalAngleWithXAxis.of(
         subject = this,
     )
 

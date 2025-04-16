@@ -3,9 +3,21 @@ package app.geometry
 /**
  * Represents an angle with respect to the x-axis.
  */
-data class PrincipalAngleWithXAxis(
+@Suppress("DataClassPrivateConstructor")
+data class PrincipalAngleWithXAxis private constructor(
     val subject: RawVector,
 ) : PrincipalAngle() {
+    companion object {
+        fun of(
+            subject: RawVector,
+        ): PrincipalAngleWithXAxis? = when {
+            subject == RawVector.zero -> null
+            else -> PrincipalAngleWithXAxis(
+                subject = subject,
+            )
+        }
+    }
+
     override val cosFi: Double
         get() = subject.x / subject.length
 

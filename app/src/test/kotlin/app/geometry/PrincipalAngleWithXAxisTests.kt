@@ -17,9 +17,9 @@ class PrincipalAngleWithXAxisTests {
         val unitX = RawVector(x = 1.0, y = 0.0)
         val subject = unitX.rotate(fi)
 
-        val angle = PrincipalAngleWithXAxis(
+        val angle = PrincipalAngleWithXAxis.of(
             subject = subject,
-        )
+        )!!
 
         assertEquals(
             expected = cos(fi),

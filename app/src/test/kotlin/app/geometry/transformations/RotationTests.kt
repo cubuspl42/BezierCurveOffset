@@ -11,7 +11,7 @@ class RotationTests {
     @Test
     fun testTransform() {
         val rotation = Rotation.byAngle(
-            RawVector(2.0, -1.0).angleBetweenXAxis(),
+            RawVector(2.0, -1.0).angleBetweenXAxis()!!,
         )
 
         assertEqualsWithTolerance(

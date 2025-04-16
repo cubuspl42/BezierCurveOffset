@@ -36,7 +36,8 @@ data class RawCubicBezierCurve private constructor(
             val p0 = rawLine.p0
             val dv = rawLine.dv
 
-            val rotation = Rotation.byAngle(angle = -dv.angleBetweenXAxis())
+            val angleBetweenXAxis = dv.angleBetweenXAxis() ?: return emptySet()
+            val rotation = Rotation.byAngle(angle = -angleBetweenXAxis)
             val transformation = Translation.of(-p0).combineWith(rotation)
 
             val transformedBezierCurve = bezierCurve.transformVia(
