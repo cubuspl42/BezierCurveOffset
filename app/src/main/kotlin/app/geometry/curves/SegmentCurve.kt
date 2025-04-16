@@ -10,6 +10,7 @@ import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.transformations.Transformation
 import app.geometry.curves.bezier.CubicBezierCurve
+import app.geometry.curves.bezier.TimeFunction
 import app.geometry.curves.bezier.toDebugControlSvgPathGroupCubic
 import app.geometry.curves.bezier.toSvgPathSegCubic
 import app.geometry.splines.MonoCurveSpline
@@ -109,6 +110,12 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : Curve() {
         if (t !in segmentTRange) throw IllegalArgumentException("t must be in [0, 1], was: $t")
 
         return evaluateSegment(t = t)
+    }
+
+    val basis = object : TimeFunction<Point>() {
+        override fun evaluateDirectly(
+            t: Double,
+        ): Point = this@SegmentCurve.evaluate(t = t)
     }
 
     /**

@@ -122,7 +122,7 @@ data class TimedPointSeries(
     ): Double = timedPoints.sumOf { timedPoint ->
         val t = timedPoint.t
         val point = timedPoint.point
-        val curvePoint = bezierCurve.curveFunction.evaluate(t = t)
+        val curvePoint = bezierCurve.evaluate(t = t)
 
         curvePoint.distanceSquaredTo(point)
     }

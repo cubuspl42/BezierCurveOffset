@@ -12,7 +12,6 @@ import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.filterLineSegmentIntersection0
 import app.geometry.curves.toSvgPath
-import app.geometry.transformations.Rotation
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.Translation
 import app.stroke
@@ -121,17 +120,17 @@ data class CubicBezierCurve private constructor(
         get() = rawCubicBezierCurve.point3
 
     override fun findBoundingBox(): BoundingBox {
-        val startPoint = curveFunction.startValue
-        val endPoint = curveFunction.endValue
+        val startPoint = basis.startValue
+        val endPoint = basis.endValue
 
         val inRangeCriticalPointSet = basisFormula.findInterestingCriticalPoints()
 
-        val criticalXValues = inRangeCriticalPointSet.criticalPointsX.map { t -> curveFunction.evaluate(t).x }
+        val criticalXValues = inRangeCriticalPointSet.criticalPointsX.map { t -> evaluate(t).x }
         val potentialXExtrema = criticalXValues + startPoint.x + endPoint.x
         val xMin = potentialXExtrema.min()
         val xMax = potentialXExtrema.max()
 
-        val criticalYValues = inRangeCriticalPointSet.criticalPointsY.map { t -> curveFunction.evaluate(t).y }
+        val criticalYValues = inRangeCriticalPointSet.criticalPointsY.map { t -> evaluate(t).y }
         val potentialYExtrema = criticalYValues + startPoint.y + endPoint.y
         val yMin = potentialYExtrema.min()
         val yMax = potentialYExtrema.max()
@@ -144,24 +143,38 @@ data class CubicBezierCurve private constructor(
         )
     }
 
+    internal fun findSkeleton(
+        t: Double,
+    ): QuadraticBezierCurve {
+        val subPoint0 = lineSegment0.evaluate(t = t)
+        val subPoint1 = lineSegment1.evaluate(t = t)
+        val subPoint2 = lineSegment2.evaluate(t = t)
+
+        return QuadraticBezierCurve(
+            start = subPoint0,
+            control = subPoint1,
+            end = subPoint2,
+        )
+    }
+
     override fun splitAt(
         t: Double,
     ): Pair<CubicBezierCurve, CubicBezierCurve> {
-        val skeleton0 = basisFormula.findSkeletonCubic(t = t)
-        val skeleton1 = skeleton0.findSkeletonQuadratic(t = t)
-        val midPoint = skeleton1.evaluateLinear(t = t).asPoint
+        val quadraticSkeleton = findSkeleton(t = t)
+        val linearSkeleton = quadraticSkeleton.findSkeleton(t = t)
+        val midPoint = linearSkeleton.evaluate(t = t)
 
         return Pair(
             of(
                 start = start,
-                control0 = skeleton0.point0,
-                control1 = skeleton1.point0,
+                control0 = quadraticSkeleton.start,
+                control1 = linearSkeleton.start,
                 end = midPoint,
             ),
             of(
                 start = midPoint,
-                control0 = skeleton1.point1,
-                control1 = skeleton0.point2,
+                control0 = linearSkeleton.end,
+                control1 = quadraticSkeleton.end,
                 end = end,
             ),
         )
@@ -169,7 +182,7 @@ data class CubicBezierCurve private constructor(
 
     override fun evaluateSegment(
         t: Double,
-    ): Point = basisFormula.evaluate(t = t).asPoint
+    ): Point = findSkeleton(t = t).evaluate(t = t)
 
     fun draw(
         graphics2D: Graphics2D,
@@ -185,7 +198,7 @@ data class CubicBezierCurve private constructor(
         graphics2D.color = outerColor
         graphics2D.draw(outerPath)
 
-        val innerPath = basisFormula.findFaster().toPath2D(
+        val innerPath = basisFormula.toPath2D(
             samplingStrategy = outerSamplingStrategy.copy(
                 x0 = 0.0,
                 x1 = 1.0,

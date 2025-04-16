@@ -46,20 +46,6 @@ fun BezierBinomial<Double>.toPolynomialFormula(): Polynomial = when (this) {
     is CubicBezierBinomial<Double> -> this.toPolynomialFormulaCubic()
 }
 
-fun BezierBinomial<RawVector>.findFaster(): TimeFunction<RawVector> {
-    return object : TimeFunction<RawVector>() {
-        override fun evaluateDirectly(t: Double): RawVector = evaluateFast(t = t)
-    }
-}
-
-fun BezierBinomial<RawVector>.evaluateFast(
-    t: Double,
-): RawVector = when (this) {
-    is LinearBezierBinomial<RawVector> -> this.evaluateLinear(t = t)
-    is QuadraticBezierBinomial<RawVector> -> this.evaluateFastQuadratic(t = t)
-    is CubicBezierBinomial<RawVector> -> this.evaluateFastCubic(t = t)
-}
-
 val BezierBinomial<RawVector>.componentX: BezierBinomial<Double>
     get() = when (this) {
         is LinearBezierBinomial<RawVector> -> this.componentXLinear

@@ -40,23 +40,6 @@ val QuadraticBezierBinomial<RawVector>.lineSegment0: LineSegment
 val QuadraticBezierBinomial<RawVector>.lineSegment1: LineSegment
     get() = LineSegment.of(start = point1, end = point2)
 
-fun QuadraticBezierBinomial<RawVector>.findSkeletonQuadratic(
-    t: Double,
-): LinearBezierBinomial<RawVector> {
-    val subPoint0 = lineSegment0.evaluate(t = t)
-    val subPoint1 = lineSegment1.evaluate(t = t)
-
-    return LinearBezierBinomial(
-        vectorSpace = vectorSpace,
-        weight0 = subPoint0.pv,
-        weight1 = subPoint1.pv,
-    )
-}
-
-fun QuadraticBezierBinomial<RawVector>.evaluateFastQuadratic(
-    t: Double,
-): RawVector = findSkeletonQuadratic(t = t).evaluateLinear(t = t)
-
 fun QuadraticBezierBinomial<Double>.toPolynomialFormulaQuadratic(): Polynomial = QuadraticPolynomial.of(
     a = weight0 - 2.0 * weight1 + weight2,
     b = 2.0 * (weight1 - weight0),

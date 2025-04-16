@@ -3,7 +3,6 @@ package app.geometry.curves.bezier
 import app.algebra.bezier_binomials.DifferentiableBezierBinomial
 import app.algebra.bezier_binomials.RealFunction
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
-import app.algebra.bezier_binomials.findFaster
 import app.algebra.bezier_binomials.findInterestingCriticalPoints
 import app.algebra.bezier_binomials.sample
 import app.geometry.Direction
@@ -62,10 +61,6 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         private const val findOffsetMaxSubdivisionLevel = 8
     }
 
-    val curveFunction: TimeFunction<Point> by lazy {
-        basisFormula.findFaster().map { it.asPoint }
-    }
-
     fun findOffsetCurveFunction(
         offset: Double,
     ): TimeFunction<Point?> = normalRayFunction.map { normalRay ->
@@ -91,7 +86,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
 
     val tangentRayFunction: TimeFunction<Ray?> by lazy {
         bindRay(
-            pointFunction = curveFunction,
+            pointFunction = basis,
             vectorFunction = tangentFunction,
         )
     }
@@ -108,7 +103,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
 
     val normalRayFunction: TimeFunction<Ray?> by lazy {
         bindRay(
-            pointFunction = curveFunction,
+            pointFunction = basis,
             vectorFunction = normalFunction,
         )
     }
@@ -236,7 +231,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
                     val t = sample.x
 
                     val offsetPoint = sample.value
-                    val approximatedOffsetPoint = approximatedOffsetCurve.curveFunction.evaluate(t = t)
+                    val approximatedOffsetPoint = approximatedOffsetCurve.evaluate(t = t)
 
                     offsetPoint.distanceTo(approximatedOffsetPoint)
                 } ?: run {
