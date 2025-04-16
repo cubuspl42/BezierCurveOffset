@@ -11,8 +11,7 @@ import app.get
 import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGMatrix
 
-@Suppress("DataClassPrivateConstructor")
-data class MixedTransformation private constructor(
+data class MixedTransformation(
     override val transformationMatrix: Matrix3x3,
 ) : Transformation() {
     companion object {
@@ -47,17 +46,6 @@ data class MixedTransformation private constructor(
             ),
         )
     }
-
-    /**
-     * Combines this transformation with another one
-     *
-     * @param base - The transformation that comes before this transformation
-     */
-    fun applyOver(
-        base: Transformation,
-    ): MixedTransformation = MixedTransformation(
-        transformationMatrix = transformationMatrix * base.transformationMatrix,
-    )
 
     override fun transform(
         point: Point,

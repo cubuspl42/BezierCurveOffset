@@ -35,7 +35,7 @@ fun extractSplineFromElement(
     )
 
     is SVGGElement -> {
-        val newTransformation = singleChild.transformation.applyOver(base = transformation)
+        val newTransformation = transformation.applyOver(base = singleChild.transformation)
 
         extractSplineFromElement(
             transformation = newTransformation, element = singleChild
@@ -90,6 +90,12 @@ fun main() {
         params = PatternOutlineParams(
             segmentParamsByEdgeHandle = mapOf(
                 EdgeHandle(
+                    firstKnotName = "A",
+                    secondKnotName = "B",
+                ) to SegmentParams(
+                    seamAllowanceKind = SeamAllowanceKind.Edging,
+                ),
+                EdgeHandle(
                     firstKnotName = "B",
                     secondKnotName = "C",
                 ) to SegmentParams(
@@ -99,20 +105,13 @@ fun main() {
                     firstKnotName = "C",
                     secondKnotName = "D",
                 ) to SegmentParams(
-                    seamAllowanceKind = SeamAllowanceKind.None,
-                ),
-
-                EdgeHandle(
-                    firstKnotName = "D",
-                    secondKnotName = "E",
-                ) to SegmentParams(
                     seamAllowanceKind = SeamAllowanceKind.Edging,
                 ),
                 EdgeHandle(
-                    firstKnotName = "E",
-                    secondKnotName = "F",
+                    firstKnotName = "D",
+                    secondKnotName = "A",
                 ) to SegmentParams(
-                    seamAllowanceKind = SeamAllowanceKind.Tunnel,
+                    seamAllowanceKind = SeamAllowanceKind.Edging,
                 ),
             ),
         ),

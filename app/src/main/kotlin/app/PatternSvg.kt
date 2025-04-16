@@ -12,6 +12,7 @@ import org.w3c.dom.svg.SVGElement
 import org.w3c.dom.svg.SVGGElement
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGTextElement
+import java.io.Reader
 import java.nio.file.Path
 import kotlin.io.path.reader
 
@@ -39,7 +40,7 @@ object PatternSvg {
             }
         }
     }
-
+    private const val markerDistanceThreshold = 30.0
     private const val inchToMmFactor = 25.4
     private const val density = 300.0
     private const val ptToMmFactor = inchToMmFactor / density
@@ -70,7 +71,7 @@ object PatternSvg {
             }
 
             is SVGGElement -> {
-                val newTransformation = element.transformation.applyOver(base = transformation)
+                val newTransformation = transformation.applyOver(base = element.transformation)
 
                 element.childElements.forEach {
                     visitElement(
@@ -90,6 +91,15 @@ object PatternSvg {
         filePath: Path,
     ): ClosedSpline<*, *, Marker?> {
         val reader = filePath.reader()
+
+        return extractFromReader(
+            reader = reader,
+        )
+    }
+
+    fun extractFromReader(
+        reader: Reader
+    ): ClosedSpline<*, *, Marker?> {
         val uri = "file://Pattern.svg"
 
         val document = documentFactory.createDocument(uri, reader) as SVGDocument
@@ -100,9 +110,7 @@ object PatternSvg {
 
         svgElement.childElements.forEach {
             visitElement(
-                transformation = Scaling(
-                    factor = ptToMmFactor,
-                ),
+                transformation = Transformation.Identity,
                 element = it,
                 splines = splines,
                 markers = markers,
@@ -123,7 +131,7 @@ object PatternSvg {
         val markedSpline = spline.transformKnotMetadata { knot ->
             getClosestMarker(
                 position = knot.point,
-                maxDistance = 10.0,
+                maxDistance = markerDistanceThreshold,
             )
         }
 

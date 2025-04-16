@@ -1,9 +1,16 @@
 package app.geometry.splines
 
+import app.PatternOutline
+import app.PatternOutline.PatternOutlineParams
+import app.PatternOutline.PatternOutlineParams.EdgeHandle
+import app.PatternOutline.PatternOutlineParams.SegmentParams
+import app.PatternSvg
+import app.SeamAllowanceKind
 import app.algebra.assertEqualsWithTolerance
 import app.geometry.Point
 import app.geometry.SvgCurveExtractionUtils
 import app.geometry.curves.LineSegment
+import app.geometry.curves.SegmentCurve
 import app.geometry.curves.SegmentCurve.OffsetEdgeMetadata
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.splines.ClosedSpline.ContourEdgeMetadata
@@ -243,12 +250,6 @@ class ClosedSplineTests {
             splines = listOf(spline0, spline1, spline2),
         )
 
-        SvgCurveExtractionUtils.dumpSpline(
-            interconnectedSpline,
-        ).writeToFile(
-            filePath = Path("/Users/jakub/Temporary/interconnectedSpline3.svg"),
-        )
-
         val expectedInterconnectedSpline = ClosedSpline(
             listOf(
                 inputLink0.withSideMetadata(),
@@ -268,6 +269,54 @@ class ClosedSplineTests {
             actual = interconnectedSpline,
             absoluteTolerance = eps,
         )
+    }
+
+    @Test
+    fun testFindContourSpline1() {
+        val reader = ClosedSplineTests::class.java.getResourceAsStream("testFindContourSpline1.svg")!!.reader()
+        val markedSpline = PatternSvg.extractFromReader(reader = reader)
+
+        val patternOutline = PatternOutline.fromMarkedSpline(
+            markedSpline = markedSpline,
+            params = PatternOutlineParams(
+                segmentParamsByEdgeHandle = mapOf(
+                    EdgeHandle(
+                        firstKnotName = "B",
+                        secondKnotName = "C",
+                    ) to SegmentParams(
+                        seamAllowanceKind = SeamAllowanceKind.Edging,
+                    ),
+                    EdgeHandle(
+                        firstKnotName = "C",
+                        secondKnotName = "D",
+                    ) to SegmentParams(
+                        seamAllowanceKind = SeamAllowanceKind.None,
+                    ),
+
+                    EdgeHandle(
+                        firstKnotName = "D",
+                        secondKnotName = "E",
+                    ) to SegmentParams(
+                        seamAllowanceKind = SeamAllowanceKind.Edging,
+                    ),
+                ),
+            ),
+        )
+
+        val spline = patternOutline.closedSpline
+
+        val contourSpline = spline.findContourSpline(
+            offsetStrategy = object : ClosedSpline.ContourOffsetStrategy<SeamAllowanceKind>() {
+                override fun determineOffsetParams(
+                    edgeMetadata: SeamAllowanceKind,
+                ): SegmentCurve.OffsetSplineParams {
+                    val seamAllowanceKind = edgeMetadata
+                    return SegmentCurve.OffsetSplineParams(
+                        offset = seamAllowanceKind.widthMm,
+                    )
+                }
+            },
+        )!!
     }
 }
 

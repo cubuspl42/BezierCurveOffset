@@ -240,6 +240,45 @@ object SvgCurveExtractionUtils {
         }
     }
 
+    fun dumpSplines(
+        splines: List<ClosedSpline<*, *, *>>,
+    ): SVGDocument {
+        val boundingBox = BoundingBox.unionAll(
+            splines.map { it.findBoundingBox() },
+        )
+
+        val computedWidth = boundingBox.xMax
+        val computedHeight = boundingBox.yMax
+
+        return createSvgDocument().apply {
+            documentSvgElement.apply {
+                viewBox = SvgViewBox(
+                    xMin = 0.0,
+                    yMin = 0.0,
+                    width = computedWidth,
+                    height = computedHeight,
+                )
+                this.width = "${computedWidth}px"
+                this.height = "${computedHeight}px"
+            }
+
+            splines.forEach { spline ->
+                documentSvgElement.appendChild(
+                    spline.toDebugSvgPathGroup(document = this)
+                )
+            }
+
+            documentSvgElement.appendChild(
+                this.createRectElement().apply {
+                    this.width.baseVal.value = computedWidth.toFloat()
+                    this.height.baseVal.value = computedHeight.toFloat()
+                    fill = "none"
+                    stroke = "black"
+                },
+            )
+        }
+    }
+
     fun dumpCurve(
         bezierCurve: CubicBezierCurve,
     ): SVGDocument {
