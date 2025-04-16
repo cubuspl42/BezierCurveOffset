@@ -1,6 +1,7 @@
 package app.algebra.polynomials
 
-class LinearPolynomial private constructor(
+@Suppress("DataClassPrivateConstructor")
+data class LinearPolynomial private constructor(
     val a: Double,
     val b: Double,
 ) : Polynomial() {
@@ -19,6 +20,12 @@ class LinearPolynomial private constructor(
     }
 
     override fun apply(x: Double): Double = a * x + b
+
+    override fun shift(
+        deltaY: Double,
+    ): Polynomial = copy(
+        b = b + deltaY,
+    )
 
     override fun findRoots(): Set<Double> = setOf(findRoot())
 

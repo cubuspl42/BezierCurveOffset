@@ -6,7 +6,8 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-class CubicPolynomial private constructor(
+@Suppress("DataClassPrivateConstructor")
+data class CubicPolynomial private constructor(
     val a: Double,
     val b: Double,
     val c: Double,
@@ -29,6 +30,12 @@ class CubicPolynomial private constructor(
     }
 
     override fun apply(x: Double): Double = a * x * x * x + b * x * x + c * x + d
+
+    override fun shift(
+        deltaY: Double,
+    ): Polynomial = copy(
+        d = d + deltaY,
+    )
 
     override fun findRoots(): Set<Double> {
         val f = (3.0 * a * c - b * b) / (3.0 * a * a)
