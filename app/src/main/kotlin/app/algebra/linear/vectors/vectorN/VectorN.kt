@@ -190,7 +190,6 @@ fun <Vo : VectorOrientation> VectorN<Vo>.conv(
     elements = other.toList(),
 )
 
-
 /**
  * Convolution of this vector with another vector
  */

@@ -6,6 +6,7 @@ import app.algebra.linear.VectorOrientation
 import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector3.Vector3
 import app.algebra.linear.vectors.vectorN.VectorN
+import app.algebra.linear.vectors.vectorN.conv
 
 data class Vector4<out Vo : VectorOrientation> internal constructor(
     val a0: Double,
@@ -208,6 +209,10 @@ fun <Vo : VectorOrientation> Vector4<Vo>.conv(
         a3 * other.a3,
     ),
 )
+
+fun <Vo : VectorOrientation> Vector4<Vo>.conv(
+    other: VectorN<Vo>
+): VectorN<Vo> = other.conv(this)
 
 fun <Vo : VectorOrientation> Vector4<Vo>.scale(
     factor: Double,

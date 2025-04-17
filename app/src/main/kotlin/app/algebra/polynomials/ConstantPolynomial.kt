@@ -47,9 +47,27 @@ data class ConstantPolynomial private constructor(
         highPolynomial: HighPolynomial,
     ): Polynomial = highPolynomial + a
 
+    override fun times(other: Polynomial): Polynomial = other * a
+
     override fun times(
         factor: Double,
     ): Polynomial = ConstantPolynomial.of(a = a * factor)
+
+    override fun timesLinear(
+        linearPolynomial: LinearPolynomial,
+    ): Polynomial = linearPolynomial * a
+
+    override fun timesQuadratic(
+        quadraticPolynomial: QuadraticPolynomial,
+    ): Polynomial = quadraticPolynomial * a
+
+    override fun timesCubic(
+        cubicPolynomial: CubicPolynomial,
+    ): Polynomial = cubicPolynomial * a
+
+    override fun timesHigh(
+        highPolynomial: HighPolynomial,
+    ): Polynomial = highPolynomial * a
 
     override fun findRoots(): Set<Double> = emptySet()
 

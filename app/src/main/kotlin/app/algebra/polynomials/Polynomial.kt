@@ -40,6 +40,26 @@ sealed class Polynomial : RealFunction<Double>(), NumericObject {
         other: Polynomial,
     ): Polynomial = other + (-other)
 
+    abstract operator fun times(
+        other: Polynomial,
+    ): Polynomial
+
+    abstract fun timesLinear(
+        linearPolynomial: LinearPolynomial
+    ): Polynomial
+
+    abstract fun timesQuadratic(
+        quadraticPolynomial: QuadraticPolynomial
+    ): Polynomial
+
+    abstract fun timesCubic(
+        cubicPolynomial: CubicPolynomial
+    ): Polynomial
+
+    abstract fun timesHigh(
+        highPolynomial: HighPolynomial
+    ): Polynomial
+
     abstract operator fun unaryMinus(): Polynomial
 
     abstract operator fun times(factor: Double): Polynomial

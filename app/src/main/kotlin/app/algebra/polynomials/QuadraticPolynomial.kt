@@ -92,6 +92,10 @@ data class QuadraticPolynomial private constructor(
     ): Polynomial = highPolynomial.plusQuadratic(this)
 
     override fun times(
+        other: Polynomial,
+    ): Polynomial = other.timesQuadratic(this)
+
+    override fun times(
         factor: Double,
     ): Polynomial = QuadraticPolynomial.of(
         a = a * factor,
@@ -99,11 +103,25 @@ data class QuadraticPolynomial private constructor(
         c = c * factor,
     )
 
-    fun timesLinear(
+    override fun timesLinear(
         linearPolynomial: LinearPolynomial,
     ): Polynomial = CubicPolynomial.of(
         coefficients = coefficients.conv(linearPolynomial.coefficients),
     )
+
+    override fun timesQuadratic(
+        quadraticPolynomial: QuadraticPolynomial,
+    ): Polynomial = HighPolynomial.of(
+        coefficients = coefficients.conv(quadraticPolynomial.coefficients),
+    )
+
+    override fun timesCubic(
+        cubicPolynomial: CubicPolynomial,
+    ): Polynomial = cubicPolynomial.timesQuadratic(this)
+
+    override fun timesHigh(
+        highPolynomial: HighPolynomial,
+    ): Polynomial = highPolynomial.timesQuadratic(this)
 
     override operator fun unaryMinus(): QuadraticPolynomial = QuadraticPolynomial(
         coefficients = -coefficients,

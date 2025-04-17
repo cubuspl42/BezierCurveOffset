@@ -4,6 +4,7 @@ import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector2.Vector2Irr
+import app.algebra.linear.vectors.vector2.conv
 import app.algebra.linear.vectors.vector2.plus
 import app.algebra.linear.vectors.vector2.unaryMinus
 
@@ -85,11 +86,33 @@ data class LinearPolynomial private constructor(
     ): Polynomial = highPolynomial.plusLinear(this)
 
     override fun times(
+        other: Polynomial,
+    ): Polynomial = other.timesLinear(this)
+
+    override fun times(
         factor: Double,
     ): Polynomial = LinearPolynomial.of(
         a = a * factor,
         b = b * factor,
     )
+
+    override fun timesLinear(
+        linearPolynomial: LinearPolynomial,
+    ): Polynomial = QuadraticPolynomial.of(
+        coefficients = coefficients.conv(linearPolynomial.coefficients),
+    )
+
+    override fun timesQuadratic(
+        quadraticPolynomial: QuadraticPolynomial,
+    ): Polynomial = quadraticPolynomial.timesLinear(this)
+
+    override fun timesCubic(
+        cubicPolynomial: CubicPolynomial,
+    ): Polynomial = cubicPolynomial.timesLinear(this)
+
+    override fun timesHigh(
+        highPolynomial: HighPolynomial,
+    ): Polynomial = highPolynomial.timesLinear(this)
 
     override fun findRoots(): Set<Double> = setOf(findRoot())
 

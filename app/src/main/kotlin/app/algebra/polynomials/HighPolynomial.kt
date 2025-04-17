@@ -2,6 +2,7 @@ package app.algebra.polynomials
 
 import app.algebra.NumericObject
 import app.algebra.linear.vectors.vectorN.VectorNIrr
+import app.algebra.linear.vectors.vectorN.conv
 import app.algebra.linear.vectors.vectorN.plus
 import app.algebra.linear.vectors.vectorN.times
 import app.algebra.linear.vectors.vectorN.unaryMinus
@@ -78,6 +79,10 @@ data class HighPolynomial private constructor(
         coefficients = coefficients + highPolynomial.coefficients,
     )
 
+    override fun times(
+        other: Polynomial,
+    ): Polynomial = other.timesHigh(this)
+
     override fun unaryMinus(): HighPolynomial = HighPolynomial(
         coefficients = -coefficients,
     )
@@ -86,6 +91,30 @@ data class HighPolynomial private constructor(
         factor: Double,
     ): Polynomial = HighPolynomial.of(
         coefficients = factor * coefficients,
+    )
+
+    override fun timesLinear(
+        linearPolynomial: LinearPolynomial,
+    ): Polynomial = HighPolynomial.of(
+        coefficients = coefficients.conv(linearPolynomial.coefficients),
+    )
+
+    override fun timesQuadratic(
+        quadraticPolynomial: QuadraticPolynomial,
+    ): Polynomial = HighPolynomial.of(
+        coefficients = coefficients.conv(quadraticPolynomial.coefficients),
+    )
+
+    override fun timesCubic(
+        cubicPolynomial: CubicPolynomial,
+    ): Polynomial = HighPolynomial.of(
+        coefficients = coefficients.conv(cubicPolynomial.coefficients),
+    )
+
+    override fun timesHigh(
+        highPolynomial: HighPolynomial,
+    ): Polynomial = HighPolynomial.of(
+        coefficients = coefficients.conv(highPolynomial.coefficients),
     )
 
     override fun apply(
