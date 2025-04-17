@@ -2,6 +2,9 @@ package app.algebra.polynomials
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
+import app.algebra.linear.matrices.matrix3.Matrix3x3
+import app.algebra.linear.matrices.matrix3.RowMajorMatrix3x3
+import app.algebra.linear.vectors.vector3.Vector1x3
 import app.algebra.linear.vectors.vector4.Vector4Irr
 import app.algebra.linear.vectors.vector4.conv
 import app.algebra.linear.vectors.vector4.lower
@@ -41,6 +44,50 @@ data class CubicPolynomial private constructor(
                 a3 = a,
             ),
         )
+
+        internal fun resultantMatrix(
+            pa: CubicPolynomial,
+            pb: CubicPolynomial,
+        ): RowMajorMatrix3x3 {
+            val a0 = pa.a0
+            val a1 = pa.a1
+            val a2 = pa.a2
+            val a3 = pa.a3
+
+            val b0 = pb.a0
+            val b1 = pb.a1
+            val b2 = pb.a2
+            val b3 = pb.a3
+
+            val a1b0 = a1 * b0 - a0 * b1
+            val a2b0 = a2 * b0 - a0 * b2
+            val a2b1 = a2 * b1 - a1 * b2
+            val a3b0 = a3 * b0 - a0 * b3
+            val a3b1 = a3 * b1 - a1 * b3
+            val a3b2 = a3 * b2 - a2 * b3
+
+            val matrix = Matrix3x3.rowMajor(
+                row0 = Vector1x3(a3b2, a3b1, a3b0),
+                row1 = Vector1x3(a3b1, a3b0 + a2b1, a2b0),
+                row2 = Vector1x3(a3b0, a2b0, a1b0),
+            )
+
+            return matrix
+        }
+
+        fun resultant(
+            pa: CubicPolynomial,
+            pb: CubicPolynomial,
+        ): Double {
+            val matrix = resultantMatrix(
+                pa = pa,
+                pb = pb,
+            )
+
+            val determinant = matrix.determinant
+
+            return determinant
+        }
     }
 
     val a: Double
@@ -54,6 +101,19 @@ data class CubicPolynomial private constructor(
 
     val d: Double
         get() = coefficients.a0
+
+    val a3: Double
+        get() = coefficients.a3
+
+    val a2: Double
+        get() = coefficients.a2
+
+    val a1: Double
+        get() = coefficients.a1
+
+    val a0: Double
+        get() = coefficients.a0
+
 
     init {
         require(coefficients.a3 != 0.0)

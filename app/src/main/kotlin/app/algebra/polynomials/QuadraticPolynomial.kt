@@ -44,6 +44,15 @@ data class QuadraticPolynomial private constructor(
     val c: Double
         get() = coefficients.a0
 
+    val a2: Double
+        get() = coefficients.a2
+
+    val a1: Double
+        get() = coefficients.a1
+
+    val a0: Double
+        get() = coefficients.a0
+
     init {
         require(a != 0.0)
     }

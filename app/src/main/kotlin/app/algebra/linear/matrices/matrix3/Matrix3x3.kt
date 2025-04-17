@@ -57,6 +57,14 @@ sealed class Matrix3x3 : NumericObject {
         throw UnsupportedOperationException()
     }
 
+    override fun toString(): String = """
+        
+        |${row0.a0} ${row0.a1} ${row0.a2}|
+        |${row1.a0} ${row1.a1} ${row1.a2}|
+        |${row2.a0} ${row2.a1} ${row2.a2}|
+        
+    """.trimIndent()
+
     protected fun equalsWithToleranceRowWise(
         other: Matrix3x3, absoluteTolerance: Double
     ): Boolean = when {
@@ -84,6 +92,21 @@ sealed class Matrix3x3 : NumericObject {
         row1 = row1 * other,
         row2 = row2 * other,
     )
+
+    val determinant: Double
+        get() {
+            val a = row0.a0
+            val b = row0.a1
+            val c = row0.a2
+            val d = row1.a0
+            val e = row1.a1
+            val f = row1.a2
+            val g = row2.a0
+            val h = row2.a1
+            val i = row2.a2
+
+            return a * (e * i - f * h) - b * (d * i - f * g) + c * (d * h - e * g)
+        }
 
     abstract val row0: Vector1x3
     abstract val row1: Vector1x3

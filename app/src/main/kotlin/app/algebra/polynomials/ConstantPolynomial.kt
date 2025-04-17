@@ -13,6 +13,9 @@ data class ConstantPolynomial private constructor(
         ): ConstantPolynomial = ConstantPolynomial(a = a)
     }
 
+    val a0: Double
+        get() = a
+
     override fun apply(x: Double): Double = a
 
     override fun equalsWithTolerance(

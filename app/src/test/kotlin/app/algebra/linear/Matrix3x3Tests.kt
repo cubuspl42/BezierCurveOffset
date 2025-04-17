@@ -1,11 +1,44 @@
 package app.algebra.linear
 
 import app.algebra.linear.matrices.matrix3.Matrix3x3
+import app.algebra.linear.vectors.vector3.Vector1x3
 import app.algebra.linear.vectors.vector3.Vector3
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class Matrix3x3Tests {
+    @Test
+    fun testDeterminant1() {
+        val matrix = Matrix3x3.rowMajor(
+            row0 = Vector3.horizontal(1.0, 2.0, 3.0),
+            row1 = Vector3.horizontal(4.0, 5.0, 6.0),
+            row2 = Vector3.horizontal(7.0, 8.0, 9.0),
+        )
+
+        val determinant = matrix.determinant
+
+        assertEquals(
+            expected = 0.0,
+            actual = determinant,
+        )
+    }
+
+    @Test
+    fun testDeterminant2() {
+        val matrix = Matrix3x3.rowMajor(
+            row0 = Vector1x3(7.0, -7.0, 2.0),
+            row1 = Vector1x3(-7.0, -5.0, -11.0),
+            row2 = Vector1x3(2.0, -11.0, 13.0),
+        )
+
+        val determinant = matrix.determinant
+
+        assertEquals(
+            expected = -1611.0,
+            actual = determinant,
+        )
+    }
+
     @Test
     fun testTimesSquareRm() {
         val aMatrix = Matrix3x3.rowMajor(
@@ -61,4 +94,5 @@ class Matrix3x3Tests {
             actual = cMatrix,
         )
     }
+
 }

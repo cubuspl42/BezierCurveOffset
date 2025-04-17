@@ -46,6 +46,12 @@ data class LinearPolynomial private constructor(
     val b: Double
         get() = coefficients.a0
 
+    val a1: Double
+        get() = coefficients.a1
+
+    val a0: Double
+        get() = coefficients.a0
+
     override fun apply(x: Double): Double = a * x + b
 
     override fun equalsWithTolerance(

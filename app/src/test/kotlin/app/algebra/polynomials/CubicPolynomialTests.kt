@@ -1,6 +1,8 @@
 package app.algebra.polynomials
 
 import app.algebra.assertEqualsWithTolerance
+import app.algebra.linear.matrices.matrix3.Matrix3x3
+import app.algebra.linear.vectors.vector3.Vector1x3
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -195,6 +197,48 @@ class CubicPolynomialTests {
             expected = listOf(1.0, 2.0, 3.0),
             actual = roots,
             absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testResultant() {
+        val pa = CubicPolynomial.of(
+            d = 1.0,
+            c = 3.0,
+            b = -2.0,
+            a = 1.0,
+        ) as CubicPolynomial
+
+        val pb = CubicPolynomial.of(
+            d = 4.0,
+            c = -1.0,
+            b = 3.0,
+            a = 2.0,
+        ) as CubicPolynomial
+
+        val resultantMatrix = CubicPolynomial.resultantMatrix(
+            pa = pa,
+            pb = pb,
+        )
+
+        assertEqualsWithTolerance(
+            expected = Matrix3x3.rowMajor(
+                row0 = Vector1x3(7.0, -7.0, 2.0),
+                row1 = Vector1x3(-7.0, -5.0, -11.0),
+                row2 = Vector1x3(2.0, -11.0, 13.0),
+            ),
+            actual = resultantMatrix,
+            absoluteTolerance = eps,
+        )
+
+        val resultant = CubicPolynomial.resultant(
+            pa = pa,
+            pb = pb,
+        )
+
+        assertEquals(
+            expected = -1611.0,
+            actual = resultant,
         )
     }
 }
