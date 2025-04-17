@@ -21,12 +21,6 @@ class CubicPolynomialTests {
 
         val product = pa * pb
 
-        /* Octave code:
-        pa = [-1, 2, -3, 1]
-        pb = [2]
-        product = conv(pa, pb)
-        */
-
         assertEqualsWithTolerance(
             expected = CubicPolynomial.of(
                 d = -2.0,
@@ -95,16 +89,6 @@ class CubicPolynomialTests {
 
         val product = pa * pb
 
-        /* Octave code:
-        pa = [-1, 2, -3, 1]
-        pb = [2, -3, 1]
-        product = conv(pa, pb)
-
-
-
-   -2    7  -13   13   -6    1
-        */
-
         assertEqualsWithTolerance(
             expected = HighPolynomial.of(
                 -2.0,
@@ -170,11 +154,6 @@ class CubicPolynomialTests {
             a = 1.0,
         )
 
-        /* Octave code:
-        polynomial = [-1, 3, -3, 1]
-        roots = roots(polynomial)
-        */
-
         val roots = polynomial.findRoots()
 
         assertEquals(
@@ -191,11 +170,6 @@ class CubicPolynomialTests {
             b = 0.0,
             a = 1.0,
         )
-
-        /* Octave code:
-        polynomial = [2, -3, 0, 1]
-        roots = roots(polynomial)
-        */
 
         val roots = polynomial.findRoots().sorted()
 
@@ -214,11 +188,6 @@ class CubicPolynomialTests {
             b = -6.0,
             a = 1.0,
         )
-
-        /* Octave code:
-        polynomial = [-6, 11, -6, 1]
-        roots = roots(polynomial)
-        */
 
         val roots = polynomial.findRoots().sorted()
 

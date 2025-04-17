@@ -89,17 +89,6 @@ class QuadraticPolynomialTests {
 
         val product = pa * pb
 
-        /*
-        Octave code:
-        pa = [2, -3, 1]
-        pb = [4, -1, 2]
-        product = conv(pa, pb)
-
-         product =
-
-    8  -14   11   -7    2
-         */
-
         assertEqualsWithTolerance(
             expected = HighPolynomial.of(
                 8.0, -14.0, 11.0, -7.0, 2.0,
@@ -111,6 +100,57 @@ class QuadraticPolynomialTests {
         assertEquals(
             expected = product,
             actual = pb * pa,
+        )
+    }
+
+    @Test
+    fun testFindRoots_singleRoot() {
+        val pa = QuadraticPolynomial.of(
+            c = 1.0,
+            b = -2.0,
+            a = 1.0,
+        )
+
+        val roots = pa.findRoots().sorted()
+
+        assertEqualsWithTolerance(
+            expected = listOf(1.0),
+            actual = roots,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testFindRoots_twoRoots() {
+        val pa = QuadraticPolynomial.of(
+            c = 2.0,
+            b = -3.0,
+            a = 1.0,
+        )
+
+        val roots = pa.findRoots().sorted()
+
+        assertEqualsWithTolerance(
+            expected = listOf(1.0, 2.0),
+            actual = roots,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testFindRoots_noRoots() {
+        val pa = QuadraticPolynomial.of(
+            c = 1.0,
+            b = 0.0,
+            a = 1.0,
+        )
+
+        val roots = pa.findRoots().sorted()
+
+        assertEqualsWithTolerance(
+            expected = emptyList(),
+            actual = roots,
+            absoluteTolerance = eps,
         )
     }
 }

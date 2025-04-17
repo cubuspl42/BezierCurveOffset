@@ -54,7 +54,6 @@ class LinearPolynomialTests {
                 c = -129.71,
                 b = 161.44,
                 a = -28.29,
-
             ),
             actual = product,
             absoluteTolerance = eps,
@@ -63,6 +62,22 @@ class LinearPolynomialTests {
         assertEquals(
             expected = product,
             actual = pb * pa,
+        )
+    }
+
+    @Test
+    fun testFindRoots() {
+        val pa = LinearPolynomial.of(
+            b = 2.0,
+            a = -3.0,
+        )
+
+        val roots = pa.findRoots().sorted()
+
+        assertEqualsWithTolerance(
+            expected = listOf(0.666),
+            actual = roots,
+            absoluteTolerance = eps,
         )
     }
 }
