@@ -1,21 +1,21 @@
 package app.algebra.polynomials
 
-import app.geometry.GeneralLineFunction
+import app.geometry.ImplicitLinearPolynomial
 
 /**
  * @return A determinant of the 3x3 matrix of bi-linear polynomials
  */
 private fun calculateDeterminant(
-    a: GeneralLineFunction, b: GeneralLineFunction, c: GeneralLineFunction,
-    d: GeneralLineFunction, e: GeneralLineFunction, f: GeneralLineFunction,
-    g: GeneralLineFunction, h: GeneralLineFunction, i: GeneralLineFunction,
-): GeneralLineFunction.CubedGeneralLineFunction {
-    val aei = GeneralLineFunction.times(a, e, i)
-    val afg = GeneralLineFunction.times(a, f, h)
-    val bdi = GeneralLineFunction.times(b, d, i)
-    val bfg = GeneralLineFunction.times(b, f, g)
-    val cdh = GeneralLineFunction.times(c, d, h)
-    val ceg = GeneralLineFunction.times(c, e, g)
+    a: ImplicitLinearPolynomial, b: ImplicitLinearPolynomial, c: ImplicitLinearPolynomial,
+    d: ImplicitLinearPolynomial, e: ImplicitLinearPolynomial, f: ImplicitLinearPolynomial,
+    g: ImplicitLinearPolynomial, h: ImplicitLinearPolynomial, i: ImplicitLinearPolynomial,
+): ImplicitLinearPolynomial.CubedGeneralLineFunction {
+    val aei = ImplicitLinearPolynomial.times(a, e, i)
+    val afg = ImplicitLinearPolynomial.times(a, f, h)
+    val bdi = ImplicitLinearPolynomial.times(b, d, i)
+    val bfg = ImplicitLinearPolynomial.times(b, f, g)
+    val cdh = ImplicitLinearPolynomial.times(c, d, h)
+    val ceg = ImplicitLinearPolynomial.times(c, e, g)
 
     return aei - afg - bdi + bfg + cdh - ceg
 }
@@ -39,7 +39,7 @@ private data class IntermediateMetaCubicPolynomial(
 private fun calculateResultant(
     pa: IntermediateMetaCubicPolynomial,
     pb: IntermediateMetaCubicPolynomial,
-): GeneralLineFunction.CubedGeneralLineFunction {
+): ImplicitLinearPolynomial.CubedGeneralLineFunction {
     val a0 = pa.a0 as LinearPolynomial
     val a1 = pa.a1 as LinearPolynomial
     val a2 = pa.a2 as LinearPolynomial
@@ -50,12 +50,12 @@ private fun calculateResultant(
     val b2 = pb.a2 as LinearPolynomial
     val b3 = pb.a3 as LinearPolynomial
 
-    val a1b0 = GeneralLineFunction.times(a1, b0) - GeneralLineFunction.times(a0, b1)
-    val a2b0 = GeneralLineFunction.times(a2, b0) - GeneralLineFunction.times(a0, b2)
-    val a2b1 = GeneralLineFunction.times(a2, b1) - GeneralLineFunction.times(a1, b2)
-    val a3b0 = GeneralLineFunction.times(a3, b0) - GeneralLineFunction.times(a0, b3)
-    val a3b1 = GeneralLineFunction.times(a3, b1) - GeneralLineFunction.times(a1, b3)
-    val a3b2 = GeneralLineFunction.times(a3, b2) - GeneralLineFunction.times(a2, b3)
+    val a1b0 = ImplicitLinearPolynomial.times(a1, b0) - ImplicitLinearPolynomial.times(a0, b1)
+    val a2b0 = ImplicitLinearPolynomial.times(a2, b0) - ImplicitLinearPolynomial.times(a0, b2)
+    val a2b1 = ImplicitLinearPolynomial.times(a2, b1) - ImplicitLinearPolynomial.times(a1, b2)
+    val a3b0 = ImplicitLinearPolynomial.times(a3, b0) - ImplicitLinearPolynomial.times(a0, b3)
+    val a3b1 = ImplicitLinearPolynomial.times(a3, b1) - ImplicitLinearPolynomial.times(a1, b3)
+    val a3b2 = ImplicitLinearPolynomial.times(a3, b2) - ImplicitLinearPolynomial.times(a2, b3)
 
     val determinant = calculateDeterminant(
         a3b2, a3b1, a3b0,
@@ -75,7 +75,7 @@ private fun CubicPolynomial.lift(): IntermediateMetaCubicPolynomial = Intermedia
 
 private fun implicitize(
     parametricPolynomial: ParametricPolynomial,
-): GeneralLineFunction.CubedGeneralLineFunction {
+): ImplicitLinearPolynomial.CubedGeneralLineFunction {
     val resultant = calculateResultant(
         pa = (parametricPolynomial.xFunction as CubicPolynomial).lift(),
         pb = (parametricPolynomial.yFunction as CubicPolynomial).lift(),

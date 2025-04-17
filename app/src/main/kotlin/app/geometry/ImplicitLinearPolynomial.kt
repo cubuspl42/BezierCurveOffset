@@ -14,10 +14,10 @@ import app.algebra.polynomials.times
  * positive if above, and negative if below (the meaning of "above" and "below"
  * depend on the line's direction.
  */
-data class GeneralLineFunction(
-    val a: Double,
-    val b: Double,
-    val c: Double,
+data class ImplicitLinearPolynomial(
+    val a2: Double,
+    val a1: Double,
+    val a0: Double,
 ) : NumericObject {
     companion object {
         /**
@@ -29,26 +29,26 @@ data class GeneralLineFunction(
         fun times(
             px: LinearPolynomial,
             py: LinearPolynomial,
-        ): GeneralLineFunction {
+        ): ImplicitLinearPolynomial {
             TODO()
         }
 
         fun times(
-            l0: GeneralLineFunction,
-            l1: GeneralLineFunction,
-            l2: GeneralLineFunction,
+            l0: ImplicitLinearPolynomial,
+            l1: ImplicitLinearPolynomial,
+            l2: ImplicitLinearPolynomial,
         ): CubedGeneralLineFunction {
-            val a3 = l0.a * l1.a * l2.a
-            val a2b1 = l0.a * l1.a * l2.b + l0.a * l1.b * l2.a + l0.b * l1.a * l2.a
-            val a1b2 = l0.a * l1.b * l2.b + l0.b * l1.a * l2.b + l0.b * l1.b * l2.a
-            val b3 = l0.b * l1.b * l2.b
-            val a2 = l0.a * l1.a * l2.c + l0.a * l1.c * l2.a + l0.c * l1.a * l2.a
+            val a3 = l0.a2 * l1.a2 * l2.a2
+            val a2b1 = l0.a2 * l1.a2 * l2.a1 + l0.a2 * l1.a1 * l2.a2 + l0.a1 * l1.a2 * l2.a2
+            val a1b2 = l0.a2 * l1.a1 * l2.a1 + l0.a1 * l1.a2 * l2.a1 + l0.a1 * l1.a1 * l2.a2
+            val b3 = l0.a1 * l1.a1 * l2.a1
+            val a2 = l0.a2 * l1.a2 * l2.a0 + l0.a2 * l1.a0 * l2.a2 + l0.a0 * l1.a2 * l2.a2
             val a1b1 =
-                l0.a * l1.b * l2.c + l0.a * l1.c * l2.b + l0.b * l1.a * l2.c + l0.b * l1.c * l2.a + l0.c * l1.a * l2.b + l0.c * l1.b * l2.a
-            val b2 = l0.b * l1.b * l2.c + l0.b * l1.c * l2.b + l0.c * l1.b * l2.b
-            val a1 = l0.a * l1.c * l2.c + l0.c * l1.a * l2.c + l0.c * l1.c * l2.a
-            val b1 = l0.b * l1.c * l2.c + l0.c * l1.b * l2.c + l0.c * l1.c * l2.b
-            val c = l0.c * l1.c * l2.c
+                l0.a2 * l1.a1 * l2.a0 + l0.a2 * l1.a0 * l2.a1 + l0.a1 * l1.a2 * l2.a0 + l0.a1 * l1.a0 * l2.a2 + l0.a0 * l1.a2 * l2.a1 + l0.a0 * l1.a1 * l2.a2
+            val b2 = l0.a1 * l1.a1 * l2.a0 + l0.a1 * l1.a0 * l2.a1 + l0.a0 * l1.a1 * l2.a1
+            val a1 = l0.a2 * l1.a0 * l2.a0 + l0.a0 * l1.a2 * l2.a0 + l0.a0 * l1.a0 * l2.a2
+            val b1 = l0.a1 * l1.a0 * l2.a0 + l0.a0 * l1.a1 * l2.a0 + l0.a0 * l1.a0 * l2.a1
+            val c = l0.a0 * l1.a0 * l2.a0
 
             return CubedGeneralLineFunction(
                 a3 = a3,
@@ -134,27 +134,27 @@ data class GeneralLineFunction(
     }
 
     operator fun plus(
-        other: GeneralLineFunction,
-    ): GeneralLineFunction = GeneralLineFunction(
-        a = a + other.a,
-        b = b + other.b,
-        c = c + other.c,
+        other: ImplicitLinearPolynomial,
+    ): ImplicitLinearPolynomial = ImplicitLinearPolynomial(
+        a2 = a2 + other.a2,
+        a1 = a1 + other.a1,
+        a0 = a0 + other.a0,
     )
 
-    operator fun unaryMinus(): GeneralLineFunction = GeneralLineFunction(
-        a = -a,
-        b = -b,
-        c = -c,
+    operator fun unaryMinus(): ImplicitLinearPolynomial = ImplicitLinearPolynomial(
+        a2 = -a2,
+        a1 = -a1,
+        a0 = -a0,
     )
 
     operator fun minus(
-        other: GeneralLineFunction,
-    ): GeneralLineFunction = this + (-other)
+        other: ImplicitLinearPolynomial,
+    ): ImplicitLinearPolynomial = this + (-other)
 
     fun put(
         x: Polynomial,
         y: Polynomial,
-    ): Polynomial = a * x + b * y + c
+    ): Polynomial = a2 * x + a1 * y + a0
 
     fun put(
         p: ParametricPolynomial,
@@ -163,15 +163,15 @@ data class GeneralLineFunction(
         y = p.yFunction,
     )
 
-    fun apply(p: RawVector): Double = a * p.x + b * p.y + c
+    fun apply(p: RawVector): Double = a2 * p.x + a1 * p.y + a0
 
     override fun equalsWithTolerance(
         other: NumericObject, absoluteTolerance: Double
     ): Boolean = when {
-        other !is GeneralLineFunction -> false
-        !a.equalsWithTolerance(other.a, absoluteTolerance = absoluteTolerance) -> false
-        !b.equalsWithTolerance(other.b, absoluteTolerance = absoluteTolerance) -> false
-        !c.equalsWithTolerance(other.c, absoluteTolerance = absoluteTolerance) -> false
+        other !is ImplicitLinearPolynomial -> false
+        !a2.equalsWithTolerance(other.a2, absoluteTolerance = absoluteTolerance) -> false
+        !a1.equalsWithTolerance(other.a1, absoluteTolerance = absoluteTolerance) -> false
+        !a0.equalsWithTolerance(other.a0, absoluteTolerance = absoluteTolerance) -> false
         else -> true
     }
 }

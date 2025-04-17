@@ -5,13 +5,13 @@ import app.algebra.polynomials.LinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import kotlin.test.Test
 
-class GeneralLineFunctionTests {
+class ImplicitLinearPolynomialTests {
     @Test
     fun testPut() {
-        val lg0 = GeneralLineFunction(
-            a = 0.89,
-            b = -0.45,
-            c = 44.5,
+        val lg0 = ImplicitLinearPolynomial(
+            a2 = 0.89,
+            a1 = -0.45,
+            a0 = 44.5,
         )
 
         val pp = ParametricPolynomial(

@@ -41,10 +41,10 @@ class ParametricLineFunctionTests {
         val lg0 = l0.toGeneralLineFunction()
 
         assertEqualsWithTolerance(
-            expected = GeneralLineFunction(
-                a = 0.89,
-                b = 0.45,
-                c = -44.5,
+            expected = ImplicitLinearPolynomial(
+                a2 = 0.89,
+                a1 = 0.45,
+                a0 = -44.5,
             ),
             actual = lg0,
             absoluteTolerance = Constants.epsilon,

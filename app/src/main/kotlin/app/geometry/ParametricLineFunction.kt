@@ -23,10 +23,10 @@ data class ParametricLineFunction(
         b = s,
     )
 
-    fun toGeneralLineFunction(): GeneralLineFunction = GeneralLineFunction(
-        a = d.y,
-        b = -d.x,
-        c = d.cross(s),
+    fun toGeneralLineFunction(): ImplicitLinearPolynomial = ImplicitLinearPolynomial(
+        a2 = d.y,
+        a1 = -d.x,
+        a0 = d.cross(s),
     )
 
     /**
