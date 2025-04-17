@@ -8,6 +8,9 @@ import app.algebra.linear.vectors.vector2.conv
 import app.algebra.linear.vectors.vector2.plus
 import app.algebra.linear.vectors.vector2.unaryMinus
 
+/**
+ * A polynomial in the form a1 * x + a0
+ */
 @Suppress("DataClassPrivateConstructor")
 data class LinearPolynomial private constructor(
     val coefficients: Vector2Irr,
@@ -34,6 +37,16 @@ data class LinearPolynomial private constructor(
                 a1 = a,
             ),
         )
+
+        fun of2(
+            a0: Double,
+            a1: Double,
+        ): Polynomial = of(
+            coefficients = Vector2(
+                a0 = a0,
+                a1 = a1,
+            ),
+        )
     }
 
     init {
@@ -45,6 +58,7 @@ data class LinearPolynomial private constructor(
 
     val b: Double
         get() = coefficients.a0
+
 
     val a1: Double
         get() = coefficients.a1
@@ -97,10 +111,10 @@ data class LinearPolynomial private constructor(
 
     override fun times(
         factor: Double,
-    ): Polynomial = LinearPolynomial.of(
+    ): LinearPolynomial = LinearPolynomial.of(
         a = a * factor,
         b = b * factor,
-    )
+    ) as LinearPolynomial // FIXME
 
     override fun timesLinear(
         linearPolynomial: LinearPolynomial,
@@ -128,3 +142,7 @@ data class LinearPolynomial private constructor(
 
     fun findRoot(): Double = -b / a
 }
+
+operator fun Double.times(
+    polynomial: LinearPolynomial,
+): LinearPolynomial = polynomial * this

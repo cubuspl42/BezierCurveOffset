@@ -42,9 +42,9 @@ class ParametricLineFunctionTests {
 
         assertEqualsWithTolerance(
             expected = ImplicitLinearPolynomial(
-                a2 = 0.89,
-                a1 = 0.45,
-                a0 = -44.5,
+                a1 = 0.89,
+                b1 = 0.45,
+                c = -44.5,
             ),
             actual = lg0,
             absoluteTolerance = Constants.epsilon,
