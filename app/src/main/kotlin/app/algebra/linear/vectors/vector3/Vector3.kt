@@ -4,6 +4,10 @@ import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.VectorOrientation
 import app.algebra.linear.vectors.vector2.Vector2
+import app.algebra.linear.vectors.vector4.Vector4
+import app.algebra.linear.vectors.vector4.vector3
+import app.algebra.linear.vectors.vectorN.VectorN
+import app.algebra.linear.vectors.vectorN.VectorNx1
 
 data class Vector3<out Vo : VectorOrientation>(
     val a0: Double,
@@ -11,15 +15,33 @@ data class Vector3<out Vo : VectorOrientation>(
     val a2: Double,
 ) : NumericObject {
     companion object {
-        fun of(
+        fun <Vo : VectorOrientation> of(
             a0: Double,
             a1: Double,
             a2: Double,
-        ): Vector3<Nothing> = Vector3(
+        ): Vector3<Vo> = Vector3(
             a0 = a0,
             a1 = a1,
             a2 = a2,
         )
+
+        fun ofIrr(
+            a0: Double,
+            a1: Double,
+            a2: Double
+        ): Vector3<VectorOrientation.Irrelevant> = Vector3(
+            a0 = a0,
+            a1 = a1,
+            a2 = a2,
+        )
+
+        fun zero(): Vector3<VectorOrientation.Irrelevant> {
+            return Vector3(
+                a0 = 0.0,
+                a1 = 0.0,
+                a2 = 0.0,
+            )
+        }
 
         fun horizontal(
             a00: Double,
@@ -40,6 +62,8 @@ data class Vector3<out Vo : VectorOrientation>(
             a1 = a10,
             a2 = a20,
         )
+
+
     }
 
     init {
@@ -48,21 +72,7 @@ data class Vector3<out Vo : VectorOrientation>(
         require(a2.isFinite())
     }
 
-    operator fun minus(
-        other: Vector3<*>,
-    ): Vector3<Nothing> = of(
-        a0 = a0 - other.a0,
-        a1 = a1 - other.a1,
-        a2 = a2 - other.a2,
-    )
-
-    operator fun plus(
-        other: Vector3<*>,
-    ): Vector3<Nothing> = of(
-        a0 = a0 + other.a0,
-        a1 = a1 + other.a1,
-        a2 = a2 + other.a2,
-    )
+    // plus vector2
 
     fun dotForced(
         other: Vector3<*>,
@@ -70,22 +80,11 @@ data class Vector3<out Vo : VectorOrientation>(
 
     fun cross(
         other: Vector3<*>,
-    ): Vector3<Nothing> = of(
+    ): Vector3<VectorOrientation.Irrelevant> = Vector3(
         a0 = a1 * other.a2 - a2 * other.a1,
         a1 = a2 * other.a0 - a0 * other.a2,
         a2 = a0 * other.a1 - a1 * other.a0,
     )
-
-    fun scale(
-        factor: Double,
-    ): Vector3<Nothing> {
-        require(factor.isFinite())
-        return of(
-            a0 = a0 * factor,
-            a1 = a1 * factor,
-            a2 = a2 * factor,
-        )
-    }
 
     val asVertical: Vector3x1
         get() {
@@ -106,10 +105,91 @@ data class Vector3<out Vo : VectorOrientation>(
         !a2.equalsWithTolerance(other.a2, absoluteTolerance) -> false
         else -> true
     }
+
+    fun toList(): List<Double> = listOf(a0, a1, a2)
 }
+
+fun <Vo : VectorOrientation> Vector3<Vo>.scale(
+    factor: Double,
+): Vector3<Vo> {
+    require(factor.isFinite())
+
+    return Vector3(
+        a0 = a0 * factor,
+        a1 = a1 * factor,
+        a2 = a2 * factor,
+    )
+}
+
+operator fun <Vo : VectorOrientation> Vector3<Vo>.minus(
+    other: Vector3<Vo>,
+): Vector3<Vo> = Vector3(
+    a0 = a0 - other.a0,
+    a1 = a1 - other.a1,
+    a2 = a2 - other.a2,
+)
+
+typealias Vector3Irr = Vector3<VectorOrientation.Irrelevant>
+
+fun <Vo : VectorOrientation> Vector3<Vo>.plusFirst(
+    scalar: Double,
+): Vector3<Vo> = copy(
+    a0 = a0 + scalar,
+)
+
+operator fun <Vo : VectorOrientation> Vector3<Vo>.plus(
+    other: Vector2<Vo>,
+): Vector3<Vo> = copy(
+    a0 = a0 + other.a0,
+    a1 = a1 + other.a1,
+)
+
+operator fun <Vo : VectorOrientation> Vector3<Vo>.plus(
+    other: Vector3<Vo>,
+): Vector3<Vo> = Vector3(
+    a0 = a0 + other.a0,
+    a1 = a1 + other.a1,
+    a2 = a2 + other.a2,
+)
+
+/**
+ * Convolution of this vector with another vector
+ */
+fun <Vo : VectorOrientation> Vector3<Vo>.conv(
+    other: Vector2<Vo>
+): Vector4<Vo> = Vector4(
+    a0 = a0 * other.a0,
+    a1 = a0 * other.a1 + a1 * other.a0,
+    a2 = a1 * other.a1 + a2 * other.a0,
+    a3 = a2 * other.a1,
+)
+
+/**
+ * Convolution of this vector with another vector
+ */
+fun <Vo : VectorOrientation> Vector3<Vo>.conv(
+    other: Vector3<Vo>
+): VectorN<Vo> = VectorN(
+    xs = listOf(
+        a0 * other.a0,
+        a0 * other.a1 + a1 * other.a0,
+        a0 * other.a2 + a1 * other.a1 + a2 * other.a0,
+        a1 * other.a2 + a2 * other.a1,
+        a2 * other.a2,
+    ),
+)
 
 val <Vo : VectorOrientation> Vector3<Vo>.vector2: Vector2<Vo>
     get() = Vector2(
         a0 = this.a0,
         a1 = this.a1,
     )
+
+val <Vo : VectorOrientation> Vector3<Vo>.lower: Vector2<Vo>
+    get() = vector2
+
+operator fun <Vo : VectorOrientation> Vector3<Vo>.unaryMinus(): Vector3<Vo> = Vector3(
+    a0 = -a0,
+    a1 = -a1,
+    a2 = -a2,
+)

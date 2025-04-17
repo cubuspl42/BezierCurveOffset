@@ -13,10 +13,21 @@ data class Vector2<out Vo : VectorOrientation>(
     companion object {
         fun <Vo : VectorOrientation> zero(): Vector2<Vo> = Vector2(a0 = 0.0, a1 = 0.0)
 
-        fun of(
-            x: Double,
-            y: Double,
-        ): Vector2<Nothing> = Vector2(x, y)
+        fun ofIrr(
+            a0: Double,
+            a1: Double,
+        ): Vector2<VectorOrientation.Irrelevant> = Vector2(
+            a0 = a0,
+            a1 = a1,
+        )
+
+        fun <Vo : VectorOrientation> of(
+            a0: Double,
+            a1: Double,
+        ): Vector2<Vo> = Vector2(
+            a0 = a0,
+            a1 = a1,
+        )
     }
 
     init {
@@ -75,7 +86,17 @@ data class Vector2<out Vo : VectorOrientation>(
         !a1.equalsWithTolerance(other.a1, absoluteTolerance = absoluteTolerance) -> false
         else -> true
     }
+
+    fun toList(): List<Double> = listOf(a0, a1)
 }
+
+typealias Vector2Irr = Vector2<VectorOrientation.Irrelevant>
+
+fun <Vo : VectorOrientation> Vector2<Vo>.plusFirst(
+    scalar: Double
+): Vector2<Vo> = copy(
+    a0 = a0 + scalar,
+)
 
 operator fun <Vo : VectorOrientation> Vector2<Vo>.plus(
     other: Vector2<Vo>,
@@ -91,21 +112,29 @@ operator fun <Vo : VectorOrientation> Vector2<Vo>.minus(
     a1 = a1 - other.a1,
 )
 
-operator fun <Vo : VectorOrientation> Vector2<Vo>.unaryMinus(): Vector2<Vo> = Vector2.of(
-    x = -a0,
-    y = -a1,
+operator fun <Vo : VectorOrientation> Vector2<Vo>.unaryMinus(): Vector2<Vo> = Vector2(
+    a0 = -a0,
+    a1 = -a1,
 )
 
 operator fun <Vo : VectorOrientation> Double.times(
     v: Vector2<Vo>,
-): Vector2<Vo> = Vector2.of(
-    x = this * v.a0,
-    y = this * v.a1,
+): Vector2<Vo> = Vector2(
+    a0 = this * v.a0,
+    a1 = this * v.a1,
 )
 
 operator fun <Vo : VectorOrientation> Vector2<Vo>.div(
     divisor: Double,
-): Vector2<Vo> = Vector2.of(
-    x = a0 / divisor,
-    y = a1 / divisor,
+): Vector2<Vo> = Vector2(
+    a0 = a0 / divisor,
+    a1 = a1 / divisor,
+)
+
+fun <Vo : VectorOrientation> Vector2<Vo>.conv(
+    other: Vector2<Vo>
+): Vector3<Vo> = Vector3(
+    a0 = a0 * other.a0,
+    a1 = a0 * other.a1 + a1 * other.a0,
+    a2 = a1 * other.a1,
 )

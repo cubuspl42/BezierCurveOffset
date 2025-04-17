@@ -5,6 +5,7 @@ import app.algebra.equalsWithTolerance
 import app.algebra.linear.VectorOrientation
 import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector3.Vector3
+import app.algebra.linear.vectors.vectorN.VectorN
 
 data class Vector4<out Vo : VectorOrientation> internal constructor(
     val a0: Double,
@@ -13,12 +14,24 @@ data class Vector4<out Vo : VectorOrientation> internal constructor(
     val a3: Double,
 ) : NumericObject {
     companion object {
-        fun of(
+        fun <Vo : VectorOrientation> of(
             a0: Double,
             a1: Double,
             a2: Double,
             a3: Double,
-        ): Vector4<Nothing> = Vector4(
+        ): Vector4<Vo> = Vector4(
+            a0 = a0,
+            a1 = a1,
+            a2 = a2,
+            a3 = a3,
+        )
+
+        fun ofIrr(
+            a0: Double,
+            a1: Double,
+            a2: Double,
+            a3: Double,
+        ): Vector4<VectorOrientation.Irrelevant> = Vector4(
             a0 = a0,
             a1 = a1,
             a2 = a2,
@@ -57,13 +70,6 @@ data class Vector4<out Vo : VectorOrientation> internal constructor(
         require(a3.isFinite())
     }
 
-    fun toArray(): DoubleArray = doubleArrayOf(
-        a0,
-        a1,
-        a2,
-        a3,
-    )
-
     fun dotForced(
         other: Vector4<*>,
     ): Double = a0 * other.a0 + a1 * other.a1 + a2 * other.a2 + a3 * other.a3
@@ -92,3 +98,144 @@ data class Vector4<out Vo : VectorOrientation> internal constructor(
         else -> true
     }
 }
+
+
+fun <Vo : VectorOrientation> Vector4<Vo>.plusFirst(
+    scalar: Double,
+): Vector4<Vo> = copy(
+    a0 = a0 + scalar,
+)
+
+operator fun <Vo : VectorOrientation> Vector4<Vo>.plus(
+    other: Vector2<Vo>,
+): Vector4<Vo> = copy(
+    a0 = a0 + other.a0,
+    a1 = a1 + other.a1,
+)
+
+operator fun <Vo : VectorOrientation> Vector4<Vo>.plus(
+    other: Vector3<Vo>,
+): Vector4<Vo> = copy(
+    a0 = a0 + other.a0,
+    a1 = a1 + other.a1,
+    a2 = a2 + other.a2,
+)
+
+operator fun <Vo : VectorOrientation> Vector4<Vo>.plus(
+    other: Vector4<Vo>,
+): Vector4<Vo> = Vector4.of(
+    a0 = a0 + other.a0,
+    a1 = a1 + other.a1,
+    a2 = a2 + other.a2,
+    a3 = a3 + other.a3,
+)
+
+operator fun <Vo : VectorOrientation> Vector4<Vo>.times(
+    scalar: Double,
+): Vector4<Vo> = Vector4(
+    a0 = a0 * scalar,
+    a1 = a1 * scalar,
+    a2 = a2 * scalar,
+    a3 = a3 * scalar,
+)
+
+operator fun <Vo : VectorOrientation> Double.times(
+    v: Vector4<Vo>,
+): Vector4<Vo> = v * this
+
+/**
+ * Convolve two vectors a and b.
+ *
+ * The output convolution is a vector with length equal to length (a) + length (b) - 1.
+ * When a and b are the coefficient vectors of two polynomials, the convolution
+ * represents the coefficient vector of the product polynomial.
+ *
+ * @return the convolution of this vector with another vector (size 5)
+ */
+fun <Vo : VectorOrientation> Vector4<Vo>.conv(
+    other: Vector2<Vo>
+): VectorN<Vo> = VectorN(
+    xs = listOf(
+        a0 * other.a0,
+        a0 * other.a1 + a1 * other.a0,
+        a1 * other.a1 + a2 * other.a0,
+        a2 * other.a1 + a3 * other.a0,
+        a3 * other.a1,
+    ),
+)
+
+/**
+ * Convolve two vectors a and b.
+ *
+ * The output convolution is a vector with length equal to length (a) + length (b) - 1.
+ * When a and b are the coefficient vectors of two polynomials, the convolution
+ * represents the coefficient vector of the product polynomial.
+ *
+ * @return the convolution of this vector with another vector (size 6)
+ */
+fun <Vo : VectorOrientation> Vector4<Vo>.conv(
+    other: Vector3<Vo>
+): VectorN<Vo> = VectorN(
+    xs = listOf(
+        a0 * other.a0,
+        a0 * other.a1 + a1 * other.a0,
+        a0 * other.a2 + a1 * other.a1 + a2 * other.a0,
+        a1 * other.a2 + a2 * other.a1 + a3 * other.a0,
+        a2 * other.a2 + a3 * other.a1,
+        a3 * other.a2,
+    ),
+)
+
+/**
+ * Convolve two vectors a and b.
+ *
+ * The output convolution is a vector with length equal to length (a) + length (b) - 1.
+ * When a and b are the coefficient vectors of two polynomials, the convolution
+ * represents the coefficient vector of the product polynomial.
+ *
+ * @return the convolution of this vector with another vector (size 7)
+ */
+fun <Vo : VectorOrientation> Vector4<Vo>.conv(
+    other: Vector4<Vo>
+): VectorN<Vo> = VectorN(
+    xs = listOf(
+        a0 * other.a0,
+        a0 * other.a1 + a1 * other.a0,
+        a0 * other.a2 + a1 * other.a1 + a2 * other.a0,
+        a0 * other.a3 + a1 * other.a2 + a2 * other.a1 + a3 * other.a0,
+        a1 * other.a3 + a2 * other.a2 + a3 * other.a1,
+        a2 * other.a3 + a3 * other.a2,
+        a3 * other.a3,
+    ),
+)
+
+fun <Vo : VectorOrientation> Vector4<Vo>.scale(
+    factor: Double,
+): Vector4<Vo> {
+    require(factor.isFinite())
+    return Vector4.of(
+        a0 = a0 * factor,
+        a1 = a1 * factor,
+        a2 = a2 * factor,
+        a3 = a3 * factor,
+    )
+}
+
+val <Vo : VectorOrientation> Vector4<Vo>.vector3: Vector3<Vo>
+    get() = Vector3(
+        a0 = this.a0,
+        a1 = this.a1,
+        a2 = this.a2,
+    )
+
+val <Vo : VectorOrientation> Vector4<Vo>.lower: Vector3<Vo>
+    get() = vector3
+
+operator fun <Vo : VectorOrientation> Vector4<Vo>.unaryMinus(): Vector4<Vo> = Vector4(
+    a0 = -a0,
+    a1 = -a1,
+    a2 = -a2,
+    a3 = -a3,
+)
+
+typealias Vector4Irr = Vector4<VectorOrientation.Irrelevant>

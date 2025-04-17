@@ -43,6 +43,10 @@ data class ConstantPolynomial private constructor(
         cubicPolynomial: CubicPolynomial,
     ): Polynomial = cubicPolynomial + a
 
+    override fun plusHigh(
+        highPolynomial: HighPolynomial,
+    ): Polynomial = highPolynomial + a
+
     override fun times(
         factor: Double,
     ): Polynomial = ConstantPolynomial.of(a = a * factor)

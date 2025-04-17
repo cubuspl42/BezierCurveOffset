@@ -2,39 +2,66 @@ package app.algebra.polynomials
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
+import app.algebra.linear.vectors.vector4.Vector4Irr
+import app.algebra.linear.vectors.vector4.lower
+import app.algebra.linear.vectors.vector4.plus
+import app.algebra.linear.vectors.vector4.plusFirst
+import app.algebra.linear.vectors.vector4.times
+import app.algebra.linear.vectors.vector4.unaryMinus
 import kotlin.math.acos
 import kotlin.math.cbrt
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
+
 @Suppress("DataClassPrivateConstructor")
 data class CubicPolynomial private constructor(
-    val a: Double,
-    val b: Double,
-    val c: Double,
-    val d: Double,
+    val coefficients: Vector4Irr,
 ) : Polynomial() {
     companion object {
+        fun of(
+            coefficients: Vector4Irr,
+        ): Polynomial = when {
+            coefficients.a3 == 0.0 -> QuadraticPolynomial.of(coefficients.lower)
+            else -> CubicPolynomial(coefficients = coefficients)
+        }
+
         fun of(
             a: Double,
             b: Double,
             c: Double,
             d: Double,
-        ): Polynomial = when {
-            a == 0.0 -> QuadraticPolynomial.of(a = b, b = c, c = d)
-            else -> CubicPolynomial(a = a, b = b, c = c, d = d)
-        }
+        ): Polynomial = of(
+            coefficients = Vector4Irr(
+                a0 = d,
+                a1 = c,
+                a2 = b,
+                a3 = a,
+            ),
+        )
     }
 
+    val a: Double
+        get() = coefficients.a3
+
+    val b: Double
+        get() = coefficients.a2
+
+    val c: Double
+        get() = coefficients.a1
+
+    val d: Double
+        get() = coefficients.a0
+
     init {
-        require(a != 0.0)
+        require(coefficients.a3 != 0.0)
     }
 
     override operator fun plus(
         constant: Double,
-    ): CubicPolynomial = copy(
-        d = d + constant,
+    ): CubicPolynomial = CubicPolynomial(
+        coefficients = coefficients.plusFirst(constant),
     )
 
     override fun plus(
@@ -43,42 +70,34 @@ data class CubicPolynomial private constructor(
 
     override fun plusLinear(
         linearPolynomial: LinearPolynomial,
-    ): CubicPolynomial = copy(
-        c = c + linearPolynomial.a,
-        d = d + linearPolynomial.b,
+    ): CubicPolynomial = CubicPolynomial(
+        coefficients = coefficients + linearPolynomial.coefficients,
     )
 
     override fun plusQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
-    ): CubicPolynomial = copy(
-        b = b + quadraticPolynomial.a,
-        c = c + quadraticPolynomial.b,
-        d = d + quadraticPolynomial.c,
+    ): CubicPolynomial = CubicPolynomial(
+        coefficients = coefficients + quadraticPolynomial.coefficients,
     )
 
     override fun plusCubic(
         cubicPolynomial: CubicPolynomial,
     ): Polynomial = CubicPolynomial.of(
-        a = a + cubicPolynomial.a,
-        b = b + cubicPolynomial.b,
-        c = c + cubicPolynomial.c,
-        d = d + cubicPolynomial.d,
+        coefficients = coefficients + cubicPolynomial.coefficients,
     )
 
+    override fun plusHigh(
+        highPolynomial: HighPolynomial,
+    ): Polynomial = highPolynomial.plusCubic(this)
+
     override fun unaryMinus(): CubicPolynomial = CubicPolynomial(
-        a = -a,
-        b = -b,
-        c = -c,
-        d = -d,
+        coefficients = -coefficients,
     )
 
     override fun times(
         factor: Double,
     ): Polynomial = CubicPolynomial.of(
-        a = a * factor,
-        b = b * factor,
-        c = c * factor,
-        d = d * factor,
+        coefficients = factor * coefficients,
     )
 
     override fun apply(x: Double): Double = a * x * x * x + b * x * x + c * x + d

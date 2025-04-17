@@ -1,7 +1,11 @@
 package app.algebra.linear
 
 sealed class VectorOrientation {
-    data object Horizontal : VectorOrientation()
+    sealed class Relevant : VectorOrientation()
 
-    data object Vertical : VectorOrientation()
+    data object Horizontal : Relevant()
+
+    data object Vertical : Relevant()
+
+    data object Irrelevant : VectorOrientation()
 }

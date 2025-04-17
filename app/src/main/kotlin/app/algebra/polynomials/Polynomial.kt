@@ -28,6 +28,10 @@ sealed class Polynomial : RealFunction<Double>(), NumericObject {
         cubicPolynomial: CubicPolynomial,
     ): Polynomial
 
+    abstract fun plusHigh(
+        highPolynomial: HighPolynomial,
+    ): Polynomial
+
     abstract operator fun plus(
         other: Polynomial,
     ): Polynomial

@@ -28,17 +28,17 @@ data class MixedTransformation(
             f: Double,
         ): MixedTransformation = MixedTransformation(
             transformationMatrix = Matrix3x3.rowMajor(
-                row0 = Vector1x3.of(
+                row0 = Vector1x3(
                     a0 = a,
                     a1 = c,
                     a2 = e,
                 ),
-                row1 = Vector1x3.of(
+                row1 = Vector1x3(
                     a0 = b,
                     a1 = d,
                     a2 = f,
                 ),
-                row2 = Vector1x3.of(
+                row2 = Vector1x3(
                     a0 = 0.0,
                     a1 = 0.0,
                     a2 = 1.0,
