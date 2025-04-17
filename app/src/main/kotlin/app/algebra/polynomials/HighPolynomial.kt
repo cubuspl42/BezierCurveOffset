@@ -14,6 +14,14 @@ data class HighPolynomial private constructor(
 ) : Polynomial() {
     companion object {
         fun of(
+            vararg coefficients: Double,
+        ): Polynomial = of(
+            coefficients = VectorNIrr(
+                xs = coefficients.toList(),
+            ),
+        )
+
+        fun of(
             coefficients: VectorNIrr,
         ): Polynomial {
             val a = coefficients.xs

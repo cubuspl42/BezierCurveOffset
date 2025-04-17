@@ -29,10 +29,10 @@ data class CubicPolynomial private constructor(
         }
 
         fun of(
-            a: Double,
-            b: Double,
-            c: Double,
             d: Double,
+            c: Double,
+            b: Double,
+            a: Double,
         ): Polynomial = of(
             coefficients = Vector4Irr(
                 a0 = d,

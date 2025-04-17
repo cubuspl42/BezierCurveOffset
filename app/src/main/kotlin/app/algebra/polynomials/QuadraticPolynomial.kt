@@ -23,9 +23,9 @@ data class QuadraticPolynomial private constructor(
         }
 
         fun of(
-            a: Double,
-            b: Double,
             c: Double,
+            b: Double,
+            a: Double,
         ): Polynomial = of(
             coefficients = Vector3Irr(
                 a0 = c,
