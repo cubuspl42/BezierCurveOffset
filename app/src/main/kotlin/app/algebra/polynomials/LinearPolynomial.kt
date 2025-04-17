@@ -26,8 +26,8 @@ data class LinearPolynomial private constructor(
         }
 
         fun of(
-            a: Double,
             b: Double,
+            a: Double,
         ): Polynomial = of(
             coefficients = Vector2(
                 a0 = b,
