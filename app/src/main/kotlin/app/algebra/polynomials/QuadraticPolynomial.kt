@@ -61,12 +61,12 @@ data class QuadraticPolynomial private constructor(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is QuadraticPolynomial -> false
-        !a.equalsWithTolerance(other.a, absoluteTolerance = absoluteTolerance) -> false
-        !b.equalsWithTolerance(other.b, absoluteTolerance = absoluteTolerance) -> false
-        !c.equalsWithTolerance(other.c, absoluteTolerance = absoluteTolerance) -> false
+        !a.equalsWithTolerance(other.a, tolerance = tolerance) -> false
+        !b.equalsWithTolerance(other.b, tolerance = tolerance) -> false
+        !c.equalsWithTolerance(other.c, tolerance = tolerance) -> false
         else -> true
     }
 

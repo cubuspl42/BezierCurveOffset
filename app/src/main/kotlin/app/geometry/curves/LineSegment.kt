@@ -45,7 +45,7 @@ data class LineSegment(
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            absoluteTolerance: Double,
+            tolerance: Double,
         ): Boolean = other is Edge
 
         override fun toString(): String = "LineSegment.Edge"

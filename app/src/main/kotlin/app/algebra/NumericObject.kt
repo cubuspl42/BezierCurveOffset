@@ -35,35 +35,35 @@ interface NumericObject {
 
     fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean
 }
 
 fun Double.equalsWithTolerance(
     other: Double,
-    absoluteTolerance: Double,
-): Boolean = abs(this - other) <= absoluteTolerance
+    tolerance: Double,
+): Boolean = abs(this - other) <= tolerance
 
 @JvmName("equalsWithToleranceListDouble")
 fun List<Double>.equalsWithTolerance(
     other: List<Double>,
-    absoluteTolerance: Double,
+    tolerance: Double,
 ): Boolean {
     if (this.size != other.size) return false
 
     return zip(other).all { (a, b) ->
-        a.equalsWithTolerance(b, absoluteTolerance)
+        a.equalsWithTolerance(b, tolerance)
     }
 }
 
 @JvmName("equalsWithToleranceListNumericObject")
 fun List<NumericObject>.equalsWithTolerance(
     other: List<NumericObject>,
-    absoluteTolerance: Double,
+    tolerance: Double,
 ): Boolean {
     if (this.size != other.size) return false
 
     return zip(other).all { (a, b) ->
-        a.equalsWithTolerance(b, absoluteTolerance)
+        a.equalsWithTolerance(b, tolerance)
     }
 }

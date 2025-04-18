@@ -69,7 +69,7 @@ class Ray(
         other: Ray,
     ): Boolean = dv.cross(other.dv).equalsWithTolerance(
         0.0,
-        absoluteTolerance = Constants.epsilon,
+        tolerance = Constants.epsilon,
     )
 }
 

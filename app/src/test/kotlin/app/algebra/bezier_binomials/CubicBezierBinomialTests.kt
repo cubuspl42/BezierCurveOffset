@@ -33,7 +33,7 @@ class CubicBezierBinomialTests {
             assertEqualsWithTolerance(
                 expected = sample.value,
                 actual = parametricPolynomial.apply(sample.x),
-                absoluteTolerance = eps,
+                tolerance = eps,
             )
         }
     }
@@ -90,7 +90,7 @@ class CubicBezierBinomialTests {
         assertEqualsWithTolerance(
             expected = expectedImplicitCubicPolynomial,
             actual = implicitCubicPolynomial,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         val samples = bezierCurveBasis.sample(

@@ -95,7 +95,7 @@ class ClosedSplineTests {
         assertEqualsWithTolerance(
             expected = expectedLinks,
             actual = interconnectedSpline.cyclicLinks,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -165,7 +165,7 @@ class ClosedSplineTests {
                 expectedCorner1.withCornerMetadata(),
             ),
             actual = interconnectedSpline.cyclicLinks,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -267,7 +267,7 @@ class ClosedSplineTests {
         assertEqualsWithTolerance(
             expected = expectedInterconnectedSpline,
             actual = interconnectedSpline,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 

@@ -103,7 +103,7 @@ data class ParametricPolynomial(
     )
 
     override fun equalsWithTolerance(
-        other: NumericObject, absoluteTolerance: Double
+        other: NumericObject, tolerance: Double
     ): Boolean = when {
         other !is ParametricPolynomial -> false
         xFunction != other.xFunction -> false

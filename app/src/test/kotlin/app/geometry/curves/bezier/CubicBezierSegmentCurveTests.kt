@@ -1,7 +1,7 @@
 package app.geometry.curves.bezier
 
+import app.algebra.assertEquals
 import app.algebra.assertEqualsWithTolerance
-import app.assertEquals
 import app.geometry.Point
 import app.geometry.SvgCurveExtractionUtils
 import app.geometry.SvgCurveExtractionUtils.ExtractedPath
@@ -421,7 +421,7 @@ class CubicBezierSegmentCurveTests {
                 Point.of(191.6589, 154.4981),
             ),
             actual = intersectionDetailsSorted,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 }

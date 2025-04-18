@@ -5,7 +5,6 @@ import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 import app.asList
 import app.elementWiseAs
-import app.geometry.BoundingBox
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.transformations.Transformation
@@ -185,13 +184,13 @@ data class ClosedSpline<
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is ClosedSpline<*, *, *> -> false
 
         !this.cyclicLinks.equalsWithTolerance(
             other.cyclicLinks,
-            absoluteTolerance = absoluteTolerance,
+            tolerance = tolerance,
         ) -> false
 
         else -> true

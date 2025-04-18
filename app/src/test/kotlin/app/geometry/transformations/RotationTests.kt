@@ -19,7 +19,7 @@ class RotationTests {
             actual = rotation.transform(
                 Point.of(10.0, 10.0),
             ),
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 }

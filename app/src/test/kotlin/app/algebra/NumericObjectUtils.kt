@@ -1,21 +1,43 @@
 package app.algebra
 
+import app.geometry.Point
 import kotlin.test.assertEquals
+
+fun assertEquals(
+    expected: Point,
+    actual: Point,
+    absoluteTolerance: Double,
+    message: String? = null,
+) {
+    kotlin.test.assertEquals(
+        expected = expected.x,
+        actual = actual.x,
+        absoluteTolerance = absoluteTolerance,
+        message = message?.let { "$it (x)" }
+    )
+
+    kotlin.test.assertEquals(
+        expected = expected.y,
+        actual = actual.y,
+        absoluteTolerance = absoluteTolerance,
+        message = message?.let { "$it (y)" }
+    )
+}
 
 fun <T : NumericObject> assertEqualsWithTolerance(
     expected: T,
     actual: T,
-    absoluteTolerance: Double,
+    tolerance: Double,
 ) {
-    assert(expected.equalsWithTolerance(actual, absoluteTolerance = absoluteTolerance)) {
-        "Expected $expected, but got $actual (tolerance: $absoluteTolerance)"
+    assert(expected.equalsWithTolerance(actual, tolerance = tolerance)) {
+        "Expected $expected, but got $actual (tolerance: $tolerance)"
     }
 }
 
 fun <T : NumericObject> assertEqualsWithTolerance(
     expected: List<T>,
     actual: List<T>,
-    absoluteTolerance: Double,
+    tolerance: Double,
 ) {
     assert(expected.size == actual.size) {
         "Expected list size ${expected.size}, but got ${actual.size}"
@@ -25,7 +47,7 @@ fun <T : NumericObject> assertEqualsWithTolerance(
         assertEqualsWithTolerance(
             expected = expected[i],
             actual = actual[i],
-            absoluteTolerance = absoluteTolerance,
+            tolerance = tolerance,
         )
     }
 }
@@ -34,7 +56,7 @@ fun <T : NumericObject> assertEqualsWithTolerance(
 fun assertEqualsWithTolerance(
     expected: List<Double>,
     actual: List<Double>,
-    absoluteTolerance: Double,
+    tolerance: Double,
 ) {
     assert(expected.size == actual.size) {
         "Expected list size ${expected.size}, but got ${actual.size}"
@@ -44,7 +66,7 @@ fun assertEqualsWithTolerance(
         assertEquals(
             expected = expected[i],
             actual = actual[i],
-            absoluteTolerance = absoluteTolerance,
+            absoluteTolerance = tolerance,
         )
     }
 }

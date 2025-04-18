@@ -89,10 +89,10 @@ data class VectorN<out Vo : VectorOrientation> internal constructor(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is VectorN<*> -> false
-        !elements.equalsWithTolerance(other.elements, absoluteTolerance = absoluteTolerance) -> false
+        !elements.equalsWithTolerance(other.elements, tolerance = tolerance) -> false
         else -> true
     }
 

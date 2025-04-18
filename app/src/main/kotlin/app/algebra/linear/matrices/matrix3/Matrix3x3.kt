@@ -49,7 +49,7 @@ sealed class Matrix3x3 : NumericObject {
     final override fun equals(other: Any?): Boolean {
         return equalsWithTolerance(
             other = other as? NumericObject ?: return false,
-            absoluteTolerance = 0.0,
+            tolerance = 0.0,
         )
     }
 
@@ -66,11 +66,11 @@ sealed class Matrix3x3 : NumericObject {
     """.trimIndent()
 
     protected fun equalsWithToleranceRowWise(
-        other: Matrix3x3, absoluteTolerance: Double
+        other: Matrix3x3, tolerance: Double
     ): Boolean = when {
-        !row0.equalsWithTolerance(other.row0, absoluteTolerance = absoluteTolerance) -> false
-        !row1.equalsWithTolerance(other.row1, absoluteTolerance = absoluteTolerance) -> false
-        !row2.equalsWithTolerance(other.row2, absoluteTolerance = absoluteTolerance) -> false
+        !row0.equalsWithTolerance(other.row0, tolerance = tolerance) -> false
+        !row1.equalsWithTolerance(other.row1, tolerance = tolerance) -> false
+        !row2.equalsWithTolerance(other.row2, tolerance = tolerance) -> false
         else -> true
     }
 

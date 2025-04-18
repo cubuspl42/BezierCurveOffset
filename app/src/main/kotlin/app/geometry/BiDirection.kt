@@ -1,7 +1,6 @@
 package app.geometry
 
 import app.algebra.NumericObject
-import app.algebra.linear.vectors.vector2.Vector2
 
 /**
  * A bi-direction in the 2D Euclidean space, i.e. a pair of opposite directions, or a unit vector with a given direction
@@ -38,12 +37,12 @@ value class BiDirection internal constructor(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is BiDirection -> false
         else -> representativeDirection.equalsWithTolerance(
             other = other.representativeDirection,
-            absoluteTolerance = absoluteTolerance,
+            tolerance = tolerance,
         )
     }
 

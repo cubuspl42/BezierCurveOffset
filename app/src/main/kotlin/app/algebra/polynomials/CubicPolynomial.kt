@@ -192,13 +192,13 @@ data class CubicPolynomial private constructor(
     override fun apply(x: Double): Double = a * x * x * x + b * x * x + c * x + d
 
     override fun equalsWithTolerance(
-        other: NumericObject, absoluteTolerance: Double
+        other: NumericObject, tolerance: Double
     ): Boolean = when {
         other !is CubicPolynomial -> false
-        !a.equalsWithTolerance(other.a, absoluteTolerance = absoluteTolerance) -> false
-        !b.equalsWithTolerance(other.b, absoluteTolerance = absoluteTolerance) -> false
-        !c.equalsWithTolerance(other.c, absoluteTolerance = absoluteTolerance) -> false
-        !d.equalsWithTolerance(other.d, absoluteTolerance = absoluteTolerance) -> false
+        !a.equalsWithTolerance(other.a, tolerance = tolerance) -> false
+        !b.equalsWithTolerance(other.b, tolerance = tolerance) -> false
+        !c.equalsWithTolerance(other.c, tolerance = tolerance) -> false
+        !d.equalsWithTolerance(other.d, tolerance = tolerance) -> false
         else -> true
     }
 

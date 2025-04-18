@@ -54,10 +54,10 @@ class Matrix4xN(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when (other) {
         !is Matrix4xN -> false
-        else -> columns.equalsWithTolerance(other.columns, absoluteTolerance = absoluteTolerance)
+        else -> columns.equalsWithTolerance(other.columns, tolerance = tolerance)
     }
 }
 

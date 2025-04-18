@@ -65,12 +65,12 @@ class RowMajorMatrix4x4(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is Matrix4x4 -> false
         else -> equalsWithToleranceRowWise(
             other = other,
-            absoluteTolerance = absoluteTolerance,
+            tolerance = tolerance,
         )
     }
 }

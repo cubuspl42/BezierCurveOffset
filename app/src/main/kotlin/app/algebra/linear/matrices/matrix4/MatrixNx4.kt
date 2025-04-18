@@ -42,9 +42,9 @@ class MatrixNx4(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when (other) {
         !is MatrixNx4 -> false
-        else -> rows.equalsWithTolerance(other.rows, absoluteTolerance = absoluteTolerance)
+        else -> rows.equalsWithTolerance(other.rows, tolerance = tolerance)
     }
 }

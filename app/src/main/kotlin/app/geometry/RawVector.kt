@@ -4,8 +4,6 @@ import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.VectorSpace
 import app.algebra.linear.vectors.vector2.Vector2x1
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.math.sqrt
 
 /**
@@ -174,11 +172,11 @@ data class RawVector(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is RawVector -> false
-        !x.equalsWithTolerance(other.x, absoluteTolerance = absoluteTolerance) -> false
-        !y.equalsWithTolerance(other.y, absoluteTolerance = absoluteTolerance) -> false
+        !x.equalsWithTolerance(other.x, tolerance = tolerance) -> false
+        !y.equalsWithTolerance(other.y, tolerance = tolerance) -> false
         else -> true
     }
 }

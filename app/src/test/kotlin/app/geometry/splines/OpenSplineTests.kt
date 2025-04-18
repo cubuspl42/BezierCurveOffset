@@ -46,7 +46,7 @@ class OpenSplineTests {
         assertEqualsWithTolerance(
             expected = spline,
             actual = mergedSpline,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -87,7 +87,7 @@ class OpenSplineTests {
         assertEqualsWithTolerance(
             expected = spline,
             actual = mergedSpline,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -144,7 +144,7 @@ class OpenSplineTests {
                 lastLink = lastLink,
             ),
             actual = mergedSpline,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -240,7 +240,7 @@ class OpenSplineTests {
         assertEqualsWithTolerance(
             expected = expectedMergedSpline,
             actual = mergedSpline,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -376,7 +376,7 @@ class OpenSplineTests {
         assertEqualsWithTolerance(
             expected = expectedMergedSpline,
             actual = mergedSpline,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 }

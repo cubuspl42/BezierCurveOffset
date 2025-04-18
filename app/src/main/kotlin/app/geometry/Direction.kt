@@ -2,7 +2,6 @@ package app.geometry
 
 import app.algebra.NumericObject
 import app.algebra.equalsWithTolerance
-import app.geometry.Point.Companion
 
 /**
  * A direction in the 2D Euclidean space, i.e. a unit vector with a given direction and orientation.
@@ -40,7 +39,7 @@ class Direction private constructor(
         require(
             dv.lengthSquared.equalsWithTolerance(
                 1.0,
-                absoluteTolerance = 1e-6,
+                tolerance = 1e-6,
             ),
         )
     }
@@ -64,12 +63,12 @@ class Direction private constructor(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is Direction -> false
         else -> angleBetween(other).equalsWithRadialTolerance(
             other = PrincipalAngle.Zero,
-            tolerance = RadialTolerance.ofAbsoluteTolerance(absoluteTolerance = absoluteTolerance),
+            tolerance = RadialTolerance.oftolerance(tolerance = tolerance),
         )
     }
 

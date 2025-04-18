@@ -27,13 +27,13 @@ class MonoCurveSpline<
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is MonoCurveSpline<*, *, *> -> false
 
         !link.equalsWithTolerance(
             other.link,
-            absoluteTolerance = absoluteTolerance,
+            tolerance = tolerance,
         ) -> false
 
         else -> true

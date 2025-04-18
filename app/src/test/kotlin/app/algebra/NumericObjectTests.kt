@@ -10,7 +10,7 @@ class NumericObjectTests {
     private val smallValue = 10.12
     private val bigValue = 1.1876e10
 
-    private fun testAbsoluteToleranceNearby(
+    private fun testtoleranceNearby(
         baseValue: Double,
         tolerance: Tolerance.Absolute,
     ) {
@@ -128,14 +128,14 @@ class NumericObjectTests {
     }
 
     @Test
-    fun testAbsoluteTolerance_tiny() {
+    fun testtolerance_tiny() {
         val tolerance = Tolerance.Absolute(
             absoluteTolerance = 10e-8,
         )
 
         // Tiny value
 
-        testAbsoluteToleranceNearby(
+        testtoleranceNearby(
             baseValue = tinyValue,
             tolerance = tolerance,
         )
@@ -156,7 +156,7 @@ class NumericObjectTests {
 
         // Small value
 
-        testAbsoluteToleranceNearby(
+        testtoleranceNearby(
             baseValue = smallValue,
             tolerance = tolerance,
         )
@@ -177,14 +177,14 @@ class NumericObjectTests {
     }
 
     @Test
-    fun testAbsoluteTolerance_small() {
+    fun testtolerance_small() {
         val tolerance = Tolerance.Absolute(
             absoluteTolerance = 10e-2,
         )
 
         // Tiny value
 
-        testAbsoluteToleranceNearby(
+        testtoleranceNearby(
             baseValue = tinyValue,
             tolerance = tolerance,
         )
@@ -205,7 +205,7 @@ class NumericObjectTests {
 
         // Small value
 
-        testAbsoluteToleranceNearby(
+        testtoleranceNearby(
             baseValue = smallValue,
             tolerance = tolerance,
         )
@@ -226,7 +226,7 @@ class NumericObjectTests {
 
         // Big value
 
-        testAbsoluteToleranceNearby(
+        testtoleranceNearby(
             baseValue = bigValue,
             tolerance = tolerance,
         )
@@ -247,14 +247,14 @@ class NumericObjectTests {
     }
 
     @Test
-    fun testAbsoluteTolerance_big() {
+    fun testtolerance_big() {
         val tolerance = Tolerance.Absolute(
             absoluteTolerance = 100.0,
         )
 
         // Tiny value
 
-        testAbsoluteToleranceNearby(
+        testtoleranceNearby(
             baseValue = tinyValue,
             tolerance = tolerance,
         )
@@ -275,7 +275,7 @@ class NumericObjectTests {
 
         // Small value
 
-        testAbsoluteToleranceNearby(
+        testtoleranceNearby(
             baseValue = smallValue,
             tolerance = tolerance,
         )
@@ -296,7 +296,7 @@ class NumericObjectTests {
 
         // Big value
 
-        testAbsoluteToleranceNearby(
+        testtoleranceNearby(
             baseValue = bigValue,
             tolerance = tolerance,
         )

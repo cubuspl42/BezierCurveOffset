@@ -106,12 +106,12 @@ data class ImplicitLinearPolynomial(
     fun apply(p: RawVector): Double = a1 * p.x + b1 * p.y + c
 
     override fun equalsWithTolerance(
-        other: NumericObject, absoluteTolerance: Double
+        other: NumericObject, tolerance: Double
     ): Boolean = when {
         other !is ImplicitLinearPolynomial -> false
-        !a1.equalsWithTolerance(other.a1, absoluteTolerance = absoluteTolerance) -> false
-        !b1.equalsWithTolerance(other.b1, absoluteTolerance = absoluteTolerance) -> false
-        !c.equalsWithTolerance(other.c, absoluteTolerance = absoluteTolerance) -> false
+        !a1.equalsWithTolerance(other.a1, tolerance = tolerance) -> false
+        !b1.equalsWithTolerance(other.b1, tolerance = tolerance) -> false
+        !c.equalsWithTolerance(other.c, tolerance = tolerance) -> false
         else -> true
     }
 }

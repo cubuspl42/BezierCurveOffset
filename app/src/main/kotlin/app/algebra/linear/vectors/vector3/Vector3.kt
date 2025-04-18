@@ -95,12 +95,12 @@ data class Vector3<out Vo : VectorOrientation>(
         }
 
     override fun equalsWithTolerance(
-        other: NumericObject, absoluteTolerance: Double
+        other: NumericObject, tolerance: Double
     ): Boolean = when {
         other !is Vector3<*> -> false
-        !a0.equalsWithTolerance(other.a0, absoluteTolerance) -> false
-        !a1.equalsWithTolerance(other.a1, absoluteTolerance) -> false
-        !a2.equalsWithTolerance(other.a2, absoluteTolerance) -> false
+        !a0.equalsWithTolerance(other.a0, tolerance) -> false
+        !a1.equalsWithTolerance(other.a1, tolerance) -> false
+        !a2.equalsWithTolerance(other.a2, tolerance) -> false
         else -> true
     }
 

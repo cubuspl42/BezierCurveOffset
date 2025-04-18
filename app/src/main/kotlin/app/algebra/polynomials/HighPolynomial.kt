@@ -134,10 +134,10 @@ data class HighPolynomial private constructor(
     }
 
     override fun equalsWithTolerance(
-        other: NumericObject, absoluteTolerance: Double
+        other: NumericObject, tolerance: Double
     ): Boolean = when {
         other !is HighPolynomial -> false
-        !coefficients.equalsWithTolerance(other.coefficients, absoluteTolerance = absoluteTolerance) -> false
+        !coefficients.equalsWithTolerance(other.coefficients, tolerance = tolerance) -> false
         else -> true
     }
 

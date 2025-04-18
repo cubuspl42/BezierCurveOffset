@@ -99,20 +99,20 @@ class ColumnMajorMatrix4x4(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other is Matrix4x4 -> when {
             other is ColumnMajorMatrix4x4 -> when {
-                !column0.equalsWithTolerance(other.column0, absoluteTolerance = absoluteTolerance) -> false
-                !column1.equalsWithTolerance(other.column1, absoluteTolerance = absoluteTolerance) -> false
-                !column2.equalsWithTolerance(other.column2, absoluteTolerance = absoluteTolerance) -> false
-                !column3.equalsWithTolerance(other.column3, absoluteTolerance = absoluteTolerance) -> false
+                !column0.equalsWithTolerance(other.column0, tolerance = tolerance) -> false
+                !column1.equalsWithTolerance(other.column1, tolerance = tolerance) -> false
+                !column2.equalsWithTolerance(other.column2, tolerance = tolerance) -> false
+                !column3.equalsWithTolerance(other.column3, tolerance = tolerance) -> false
                 else -> true
             }
 
             else -> equalsWithToleranceRowWise(
                 other = other,
-                absoluteTolerance = absoluteTolerance,
+                tolerance = tolerance,
             )
         }
 

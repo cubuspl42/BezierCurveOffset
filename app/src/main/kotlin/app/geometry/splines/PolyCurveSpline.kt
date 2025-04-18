@@ -32,23 +32,23 @@ data class PolyCurveSpline<
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double
+        tolerance: Double
     ): Boolean = when {
         other !is PolyCurveSpline<*, *, *> -> false
 
         !firstLink.equalsWithTolerance(
             other.firstLink,
-            absoluteTolerance = absoluteTolerance,
+            tolerance = tolerance,
         ) -> false
 
         !innerLinks.equalsWithTolerance(
             other.innerLinks,
-            absoluteTolerance = absoluteTolerance,
+            tolerance = tolerance,
         ) -> false
 
         !lastLink.equalsWithTolerance(
             other.lastLink,
-            absoluteTolerance = absoluteTolerance,
+            tolerance = tolerance,
         ) -> false
 
         else -> true

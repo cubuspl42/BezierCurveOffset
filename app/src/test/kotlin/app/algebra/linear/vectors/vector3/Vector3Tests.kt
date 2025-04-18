@@ -30,7 +30,7 @@ class Vector3Tests {
                 a3 = -50.4,
             ),
             actual = a.conv(b),
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -59,7 +59,7 @@ class Vector3Tests {
                 ),
             ),
             actual = a.conv(b),
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 }

@@ -79,11 +79,11 @@ data class Vector2<out Vo : VectorOrientation>(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is Vector2<*> -> false
-        !a0.equalsWithTolerance(other.a0, absoluteTolerance = absoluteTolerance) -> false
-        !a1.equalsWithTolerance(other.a1, absoluteTolerance = absoluteTolerance) -> false
+        !a0.equalsWithTolerance(other.a0, tolerance = tolerance) -> false
+        !a1.equalsWithTolerance(other.a1, tolerance = tolerance) -> false
         else -> true
     }
 

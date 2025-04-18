@@ -31,7 +31,7 @@ class CubicPolynomialTests {
                 a = 2.0,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         assertEquals(
@@ -65,7 +65,7 @@ class CubicPolynomialTests {
                 2.0,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         assertEquals(
@@ -101,7 +101,7 @@ class CubicPolynomialTests {
                 1.0,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         assertEquals(
@@ -138,7 +138,7 @@ class CubicPolynomialTests {
                 2.0,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         assertEquals(
@@ -178,7 +178,7 @@ class CubicPolynomialTests {
         assertEqualsWithTolerance(
             expected = listOf(-2.0, 1.0),
             actual = roots,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -196,7 +196,7 @@ class CubicPolynomialTests {
         assertEqualsWithTolerance(
             expected = listOf(1.0, 2.0, 3.0),
             actual = roots,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -228,7 +228,7 @@ class CubicPolynomialTests {
                 row2 = Vector1x3(2.0, -11.0, 13.0),
             ),
             actual = resultantMatrix,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         val resultant = CubicPolynomial.resultant(

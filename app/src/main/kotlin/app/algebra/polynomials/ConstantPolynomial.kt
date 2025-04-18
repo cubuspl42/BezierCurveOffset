@@ -19,10 +19,10 @@ data class ConstantPolynomial private constructor(
     override fun apply(x: Double): Double = a
 
     override fun equalsWithTolerance(
-        other: NumericObject, absoluteTolerance: Double
+        other: NumericObject, tolerance: Double
     ): Boolean = when {
         other !is ConstantPolynomial -> false
-        !a.equalsWithTolerance(other.a, absoluteTolerance = absoluteTolerance) -> false
+        !a.equalsWithTolerance(other.a, tolerance = tolerance) -> false
         else -> true
     }
 

@@ -81,7 +81,7 @@ class Matrix4xNTests {
                 a30 = 364.0,
             ),
             actual = result,
-            absoluteTolerance = 0.01,
+            tolerance = 0.01,
         )
     }
 }

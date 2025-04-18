@@ -33,7 +33,7 @@ class QuadraticPolynomialTests {
                 a = 2.0,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         assertEquals(
@@ -64,7 +64,7 @@ class QuadraticPolynomialTests {
                 a = 2.0,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         assertEquals(
@@ -94,7 +94,7 @@ class QuadraticPolynomialTests {
                 8.0, -14.0, 11.0, -7.0, 2.0,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         assertEquals(
@@ -116,7 +116,7 @@ class QuadraticPolynomialTests {
         assertEqualsWithTolerance(
             expected = listOf(1.0),
             actual = roots,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -133,7 +133,7 @@ class QuadraticPolynomialTests {
         assertEqualsWithTolerance(
             expected = listOf(1.0, 2.0),
             actual = roots,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -150,7 +150,7 @@ class QuadraticPolynomialTests {
         assertEqualsWithTolerance(
             expected = emptyList(),
             actual = roots,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 }

@@ -186,10 +186,10 @@ data class Point internal constructor(
     // TODO: Geometric tolerance
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double
+        tolerance: Double
     ): Boolean = when {
         other !is Point -> false
-        !pv.equalsWithTolerance(other.pv, absoluteTolerance = absoluteTolerance) -> false
+        !pv.equalsWithTolerance(other.pv, tolerance = tolerance) -> false
         else -> true
     }
 }

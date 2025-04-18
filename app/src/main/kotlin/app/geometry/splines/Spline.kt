@@ -49,10 +49,10 @@ sealed class Spline<
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            absoluteTolerance: Double,
+            tolerance: Double,
         ): Boolean = when {
             other !is Knot<*> -> false
-            !point.equalsWithTolerance(other.point, absoluteTolerance = absoluteTolerance) -> false
+            !point.equalsWithTolerance(other.point, tolerance = tolerance) -> false
             else -> metadata == other.metadata
         }
     }
@@ -91,10 +91,10 @@ sealed class Spline<
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            absoluteTolerance: Double,
+            tolerance: Double,
         ): Boolean = when {
             other !is Edge<*, *> -> false
-            !curveEdge.equalsWithTolerance(other.curveEdge, absoluteTolerance = absoluteTolerance) -> false
+            !curveEdge.equalsWithTolerance(other.curveEdge, tolerance = tolerance) -> false
             else -> metadata == other.metadata
         }
     }
@@ -151,11 +151,11 @@ sealed class Spline<
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            absoluteTolerance: Double
+            tolerance: Double
         ): Boolean = when {
             other !is PartialLink<*, *, *> -> false
-            !startKnot.equalsWithTolerance(other.startKnot, absoluteTolerance = absoluteTolerance) -> false
-            !edge.equalsWithTolerance(other.edge, absoluteTolerance = absoluteTolerance) -> false
+            !startKnot.equalsWithTolerance(other.startKnot, tolerance = tolerance) -> false
+            !edge.equalsWithTolerance(other.edge, tolerance = tolerance) -> false
             else -> true
         }
     }
@@ -197,12 +197,12 @@ sealed class Spline<
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            absoluteTolerance: Double,
+            tolerance: Double,
         ): Boolean = when {
             other !is CompleteLink<*, *, *> -> false
-            !startKnot.equalsWithTolerance(other.startKnot, absoluteTolerance = absoluteTolerance) -> false
-            !edge.equalsWithTolerance(other.edge, absoluteTolerance = absoluteTolerance) -> false
-            !endKnot.equalsWithTolerance(other.endKnot, absoluteTolerance = absoluteTolerance) -> false
+            !startKnot.equalsWithTolerance(other.startKnot, tolerance = tolerance) -> false
+            !edge.equalsWithTolerance(other.edge, tolerance = tolerance) -> false
+            !endKnot.equalsWithTolerance(other.endKnot, tolerance = tolerance) -> false
             else -> true
         }
     }

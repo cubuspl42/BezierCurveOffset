@@ -69,11 +69,11 @@ data class LinearPolynomial private constructor(
     override fun apply(x: Double): Double = a * x + b
 
     override fun equalsWithTolerance(
-        other: NumericObject, absoluteTolerance: Double
+        other: NumericObject, tolerance: Double
     ): Boolean = when {
         other !is LinearPolynomial -> false
-        !a.equalsWithTolerance(other.a, absoluteTolerance = absoluteTolerance) -> false
-        !b.equalsWithTolerance(other.b, absoluteTolerance = absoluteTolerance) -> false
+        !a.equalsWithTolerance(other.a, tolerance = tolerance) -> false
+        !b.equalsWithTolerance(other.b, tolerance = tolerance) -> false
         else -> true
     }
 

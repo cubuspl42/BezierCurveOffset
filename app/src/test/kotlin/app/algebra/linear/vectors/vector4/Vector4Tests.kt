@@ -34,7 +34,7 @@ class Vector4Tests {
                 ),
             ),
             actual = a.conv(b),
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -65,7 +65,7 @@ class Vector4Tests {
                 ),
             ),
             actual = a.conv(b),
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 
@@ -98,7 +98,7 @@ class Vector4Tests {
                 )
             ),
             actual = a.conv(b),
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 }

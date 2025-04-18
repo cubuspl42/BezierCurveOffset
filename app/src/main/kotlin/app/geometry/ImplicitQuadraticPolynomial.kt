@@ -37,15 +37,15 @@ data class ImplicitQuadraticPolynomial(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is ImplicitQuadraticPolynomial -> false
-        !a2.equalsWithTolerance(other.a2, absoluteTolerance = absoluteTolerance) -> false
-        !a1b1.equalsWithTolerance(other.a1b1, absoluteTolerance = absoluteTolerance) -> false
-        !b2.equalsWithTolerance(other.b2, absoluteTolerance = absoluteTolerance) -> false
-        !a1.equalsWithTolerance(other.a1, absoluteTolerance = absoluteTolerance) -> false
-        !b1.equalsWithTolerance(other.b1, absoluteTolerance = absoluteTolerance) -> false
-        !c.equalsWithTolerance(other.c, absoluteTolerance = absoluteTolerance) -> false
+        !a2.equalsWithTolerance(other.a2, tolerance = tolerance) -> false
+        !a1b1.equalsWithTolerance(other.a1b1, tolerance = tolerance) -> false
+        !b2.equalsWithTolerance(other.b2, tolerance = tolerance) -> false
+        !a1.equalsWithTolerance(other.a1, tolerance = tolerance) -> false
+        !b1.equalsWithTolerance(other.b1, tolerance = tolerance) -> false
+        !c.equalsWithTolerance(other.c, tolerance = tolerance) -> false
         else -> true
     }
 

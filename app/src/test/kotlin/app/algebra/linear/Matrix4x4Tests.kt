@@ -38,7 +38,7 @@ class Matrix4x4Tests {
         assertEqualsWithTolerance(
             expected = cMatrixExpected,
             actual = cMatrix,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -79,7 +79,7 @@ class Matrix4x4Tests {
         assertEqualsWithTolerance(
             expected = expectedMatrix,
             actual = cMatrix,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -108,7 +108,7 @@ class Matrix4x4Tests {
         assertEqualsWithTolerance(
             expected = aMatrix,
             actual = luMatrix,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -139,7 +139,7 @@ class Matrix4x4Tests {
         assertEqualsWithTolerance(
             expected = paMatrix,
             actual = luMatrix,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -170,7 +170,7 @@ class Matrix4x4Tests {
         assertEqualsWithTolerance(
             expected = paMatrix,
             actual = luMatrix,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -197,7 +197,7 @@ class Matrix4x4Tests {
                 a30 = 0.5714,
             ),
             actual = xVector,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -231,7 +231,7 @@ class Matrix4x4Tests {
         assertEqualsWithTolerance(
             expected = xMatrixExpected,
             actual = xMatrix,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -258,7 +258,7 @@ class Matrix4x4Tests {
                 a30 = 0.2917,
             ),
             actual = xVector,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -292,7 +292,7 @@ class Matrix4x4Tests {
         assertEqualsWithTolerance(
             expected = xMatrixExpected,
             actual = xMatrix,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -326,7 +326,7 @@ class Matrix4x4Tests {
         assertEqualsWithTolerance(
             expected = xMatrixExpected,
             actual = xMatrix,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -367,7 +367,7 @@ class Matrix4x4Tests {
         assertEqualsWithTolerance(
             expected = cMatrixExpected,
             actual = cMatrix,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -392,7 +392,7 @@ class Matrix4x4Tests {
         assertEqualsWithTolerance(
             expected = aMatrixInvertedExpected,
             actual = aMatrixInverted,
-            absoluteTolerance = 0.001,
+            tolerance = 0.001,
         )
     }
 
@@ -415,7 +415,7 @@ class Matrix4x4Tests {
                 row3 = Vector4.horizontal(-5.85127, 10.95458, -6.09372, 0.99269),
             ),
             actual = aMatrixInverted,
-            absoluteTolerance = 0.0001,
+            tolerance = 0.0001,
         )
     }
 }

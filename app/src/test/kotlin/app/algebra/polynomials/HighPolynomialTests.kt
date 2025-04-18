@@ -30,7 +30,7 @@ class HighPolynomialTests {
                 24.4,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         assertEquals(
@@ -70,7 +70,7 @@ class HighPolynomialTests {
                 -4.6,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         assertEquals(
@@ -110,7 +110,7 @@ class HighPolynomialTests {
                 37.8,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
 
         assertEquals(
@@ -154,7 +154,7 @@ class HighPolynomialTests {
                 -154.4,
             ),
             actual = product,
-            absoluteTolerance = eps,
+            tolerance = eps,
         )
     }
 }

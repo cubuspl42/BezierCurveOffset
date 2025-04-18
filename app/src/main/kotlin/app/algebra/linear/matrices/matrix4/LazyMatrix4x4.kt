@@ -31,10 +31,10 @@ sealed class LazyMatrix4x4 : Matrix4x4() {
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = computed.equalsWithTolerance(
         other,
-        absoluteTolerance = absoluteTolerance,
+        tolerance = tolerance,
     )
 
     override fun get(i: Int, j: Int): Double = computed[i, j]

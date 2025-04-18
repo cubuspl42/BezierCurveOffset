@@ -6,7 +6,6 @@ import app.algebra.bezier_binomials.CubicBezierBinomial
 import app.fill
 import app.geometry.BoundingBox
 import app.geometry.Direction
-import app.geometry.ImplicitCubicPolynomial
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.curves.LineSegment
@@ -60,11 +59,11 @@ data class CubicBezierCurve private constructor(
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            absoluteTolerance: Double,
+            tolerance: Double,
         ): Boolean = when {
             other !is Edge -> false
-            !control0.equalsWithTolerance(other.control0, absoluteTolerance = absoluteTolerance) -> false
-            !control1.equalsWithTolerance(other.control1, absoluteTolerance = absoluteTolerance) -> false
+            !control0.equalsWithTolerance(other.control0, tolerance = tolerance) -> false
+            !control1.equalsWithTolerance(other.control1, tolerance = tolerance) -> false
             else -> true
         }
     }

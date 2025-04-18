@@ -125,19 +125,19 @@ data class ImplicitCubicPolynomial(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is ImplicitCubicPolynomial -> false
-        !a3.equalsWithTolerance(other.a3, absoluteTolerance = absoluteTolerance) -> false
-        !a2b1.equalsWithTolerance(other.a2b1, absoluteTolerance = absoluteTolerance) -> false
-        !a1b2.equalsWithTolerance(other.a1b2, absoluteTolerance = absoluteTolerance) -> false
-        !b3.equalsWithTolerance(other.b3, absoluteTolerance = absoluteTolerance) -> false
-        !a2.equalsWithTolerance(other.a2, absoluteTolerance = absoluteTolerance) -> false
-        !a1b1.equalsWithTolerance(other.a1b1, absoluteTolerance = absoluteTolerance) -> false
-        !b2.equalsWithTolerance(other.b2, absoluteTolerance = absoluteTolerance) -> false
-        !a1.equalsWithTolerance(other.a1, absoluteTolerance = absoluteTolerance) -> false
-        !b1.equalsWithTolerance(other.b1, absoluteTolerance = absoluteTolerance) -> false
-        !c.equalsWithTolerance(other.c, absoluteTolerance = absoluteTolerance) -> false
+        !a3.equalsWithTolerance(other.a3, tolerance = tolerance) -> false
+        !a2b1.equalsWithTolerance(other.a2b1, tolerance = tolerance) -> false
+        !a1b2.equalsWithTolerance(other.a1b2, tolerance = tolerance) -> false
+        !b3.equalsWithTolerance(other.b3, tolerance = tolerance) -> false
+        !a2.equalsWithTolerance(other.a2, tolerance = tolerance) -> false
+        !a1b1.equalsWithTolerance(other.a1b1, tolerance = tolerance) -> false
+        !b2.equalsWithTolerance(other.b2, tolerance = tolerance) -> false
+        !a1.equalsWithTolerance(other.a1, tolerance = tolerance) -> false
+        !b1.equalsWithTolerance(other.b1, tolerance = tolerance) -> false
+        !c.equalsWithTolerance(other.c, tolerance = tolerance) -> false
         else -> true
     }
 

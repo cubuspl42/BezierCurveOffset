@@ -66,7 +66,7 @@ sealed class Matrix4x4 : NumericObject {
     final override fun equals(other: Any?): Boolean {
         return equalsWithTolerance(
             other = other as? NumericObject ?: return false,
-            absoluteTolerance = 0.0,
+            tolerance = 0.0,
         )
     }
 
@@ -76,12 +76,12 @@ sealed class Matrix4x4 : NumericObject {
 
     protected fun equalsWithToleranceRowWise(
         other: Matrix4x4,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
-        !row0.equalsWithTolerance(other.row0, absoluteTolerance = absoluteTolerance) -> false
-        !row1.equalsWithTolerance(other.row1, absoluteTolerance = absoluteTolerance) -> false
-        !row2.equalsWithTolerance(other.row2, absoluteTolerance = absoluteTolerance) -> false
-        !row3.equalsWithTolerance(other.row3, absoluteTolerance = absoluteTolerance) -> false
+        !row0.equalsWithTolerance(other.row0, tolerance = tolerance) -> false
+        !row1.equalsWithTolerance(other.row1, tolerance = tolerance) -> false
+        !row2.equalsWithTolerance(other.row2, tolerance = tolerance) -> false
+        !row3.equalsWithTolerance(other.row3, tolerance = tolerance) -> false
         else -> true
     }
 

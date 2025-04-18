@@ -89,13 +89,13 @@ data class Vector4<out Vo : VectorOrientation> internal constructor(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is Vector4<*> -> false
-        !a0.equalsWithTolerance(other.a0, absoluteTolerance = absoluteTolerance) -> false
-        !a1.equalsWithTolerance(other.a1, absoluteTolerance = absoluteTolerance) -> false
-        !a2.equalsWithTolerance(other.a2, absoluteTolerance = absoluteTolerance) -> false
-        !a3.equalsWithTolerance(other.a3, absoluteTolerance = absoluteTolerance) -> false
+        !a0.equalsWithTolerance(other.a0, tolerance = tolerance) -> false
+        !a1.equalsWithTolerance(other.a1, tolerance = tolerance) -> false
+        !a2.equalsWithTolerance(other.a2, tolerance = tolerance) -> false
+        !a3.equalsWithTolerance(other.a3, tolerance = tolerance) -> false
         else -> true
     }
 }

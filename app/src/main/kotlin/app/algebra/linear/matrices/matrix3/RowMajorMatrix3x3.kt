@@ -47,12 +47,12 @@ class RowMajorMatrix3x3(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        absoluteTolerance: Double,
+        tolerance: Double,
     ): Boolean = when {
         other !is Matrix3x3 -> false
         else -> equalsWithToleranceRowWise(
             other = other,
-            absoluteTolerance = absoluteTolerance,
+            tolerance = tolerance,
         )
     }
 }

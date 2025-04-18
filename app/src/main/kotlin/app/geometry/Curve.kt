@@ -38,20 +38,20 @@ abstract class Curve {
             tolerance: GeometricTolerance
         ): Boolean = when {
             other !is IntersectionDetails<*, *> -> false
-            !point.equalsWithTolerance(other.point, absoluteTolerance = tolerance.distanceTolerance) -> false
-            !t0.equalsWithTolerance(other.t0, absoluteTolerance = tolerance.distanceTolerance) -> false
-            !t1.equalsWithTolerance(other.t1, absoluteTolerance = tolerance.distanceTolerance) -> false
+            !point.equalsWithTolerance(other.point, tolerance = tolerance.distanceTolerance) -> false
+            !t0.equalsWithTolerance(other.t0, tolerance = tolerance.distanceTolerance) -> false
+            !t1.equalsWithTolerance(other.t1, tolerance = tolerance.distanceTolerance) -> false
             else -> true
         }
 
         final override fun equalsWithTolerance(
             other: NumericObject,
-            absoluteTolerance: Double,
+            tolerance: Double,
         ): Boolean = when {
             other !is IntersectionDetails<*, *> -> false
-            !point.equalsWithTolerance(other.point, absoluteTolerance = absoluteTolerance) -> false
-            !t0.equalsWithTolerance(other.t0, absoluteTolerance = absoluteTolerance) -> false
-            !t1.equalsWithTolerance(other.t1, absoluteTolerance = absoluteTolerance) -> false
+            !point.equalsWithTolerance(other.point, tolerance = tolerance) -> false
+            !t0.equalsWithTolerance(other.t0, tolerance = tolerance) -> false
+            !t1.equalsWithTolerance(other.t1, tolerance = tolerance) -> false
             else -> true
         }
 
