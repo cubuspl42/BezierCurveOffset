@@ -7,6 +7,8 @@ import app.algebra.linear.vectors.vectorN.conv
 import app.algebra.linear.vectors.vectorN.plus
 import app.algebra.linear.vectors.vectorN.times
 import app.algebra.linear.vectors.vectorN.unaryMinus
+import app.equalsZeroApproximately
+import org.apache.commons.math3.analysis.solvers.LaguerreSolver
 import kotlin.math.pow
 
 @Suppress("DataClassPrivateConstructor")
@@ -144,6 +146,30 @@ data class HighPolynomial private constructor(
     }
 
     override fun findRoots(): Set<Double> {
-        TODO()
+        val solver = LaguerreSolver()
+        val coefficients = coefficients.elements
+
+        val roots = solver.solveAllReal(
+            coefficients = coefficients,
+            initial = 0.5,
+        )
+
+        return roots.toSet()
+    }
+}
+
+private fun LaguerreSolver.solveAllReal(
+    coefficients: Collection<Double>,
+    initial: Double,
+): Collection<Double> {
+    val complexRoots = solveAllComplex(
+        coefficients.toDoubleArray(),
+        initial,
+    )
+
+    return complexRoots.mapNotNull { complex ->
+        complex.takeIf {
+            it.imaginary.equalsZeroApproximately(epsilon = 10e-8)
+        }?.real
     }
 }

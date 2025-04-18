@@ -1,6 +1,8 @@
 package app.algebra.polynomials
 
+import app.algebra.NumericObject.Tolerance
 import app.algebra.assertEqualsWithAbsoluteTolerance
+import app.algebra.assertEqualsWithTolerance
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -154,6 +156,42 @@ class HighPolynomialTests {
             ),
             actual = product,
             absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testFindRoots() {
+        val highPolynomial = HighPolynomial.of(
+            -4.05318211480636e+17,
+            1.33720916235669e+19,
+            -1.74033656459737e+20,
+            1.18641205512086e+21,
+            -4.72731353333192e+21,
+            1.15564116811744e+22,
+            -1.75176752296017e+22,
+            1.60246744255751e+22,
+            -8.09146929050218e+21,
+            1.73006535868332e+21,
+        )
+
+        val roots = highPolynomial.findRoots()
+
+        assertEqualsWithTolerance(
+            expected = setOf(
+                0.9785368635066114,
+                0.9147383049567882,
+                0.8142156752930875,
+                0.6822325289916767,
+                0.43011874465177913,
+                0.40251769663008713,
+                0.22787694791806082,
+                0.1435234395326374,
+                0.08321298331285831,
+            ).sorted(),
+            actual = roots.sorted(),
+            tolerance = Tolerance.Absolute(
+                absoluteTolerance = 10e-11,
+            ),
         )
     }
 }
