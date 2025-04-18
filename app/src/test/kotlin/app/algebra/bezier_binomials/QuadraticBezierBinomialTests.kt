@@ -1,6 +1,6 @@
 package app.algebra.bezier_binomials
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.polynomials.ParametricPolynomial
 import app.geometry.RawVector
 import kotlin.test.Test
@@ -24,7 +24,7 @@ class QuadraticBezierBinomialTests {
         bezierBinomial.sample(
             strategy = RealFunction.SamplingStrategy(sampleCount = 10),
         ).forEach { sample ->
-            assertEqualsWithTolerance(
+            assertEqualsWithAbsoluteTolerance(
                 expected = sample.value,
                 actual = parametricPolynomial.apply(sample.x),
                 absoluteTolerance = eps,

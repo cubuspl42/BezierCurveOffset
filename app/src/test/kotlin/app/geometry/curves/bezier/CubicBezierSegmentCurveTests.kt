@@ -1,6 +1,6 @@
 package app.geometry.curves.bezier
 
-import app.algebra.assertEquals
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.assertEqualsWithTolerance
 import app.geometry.Point
 import app.geometry.SvgCurveExtractionUtils
@@ -58,31 +58,31 @@ class CubicBezierSegmentCurveTests {
             actual = bezierCurve0.start,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl0,
             actual = bezierCurve0.control0,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl1,
             actual = bezierCurve0.control1,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedSplitPoint,
             actual = bezierCurve0.end,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl2,
             actual = bezierCurve1.control0,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl3,
             actual = bezierCurve1.control1,
             absoluteTolerance = eps,
@@ -143,49 +143,49 @@ class CubicBezierSegmentCurveTests {
             actual = bezierCurve0.start,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl0,
             actual = bezierCurve0.control0,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl1,
             actual = bezierCurve0.control1,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedSplitPoint0,
             actual = bezierCurve0.end,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl2,
             actual = bezierCurve1.control0,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl3,
             actual = bezierCurve1.control1,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedSplitPoint1,
             actual = bezierCurve1.end,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl4,
             actual = bezierCurve2.control0,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl5,
             actual = bezierCurve2.control1,
             absoluteTolerance = eps,
@@ -253,31 +253,31 @@ class CubicBezierSegmentCurveTests {
             actual = bezierCurve0.start,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl0,
             actual = bezierCurve0.control0,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl1,
             actual = bezierCurve0.control1,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedSplitPoint0,
             actual = bezierCurve0.end,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl2,
             actual = bezierCurve1.control0,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl3,
             actual = bezierCurve1.control1,
             absoluteTolerance = eps,
@@ -288,19 +288,19 @@ class CubicBezierSegmentCurveTests {
             actual = bezierCurve1.end,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl4,
             actual = bezierCurve2.control0,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedNewControl5,
             actual = bezierCurve2.control1,
             absoluteTolerance = eps,
         )
 
-        assertEquals(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedSplitPoint2,
             actual = bezierCurve2.end,
             absoluteTolerance = eps,

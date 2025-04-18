@@ -1,6 +1,6 @@
 package app.algebra.linear.vectors.vector2
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.linear.vectors.vector3.Vector3
 import kotlin.test.Test
 
@@ -28,7 +28,7 @@ class Vector2Tests {
 
          */
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = Vector3.of(
                 a0 = 210.576,
                 a1 = -189.284,

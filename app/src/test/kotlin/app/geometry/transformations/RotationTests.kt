@@ -1,6 +1,6 @@
 package app.geometry.transformations
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.geometry.Point
 import app.geometry.RawVector
 import kotlin.test.Test
@@ -14,7 +14,7 @@ class RotationTests {
             RawVector(2.0, -1.0).angleBetweenXAxis()!!,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = Point.of(13.41, 4.47),
             actual = rotation.transform(
                 Point.of(10.0, 10.0),

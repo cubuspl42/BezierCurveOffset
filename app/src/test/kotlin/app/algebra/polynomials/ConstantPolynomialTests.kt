@@ -1,6 +1,6 @@
 package app.algebra.polynomials
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import kotlin.test.Test
 
 class ConstantPolynomialTests {
@@ -17,7 +17,7 @@ class ConstantPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = ConstantPolynomial.of(
                 a = 6.0,
             ),
@@ -25,7 +25,7 @@ class ConstantPolynomialTests {
             absoluteTolerance = eps,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = product,
             actual = pb * pa,
             absoluteTolerance = eps,

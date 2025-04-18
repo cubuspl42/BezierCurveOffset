@@ -39,7 +39,7 @@ interface NumericObject {
     ): Boolean
 }
 
-private fun NumericObject.equalsWithTolerance(
+fun NumericObject.equalsWithAbsoluteTolerance(
     other: NumericObject,
     absoluteTolerance: Double,
 ): Boolean = equalsWithTolerance(
@@ -49,9 +49,19 @@ private fun NumericObject.equalsWithTolerance(
     ),
 )
 
+fun NumericObject.equalsWithRelativeTolerance(
+    other: NumericObject,
+    relativeTolerance: Double,
+): Boolean = equalsWithTolerance(
+    other = other,
+    tolerance = Tolerance.Relative(
+        relativeTolerance = relativeTolerance,
+    ),
+)
+
 fun NumericObject.equalsWithNoTolerance(
     other: NumericObject,
-): Boolean = equalsWithTolerance(
+): Boolean = equalsWithAbsoluteTolerance(
     other = other,
     absoluteTolerance = 0.0,
 )

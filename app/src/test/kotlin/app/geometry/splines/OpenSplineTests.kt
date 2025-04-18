@@ -1,6 +1,6 @@
 package app.geometry.splines
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.geometry.Point
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.bezier.CubicBezierCurve
@@ -43,7 +43,7 @@ class OpenSplineTests {
 
         val mergedSpline = OpenSpline.merge(listOf(spline))
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = spline,
             actual = mergedSpline,
             absoluteTolerance = eps,
@@ -84,7 +84,7 @@ class OpenSplineTests {
 
         val mergedSpline = OpenSpline.merge(listOf(spline))
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = spline,
             actual = mergedSpline,
             absoluteTolerance = eps,
@@ -133,7 +133,7 @@ class OpenSplineTests {
             splines = listOf(spline0, spline1),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = OpenSpline.of(
                 leadingLinks = listOf(
                     Spline.PartialLink(
@@ -237,7 +237,7 @@ class OpenSplineTests {
             ),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedMergedSpline,
             actual = mergedSpline,
             absoluteTolerance = eps,
@@ -373,7 +373,7 @@ class OpenSplineTests {
             ),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedMergedSpline,
             actual = mergedSpline,
             absoluteTolerance = eps,

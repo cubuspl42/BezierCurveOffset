@@ -7,6 +7,7 @@ import app.PatternOutline.PatternOutlineParams.SegmentParams
 import app.PatternSvg
 import app.SeamAllowanceKind
 import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.geometry.Point
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
@@ -261,7 +262,7 @@ class ClosedSplineTests {
             ),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedInterconnectedSpline,
             actual = interconnectedSpline,
             absoluteTolerance = eps,

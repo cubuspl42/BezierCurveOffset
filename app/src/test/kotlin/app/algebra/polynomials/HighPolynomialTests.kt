@@ -1,6 +1,6 @@
 package app.algebra.polynomials
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -19,7 +19,7 @@ class HighPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = HighPolynomial.of(
                 -8.0,
                 6.0,
@@ -57,7 +57,7 @@ class HighPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = HighPolynomial.of(
                 -16.0,
                 16.0,
@@ -97,7 +97,7 @@ class HighPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = HighPolynomial.of(
                 12.0,
                 -25.0,
@@ -139,7 +139,7 @@ class HighPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = HighPolynomial.of(
                 16.0,
                 -104.0,

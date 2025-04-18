@@ -1,26 +1,6 @@
 package app.algebra
 
 import app.algebra.NumericObject.Tolerance
-import app.geometry.Point
-
-fun assertEquals(
-    expected: Point,
-    actual: Point,
-    absoluteTolerance: Double,
-    message: String? = null,
-) {
-    kotlin.test.assertEquals(
-        expected = expected.x,
-        actual = actual.x,
-        absoluteTolerance = absoluteTolerance,
-        message = message?.let { "$it (x)" })
-
-    kotlin.test.assertEquals(
-        expected = expected.y,
-        actual = actual.y,
-        absoluteTolerance = absoluteTolerance,
-        message = message?.let { "$it (y)" })
-}
 
 fun assertEqualsWithTolerance(
     expected: Double,
@@ -32,6 +12,18 @@ fun assertEqualsWithTolerance(
     }
 }
 
+fun assertEqualsWithAbsoluteTolerance(
+    expected: Double,
+    actual: Double,
+    absoluteTolerance: Double,
+) {
+    kotlin.test.assertEquals(
+        expected = expected,
+        actual = actual,
+        absoluteTolerance = absoluteTolerance,
+    )
+}
+
 fun <T : NumericObject> assertEqualsWithTolerance(
     expected: T,
     actual: T,
@@ -42,7 +34,7 @@ fun <T : NumericObject> assertEqualsWithTolerance(
     }
 }
 
-fun <T : NumericObject> assertEqualsWithTolerance(
+fun <T : NumericObject> assertEqualsWithAbsoluteTolerance(
     expected: T,
     actual: T,
     absoluteTolerance: Double,
@@ -52,6 +44,20 @@ fun <T : NumericObject> assertEqualsWithTolerance(
         actual = actual,
         tolerance = Tolerance.Absolute(
             absoluteTolerance = absoluteTolerance,
+        ),
+    )
+}
+
+fun <T : NumericObject> assertEqualsWithRelativeTolerance(
+    expected: T,
+    actual: T,
+    relativeTolerance: Double,
+) {
+    assertEqualsWithTolerance(
+        expected = expected,
+        actual = actual,
+        tolerance = Tolerance.Relative(
+            relativeTolerance = relativeTolerance,
         ),
     )
 }

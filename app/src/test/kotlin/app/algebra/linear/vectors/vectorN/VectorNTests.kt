@@ -1,6 +1,6 @@
 package app.algebra.linear.vectors.vectorN
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector3.Vector3
 import app.algebra.linear.vectors.vector4.Vector4
@@ -20,7 +20,7 @@ class VectorNTests {
             a1 = -5.0,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN.ofIrr(
                 5.0, -7.0, 3.0, 12.0, -7.2
             ),
@@ -41,7 +41,7 @@ class VectorNTests {
             a2 = 6.0,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN.ofIrr(
                 5.0, -7.0, 9.0, 12.0, -7.2
             ),
@@ -64,7 +64,7 @@ class VectorNTests {
             a3 = 7.0,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN.ofIrr(
                 5.0, -7.0, 9.0, 19.0, -7.2
             ),
@@ -83,7 +83,7 @@ class VectorNTests {
             elements = listOf(4.0, -5.0, 6.0)
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN.ofIrr(
                 elements = listOf(5.0, -7.0, 9.0)
             ),
@@ -102,7 +102,7 @@ class VectorNTests {
             elements = listOf(4.0, -5.0)
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN.ofIrr(
                 elements = listOf(5.0, -7.0, 3.0)
             ),
@@ -121,7 +121,7 @@ class VectorNTests {
             elements = listOf(4.0, -5.0, 6.0, 7.0)
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN.ofIrr(
                 elements = listOf(5.0, -7.0, 9.0, 7.0)
             ),
@@ -141,7 +141,7 @@ class VectorNTests {
             a1 = -5.0,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN.ofIrr(
                 elements = listOf(
                     4.0,
@@ -167,7 +167,7 @@ class VectorNTests {
             a2 = 8.0,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN.ofIrr(
                 elements = listOf(
                     12.0,
@@ -196,7 +196,7 @@ class VectorNTests {
             a3 = -11.0,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN(
                 elements = listOf(
                     24.0,
@@ -224,7 +224,7 @@ class VectorNTests {
             elements = listOf(8.0, -9.0, 10.0, -11.0, 12.0)
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN.ofIrr(
                 elements = listOf(
                     24.0,

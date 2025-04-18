@@ -141,6 +141,4 @@ data class ImplicitCubicPolynomial(
         !c.equalsWithTolerance(other.c, tolerance = tolerance) -> false
         else -> true
     }
-
-
 }

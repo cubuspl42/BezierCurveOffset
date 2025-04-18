@@ -1,6 +1,7 @@
 package app.algebra.polynomials
 
 import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -20,7 +21,7 @@ class LinearPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = LinearPolynomial.of(
                 b = -129.71,
                 a = 134.07,
@@ -49,7 +50,7 @@ class LinearPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = QuadraticPolynomial.of(
                 c = -129.71,
                 b = 161.44,

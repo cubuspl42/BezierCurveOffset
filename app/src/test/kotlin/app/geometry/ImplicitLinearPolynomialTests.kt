@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.polynomials.LinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import kotlin.test.Test
@@ -25,7 +25,7 @@ class ImplicitLinearPolynomialTests {
 
         val product = a * b
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = ImplicitQuadraticPolynomial.of(
                 a2 = 6.35,
                 a1b1 = 2.18,
@@ -66,7 +66,7 @@ class ImplicitLinearPolynomialTests {
 
         val finalP = lg0.put(pp)
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = LinearPolynomial.of(
                 a = -0.801,
                 b = 89.0,

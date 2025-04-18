@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
@@ -21,7 +21,7 @@ class RayTests {
             ray0.findIntersection(ray1),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = Point.of(0.0, 98.888888),
             actual = point,
             absoluteTolerance = Constants.epsilon,

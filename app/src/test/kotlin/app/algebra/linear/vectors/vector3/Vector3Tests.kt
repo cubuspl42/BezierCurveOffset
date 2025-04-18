@@ -1,6 +1,6 @@
 package app.algebra.linear.vectors.vector3
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.linear.vectors.vectorN.VectorN
@@ -22,7 +22,7 @@ class Vector3Tests {
             a1 = -9.0,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = Vector4.of(
                 a0 = 9.36,
                 a1 = -37.32,
@@ -48,7 +48,7 @@ class Vector3Tests {
             a2 = 10.9,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = VectorN(
                 elements = listOf(
                     18.27,

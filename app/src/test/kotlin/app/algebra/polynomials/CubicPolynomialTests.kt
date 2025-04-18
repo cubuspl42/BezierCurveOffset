@@ -1,6 +1,7 @@
 package app.algebra.polynomials
 
 import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.linear.matrices.matrix3.Matrix3x3
 import app.algebra.linear.vectors.vector3.Vector1x3
 import kotlin.test.Test
@@ -23,7 +24,7 @@ class CubicPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = CubicPolynomial.of(
                 d = -2.0,
                 c = 4.0,
@@ -56,7 +57,7 @@ class CubicPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = HighPolynomial.of(
                 1.0,
                 -4.0,
@@ -91,7 +92,7 @@ class CubicPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = HighPolynomial.of(
                 -2.0,
                 7.0,
@@ -127,7 +128,7 @@ class CubicPolynomialTests {
 
         val product = pa * pb
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = HighPolynomial.of(
                 3.0,
                 -10.0,
@@ -221,7 +222,7 @@ class CubicPolynomialTests {
             pb = pb,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = Matrix3x3.rowMajor(
                 row0 = Vector1x3(7.0, -7.0, 2.0),
                 row1 = Vector1x3(-7.0, -5.0, -11.0),

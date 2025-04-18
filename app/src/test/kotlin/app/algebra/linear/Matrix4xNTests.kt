@@ -1,6 +1,6 @@
 package app.algebra.linear
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.matrices.matrix4.RectangularMatrix4
 import app.algebra.linear.matrices.matrix4.times
@@ -73,7 +73,7 @@ class Matrix4xNTests {
 
         val result = matrixA * vectorB
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = Vector4.vertical(
                 a00 = 301.0,
                 a10 = 322.0,

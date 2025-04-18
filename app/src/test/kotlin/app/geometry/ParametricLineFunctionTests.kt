@@ -1,6 +1,6 @@
 package app.geometry
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.polynomials.LinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import kotlin.test.Test
@@ -40,7 +40,7 @@ class ParametricLineFunctionTests {
 
         val lg0 = l0.toGeneralLineFunction()
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = ImplicitLinearPolynomial(
                 a1 = 0.89,
                 b1 = 0.45,
@@ -60,7 +60,7 @@ class ParametricLineFunctionTests {
 
         val lp0 = l0.toParametricPolynomial()
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = ParametricPolynomial(
                 xFunction = LinearPolynomial.of(
                     a = -0.45,

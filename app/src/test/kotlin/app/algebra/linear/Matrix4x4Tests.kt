@@ -1,6 +1,6 @@
 package app.algebra.linear
 
-import app.algebra.assertEqualsWithTolerance
+import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.matrices.matrix4.RectangularMatrix4
 import app.algebra.linear.vectors.vector4.Vector4
@@ -35,7 +35,7 @@ class Matrix4x4Tests {
 
         val cMatrix: Matrix4x4 = aMatrix * bMatrix
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = cMatrixExpected,
             actual = cMatrix,
             absoluteTolerance = 0.001,
@@ -76,7 +76,7 @@ class Matrix4x4Tests {
             ),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = expectedMatrix,
             actual = cMatrix,
             absoluteTolerance = 0.001,
@@ -105,7 +105,7 @@ class Matrix4x4Tests {
 
         val luMatrix = lMatrix * uMatrix
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = aMatrix,
             actual = luMatrix,
             absoluteTolerance = 0.001,
@@ -136,7 +136,7 @@ class Matrix4x4Tests {
         val paMatrix = pMatrix * aMatrix
         val luMatrix = lMatrix * uMatrix
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = paMatrix,
             actual = luMatrix,
             absoluteTolerance = 0.001,
@@ -167,7 +167,7 @@ class Matrix4x4Tests {
         val paMatrix = pMatrix * aMatrix
         val luMatrix = lMatrix * uMatrix
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = paMatrix,
             actual = luMatrix,
             absoluteTolerance = 0.001,
@@ -189,7 +189,7 @@ class Matrix4x4Tests {
             yVector = yVector,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = Vector4.vertical(
                 a00 = -1.0857,
                 a10 = 0.3429,
@@ -228,7 +228,7 @@ class Matrix4x4Tests {
             row3 = Vector4.horizontal(1.8571, 2.0000, 2.1429, 2.2857),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = xMatrixExpected,
             actual = xMatrix,
             absoluteTolerance = 0.001,
@@ -250,7 +250,7 @@ class Matrix4x4Tests {
             yVector = yVector,
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = Vector4.vertical(
                 a00 = 0.1429,
                 a10 = 0.2619,
@@ -289,7 +289,7 @@ class Matrix4x4Tests {
             row3 = Vector4.horizontal(0.9167, 1.0000, 1.0833, 1.1667),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = xMatrixExpected,
             actual = xMatrix,
             absoluteTolerance = 0.001,
@@ -323,7 +323,7 @@ class Matrix4x4Tests {
             row3 = Vector4.horizontal(1.0, -0.1629, 0.9602, -1.7977),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = xMatrixExpected,
             actual = xMatrix,
             absoluteTolerance = 0.001,
@@ -364,7 +364,7 @@ class Matrix4x4Tests {
             row3 = Vector4.horizontal(10.3480, 7.2588, 16.4700, 11.8620),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = cMatrixExpected,
             actual = cMatrix,
             absoluteTolerance = 0.001,
@@ -389,7 +389,7 @@ class Matrix4x4Tests {
             row3 = Vector4.horizontal(-0.2170, -0.3609, 0.1857, 0.8368),
         )
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = aMatrixInvertedExpected,
             actual = aMatrixInverted,
             absoluteTolerance = 0.001,
@@ -407,7 +407,7 @@ class Matrix4x4Tests {
 
         val aMatrixInverted = assertNotNull(aMatrix.invert())
 
-        assertEqualsWithTolerance(
+        assertEqualsWithAbsoluteTolerance(
             expected = Matrix4x4.rowMajor(
                 row0 = Vector4.horizontal(535.62246, -783.58183, 256.78892, -5.85127),
                 row1 = Vector4.horizontal(-783.58183, 1165.97234, -395.73348, 10.95458),
