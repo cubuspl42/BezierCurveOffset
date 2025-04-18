@@ -8,11 +8,7 @@ import app.algebra.polynomials.Polynomial
 import app.algebra.polynomials.times
 
 /**
- * A polynomial in the form a1 * x + b1 * y + c, describing a line in 2D space.
- *
- * Given a point, it evaluates to 0 if the point is on the line,
- * positive if above, and negative if below (the meaning of "above" and "below"
- * depend on the line's direction).
+ * A polynomial in the form a1 * x + b1 * y + c
  */
 data class ImplicitLinearPolynomial(
     val a1: Double,
@@ -29,38 +25,6 @@ data class ImplicitLinearPolynomial(
             b1 = b1,
             c = c,
         )
-
-        // TODO: Nuke
-        fun times(
-            l0: ImplicitLinearPolynomial,
-            l1: ImplicitLinearPolynomial,
-            l2: ImplicitLinearPolynomial,
-        ): ImplicitCubicPolynomial {
-            val a3 = l0.a1 * l1.a1 * l2.a1
-            val a2b1 = l0.a1 * l1.a1 * l2.b1 + l0.a1 * l1.b1 * l2.a1 + l0.b1 * l1.a1 * l2.a1
-            val a1b2 = l0.a1 * l1.b1 * l2.b1 + l0.b1 * l1.a1 * l2.b1 + l0.b1 * l1.b1 * l2.a1
-            val b3 = l0.b1 * l1.b1 * l2.b1
-            val a2 = l0.a1 * l1.a1 * l2.c + l0.a1 * l1.c * l2.a1 + l0.c * l1.a1 * l2.a1
-            val a1b1 =
-                l0.a1 * l1.b1 * l2.c + l0.a1 * l1.c * l2.b1 + l0.b1 * l1.a1 * l2.c + l0.b1 * l1.c * l2.a1 + l0.c * l1.a1 * l2.b1 + l0.c * l1.b1 * l2.a1
-            val b2 = l0.b1 * l1.b1 * l2.c + l0.b1 * l1.c * l2.b1 + l0.c * l1.b1 * l2.b1
-            val a1 = l0.a1 * l1.c * l2.c + l0.c * l1.a1 * l2.c + l0.c * l1.c * l2.a1
-            val b1 = l0.b1 * l1.c * l2.c + l0.c * l1.b1 * l2.c + l0.c * l1.c * l2.b1
-            val c = l0.c * l1.c * l2.c
-
-            return ImplicitCubicPolynomial(
-                a3 = a3,
-                a2b1 = a2b1,
-                a1b2 = a1b2,
-                b3 = b3,
-                a2 = a2,
-                a1b1 = a1b1,
-                b2 = b2,
-                a1 = a1,
-                b1 = b1,
-                c = c,
-            )
-        }
 
         /**
          * @param py - the polynomial in the form a1 * y + a0

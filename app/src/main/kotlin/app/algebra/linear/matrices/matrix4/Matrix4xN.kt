@@ -17,22 +17,22 @@ class Matrix4xN(
 
     val row0: Vector1xN
         get() = Vector1xN(
-            xs = columns.map { it.a0 },
+            elements = columns.map { it.a0 },
         )
 
     val row1: Vector1xN
         get() = Vector1xN(
-            xs = columns.map { it.a1 },
+            elements = columns.map { it.a1 },
         )
 
     val row2: Vector1xN
         get() = Vector1xN(
-            xs = columns.map { it.a2 },
+            elements = columns.map { it.a2 },
         )
 
     val row3: Vector1xN
         get() = Vector1xN(
-            xs = columns.map { it.a3 },
+            elements = columns.map { it.a3 },
         )
 
     val width: Int

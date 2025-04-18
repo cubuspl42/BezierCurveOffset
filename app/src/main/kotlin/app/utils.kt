@@ -59,6 +59,19 @@ fun <T> List<T>.uncons(): Uncons<T>? = firstOrNull()?.let { head ->
     )
 }
 
+data class Split<T>(
+    val leadingElements: List<T>,
+    val trailingElements: List<T>,
+)
+
+/**
+ * Split the list after taking [n] front elements
+ */
+fun <T> List<T>.splitAfter(n: Int): Split<T> = Split(
+    leadingElements = take(n),
+    trailingElements = drop(n),
+)
+
 data class Untrail<T>(
     val leadingElements: List<T>,
     val lastElement: T,

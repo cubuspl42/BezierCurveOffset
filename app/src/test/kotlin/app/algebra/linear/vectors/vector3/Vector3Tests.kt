@@ -50,7 +50,7 @@ class Vector3Tests {
 
         assertEqualsWithTolerance(
             expected = VectorN(
-                xs = listOf(
+                elements = listOf(
                     18.27,
                     -57.99,
                     121.58,

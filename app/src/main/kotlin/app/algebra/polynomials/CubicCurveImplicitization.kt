@@ -5,6 +5,8 @@ import app.geometry.ImplicitLinearPolynomial
 import app.geometry.ImplicitQuadraticPolynomial
 import app.geometry.times
 
+// TODO: Nuke this all?
+
 /**
  * @return A determinant of the 3x3 matrix of bi-linear polynomials
  */
@@ -92,7 +94,7 @@ private fun CubicPolynomial.lift(): IntermediateMetaCubicPolynomial = Intermedia
     a3 = LinearPolynomial.of(b = d, a = -1.0),
 )
 
-private fun implicitize(
+internal fun implicitize(
     parametricPolynomial: ParametricPolynomial,
 ): ImplicitCubicPolynomial {
     val resultant = calculateResultant(

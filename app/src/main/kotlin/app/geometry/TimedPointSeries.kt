@@ -128,11 +128,11 @@ data class TimedPointSeries(
     }
 
     private fun buildXVector(): VectorNx1 = VectorNx1(
-        xs = timedPoints.map { it.point.x },
+        elements = timedPoints.map { it.point.x },
     )
 
     private fun buildYVector(): VectorNx1 = VectorNx1(
-        xs = timedPoints.map { it.point.y },
+        elements = timedPoints.map { it.point.y },
     )
 
     private fun buildBigTMatrix(): MatrixNx4 = RectangularMatrix4.vertical(

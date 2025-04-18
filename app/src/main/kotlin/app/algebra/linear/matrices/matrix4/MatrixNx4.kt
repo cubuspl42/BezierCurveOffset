@@ -14,22 +14,22 @@ class MatrixNx4(
 
     val column0: VectorNx1
         get() = VectorNx1(
-            xs = rows.map { it.a0 },
+            elements = rows.map { it.a0 },
         )
 
     val column1: VectorNx1
         get() = VectorNx1(
-            xs = rows.map { it.a1 },
+            elements = rows.map { it.a1 },
         )
 
     val column2: VectorNx1
         get() = VectorNx1(
-            xs = rows.map { it.a2 },
+            elements = rows.map { it.a2 },
         )
 
     val column3: VectorNx1
         get() = VectorNx1(
-            xs = rows.map { it.a3 },
+            elements = rows.map { it.a3 },
         )
 
     val height: Int

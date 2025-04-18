@@ -156,7 +156,7 @@ operator fun <Vo : VectorOrientation> Double.times(
 fun <Vo : VectorOrientation> Vector4<Vo>.conv(
     other: Vector2<Vo>
 ): VectorN<Vo> = VectorN(
-    xs = listOf(
+    elements = listOf(
         a0 * other.a0,
         a0 * other.a1 + a1 * other.a0,
         a1 * other.a1 + a2 * other.a0,
@@ -177,7 +177,7 @@ fun <Vo : VectorOrientation> Vector4<Vo>.conv(
 fun <Vo : VectorOrientation> Vector4<Vo>.conv(
     other: Vector3<Vo>
 ): VectorN<Vo> = VectorN(
-    xs = listOf(
+    elements = listOf(
         a0 * other.a0,
         a0 * other.a1 + a1 * other.a0,
         a0 * other.a2 + a1 * other.a1 + a2 * other.a0,
@@ -199,7 +199,7 @@ fun <Vo : VectorOrientation> Vector4<Vo>.conv(
 fun <Vo : VectorOrientation> Vector4<Vo>.conv(
     other: Vector4<Vo>
 ): VectorN<Vo> = VectorN(
-    xs = listOf(
+    elements = listOf(
         a0 * other.a0,
         a0 * other.a1 + a1 * other.a0,
         a0 * other.a2 + a1 * other.a1 + a2 * other.a0,

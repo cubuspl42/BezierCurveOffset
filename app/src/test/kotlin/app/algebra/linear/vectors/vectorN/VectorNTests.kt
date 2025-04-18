@@ -10,9 +10,9 @@ private val eps = 10e-4
 
 class VectorNTests {
     @Test
-    fun testConv_vector2() {
+    fun testPlus_vector2() {
         val a = VectorN.ofIrr(
-            xs = listOf(1.0, -2.0, 3.0)
+            elements = listOf(1.0, -2.0, 3.0, 12.0, -7.2),
         )
 
         val b = Vector2.ofIrr(
@@ -22,7 +22,128 @@ class VectorNTests {
 
         assertEqualsWithTolerance(
             expected = VectorN.ofIrr(
-                xs = listOf(
+                5.0, -7.0, 3.0, 12.0, -7.2
+            ),
+            actual = a + b,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testPlus_vector3() {
+        val a = VectorN.ofIrr(
+            elements = listOf(1.0, -2.0, 3.0, 12.0, -7.2),
+        )
+
+        val b = Vector3.ofIrr(
+            a0 = 4.0,
+            a1 = -5.0,
+            a2 = 6.0,
+        )
+
+        assertEqualsWithTolerance(
+            expected = VectorN.ofIrr(
+                5.0, -7.0, 9.0, 12.0, -7.2
+            ),
+            actual = a + b,
+            absoluteTolerance = eps,
+        )
+    }
+
+
+    @Test
+    fun testPlus_vector4() {
+        val a = VectorN.ofIrr(
+            elements = listOf(1.0, -2.0, 3.0, 12.0, -7.2),
+        )
+
+        val b = Vector4.ofIrr(
+            a0 = 4.0,
+            a1 = -5.0,
+            a2 = 6.0,
+            a3 = 7.0,
+        )
+
+        assertEqualsWithTolerance(
+            expected = VectorN.ofIrr(
+                5.0, -7.0, 9.0, 19.0, -7.2
+            ),
+            actual = a + b,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testPlus_sameSize() {
+        val a = VectorN.ofIrr(
+            elements = listOf(1.0, -2.0, 3.0)
+        )
+
+        val b = VectorN.ofIrr(
+            elements = listOf(4.0, -5.0, 6.0)
+        )
+
+        assertEqualsWithTolerance(
+            expected = VectorN.ofIrr(
+                elements = listOf(5.0, -7.0, 9.0)
+            ),
+            actual = a + b,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testPlus_smaller() {
+        val a = VectorN.ofIrr(
+            elements = listOf(1.0, -2.0, 3.0)
+        )
+
+        val b = VectorN.ofIrr(
+            elements = listOf(4.0, -5.0)
+        )
+
+        assertEqualsWithTolerance(
+            expected = VectorN.ofIrr(
+                elements = listOf(5.0, -7.0, 3.0)
+            ),
+            actual = a + b,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testPlus_larger() {
+        val a = VectorN.ofIrr(
+            elements = listOf(1.0, -2.0, 3.0)
+        )
+
+        val b = VectorN.ofIrr(
+            elements = listOf(4.0, -5.0, 6.0, 7.0)
+        )
+
+        assertEqualsWithTolerance(
+            expected = VectorN.ofIrr(
+                elements = listOf(5.0, -7.0, 9.0, 7.0)
+            ),
+            actual = a + b,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testConv_vector2() {
+        val a = VectorN.ofIrr(
+            elements = listOf(1.0, -2.0, 3.0)
+        )
+
+        val b = Vector2.ofIrr(
+            a0 = 4.0,
+            a1 = -5.0,
+        )
+
+        assertEqualsWithTolerance(
+            expected = VectorN.ofIrr(
+                elements = listOf(
                     4.0,
                     -13.0,
                     22.0,
@@ -37,7 +158,7 @@ class VectorNTests {
     @Test
     fun testConv_vector3() {
         val a = VectorN.ofIrr(
-            xs = listOf(2.0, -3.0, 4.0, -5.0)
+            elements = listOf(2.0, -3.0, 4.0, -5.0)
         )
 
         val b = Vector3.ofIrr(
@@ -48,7 +169,7 @@ class VectorNTests {
 
         assertEqualsWithTolerance(
             expected = VectorN.ofIrr(
-                xs = listOf(
+                elements = listOf(
                     12.0,
                     -32.0,
                     61.0,
@@ -65,7 +186,7 @@ class VectorNTests {
     @Test
     fun testConv_vector4() {
         val a = VectorN.ofIrr(
-            xs = listOf(3.0, -4.0, 5.0, -6.0, 7.0)
+            elements = listOf(3.0, -4.0, 5.0, -6.0, 7.0)
         )
 
         val b = Vector4.ofIrr(
@@ -77,7 +198,7 @@ class VectorNTests {
 
         assertEqualsWithTolerance(
             expected = VectorN(
-                xs = listOf(
+                elements = listOf(
                     24.0,
                     -59.0,
                     106.0,
@@ -96,16 +217,16 @@ class VectorNTests {
     @Test
     fun testConv_vectorN() {
         val a = VectorN.ofIrr(
-            xs = listOf(3.0, -4.0, 5.0, -6.0, 7.0)
+            elements = listOf(3.0, -4.0, 5.0, -6.0, 7.0)
         )
 
         val b = VectorN.ofIrr(
-            xs = listOf(8.0, -9.0, 10.0, -11.0, 12.0)
+            elements = listOf(8.0, -9.0, 10.0, -11.0, 12.0)
         )
 
         assertEqualsWithTolerance(
             expected = VectorN.ofIrr(
-                xs = listOf(
+                elements = listOf(
                     24.0,
                     -59.0,
                     106.0,

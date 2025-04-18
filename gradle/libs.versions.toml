@@ -9,6 +9,7 @@ junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", vers
 batik-anim = { module = "org.apache.xmlgraphics:batik-anim", version.ref = "batik" }
 batik-svg-dom = { module = "org.apache.xmlgraphics:batik-svg-dom", version.ref = "batik" }
 batik-css = { module = "org.apache.xmlgraphics:batik-css", version.ref = "batik" }
+commons-math3 = { module = "org.apache.commons:commons-math3", version = "3.6.1" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version = "2.1.0" }

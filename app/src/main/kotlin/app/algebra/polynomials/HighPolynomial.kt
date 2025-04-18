@@ -17,14 +17,14 @@ data class HighPolynomial private constructor(
             vararg coefficients: Double,
         ): Polynomial = of(
             coefficients = VectorNIrr(
-                xs = coefficients.toList(),
+                elements = coefficients.toList(),
             ),
         )
 
         fun of(
             coefficients: VectorNIrr,
         ): Polynomial {
-            val a = coefficients.xs
+            val a = coefficients.elements
             val n = coefficients.size - 1
             require(n > 3)
 
@@ -57,7 +57,9 @@ data class HighPolynomial private constructor(
 
     override operator fun plus(
         constant: Double,
-    ): HighPolynomial = TODO()
+    ): HighPolynomial = HighPolynomial(
+        coefficients = coefficients.plusFirst(constant),
+    )
 
     override fun plus(
         other: Polynomial,
@@ -127,7 +129,7 @@ data class HighPolynomial private constructor(
 
     override fun apply(
         x: Double,
-    ): Double = coefficients.xs.withIndex().sumOf { (i, ai) ->
+    ): Double = coefficients.elements.withIndex().sumOf { (i, ai) ->
         ai * x.pow(i)
     }
 

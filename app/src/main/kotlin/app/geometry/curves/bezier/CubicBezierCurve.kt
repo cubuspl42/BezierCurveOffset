@@ -6,6 +6,7 @@ import app.algebra.bezier_binomials.CubicBezierBinomial
 import app.fill
 import app.geometry.BoundingBox
 import app.geometry.Direction
+import app.geometry.ImplicitCubicPolynomial
 import app.geometry.Point
 import app.geometry.Ray
 import app.geometry.curves.LineSegment

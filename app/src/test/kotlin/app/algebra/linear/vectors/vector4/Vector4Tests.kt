@@ -25,7 +25,7 @@ class Vector4Tests {
 
         assertEqualsWithTolerance(
             expected = VectorN.ofIrr(
-                xs = listOf(
+                elements = listOf(
                     6.05,
                     -19.36,
                     32.67,
@@ -55,7 +55,7 @@ class Vector4Tests {
 
         assertEqualsWithTolerance(
             expected = VectorN.ofIrr(
-                xs = listOf(
+                elements = listOf(
                     14.52,
                     -38.72,
                     73.81,
@@ -87,7 +87,7 @@ class Vector4Tests {
 
         assertEqualsWithTolerance(
             expected = VectorN(
-                xs = listOf(
+                elements = listOf(
                     25.41,
                     -62.92,
                     113.74,

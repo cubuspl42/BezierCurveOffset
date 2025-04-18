@@ -6,71 +6,85 @@ import app.algebra.linear.VectorOrientation
 import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector3.Vector3
 import app.algebra.linear.vectors.vector4.Vector4
+import app.splitAfter
+import app.uncons
 
+/**
+ * A vector of arbitrary size N.
+ *
+ * @param elements - the vector elements, indexed from 0 to N-1 (the least significant
+ * element is at the front of the list)
+ */
 data class VectorN<out Vo : VectorOrientation> internal constructor(
-    val xs: List<Double>
+    val elements: List<Double>
 ) : NumericObject {
     companion object {
         fun horizontal(
-            xs: List<Double>,
+            elements: List<Double>,
         ): Vector1xN = Vector1xN(
-            xs = xs,
+            elements = elements,
         )
 
         fun horizontal(
-            vararg xs: Double,
+            vararg elements: Double,
         ): Vector1xN = Vector1xN(
-            xs = xs.toList(),
+            elements = elements.toList(),
         )
 
         fun vertical(
-            xs: List<Double>,
+            elements: List<Double>,
         ): VectorNx1 = VectorNx1(
-            xs = xs,
+            elements = elements,
         )
 
         fun vertical(
-            vararg xs: Double,
+            vararg elements: Double,
         ): VectorNx1 = VectorNx1(
-            xs = xs.toList(),
+            elements = elements.toList(),
         )
 
         fun ofIrr(
-            xs: List<Double>,
+            vararg elements: Double,
+        ) = ofIrr(
+            elements = elements.toList(),
+        )
+
+        fun ofIrr(
+            elements: List<Double>,
         ): VectorN<VectorOrientation.Irrelevant> = VectorN(
-            xs = xs,
+            elements = elements,
         )
     }
 
     init {
-        require(xs.isNotEmpty())
+        require(elements.isNotEmpty())
     }
 
     val a0: Double
-        get() = xs.first()
+        get() = elements.first()
 
     val an: Double
-        get() = xs.last()
+        get() = elements.last()
 
     val lower: VectorN<Vo>
         get() = VectorN(
-            xs = xs.dropLast(1),
+            elements = elements.dropLast(1),
         )
 
     val size: Int
-        get() = xs.size
+        get() = elements.size
 
     fun dotForced(
         other: VectorN<*>,
     ): Double {
-        require(xs.size == other.xs.size)
-        return xs.zip(other.xs).sumOf { (a, b) -> a * b }
+        require(elements.size == other.elements.size)
+        return elements.zip(other.elements).sumOf { (a, b) -> a * b }
     }
 
     fun vertical(
         xs: List<Double>,
     ): VectorN<Nothing> = VectorN(
-        xs = xs,
+        elements = xs,
     )
 
     override fun equalsWithTolerance(
@@ -78,81 +92,124 @@ data class VectorN<out Vo : VectorOrientation> internal constructor(
         absoluteTolerance: Double,
     ): Boolean = when {
         other !is VectorN<*> -> false
-        !xs.equalsWithTolerance(other.xs, absoluteTolerance = absoluteTolerance) -> false
+        !elements.equalsWithTolerance(other.elements, absoluteTolerance = absoluteTolerance) -> false
         else -> true
+    }
+
+    fun plusFirst(constant: Double): VectorN<Vo> {
+        val (leastSignificantElement, moreSignificantElements) = elements.uncons() ?: throw AssertionError()
+
+        return VectorN(
+            elements = listOf(leastSignificantElement + constant) + moreSignificantElements,
+        )
     }
 }
 
 typealias VectorNIrr = VectorN<VectorOrientation.Irrelevant>
 
+// FIXME: the least significant element is at the front of the list, not end!
+
 operator fun <Vo : VectorOrientation> VectorN<Vo>.plus(
     other: Vector2<Vo>,
 ): VectorN<Vo> {
-    require(xs.size >= 2)
-
-    val x0 = xs[0]
-    val x1 = xs[1]
+    require(elements.size >= 2)
+//
+    val x0 = elements[0]
+    val x1 = elements[1]
+//
+//    return VectorN(
+//        xs = xs.drop(2) + listOf(
+//            x0 + other.a0,
+//            x1 + other.a1,
+//        )
+//    )
 
     return VectorN(
-        xs = xs.drop(2) + listOf(
+        elements = listOf(
             x0 + other.a0,
             x1 + other.a1,
-        )
+        ) + elements.drop(2),
     )
 }
 
 operator fun <Vo : VectorOrientation> VectorN<Vo>.plus(
     other: Vector3<Vo>,
 ): VectorN<Vo> {
-    require(xs.size >= 3)
+    require(elements.size >= 3)
 
-    val x0 = xs[0]
-    val x1 = xs[1]
-    val x2 = xs[2]
+    val x0 = elements[0]
+    val x1 = elements[1]
+    val x2 = elements[2]
+//
+//    return VectorN(
+//        xs = xs.drop(3) + listOf(
+//            x0 + other.a0,
+//            x1 + other.a1,
+//            x2 + other.a2,
+//        )
+//    )
 
     return VectorN(
-        xs = xs.drop(3) + listOf(
+        elements = listOf(
             x0 + other.a0,
             x1 + other.a1,
             x2 + other.a2,
-        )
+        ) + elements.drop(3),
     )
 }
 
 operator fun <Vo : VectorOrientation> VectorN<Vo>.plus(
     other: Vector4<Vo>,
 ): VectorN<Vo> {
-    require(xs.size >= 4)
+    require(elements.size >= 4)
 
-    val x0 = xs[0]
-    val x1 = xs[1]
-    val x2 = xs[2]
-    val x3 = xs[3]
+    val x0 = elements[0]
+    val x1 = elements[1]
+    val x2 = elements[2]
+    val x3 = elements[3]
+
+//    return VectorN(
+//        xs = xs.drop(4) + listOf(
+//            x0 + other.a0,
+//            x1 + other.a1,
+//            x2 + other.a2,
+//            x3 + other.a3,
+//        )
+//    )
 
     return VectorN(
-        xs = xs.drop(4) + listOf(
+        elements = listOf(
             x0 + other.a0,
             x1 + other.a1,
             x2 + other.a2,
             x3 + other.a3,
-        )
+        ) + elements.drop(4),
     )
 }
 
 operator fun <Vo : VectorOrientation> VectorN<Vo>.plus(
     other: VectorN<Vo>,
+): VectorN<Vo> = when {
+    elements.size >= other.size -> plusNotLarger(other)
+    else -> other.plusNotLarger(this)
+}
+
+private fun <Vo : VectorOrientation> VectorN<Vo>.plusNotLarger(
+    other: VectorN<Vo>,
 ): VectorN<Vo> {
-    require(xs.size == other.xs.size)
+    require(size >= other.size)
+
+    val (lessSignificantElements, moreSignificantElements) = elements.splitAfter(other.size)
 
     return VectorN(
-        xs = xs.zip(other.xs).map { (a, b) -> a + b },
+        elements = lessSignificantElements.zip(other.elements) { a, b -> a + b } + moreSignificantElements,
     )
 }
 
 operator fun <Vo : VectorOrientation> VectorN<Vo>.times(
     factor: Double,
 ): VectorN<Vo> = VectorN(
-    xs = xs.map { it * factor },
+    elements = elements.map { it * factor },
 )
 
 operator fun <Vo : VectorOrientation> Double.times(
@@ -160,7 +217,7 @@ operator fun <Vo : VectorOrientation> Double.times(
 ): VectorN<Vo> = vector * this
 
 operator fun <Vo : VectorOrientation> VectorN<Vo>.unaryMinus(): VectorN<Vo> = VectorN(
-    xs = xs.map { -it },
+    elements = elements.map { -it },
 )
 
 /**
@@ -196,20 +253,20 @@ fun <Vo : VectorOrientation> VectorN<Vo>.conv(
 fun <Vo : VectorOrientation> VectorN<Vo>.conv(
     other: VectorN<Vo>
 ): VectorN<Vo> = conv(
-    elements = other.xs,
+    elements = other.elements,
 )
 
 private fun <Vo : VectorOrientation> VectorN<Vo>.conv(
     elements: List<Double>
 ): VectorN<Vo> {
-    val resultSize = xs.size + elements.size - 1
+    val resultSize = this.elements.size + elements.size - 1
 
     return VectorN(
-        xs = (0 until resultSize).map { k ->
+        elements = (0 until resultSize).map { k ->
             (0..k).filter { i ->
-                i in xs.indices && (k - i) in elements.indices
+                i in this.elements.indices && (k - i) in elements.indices
             }.sumOf { i ->
-                xs[i] * elements[k - i]
+                this.elements[i] * elements[k - i]
             }
         },
     )

@@ -5,9 +5,7 @@ import app.algebra.equalsWithTolerance
 import app.algebra.linear.VectorOrientation
 import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector4.Vector4
-import app.algebra.linear.vectors.vector4.vector3
 import app.algebra.linear.vectors.vectorN.VectorN
-import app.algebra.linear.vectors.vectorN.VectorNx1
 
 data class Vector3<out Vo : VectorOrientation>(
     val a0: Double,
@@ -170,7 +168,7 @@ fun <Vo : VectorOrientation> Vector3<Vo>.conv(
 fun <Vo : VectorOrientation> Vector3<Vo>.conv(
     other: Vector3<Vo>
 ): VectorN<Vo> = VectorN(
-    xs = listOf(
+    elements = listOf(
         a0 * other.a0,
         a0 * other.a1 + a1 * other.a0,
         a0 * other.a2 + a1 * other.a1 + a2 * other.a0,

@@ -1,6 +1,5 @@
 package app.geometry
 
-import app.PatternSvg.mmToPtFactor
 import app.SvgViewBox
 import app.asList
 import app.asSVGPathSegCurvetoCubicAbs
@@ -8,7 +7,6 @@ import app.asSVGPathSegLinetoAbs
 import app.asSVGPathSegMovetoAbs
 import app.childElements
 import app.color
-import app.createPathElement
 import app.createRectElement
 import app.createSvgDocument
 import app.documentFactory
@@ -34,7 +32,6 @@ import app.untrail
 import app.viewBox
 import app.width
 import org.apache.batik.anim.dom.SVGOMDocument
-import org.apache.batik.css.engine.value.svg12.LineHeightValue
 import org.w3c.dom.svg.SVGColor
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGPathElement
@@ -55,16 +52,30 @@ object SvgCurveExtractionUtils {
     data class ExtractedOpenSpline(
         override val color: Color,
         val openSpline: OpenSpline<*, *, *>,
-    ) : ExtractedPath()
+    ) : ExtractedPath() {
+        fun singleBezierCurve(): CubicBezierCurve = openSpline.subCurves.single() as CubicBezierCurve
+    }
 
     data class ExtractedCurveSet(
         val extractedPaths: Set<ExtractedPath>,
     ) {
-        fun getCurveByColor(
+        fun getPathByColor(
             color: Color,
         ): ExtractedPath = extractedPaths.single {
             it.color == color
         }
+
+        fun getOpenSplineByColor(
+            color: Color,
+        ): ExtractedOpenSpline = getPathByColor(
+            color = color,
+        ) as ExtractedOpenSpline
+
+        fun getBezierCurveByColor(
+            color: Color,
+        ): CubicBezierCurve = getOpenSplineByColor(
+            color = color,
+        ).singleBezierCurve()
     }
 
     fun extractCurves(

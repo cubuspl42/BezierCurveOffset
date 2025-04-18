@@ -395,13 +395,13 @@ class CubicBezierSegmentCurveTests {
             resourceName = "lineBezierIntersection1.svg",
         )
 
-        val extractedBezier = extractedCurveSet.getCurveByColor(
+        val extractedBezier = extractedCurveSet.getPathByColor(
             color = ExtractedPath.blue,
         ) as SvgCurveExtractionUtils.ExtractedOpenSpline
 
         val bezierCurve = extractedBezier.openSpline.subCurves.single() as CubicBezierCurve
 
-        val extractedLine = extractedCurveSet.getCurveByColor(
+        val extractedLine = extractedCurveSet.getPathByColor(
             color = ExtractedPath.red,
         ) as SvgCurveExtractionUtils.ExtractedOpenSpline
 
