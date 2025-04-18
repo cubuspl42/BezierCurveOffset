@@ -1,6 +1,7 @@
 package app.algebra.polynomials
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.vectors.vector3.Vector3Irr
 import app.algebra.linear.vectors.vector3.conv
@@ -61,7 +62,7 @@ data class QuadraticPolynomial private constructor(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is QuadraticPolynomial -> false
         !a.equalsWithTolerance(other.a, tolerance = tolerance) -> false

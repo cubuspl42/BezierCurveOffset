@@ -35,7 +35,7 @@ class Vector2Tests {
                 a2 = -2.24,
             ),
             actual = a.conv(b),
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 }

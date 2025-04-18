@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.geometry.curves.LineSegment
 
@@ -33,7 +34,7 @@ abstract class Curve {
 
         abstract val t1: Double
 
-        final override fun equalsWithTolerance(
+        final override fun equalsWithGeometricTolerance(
             other: GeometricObject,
             tolerance: GeometricTolerance
         ): Boolean = when {
@@ -46,7 +47,7 @@ abstract class Curve {
 
         final override fun equalsWithTolerance(
             other: NumericObject,
-            tolerance: Double,
+            tolerance: Tolerance,
         ): Boolean = when {
             other !is IntersectionDetails<*, *> -> false
             !point.equalsWithTolerance(other.point, tolerance = tolerance) -> false

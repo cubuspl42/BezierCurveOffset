@@ -1,6 +1,9 @@
 package app.algebra.linear.matrices.matrix4
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
+import app.algebra.equalsWithNoTolerance
+import app.algebra.equalsWithTolerance
 import app.algebra.linear.vectors.vector4.Vector1x4
 import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.linear.vectors.vector4.Vector4x1
@@ -64,9 +67,8 @@ sealed class Matrix4x4 : NumericObject {
     )
 
     final override fun equals(other: Any?): Boolean {
-        return equalsWithTolerance(
+        return equalsWithNoTolerance(
             other = other as? NumericObject ?: return false,
-            tolerance = 0.0,
         )
     }
 
@@ -76,7 +78,7 @@ sealed class Matrix4x4 : NumericObject {
 
     protected fun equalsWithToleranceRowWise(
         other: Matrix4x4,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when {
         !row0.equalsWithTolerance(other.row0, tolerance = tolerance) -> false
         !row1.equalsWithTolerance(other.row1, tolerance = tolerance) -> false

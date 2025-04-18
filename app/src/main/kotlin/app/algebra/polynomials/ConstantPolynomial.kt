@@ -1,6 +1,7 @@
 package app.algebra.polynomials
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 
 @Suppress("DataClassPrivateConstructor")
@@ -19,7 +20,8 @@ data class ConstantPolynomial private constructor(
     override fun apply(x: Double): Double = a
 
     override fun equalsWithTolerance(
-        other: NumericObject, tolerance: Double
+        other: NumericObject,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is ConstantPolynomial -> false
         !a.equalsWithTolerance(other.a, tolerance = tolerance) -> false

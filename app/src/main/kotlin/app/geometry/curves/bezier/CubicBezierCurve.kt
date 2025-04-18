@@ -2,6 +2,7 @@ package app.geometry.curves.bezier
 
 import app.SVGGElementUtils
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.bezier_binomials.CubicBezierBinomial
 import app.fill
 import app.geometry.BoundingBox
@@ -59,7 +60,7 @@ data class CubicBezierCurve private constructor(
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            tolerance: Double,
+            tolerance: Tolerance,
         ): Boolean = when {
             other !is Edge -> false
             !control0.equalsWithTolerance(other.control0, tolerance = tolerance) -> false

@@ -421,7 +421,7 @@ class CubicBezierSegmentCurveTests {
                 Point.of(191.6589, 154.4981),
             ),
             actual = intersectionDetailsSorted,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 }

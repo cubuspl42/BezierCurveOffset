@@ -1,5 +1,7 @@
 package app.algebra
 
+import app.algebra.NumericObject.Tolerance
+import app.equalsApproximately
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -9,8 +11,7 @@ interface NumericObject {
             val absoluteTolerance: Double,
         ) : Tolerance() {
             override fun equalsApproximately(
-                first: Double,
-                second: Double
+                first: Double, second: Double
             ): Boolean = abs(first - second) <= absoluteTolerance
         }
 
@@ -22,8 +23,7 @@ interface NumericObject {
             }
 
             override fun equalsApproximately(
-                first: Double,
-                second: Double
+                first: Double, second: Double
             ): Boolean = abs(first - second) <= relativeTolerance * max(abs(first), abs(second))
         }
 
@@ -35,19 +35,41 @@ interface NumericObject {
 
     fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean
 }
 
+private fun NumericObject.equalsWithTolerance(
+    other: NumericObject,
+    absoluteTolerance: Double,
+): Boolean = equalsWithTolerance(
+    other = other,
+    tolerance = Tolerance.Absolute(
+        absoluteTolerance = absoluteTolerance,
+    ),
+)
+
+fun NumericObject.equalsWithNoTolerance(
+    other: NumericObject,
+): Boolean = equalsWithTolerance(
+    other = other,
+    absoluteTolerance = 0.0,
+)
+
 fun Double.equalsWithTolerance(
     other: Double,
-    tolerance: Double,
-): Boolean = abs(this - other) <= tolerance
+    absoluteTolerance: Double,
+): Boolean = absoluteTolerance.equalsApproximately(this, other)
+
+fun Double.equalsWithTolerance(
+    other: Double,
+    tolerance: Tolerance,
+): Boolean = tolerance.equalsApproximately(this, other)
 
 @JvmName("equalsWithToleranceListDouble")
 fun List<Double>.equalsWithTolerance(
     other: List<Double>,
-    tolerance: Double,
+    tolerance: Tolerance,
 ): Boolean {
     if (this.size != other.size) return false
 
@@ -59,7 +81,7 @@ fun List<Double>.equalsWithTolerance(
 @JvmName("equalsWithToleranceListNumericObject")
 fun List<NumericObject>.equalsWithTolerance(
     other: List<NumericObject>,
-    tolerance: Double,
+    tolerance: Tolerance,
 ): Boolean {
     if (this.size != other.size) return false
 

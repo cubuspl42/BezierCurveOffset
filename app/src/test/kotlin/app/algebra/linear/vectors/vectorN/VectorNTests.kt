@@ -25,7 +25,7 @@ class VectorNTests {
                 5.0, -7.0, 3.0, 12.0, -7.2
             ),
             actual = a + b,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -46,7 +46,7 @@ class VectorNTests {
                 5.0, -7.0, 9.0, 12.0, -7.2
             ),
             actual = a + b,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -69,7 +69,7 @@ class VectorNTests {
                 5.0, -7.0, 9.0, 19.0, -7.2
             ),
             actual = a + b,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -88,7 +88,7 @@ class VectorNTests {
                 elements = listOf(5.0, -7.0, 9.0)
             ),
             actual = a + b,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -107,7 +107,7 @@ class VectorNTests {
                 elements = listOf(5.0, -7.0, 3.0)
             ),
             actual = a + b,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -126,7 +126,7 @@ class VectorNTests {
                 elements = listOf(5.0, -7.0, 9.0, 7.0)
             ),
             actual = a + b,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -151,7 +151,7 @@ class VectorNTests {
                 )
             ),
             actual = a.conv(b),
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -179,7 +179,7 @@ class VectorNTests {
                 ),
             ),
             actual = a.conv(b),
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -210,7 +210,7 @@ class VectorNTests {
                 )
             ),
             actual = a.conv(b),
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -239,7 +239,7 @@ class VectorNTests {
                 ),
             ),
             actual = a.conv(b),
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 }

@@ -1,6 +1,7 @@
 package app.geometry.splines
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.geometry.curves.SegmentCurve
 import app.withNext
@@ -32,7 +33,7 @@ data class PolyCurveSpline<
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is PolyCurveSpline<*, *, *> -> false
 

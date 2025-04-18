@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.algebra.polynomials.LinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
@@ -106,7 +107,8 @@ data class ImplicitLinearPolynomial(
     fun apply(p: RawVector): Double = a1 * p.x + b1 * p.y + c
 
     override fun equalsWithTolerance(
-        other: NumericObject, tolerance: Double
+        other: NumericObject,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is ImplicitLinearPolynomial -> false
         !a1.equalsWithTolerance(other.a1, tolerance = tolerance) -> false

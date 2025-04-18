@@ -1,6 +1,7 @@
 package app.geometry.splines
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.geometry.curves.SegmentCurve
 
 class MonoCurveSpline<
@@ -27,7 +28,7 @@ class MonoCurveSpline<
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is MonoCurveSpline<*, *, *> -> false
 

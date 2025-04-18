@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.polynomials.Polynomial
@@ -125,7 +126,7 @@ data class ImplicitCubicPolynomial(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is ImplicitCubicPolynomial -> false
         !a3.equalsWithTolerance(other.a3, tolerance = tolerance) -> false

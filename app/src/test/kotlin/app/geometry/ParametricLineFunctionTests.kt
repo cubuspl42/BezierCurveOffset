@@ -47,7 +47,7 @@ class ParametricLineFunctionTests {
                 c = -44.5,
             ),
             actual = lg0,
-            tolerance = Constants.epsilon,
+            absoluteTolerance = Constants.epsilon,
         )
     }
 
@@ -72,7 +72,7 @@ class ParametricLineFunctionTests {
                 ),
             ),
             actual = lp0,
-            tolerance = Constants.epsilon,
+            absoluteTolerance = Constants.epsilon,
         )
     }
 }

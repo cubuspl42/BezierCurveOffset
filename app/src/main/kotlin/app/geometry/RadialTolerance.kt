@@ -6,13 +6,13 @@ data class RadialTolerance(
     val cosEps: Double,
 ) {
     companion object {
-        fun oftolerance(
-            tolerance: Double,
+        fun ofTolerance(
+            absoluteTolerance: Double,
         ): RadialTolerance {
-            require(tolerance <= 0.01)
+            require(absoluteTolerance <= 0.01)
             return RadialTolerance(
                 // For small eps values, (1 - eps) and cos(eps) can be used interchangeably.
-                cosEps = 1 - tolerance,
+                cosEps = 1 - absoluteTolerance,
             )
         }
 

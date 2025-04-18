@@ -35,7 +35,7 @@ class ImplicitLinearPolynomialTests {
                 c = -5.25,
             ),
             actual = product,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
 
         assertEquals(
@@ -72,7 +72,7 @@ class ImplicitLinearPolynomialTests {
                 b = 89.0,
             ),
             actual = finalP,
-            tolerance = Constants.epsilon,
+            absoluteTolerance = Constants.epsilon,
         )
     }
 }

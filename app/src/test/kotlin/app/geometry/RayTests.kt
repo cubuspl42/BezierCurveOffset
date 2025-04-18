@@ -24,7 +24,7 @@ class RayTests {
         assertEqualsWithTolerance(
             expected = Point.of(0.0, 98.888888),
             actual = point,
-            tolerance = Constants.epsilon,
+            absoluteTolerance = Constants.epsilon,
         )
     }
 }

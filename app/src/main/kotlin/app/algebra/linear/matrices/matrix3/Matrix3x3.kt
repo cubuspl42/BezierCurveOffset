@@ -1,6 +1,9 @@
 package app.algebra.linear.matrices.matrix3
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
+import app.algebra.equalsWithNoTolerance
+import app.algebra.equalsWithTolerance
 import app.algebra.linear.vectors.vector3.Vector1x3
 import app.algebra.linear.vectors.vector3.Vector3
 import app.algebra.linear.vectors.vector3.Vector3x1
@@ -47,9 +50,8 @@ sealed class Matrix3x3 : NumericObject {
     }
 
     final override fun equals(other: Any?): Boolean {
-        return equalsWithTolerance(
+        return equalsWithNoTolerance(
             other = other as? NumericObject ?: return false,
-            tolerance = 0.0,
         )
     }
 
@@ -66,7 +68,8 @@ sealed class Matrix3x3 : NumericObject {
     """.trimIndent()
 
     protected fun equalsWithToleranceRowWise(
-        other: Matrix3x3, tolerance: Double
+        other: Matrix3x3,
+        tolerance: Tolerance,
     ): Boolean = when {
         !row0.equalsWithTolerance(other.row0, tolerance = tolerance) -> false
         !row1.equalsWithTolerance(other.row1, tolerance = tolerance) -> false

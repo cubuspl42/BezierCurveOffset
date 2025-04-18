@@ -1,6 +1,7 @@
 package app.algebra.polynomials
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.linear.vectors.vectorN.VectorNIrr
 import app.algebra.linear.vectors.vectorN.conv
 import app.algebra.linear.vectors.vectorN.plus
@@ -134,7 +135,8 @@ data class HighPolynomial private constructor(
     }
 
     override fun equalsWithTolerance(
-        other: NumericObject, tolerance: Double
+        other: NumericObject,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is HighPolynomial -> false
         !coefficients.equalsWithTolerance(other.coefficients, tolerance = tolerance) -> false

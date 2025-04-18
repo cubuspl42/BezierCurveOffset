@@ -1,6 +1,7 @@
 package app.algebra.linear.matrices.matrix4
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.vectors.vector4.Vector1x4
 import app.algebra.linear.vectors.vectorN.VectorNx1
@@ -42,7 +43,7 @@ class MatrixNx4(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when (other) {
         !is MatrixNx4 -> false
         else -> rows.equalsWithTolerance(other.rows, tolerance = tolerance)

@@ -1,6 +1,7 @@
 package app.algebra.linear.vectors.vector2
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.VectorOrientation
 import app.algebra.linear.vectors.vector3.Vector3
@@ -79,7 +80,7 @@ data class Vector2<out Vo : VectorOrientation>(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is Vector2<*> -> false
         !a0.equalsWithTolerance(other.a0, tolerance = tolerance) -> false

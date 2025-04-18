@@ -1,6 +1,7 @@
 package app.algebra.polynomials
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.bezier_binomials.RealFunction
 import app.geometry.RawVector
 
@@ -103,7 +104,8 @@ data class ParametricPolynomial(
     )
 
     override fun equalsWithTolerance(
-        other: NumericObject, tolerance: Double
+        other: NumericObject,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is ParametricPolynomial -> false
         xFunction != other.xFunction -> false

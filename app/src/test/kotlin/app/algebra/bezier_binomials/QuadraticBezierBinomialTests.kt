@@ -27,7 +27,7 @@ class QuadraticBezierBinomialTests {
             assertEqualsWithTolerance(
                 expected = sample.value,
                 actual = parametricPolynomial.apply(sample.x),
-                tolerance = eps,
+                absoluteTolerance = eps,
             )
         }
     }

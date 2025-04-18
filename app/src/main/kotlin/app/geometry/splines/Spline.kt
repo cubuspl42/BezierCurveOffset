@@ -2,6 +2,7 @@ package app.geometry.splines
 
 import app.SVGGElementUtils
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.geometry.BoundingBox
 import app.geometry.Point
 import app.geometry.curves.SegmentCurve
@@ -49,7 +50,7 @@ sealed class Spline<
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            tolerance: Double,
+            tolerance: Tolerance,
         ): Boolean = when {
             other !is Knot<*> -> false
             !point.equalsWithTolerance(other.point, tolerance = tolerance) -> false
@@ -91,7 +92,7 @@ sealed class Spline<
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            tolerance: Double,
+            tolerance: Tolerance,
         ): Boolean = when {
             other !is Edge<*, *> -> false
             !curveEdge.equalsWithTolerance(other.curveEdge, tolerance = tolerance) -> false
@@ -151,7 +152,7 @@ sealed class Spline<
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            tolerance: Double
+            tolerance: Tolerance
         ): Boolean = when {
             other !is PartialLink<*, *, *> -> false
             !startKnot.equalsWithTolerance(other.startKnot, tolerance = tolerance) -> false
@@ -197,7 +198,7 @@ sealed class Spline<
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            tolerance: Double,
+            tolerance: Tolerance,
         ): Boolean = when {
             other !is CompleteLink<*, *, *> -> false
             !startKnot.equalsWithTolerance(other.startKnot, tolerance = tolerance) -> false

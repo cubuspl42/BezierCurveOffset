@@ -53,7 +53,7 @@ data class MixedTransformation(
         // The transformed point in the homogeneous coordinates
         val pt: Vector3x1 = transformationMatrix * point.pv.vertical.toVec3()
 
-        if (!pt.a2.equalsWithTolerance(1.0, tolerance = Constants.epsilon)) {
+        if (!pt.a2.equalsWithTolerance(1.0, absoluteTolerance = Constants.epsilon)) {
             throw AssertionError()
         }
 

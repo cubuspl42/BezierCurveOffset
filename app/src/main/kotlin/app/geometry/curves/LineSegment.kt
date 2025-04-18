@@ -1,6 +1,7 @@
 package app.geometry.curves
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.fillCircle
 import app.geometry.BoundingBox
 import app.geometry.Curve
@@ -45,7 +46,7 @@ data class LineSegment(
 
         override fun equalsWithTolerance(
             other: NumericObject,
-            tolerance: Double,
+            tolerance: Tolerance,
         ): Boolean = other is Edge
 
         override fun toString(): String = "LineSegment.Edge"

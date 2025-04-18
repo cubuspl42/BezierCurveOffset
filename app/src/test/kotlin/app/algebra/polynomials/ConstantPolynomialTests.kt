@@ -22,13 +22,13 @@ class ConstantPolynomialTests {
                 a = 6.0,
             ),
             actual = product,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
 
         assertEqualsWithTolerance(
             expected = product,
             actual = pb * pa,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 }

@@ -1,7 +1,6 @@
 package app.algebra.polynomials
 
 import app.algebra.assertEqualsWithTolerance
-import app.algebra.linear.vectors.vectorN.VectorN
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -30,7 +29,7 @@ class HighPolynomialTests {
                 24.4,
             ),
             actual = product,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
 
         assertEquals(
@@ -70,7 +69,7 @@ class HighPolynomialTests {
                 -4.6,
             ),
             actual = product,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
 
         assertEquals(
@@ -110,7 +109,7 @@ class HighPolynomialTests {
                 37.8,
             ),
             actual = product,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
 
         assertEquals(
@@ -154,7 +153,7 @@ class HighPolynomialTests {
                 -154.4,
             ),
             actual = product,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 }

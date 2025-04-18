@@ -1,6 +1,7 @@
 package app.algebra.linear.matrices.matrix3
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.linear.vectors.vector3.Vector1x3
 import app.algebra.linear.vectors.vector3.Vector3
 import app.algebra.linear.vectors.vector3.Vector3x1
@@ -46,7 +47,7 @@ class ColumnMajorMatrix3x3(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when {
         other is Matrix3x3 -> when {
             other is ColumnMajorMatrix3x3 -> when {

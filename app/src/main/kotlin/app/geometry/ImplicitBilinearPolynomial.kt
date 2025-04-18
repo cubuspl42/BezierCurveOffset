@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.algebra.polynomials.LinearPolynomial
 
@@ -54,7 +55,7 @@ data class ImplicitBilinearPolynomial(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is ImplicitBilinearPolynomial -> false
         !a1b1.equalsWithTolerance(other.a1b1, tolerance = tolerance) -> false

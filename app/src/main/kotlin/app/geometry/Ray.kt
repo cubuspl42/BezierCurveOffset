@@ -64,13 +64,6 @@ class Ray(
         s = startingPoint.pv,
         d = dv,
     )
-
-    fun isParallelTo(
-        other: Ray,
-    ): Boolean = dv.cross(other.dv).equalsWithTolerance(
-        0.0,
-        tolerance = Constants.epsilon,
-    )
 }
 
 fun Ray.toDebugPath(

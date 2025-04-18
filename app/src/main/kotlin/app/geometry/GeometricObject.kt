@@ -1,7 +1,7 @@
 package app.geometry
 
 interface GeometricObject {
-    fun equalsWithTolerance(
+    fun equalsWithGeometricTolerance(
         other: GeometricObject,
         tolerance: GeometricTolerance,
     ): Boolean

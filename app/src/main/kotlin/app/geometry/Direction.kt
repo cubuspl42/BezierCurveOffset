@@ -1,7 +1,7 @@
 package app.geometry
 
 import app.algebra.NumericObject
-import app.algebra.equalsWithTolerance
+import app.algebra.NumericObject.Tolerance
 
 /**
  * A direction in the 2D Euclidean space, i.e. a unit vector with a given direction and orientation.
@@ -35,15 +35,6 @@ class Direction private constructor(
         )
     }
 
-    init {
-        require(
-            dv.lengthSquared.equalsWithTolerance(
-                1.0,
-                tolerance = 1e-6,
-            ),
-        )
-    }
-
     val perpendicular: Direction
         get() = Direction(dv = dv.perpendicular)
 
@@ -63,16 +54,16 @@ class Direction private constructor(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is Direction -> false
         else -> angleBetween(other).equalsWithRadialTolerance(
             other = PrincipalAngle.Zero,
-            tolerance = RadialTolerance.oftolerance(tolerance = tolerance),
+            tolerance = RadialTolerance.ofTolerance(absoluteTolerance = 0.01),
         )
     }
 
-    override fun equalsWithTolerance(
+    override fun equalsWithGeometricTolerance(
         other: GeometricObject,
         tolerance: GeometricTolerance,
     ): Boolean = when {

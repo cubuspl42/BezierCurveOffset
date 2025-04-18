@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.equalsZeroApproximately
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.Translation
@@ -186,7 +187,7 @@ data class Point internal constructor(
     // TODO: Geometric tolerance
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double
+        tolerance: Tolerance
     ): Boolean = when {
         other !is Point -> false
         !pv.equalsWithTolerance(other.pv, tolerance = tolerance) -> false

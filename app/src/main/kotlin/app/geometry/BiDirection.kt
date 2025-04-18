@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 
 /**
  * A bi-direction in the 2D Euclidean space, i.e. a pair of opposite directions, or a unit vector with a given direction
@@ -37,7 +38,7 @@ value class BiDirection internal constructor(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is BiDirection -> false
         else -> representativeDirection.equalsWithTolerance(
@@ -46,15 +47,15 @@ value class BiDirection internal constructor(
         )
     }
 
-    override fun equalsWithTolerance(
+    override fun equalsWithGeometricTolerance(
         other: GeometricObject,
         tolerance: GeometricTolerance,
     ): Boolean = when {
         other !is BiDirection -> false
-        else -> representativeDirection.equalsWithTolerance(
+        else -> representativeDirection.equalsWithGeometricTolerance(
             other.representativeDirection,
             tolerance = tolerance,
-        ) || representativeDirection.equalsWithTolerance(
+        ) || representativeDirection.equalsWithGeometricTolerance(
             other.representativeDirection.opposite,
             tolerance = tolerance,
         )

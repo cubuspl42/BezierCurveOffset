@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.VectorSpace
 import app.algebra.linear.vectors.vector2.Vector2x1
@@ -172,7 +173,7 @@ data class RawVector(
 
     override fun equalsWithTolerance(
         other: NumericObject,
-        tolerance: Double,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is RawVector -> false
         !x.equalsWithTolerance(other.x, tolerance = tolerance) -> false

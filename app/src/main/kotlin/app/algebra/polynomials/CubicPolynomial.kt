@@ -1,6 +1,7 @@
 package app.algebra.polynomials
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.matrices.matrix3.Matrix3x3
 import app.algebra.linear.matrices.matrix3.RowMajorMatrix3x3
@@ -17,7 +18,6 @@ import kotlin.math.cbrt
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
-
 
 @Suppress("DataClassPrivateConstructor")
 data class CubicPolynomial private constructor(
@@ -192,7 +192,8 @@ data class CubicPolynomial private constructor(
     override fun apply(x: Double): Double = a * x * x * x + b * x * x + c * x + d
 
     override fun equalsWithTolerance(
-        other: NumericObject, tolerance: Double
+        other: NumericObject,
+        tolerance: Tolerance,
     ): Boolean = when {
         other !is CubicPolynomial -> false
         !a.equalsWithTolerance(other.a, tolerance = tolerance) -> false

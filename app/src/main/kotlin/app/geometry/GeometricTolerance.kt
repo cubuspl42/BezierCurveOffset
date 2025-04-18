@@ -1,5 +1,7 @@
 package app.geometry
 
+import app.algebra.NumericObject.Tolerance
+
 data class GeometricTolerance(
     val negligibleDistance: Double,
     val greatDistance: Double,
@@ -7,8 +9,10 @@ data class GeometricTolerance(
     /**
      * The tolerance for a distance between two points
      */
-    val distanceTolerance: Double
-        get() = negligibleDistance
+    val distanceTolerance: Tolerance.Absolute
+        get() = Tolerance.Absolute(
+            absoluteTolerance = negligibleDistance,
+        )
 
     /**
      * The tolerance for the |l|^2, where l is a distance between two points

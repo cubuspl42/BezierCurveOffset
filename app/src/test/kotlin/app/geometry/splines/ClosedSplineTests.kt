@@ -8,15 +8,12 @@ import app.PatternSvg
 import app.SeamAllowanceKind
 import app.algebra.assertEqualsWithTolerance
 import app.geometry.Point
-import app.geometry.SvgCurveExtractionUtils
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.SegmentCurve.OffsetEdgeMetadata
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.splines.ClosedSpline.ContourEdgeMetadata
 import app.geometry.splines.ClosedSpline.ContourKnotMetadata
-import app.writeToFile
-import kotlin.io.path.Path
 import kotlin.test.Test
 
 private val eps = 10e-3
@@ -95,7 +92,7 @@ class ClosedSplineTests {
         assertEqualsWithTolerance(
             expected = expectedLinks,
             actual = interconnectedSpline.cyclicLinks,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -165,7 +162,7 @@ class ClosedSplineTests {
                 expectedCorner1.withCornerMetadata(),
             ),
             actual = interconnectedSpline.cyclicLinks,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 
@@ -267,7 +264,7 @@ class ClosedSplineTests {
         assertEqualsWithTolerance(
             expected = expectedInterconnectedSpline,
             actual = interconnectedSpline,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 

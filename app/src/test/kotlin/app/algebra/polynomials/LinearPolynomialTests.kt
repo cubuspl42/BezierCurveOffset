@@ -26,7 +26,7 @@ class LinearPolynomialTests {
                 a = 134.07,
             ),
             actual = product,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
 
         assertEquals(
@@ -56,7 +56,7 @@ class LinearPolynomialTests {
                 a = -28.29,
             ),
             actual = product,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
 
         assertEquals(
@@ -77,7 +77,7 @@ class LinearPolynomialTests {
         assertEqualsWithTolerance(
             expected = listOf(0.666),
             actual = roots,
-            tolerance = eps,
+            absoluteTolerance = eps,
         )
     }
 }
