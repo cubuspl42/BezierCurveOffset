@@ -21,14 +21,14 @@ import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
 import app.geometry.splines.toDebugSvgPathGroup
 import app.height
-import app.mapCarrying
+import app.utils.mapCarrying
 import app.p
 import app.p1
 import app.p2
 import app.stroke
 import app.svgDomImplementation
-import app.uncons
-import app.untrail
+import app.utils.uncons
+import app.utils.untrail
 import app.viewBox
 import app.width
 import org.apache.batik.anim.dom.SVGOMDocument

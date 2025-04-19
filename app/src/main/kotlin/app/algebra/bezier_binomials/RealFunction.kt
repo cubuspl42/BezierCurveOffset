@@ -1,11 +1,10 @@
 package app.algebra.bezier_binomials
 
 import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
-import app.algebra.linear.vectors.vector2.Vector2
 import app.geometry.RawVector
 import app.geometry.lineTo
 import app.geometry.moveTo
-import app.linspace
+import app.utils.linspace
 import java.awt.geom.Path2D
 
 abstract class RealFunction<out V> {

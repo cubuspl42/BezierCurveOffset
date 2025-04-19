@@ -6,6 +6,11 @@ import app.geometry.curves.LineSegment
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.splines.ClosedSpline
 import app.geometry.splines.Spline
+import app.utils.shiftWhile
+import app.utils.splitBy
+import app.utils.uncons
+import app.utils.withNext
+import app.utils.withNextCyclic
 
 data class PatternOutline(
     val segments: List<Segment>,

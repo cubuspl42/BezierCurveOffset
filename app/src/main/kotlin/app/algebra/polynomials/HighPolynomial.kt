@@ -7,7 +7,7 @@ import app.algebra.linear.vectors.vectorN.conv
 import app.algebra.linear.vectors.vectorN.plus
 import app.algebra.linear.vectors.vectorN.times
 import app.algebra.linear.vectors.vectorN.unaryMinus
-import app.equalsZeroApproximately
+import app.utils.equalsZeroApproximately
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver
 import kotlin.math.pow
 

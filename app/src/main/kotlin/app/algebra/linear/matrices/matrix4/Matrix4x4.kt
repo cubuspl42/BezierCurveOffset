@@ -3,11 +3,10 @@ package app.algebra.linear.matrices.matrix4
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithNoTolerance
-import app.algebra.equalsWithTolerance
 import app.algebra.linear.vectors.vector4.Vector1x4
 import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.linear.vectors.vector4.Vector4x1
-import app.indexOfMaxBy
+import app.utils.indexOfMaxBy
 import kotlin.math.absoluteValue
 
 sealed class Matrix4x4 : NumericObject {

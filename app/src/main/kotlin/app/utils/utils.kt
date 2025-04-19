@@ -1,4 +1,4 @@
-package app
+package app.utils
 
 import kotlin.math.abs
 import kotlin.math.absoluteValue
