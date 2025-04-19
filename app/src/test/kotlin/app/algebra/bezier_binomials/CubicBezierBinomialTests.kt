@@ -1,10 +1,13 @@
 package app.algebra.bezier_binomials
 
+import app.algebra.NumericObject
 import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.assertEqualsWithRelativeTolerance
+import app.algebra.assertEqualsWithTolerance
 import app.algebra.polynomials.HighPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import app.geometry.ImplicitCubicPolynomial
+import app.geometry.Point
 import app.geometry.RawVector
 import app.geometry.SvgCurveExtractionUtils
 import java.awt.Color
@@ -14,6 +17,18 @@ import kotlin.test.assertIs
 private const val eps = 10e-4
 
 class CubicBezierBinomialTests {
+    private val loopWaveIntersectionCurveSet = SvgCurveExtractionUtils.extractCurves(
+        clazz = CubicBezierBinomialTests::class.java,
+        resourceName = "loopWaveIntersection.svg",
+    )
+
+    private val loopCurve = loopWaveIntersectionCurveSet.getBezierCurveByColor(
+        color = Color(0x3399CC),
+    )
+
+    private val waveCurve = loopWaveIntersectionCurveSet.getBezierCurveByColor(
+        color = Color(0xCCFF33),
+    )
 
     @Test
     fun testToPolynomialFormulaCubic() {
@@ -41,20 +56,7 @@ class CubicBezierBinomialTests {
 
     @Test
     fun testImplicitize() {
-        val extractedCurveSet = SvgCurveExtractionUtils.extractCurves(
-            clazz = CubicBezierBinomialTests::class.java,
-            resourceName = "loopWaveIntersection.svg",
-        )
-
-        val bezierCurve = extractedCurveSet.getBezierCurveByColor(
-            color = Color(0x3399CC),
-        )
-
-        val bezierCurve2 = extractedCurveSet.getBezierCurveByColor(
-            color = Color(0xCCFF33),
-        )
-
-        val bezierCurveBasis = bezierCurve.basisFormula
+        val bezierCurveBasis = loopCurve.basisFormula
 
         val implicitCubicPolynomial = bezierCurveBasis.implicitize()
 
@@ -76,9 +78,54 @@ class CubicBezierBinomialTests {
         )
 
         val intersectionPolynomial = implicitCubicPolynomial.put(
-            bezierCurve2.basisFormula.toParametricPolynomial(),
+            waveCurve.basisFormula.toParametricPolynomial(),
         )
 
         assertIs<HighPolynomial>(intersectionPolynomial)
+    }
+
+    @Test
+    fun testSolveIntersections() {
+        val intersectionWaveTValues = loopCurve.basisFormula.solveIntersections(
+            waveCurve.basisFormula,
+        )
+
+        assertEqualsWithTolerance(
+            expected = listOf(
+                0.9785368635066114,
+                0.9147383049567882,
+                0.8142156752930875,
+                0.6822325289916767,
+                0.43011874465177913,
+                0.40251769663008713,
+                0.22787694791806082,
+                0.1435234395326374,
+                0.08321298331285831,
+            ).sorted(),
+            actual = intersectionWaveTValues.sorted(),
+            tolerance = NumericObject.Tolerance.Absolute(
+                absoluteTolerance = 10e-11,
+            ),
+        )
+
+        assertEqualsWithTolerance(
+            expected = listOf(
+                Point.of(590.517423417456, 365.351468585959),
+                Point.of(569.693769676009, 289.328026231261),
+                Point.of(544.115031887314, 226.794563840263),
+                Point.of(520.705506672753, 223.610007522960),
+                Point.of(491.270173012666, 324.946476047408),
+                Point.of(488.126372683975, 335.012776278537),
+                Point.of(462.841051803370, 345.574224761226),
+                Point.of(445.046899204276, 298.915662971792),
+                Point.of(429.096911279908, 236.478283237304),
+            ).sortedBy { it.x },
+            actual = intersectionWaveTValues.map { t ->
+                waveCurve.evaluate(t = t)
+            }.sortedBy { it.x },
+            tolerance = NumericObject.Tolerance.Absolute(
+                absoluteTolerance = 10e-8,
+            ),
+        )
     }
 }

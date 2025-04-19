@@ -60,13 +60,18 @@ data class CubicBezierBinomial(
         return c1 + c2 + c3 + c4
     }
 
+    /**
+     * Solve the intersection of two cubic Bézier curves.
+     *
+     * @return A set of intersection parameter values t for the [other] curve.
+     */
     fun solveIntersections(
         other: CubicBezierBinomial,
     ): Set<Double> {
         val thisImplicit = implicitize()
         val otherParametric = other.toParametricPolynomial()
         val intersectionPolynomial = thisImplicit.put(otherParametric)
-        TODO()
+        return intersectionPolynomial.findRoots()
     }
 
     fun implicitize(): ImplicitCubicPolynomial {
