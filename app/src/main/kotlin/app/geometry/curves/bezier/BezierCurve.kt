@@ -14,7 +14,7 @@ import app.geometry.curves.toSpline
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.mergeWith
 import app.utils.contains
-import app.utils.iterable.partitionSorted
+import app.utils.iterable.partitionAtCenter
 import app.utils.open
 
 /**
@@ -310,11 +310,11 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
         tValuesSorted: List<Double>,
     ): List<BezierCurve> {
         val partitioningResult =
-            tValuesSorted.partitionSorted() ?: return listOf(this) // We're done, no more places to split
+            tValuesSorted.partitionAtCenter() ?: return listOf(this) // We're done, no more places to split
 
-        val leftTValues = partitioningResult.leftPart
-        val medianTValue = partitioningResult.medianValue
-        val rightTValues = partitioningResult.rightPart
+        val leftTValues = partitioningResult.previousElements
+        val medianTValue = partitioningResult.innerElement
+        val rightTValues = partitioningResult.nextElements
 
         val (leftSplitCurve, rightSplitCurve) = splitAt(
             t = medianTValue,

@@ -1,27 +1,6 @@
 package app.utils.iterable
 
-data class PartitioningResult<T>(
-    val leftPart: List<T>,
-    val medianValue: T,
-    val rightPart: List<T>,
-)
-
 fun <T : Comparable<T>> Iterable<T>.isSorted(): Boolean = mapWithNext { a, b -> a <= b }.all { it }
-
-fun <T : Comparable<T>> List<T>.partitionSorted(): PartitioningResult<T>? {
-    assert(isSorted())
-
-    if (isEmpty()) return null
-
-    val medianIndex = size / 2
-    val medianValue = this[medianIndex]
-
-    return PartitioningResult(
-        leftPart = subList(0, medianIndex),
-        medianValue = medianValue,
-        rightPart = subList(medianIndex + 1, size),
-    )
-}
 
 /**
  * Returns a list containing the results of applying the given [transform] function to each element
