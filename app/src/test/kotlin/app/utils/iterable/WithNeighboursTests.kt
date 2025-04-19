@@ -1,16 +1,14 @@
-package app.utils.iterable_utils_tests
+package app.utils.iterable
 
 import app.utils.BlueHalfDominoBlock
 import app.utils.FullDominoBlock
-import app.utils.iterable.WithPrevious
-import app.utils.iterable.withPrevious
-import app.utils.iterable.withPreviousCyclic
+import app.utils.RedHalfDominoBlock
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
-class WithPreviousTests {
+class WithNeighboursTests {
     @Test
-    fun testWithPrevious_standardCase() {
+    fun testWithNeighbours_standardCase() {
         val actual = listOf(
             FullDominoBlock(
                 redNumber = 1,
@@ -24,15 +22,18 @@ class WithPreviousTests {
                 redNumber = 2,
                 blueNumber = 5,
             ),
-        ).withPrevious(
+        ).withNeighbours(
             outerLeft = BlueHalfDominoBlock(
                 blueNumber = 1,
+            ),
+            outerRight = RedHalfDominoBlock(
+                redNumber = 5,
             ),
         )
 
         assertEquals(
             expected = listOf(
-                WithPrevious(
+                WithNeighbours(
                     prevElement = BlueHalfDominoBlock(
                         blueNumber = 1,
                     ),
@@ -40,8 +41,12 @@ class WithPreviousTests {
                         redNumber = 1,
                         blueNumber = 6,
                     ),
+                    nextElement = FullDominoBlock(
+                        redNumber = 6,
+                        blueNumber = 2,
+                    ),
                 ),
-                WithPrevious(
+                WithNeighbours(
                     prevElement = FullDominoBlock(
                         redNumber = 1,
                         blueNumber = 6,
@@ -50,8 +55,12 @@ class WithPreviousTests {
                         redNumber = 6,
                         blueNumber = 2,
                     ),
+                    nextElement = FullDominoBlock(
+                        redNumber = 2,
+                        blueNumber = 5,
+                    ),
                 ),
-                WithPrevious(
+                WithNeighbours(
                     prevElement = FullDominoBlock(
                         redNumber = 6,
                         blueNumber = 2,
@@ -60,6 +69,9 @@ class WithPreviousTests {
                         redNumber = 2,
                         blueNumber = 5,
                     ),
+                    nextElement = RedHalfDominoBlock(
+                        redNumber = 5,
+                    ),
                 ),
             ),
             actual = actual,
@@ -67,21 +79,24 @@ class WithPreviousTests {
     }
 
     @Test
-    fun testWithPrevious_singleElement() {
+    fun testWithNeighbours_singleElement() {
         val actual = listOf(
             FullDominoBlock(
                 redNumber = 1,
                 blueNumber = 6,
             ),
-        ).withPrevious(
+        ).withNeighbours(
             outerLeft = BlueHalfDominoBlock(
                 blueNumber = 1,
+            ),
+            outerRight = RedHalfDominoBlock(
+                redNumber = 5,
             ),
         )
 
         assertEquals(
             expected = listOf(
-                WithPrevious(
+                WithNeighbours(
                     prevElement = BlueHalfDominoBlock(
                         blueNumber = 1,
                     ),
@@ -89,6 +104,9 @@ class WithPreviousTests {
                         redNumber = 1,
                         blueNumber = 6,
                     ),
+                    nextElement = RedHalfDominoBlock(
+                        redNumber = 5,
+                    ),
                 ),
             ),
             actual = actual,
@@ -96,10 +114,13 @@ class WithPreviousTests {
     }
 
     @Test
-    fun testWithPrevious_emptyList() {
-        val actual = emptyList<FullDominoBlock>().withPrevious(
+    fun testWithNeighbours_emptyList() {
+        val actual = emptyList<FullDominoBlock>().withNeighbours(
             outerLeft = BlueHalfDominoBlock(
                 blueNumber = 1,
+            ),
+            outerRight = RedHalfDominoBlock(
+                redNumber = 5,
             ),
         )
 
@@ -109,57 +130,5 @@ class WithPreviousTests {
         )
     }
 
-    @Test
-    fun testWithPreviousCyclic_standardCase() {
-        val actual = listOf(
-            FullDominoBlock(
-                redNumber = 1,
-                blueNumber = 6,
-            ),
-            FullDominoBlock(
-                redNumber = 6,
-                blueNumber = 2,
-            ),
-            FullDominoBlock(
-                redNumber = 2,
-                blueNumber = 5,
-            ),
-        ).withPreviousCyclic()
-
-        assertEquals(
-            expected = listOf(
-                WithPrevious(
-                    prevElement = FullDominoBlock(
-                        redNumber = 2,
-                        blueNumber = 5,
-                    ),
-                    element = FullDominoBlock(
-                        redNumber = 1,
-                        blueNumber = 6,
-                    ),
-                ),
-                WithPrevious(
-                    prevElement = FullDominoBlock(
-                        redNumber = 1,
-                        blueNumber = 6,
-                    ),
-                    element = FullDominoBlock(
-                        redNumber = 6,
-                        blueNumber = 2,
-                    ),
-                ),
-                WithPrevious(
-                    prevElement = FullDominoBlock(
-                        redNumber = 6,
-                        blueNumber = 2,
-                    ),
-                    element = FullDominoBlock(
-                        redNumber = 2,
-                        blueNumber = 5,
-                    ),
-                ),
-            ),
-            actual = actual,
-        )
-    }
 }
+
