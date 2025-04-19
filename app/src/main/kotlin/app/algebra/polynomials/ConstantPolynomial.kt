@@ -3,19 +3,21 @@ package app.algebra.polynomials
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
+import app.algebra.linear.VectorOrientation
+import app.algebra.linear.vectors.vector2.Vector2
 
 @Suppress("DataClassPrivateConstructor")
 data class ConstantPolynomial private constructor(
     val a: Double,
-) : Polynomial {
+) : LinearPolynomial {
     companion object {
         fun of(
             a: Double,
         ): ConstantPolynomial = ConstantPolynomial(a = a)
     }
 
-    val a0: Double
-        get() = a
+    override val coefficientsLinear: Vector2<VectorOrientation.Irrelevant>
+        get() = Vector2(a0 = a, a1 = 0.0)
 
     override fun apply(x: Double): Double = a
 
@@ -30,7 +32,7 @@ data class ConstantPolynomial private constructor(
 
     override fun plus(
         constant: Double,
-    ): Polynomial = ConstantPolynomial(a + constant)
+    ): ConstantPolynomial = ConstantPolynomial(a + constant)
 
     override fun plus(
         other: Polynomial,
@@ -38,11 +40,11 @@ data class ConstantPolynomial private constructor(
 
     override fun plusLinear(
         linearPolynomial: LinearPolynomial,
-    ): Polynomial = linearPolynomial + a
+    ): LinearPolynomial = linearPolynomial + a
 
     override fun plusQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
-    ): Polynomial = quadraticPolynomial + a
+    ): QuadraticPolynomial = quadraticPolynomial + a
 
     override fun plusCubic(
         cubicPolynomial: CubicPolynomial,
@@ -56,7 +58,7 @@ data class ConstantPolynomial private constructor(
 
     override fun times(
         factor: Double,
-    ): Polynomial = ConstantPolynomial.of(a = a * factor)
+    ): ConstantPolynomial = ConstantPolynomial.of(a = a * factor)
 
     override fun timesLinear(
         linearPolynomial: LinearPolynomial,

@@ -19,16 +19,13 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.sqrt
 
-@Suppress("DataClassPrivateConstructor")
-data class CubicPolynomial private constructor(
-    val coefficients: Vector4Irr,
-) : Polynomial {
+interface CubicPolynomial : Polynomial {
     companion object {
         fun of(
             coefficients: Vector4Irr,
-        ): Polynomial = when {
+        ): CubicPolynomial = when {
             coefficients.a3 == 0.0 -> QuadraticPolynomial.of(coefficients.lower)
-            else -> CubicPolynomial(coefficients = coefficients)
+            else -> ProperCubicPolynomial(coefficients = coefficients)
         }
 
         fun of(
@@ -90,30 +87,31 @@ data class CubicPolynomial private constructor(
         }
     }
 
-    val a: Double
-        get() = coefficients.a3
-
-    val b: Double
-        get() = coefficients.a2
-
-    val c: Double
-        get() = coefficients.a1
-
-    val d: Double
-        get() = coefficients.a0
+    val coefficientsCubic: Vector4Irr
 
     val a3: Double
-        get() = coefficients.a3
+        get() = coefficientsCubic.a3
 
     val a2: Double
-        get() = coefficients.a2
+        get() = coefficientsCubic.a2
 
     val a1: Double
-        get() = coefficients.a1
+        get() = coefficientsCubic.a1
 
     val a0: Double
-        get() = coefficients.a0
+        get() = coefficientsCubic.a0
 
+    override fun plusQuadratic(
+        quadraticPolynomial: QuadraticPolynomial,
+    ): CubicPolynomial
+}
+
+data class ProperCubicPolynomial internal constructor(
+    val coefficients: Vector4Irr,
+) : CubicPolynomial {
+
+    override val coefficientsCubic: Vector4Irr
+        get() = coefficients
 
     init {
         require(coefficients.a3 != 0.0)
@@ -121,7 +119,7 @@ data class CubicPolynomial private constructor(
 
     override operator fun plus(
         constant: Double,
-    ): CubicPolynomial = CubicPolynomial(
+    ): ProperCubicPolynomial = ProperCubicPolynomial(
         coefficients = coefficients.plusFirst(constant),
     )
 
@@ -131,20 +129,20 @@ data class CubicPolynomial private constructor(
 
     override fun plusLinear(
         linearPolynomial: LinearPolynomial,
-    ): CubicPolynomial = CubicPolynomial(
-        coefficients = coefficients + linearPolynomial.coefficients,
+    ): ProperCubicPolynomial = ProperCubicPolynomial(
+        coefficients = coefficients + linearPolynomial.coefficientsLinear,
     )
 
     override fun plusQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
-    ): CubicPolynomial = CubicPolynomial(
-        coefficients = coefficients + quadraticPolynomial.coefficients,
+    ): ProperCubicPolynomial = ProperCubicPolynomial(
+        coefficients = coefficients + quadraticPolynomial.coefficientsQuadratic,
     )
 
     override fun plusCubic(
         cubicPolynomial: CubicPolynomial,
     ): Polynomial = CubicPolynomial.of(
-        coefficients = coefficients + cubicPolynomial.coefficients,
+        coefficients = coefficients + cubicPolynomial.coefficientsCubic,
     )
 
     override fun plusHigh(
@@ -155,32 +153,32 @@ data class CubicPolynomial private constructor(
         other: Polynomial,
     ): Polynomial = other.timesCubic(this)
 
-    override fun unaryMinus(): CubicPolynomial = CubicPolynomial(
+    override fun unaryMinus(): ProperCubicPolynomial = ProperCubicPolynomial(
         coefficients = -coefficients,
     )
 
     override fun times(
         factor: Double,
-    ): Polynomial = CubicPolynomial.of(
+    ): CubicPolynomial = CubicPolynomial.of(
         coefficients = factor * coefficients,
     )
 
     override fun timesLinear(
         linearPolynomial: LinearPolynomial,
     ): Polynomial = HighPolynomial.of(
-        coefficients = coefficients.conv(linearPolynomial.coefficients),
+        coefficients = coefficients.conv(linearPolynomial.coefficientsLinear),
     )
 
     override fun timesQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
     ): Polynomial = HighPolynomial.of(
-        coefficients = coefficients.conv(quadraticPolynomial.coefficients),
+        coefficients = coefficients.conv(quadraticPolynomial.coefficientsQuadratic),
     )
 
     override fun timesCubic(
         cubicPolynomial: CubicPolynomial,
     ): Polynomial = HighPolynomial.of(
-        coefficients = coefficients.conv(cubicPolynomial.coefficients),
+        coefficients = coefficients.conv(cubicPolynomial.coefficientsCubic),
     )
 
     override fun timesHigh(
@@ -189,21 +187,26 @@ data class CubicPolynomial private constructor(
         coefficients = coefficients.conv(highPolynomial.coefficients),
     )
 
-    override fun apply(x: Double): Double = a * x * x * x + b * x * x + c * x + d
+    override fun apply(x: Double): Double = a3 * x * x * x + a2 * x * x + a1 * x + a0
 
     override fun equalsWithTolerance(
         other: NumericObject,
         tolerance: Tolerance,
     ): Boolean = when {
-        other !is CubicPolynomial -> false
-        !a.equalsWithTolerance(other.a, tolerance = tolerance) -> false
-        !b.equalsWithTolerance(other.b, tolerance = tolerance) -> false
-        !c.equalsWithTolerance(other.c, tolerance = tolerance) -> false
-        !d.equalsWithTolerance(other.d, tolerance = tolerance) -> false
+        other !is ProperCubicPolynomial -> false
+        !a3.equalsWithTolerance(other.a3, tolerance = tolerance) -> false
+        !a2.equalsWithTolerance(other.a2, tolerance = tolerance) -> false
+        !a1.equalsWithTolerance(other.a1, tolerance = tolerance) -> false
+        !a0.equalsWithTolerance(other.a0, tolerance = tolerance) -> false
         else -> true
     }
 
     override fun findRoots(): Set<Double> {
+        val a = a3
+        val b = a2
+        val c = a1
+        val d = a0
+
         val f = (3.0 * a * c - b * b) / (3.0 * a * a)
         val g = (2.0 * b * b * b - 9.0 * a * b * c + 27.0 * a * a * d) / (27.0 * a * a * a)
         val h = g * g / 4.0 + f * f * f / 27.0

@@ -50,9 +50,10 @@ class QuadraticPolynomialTests {
             b = -3.0,
             a = 1.0,
         )
+
         val pb = LinearPolynomial.of(
-            b = -1.0,
-            a = 2.0,
+            a0 = -1.0,
+            a1 = 2.0,
         )
 
         val product = pa * pb

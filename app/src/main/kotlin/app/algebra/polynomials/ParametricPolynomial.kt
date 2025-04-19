@@ -68,16 +68,16 @@ data class ParametricPolynomial(
         )
 
         fun linear(
-            a: RawVector,
-            b: RawVector,
+            a1: RawVector,
+            a0: RawVector,
         ): ParametricPolynomial = ParametricPolynomial(
             xFunction = LinearPolynomial.of(
-                a = a.x,
-                b = b.x,
+                a1 = a1.x,
+                a0 = a0.x,
             ),
             yFunction = LinearPolynomial.of(
-                a = a.y,
-                b = b.y,
+                a1 = a1.y,
+                a0 = a0.y,
             ),
         )
 

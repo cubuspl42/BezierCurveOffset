@@ -131,19 +131,19 @@ data class HighPolynomial private constructor(
     override fun plusLinear(
         linearPolynomial: LinearPolynomial,
     ): HighPolynomial = HighPolynomial(
-        coefficients + linearPolynomial.coefficients,
+        coefficients + linearPolynomial.coefficientsLinear,
     )
 
     override fun plusQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
     ): HighPolynomial = HighPolynomial(
-        coefficients + quadraticPolynomial.coefficients,
+        coefficients + quadraticPolynomial.coefficientsQuadratic,
     )
 
     override fun plusCubic(
         cubicPolynomial: CubicPolynomial,
     ): Polynomial = HighPolynomial(
-        coefficients + cubicPolynomial.coefficients,
+        coefficients + cubicPolynomial.coefficientsCubic,
     )
 
     override fun plusHigh(
@@ -169,19 +169,19 @@ data class HighPolynomial private constructor(
     override fun timesLinear(
         linearPolynomial: LinearPolynomial,
     ): Polynomial = HighPolynomial.of(
-        coefficients = coefficients.conv(linearPolynomial.coefficients),
+        coefficients = coefficients.conv(linearPolynomial.coefficientsLinear),
     )
 
     override fun timesQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
     ): Polynomial = HighPolynomial.of(
-        coefficients = coefficients.conv(quadraticPolynomial.coefficients),
+        coefficients = coefficients.conv(quadraticPolynomial.coefficientsQuadratic),
     )
 
     override fun timesCubic(
         cubicPolynomial: CubicPolynomial,
     ): Polynomial = HighPolynomial.of(
-        coefficients = coefficients.conv(cubicPolynomial.coefficients),
+        coefficients = coefficients.conv(cubicPolynomial.coefficientsCubic),
     )
 
     override fun timesHigh(

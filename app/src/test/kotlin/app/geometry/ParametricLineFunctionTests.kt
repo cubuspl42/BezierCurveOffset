@@ -63,12 +63,12 @@ class ParametricLineFunctionTests {
         assertEqualsWithAbsoluteTolerance(
             expected = ParametricPolynomial(
                 xFunction = LinearPolynomial.of(
-                    a = -0.45,
-                    b = 50.0,
+                    a1 = -0.45,
+                    a0 = 50.0,
                 ),
                 yFunction = LinearPolynomial.of(
-                    a = 0.89,
-                    b = 0.0,
+                    a1 = 0.89,
+                    a0 = 0.0,
                 ),
             ),
             actual = lp0,

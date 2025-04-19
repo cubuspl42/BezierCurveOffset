@@ -11,8 +11,8 @@ class LinearPolynomialTests {
     @Test
     fun testTimes_constant() {
         val pa = LinearPolynomial.of(
-            b = -11.9,
-            a = 12.3,
+            a0 = -11.9,
+            a1 = 12.3,
         )
 
         val pb = ConstantPolynomial.of(
@@ -23,8 +23,8 @@ class LinearPolynomialTests {
 
         assertEqualsWithAbsoluteTolerance(
             expected = LinearPolynomial.of(
-                b = -129.71,
-                a = 134.07,
+                a0 = -129.71,
+                a1 = 134.07,
             ),
             actual = product,
             absoluteTolerance = eps,
@@ -39,13 +39,13 @@ class LinearPolynomialTests {
     @Test
     fun testTimes_linear() {
         val pa = LinearPolynomial.of(
-            b = -11.9,
-            a = 12.3,
+            a0 = -11.9,
+            a1 = 12.3,
         )
 
         val pb = LinearPolynomial.of(
-            b = 10.9,
-            a = -2.3,
+            a0 = 10.9,
+            a1 = -2.3,
         )
 
         val product = pa * pb
@@ -69,8 +69,8 @@ class LinearPolynomialTests {
     @Test
     fun testFindRoots() {
         val pa = LinearPolynomial.of(
-            b = 2.0,
-            a = -3.0,
+            a0 = 2.0,
+            a1 = -3.0,
         )
 
         val roots = pa.findRoots().sorted()

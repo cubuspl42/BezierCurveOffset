@@ -19,8 +19,8 @@ data class ParametricLineFunction(
     override fun apply(x: Double): RawVector = s + d * x
 
     override fun toParametricPolynomial() = ParametricPolynomial.linear(
-        a = d,
-        b = s,
+        a1 = d,
+        a0 = s,
     )
 
     fun toGeneralLineFunction(): ImplicitLinearPolynomial = ImplicitLinearPolynomial(
