@@ -139,14 +139,6 @@ data class ProperQuadraticPolynomial internal constructor(
         coefficients = coefficients.conv(quadraticPolynomial.coefficientsQuadratic),
     )
 
-    override fun timesCubic(
-        cubicPolynomial: CubicPolynomial,
-    ): Polynomial = cubicPolynomial.timesQuadratic(this)
-
-    override fun timesHigh(
-        highPolynomial: HighPolynomial,
-    ): Polynomial = highPolynomial.timesQuadratic(this)
-
     override operator fun unaryMinus(): ProperQuadraticPolynomial = ProperQuadraticPolynomial(
         coefficients = -coefficients,
     )

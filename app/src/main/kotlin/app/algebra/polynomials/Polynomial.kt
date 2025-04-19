@@ -5,8 +5,8 @@ import app.algebra.NumericObject.Tolerance
 import app.algebra.bezier_binomials.RealFunction
 import app.algebra.linear.vectors.vectorN.VectorN
 import app.algebra.linear.vectors.vectorN.VectorNIrr
+import app.algebra.linear.vectors.vectorN.conv
 import app.geometry.Constants
-import app.geometry.splines.ClosedSpline
 import app.utils.iterable.uncons
 import app.utils.iterable.untrail
 
@@ -135,13 +135,11 @@ sealed interface Polynomial : RealFunction<Double>, NumericObject {
         quadraticPolynomial: QuadraticPolynomial
     ): Polynomial
 
-    abstract fun timesCubic(
-        cubicPolynomial: CubicPolynomial
-    ): Polynomial
-
-    abstract fun timesHigh(
-        highPolynomial: HighPolynomial
-    ): Polynomial
+    fun timesCubic(
+        cubicPolynomial: ProperCubicPolynomial,
+    ): Polynomial = Polynomial.of(
+        coefficients = coefficientsN.conv(cubicPolynomial.coefficientsCubic),
+    )
 
     abstract operator fun unaryMinus(): Polynomial
 

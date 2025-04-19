@@ -45,6 +45,10 @@ interface LinearPolynomial : QuadraticPolynomial {
             a2 = 0.0,
         )
 
+    override fun timesCubic(
+        cubicPolynomial: ProperCubicPolynomial,
+    ): Polynomial = cubicPolynomial.timesLinear(this)
+
     override operator fun plus(
         constant: Double,
     ): LinearPolynomial
@@ -52,6 +56,7 @@ interface LinearPolynomial : QuadraticPolynomial {
     override fun times(
         factor: Double,
     ): LinearPolynomial
+
 
     val coefficientsLinear: Vector2<VectorOrientation.Irrelevant>
 }
@@ -128,14 +133,6 @@ data class ProperLinearPolynomial internal constructor(
     override fun timesQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
     ): Polynomial = quadraticPolynomial.timesLinear(this)
-
-    override fun timesCubic(
-        cubicPolynomial: CubicPolynomial,
-    ): Polynomial = cubicPolynomial.timesLinear(this)
-
-    override fun timesHigh(
-        highPolynomial: HighPolynomial,
-    ): Polynomial = highPolynomial.timesLinear(this)
 
     override fun findRoots(
         maxDepth: Int,

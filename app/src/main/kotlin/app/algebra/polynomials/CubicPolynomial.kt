@@ -182,18 +182,6 @@ data class ProperCubicPolynomial internal constructor(
         coefficients = coefficients.conv(quadraticPolynomial.coefficientsQuadratic),
     )
 
-    override fun timesCubic(
-        cubicPolynomial: CubicPolynomial,
-    ): Polynomial = Polynomial.of(
-        coefficients = coefficients.conv(cubicPolynomial.coefficientsCubic),
-    )
-
-    override fun timesHigh(
-        highPolynomial: HighPolynomial,
-    ): Polynomial = Polynomial.of(
-        coefficients = coefficients.conv(highPolynomial.coefficientsN),
-    )
-
     override fun apply(x: Double): Double = a3 * x * x * x + a2 * x * x + a1 * x + a0
 
     override fun equalsWithTolerance(

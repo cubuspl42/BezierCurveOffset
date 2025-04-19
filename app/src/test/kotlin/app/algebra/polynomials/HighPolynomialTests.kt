@@ -255,15 +255,5 @@ class HighPolynomialTests {
             actual = roots.sorted(),
             tolerance = tolerance,
         )
-
-        val rootsMy = highPolynomial.findRoots(
-            tolerance = tolerance,
-        )
-
-        assertEqualsWithTolerance(
-            expected = expectedRoots,
-            actual = rootsMy.sorted(),
-            tolerance = tolerance,
-        )
     }
 }

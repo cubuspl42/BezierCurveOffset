@@ -10,11 +10,7 @@ import app.algebra.linear.vectors.vectorN.times
 import app.algebra.linear.vectors.vectorN.unaryMinus
 import app.utils.div
 import app.utils.equalsWithTolerance
-import app.utils.iterable.uncons
-import app.utils.iterable.untrail
 import app.utils.plus
-import app.utils.solveAllReal
-import org.apache.commons.math3.analysis.solvers.LaguerreSolver
 import org.apache.commons.math3.complex.Complex
 import kotlin.math.abs
 import kotlin.math.pow
@@ -105,7 +101,9 @@ data class HighPolynomial internal constructor(
 
     override fun times(
         other: Polynomial,
-    ): Polynomial = other.timesHigh(this)
+    ): Polynomial = timesAny(
+        polynomial = other,
+    )
 
     override fun unaryMinus(): HighPolynomial = HighPolynomial(
         coefficients = -coefficients,
@@ -130,15 +128,15 @@ data class HighPolynomial internal constructor(
     )
 
     override fun timesCubic(
-        cubicPolynomial: CubicPolynomial,
-    ): Polynomial = Polynomial.of(
-        coefficients = coefficients.conv(cubicPolynomial.coefficientsCubic),
+        cubicPolynomial: ProperCubicPolynomial,
+    ): Polynomial = timesAny(
+        polynomial = cubicPolynomial,
     )
 
-    override fun timesHigh(
-        highPolynomial: HighPolynomial,
+    private fun timesAny(
+        polynomial: Polynomial,
     ): Polynomial = Polynomial.of(
-        coefficients = coefficients.conv(highPolynomial.coefficientsN),
+        coefficients = coefficients.conv(polynomial.coefficientsN),
     )
 
     override fun apply(
@@ -155,7 +153,6 @@ data class HighPolynomial internal constructor(
         !coefficients.equalsWithTolerance(other.coefficients, tolerance = tolerance) -> false
         else -> true
     }
-
 
 
 //    override fun findRoots(): Set<Double> {
@@ -180,7 +177,7 @@ data class HighPolynomial internal constructor(
             tolerance = tolerance,
         ) ?: return emptyList()
 
-        val (deflatedPolynomial, _) = this.divide(x0 = primaryRoot) ?: return listOf(primaryRoot)
+        val (deflatedPolynomial, _) = this.divide(x0 = primaryRoot)
 
         val lowerDegreeRoots = deflatedPolynomial.findRoots(
             maxDepth = maxDepth,

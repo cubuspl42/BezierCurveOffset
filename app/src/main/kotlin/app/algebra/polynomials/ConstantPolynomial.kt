@@ -70,14 +70,6 @@ data class ConstantPolynomial private constructor(
         quadraticPolynomial: QuadraticPolynomial,
     ): Polynomial = quadraticPolynomial * a
 
-    override fun timesCubic(
-        cubicPolynomial: CubicPolynomial,
-    ): Polynomial = cubicPolynomial * a
-
-    override fun timesHigh(
-        highPolynomial: HighPolynomial,
-    ): Polynomial = highPolynomial * a
-
     override fun findRoots(
         maxDepth: Int,
         tolerance: Tolerance,
