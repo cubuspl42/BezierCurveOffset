@@ -4,7 +4,7 @@ import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
 import app.geometry.RawVector
 import app.geometry.lineTo
 import app.geometry.moveTo
-import app.utils.iterable.linspace
+import app.utils.linspace
 import java.awt.geom.Path2D
 
 abstract class RealFunction<out V> {
