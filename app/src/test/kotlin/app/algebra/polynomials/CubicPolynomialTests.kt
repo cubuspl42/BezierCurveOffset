@@ -208,14 +208,14 @@ class CubicPolynomialTests {
             c = 3.0,
             b = -2.0,
             a = 1.0,
-        ) as CubicPolynomial
+        )
 
         val pb = CubicPolynomial.of(
             d = 4.0,
             c = -1.0,
             b = 3.0,
             a = 2.0,
-        ) as CubicPolynomial
+        )
 
         val resultantMatrix = CubicPolynomial.resultantMatrix(
             pa = pa,

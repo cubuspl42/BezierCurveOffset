@@ -33,7 +33,7 @@ interface CubicPolynomial : Polynomial {
             c: Double,
             b: Double,
             a: Double,
-        ): Polynomial = of(
+        ): CubicPolynomial = of(
             coefficients = Vector4Irr(
                 a0 = d,
                 a1 = c,
