@@ -34,7 +34,7 @@ data class CubicBezierBinomial(
      */
     fun solve(
         lineFunction: ParametricLineFunction,
-    ): Set<Double> = lineFunction.toGeneralLineFunction().put(
+    ): List<Double> = lineFunction.toGeneralLineFunction().put(
         toParametricPolynomial(),
     ).findRoots()
 
@@ -71,7 +71,7 @@ data class CubicBezierBinomial(
         val thisImplicit = implicitize()
         val otherParametric = other.toParametricPolynomial()
         val intersectionPolynomial = thisImplicit.put(otherParametric)
-        return intersectionPolynomial.findRoots()
+        return intersectionPolynomial.findRoots().toSet()
     }
 
     fun implicitize(): ImplicitCubicPolynomial {

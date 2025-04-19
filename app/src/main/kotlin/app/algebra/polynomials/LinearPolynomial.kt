@@ -137,7 +137,13 @@ data class ProperLinearPolynomial internal constructor(
         highPolynomial: HighPolynomial,
     ): Polynomial = highPolynomial.timesLinear(this)
 
-    override fun findRoots(): Set<Double> = setOf(findRoot())
+    override fun findRoots(
+        maxDepth: Int,
+        tolerance: Tolerance,
+    ): List<Double> = listOf(findRoot())
+
+    override val derivative: ConstantPolynomial
+        get() = ConstantPolynomial.of(a1)
 
     override operator fun unaryMinus(): ProperLinearPolynomial = ProperLinearPolynomial(
         coefficients = -coefficients,

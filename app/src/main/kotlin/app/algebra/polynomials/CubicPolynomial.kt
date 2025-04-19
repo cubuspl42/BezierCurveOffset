@@ -13,6 +13,8 @@ import app.algebra.linear.vectors.vector4.plus
 import app.algebra.linear.vectors.vector4.plusFirst
 import app.algebra.linear.vectors.vector4.times
 import app.algebra.linear.vectors.vector4.unaryMinus
+import app.algebra.linear.vectors.vectorN.VectorN
+import app.algebra.linear.vectors.vectorN.VectorNIrr
 import kotlin.math.acos
 import kotlin.math.cbrt
 import kotlin.math.cos
@@ -101,6 +103,11 @@ interface CubicPolynomial : Polynomial {
     val a0: Double
         get() = coefficientsCubic.a0
 
+    override val coefficientsN: VectorNIrr
+        get() = VectorN.ofIrr(
+            a0, a1, a2, a3
+        )
+
     override fun plusQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
     ): CubicPolynomial
@@ -165,26 +172,26 @@ data class ProperCubicPolynomial internal constructor(
 
     override fun timesLinear(
         linearPolynomial: LinearPolynomial,
-    ): Polynomial = HighPolynomial.of(
+    ): Polynomial = Polynomial.of(
         coefficients = coefficients.conv(linearPolynomial.coefficientsLinear),
     )
 
     override fun timesQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
-    ): Polynomial = HighPolynomial.of(
+    ): Polynomial = Polynomial.of(
         coefficients = coefficients.conv(quadraticPolynomial.coefficientsQuadratic),
     )
 
     override fun timesCubic(
         cubicPolynomial: CubicPolynomial,
-    ): Polynomial = HighPolynomial.of(
+    ): Polynomial = Polynomial.of(
         coefficients = coefficients.conv(cubicPolynomial.coefficientsCubic),
     )
 
     override fun timesHigh(
         highPolynomial: HighPolynomial,
-    ): Polynomial = HighPolynomial.of(
-        coefficients = coefficients.conv(highPolynomial.coefficients),
+    ): Polynomial = Polynomial.of(
+        coefficients = coefficients.conv(highPolynomial.coefficientsN),
     )
 
     override fun apply(x: Double): Double = a3 * x * x * x + a2 * x * x + a1 * x + a0
@@ -201,7 +208,10 @@ data class ProperCubicPolynomial internal constructor(
         else -> true
     }
 
-    override fun findRoots(): Set<Double> {
+    override fun findRoots(
+        maxDepth: Int,
+        tolerance: Tolerance,
+    ): List<Double> {
         val a = a3
         val b = a2
         val c = a1
@@ -222,7 +232,7 @@ data class ProperCubicPolynomial internal constructor(
 
                 val x0 = u + v - (b / (3.0 * a))
 
-                setOf(x0)
+                listOf(x0)
             }
 
             h == 0.0 -> {
@@ -233,7 +243,7 @@ data class ProperCubicPolynomial internal constructor(
                 val x0 = 2.0 * u - (b / (3.0 * a))
                 val x1 = -u - (b / (3.0 * a))
 
-                setOf(x0, x1)
+                listOf(x0, x1)
             }
 
             else -> {
@@ -250,8 +260,15 @@ data class ProperCubicPolynomial internal constructor(
                 val x1 = j * (-m + n) + p
                 val x2 = j * (-m - n) + p
 
-                setOf(x0, x1, x2)
+                listOf(x0, x1, x2)
             }
         }
     }
+
+    override val derivative: QuadraticPolynomial
+        get() = QuadraticPolynomial.of(
+            a2 = 3.0 * a3,
+            a1 = 2.0 * a2,
+            a0 = a1,
+        )
 }

@@ -58,7 +58,7 @@ class CubicPolynomialTests {
         val product = pa * pb
 
         assertEqualsWithAbsoluteTolerance(
-            expected = HighPolynomial.of(
+            expected = Polynomial.of(
                 1.0,
                 -4.0,
                 7.0,
@@ -85,15 +85,15 @@ class CubicPolynomialTests {
         )
 
         val pb = QuadraticPolynomial.of(
-            c = 2.0,
-            b = -3.0,
-            a = 1.0,
+            a0 = 2.0,
+            a1 = -3.0,
+            a2 = 1.0,
         )
 
         val product = pa * pb
 
         assertEqualsWithAbsoluteTolerance(
-            expected = HighPolynomial.of(
+            expected = Polynomial.of(
                 -2.0,
                 7.0,
                 -13.0,
@@ -129,7 +129,7 @@ class CubicPolynomialTests {
         val product = pa * pb
 
         assertEqualsWithAbsoluteTolerance(
-            expected = HighPolynomial.of(
+            expected = Polynomial.of(
                 3.0,
                 -10.0,
                 18.0,
@@ -157,7 +157,7 @@ class CubicPolynomialTests {
             a = 1.0,
         )
 
-        val roots = polynomial.findRoots()
+        val roots = polynomial.findRoots().toSet()
 
         assertEquals(
             expected = setOf(1.0),

@@ -56,14 +56,14 @@ data class ParametricPolynomial(
             c: RawVector,
         ): ParametricPolynomial = ParametricPolynomial(
             xFunction = QuadraticPolynomial.of(
-                a = a.x,
-                b = b.x,
-                c = c.x,
+                a2 = a.x,
+                a1 = b.x,
+                a0 = c.x,
             ),
             yFunction = QuadraticPolynomial.of(
-                a = a.y,
-                b = b.y,
-                c = c.y,
+                a2 = a.y,
+                a1 = b.y,
+                a0 = c.y,
             ),
         )
 
@@ -94,8 +94,8 @@ data class ParametricPolynomial(
     }
 
     fun findRoots(): RootSet = RootSet(
-        xRoots = xFunction.findRoots(),
-        yRoots = yFunction.findRoots(),
+        xRoots = xFunction.findRoots().toSet(),
+        yRoots = yFunction.findRoots().toSet(),
     )
 
     override fun apply(x: Double): RawVector = RawVector(

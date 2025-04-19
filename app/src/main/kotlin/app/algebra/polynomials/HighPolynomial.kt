@@ -3,7 +3,6 @@ package app.algebra.polynomials
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsZeroWithTolerance
-import app.algebra.linear.vectors.vectorN.VectorN
 import app.algebra.linear.vectors.vectorN.VectorNIrr
 import app.algebra.linear.vectors.vectorN.conv
 import app.algebra.linear.vectors.vectorN.plus
@@ -15,63 +14,15 @@ import app.utils.iterable.uncons
 import app.utils.iterable.untrail
 import app.utils.plus
 import app.utils.solveAllReal
-import app.utils.times
 import org.apache.commons.math3.analysis.solvers.LaguerreSolver
 import org.apache.commons.math3.complex.Complex
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 
-@Suppress("DataClassPrivateConstructor")
-data class HighPolynomial private constructor(
+data class HighPolynomial internal constructor(
     val coefficients: VectorNIrr,
 ) : Polynomial {
-    companion object {
-        fun of(
-            vararg coefficients: Double,
-        ): Polynomial = of(
-            coefficients = VectorNIrr(
-                elements = coefficients.toList(),
-            ),
-        )
-
-        fun of(
-            coefficients: List<Double>,
-        ): HighPolynomial = HighPolynomial(
-            coefficients = VectorN.ofIrr(
-                elements = coefficients,
-            ),
-        )
-
-        fun of(
-            coefficients: VectorNIrr,
-        ): Polynomial {
-            val a = coefficients.elements
-            val n = coefficients.size - 1
-
-            val an = a.last()
-
-            return when {
-                an == 0.0 -> when {
-                    n == 4 -> CubicPolynomial.of(
-                        a = a[3],
-                        b = a[2],
-                        c = a[1],
-                        d = a[0],
-                    )
-
-                    else -> HighPolynomial.of(
-                        coefficients = coefficients.lower,
-                    )
-                }
-
-                else -> HighPolynomial(
-                    coefficients = coefficients,
-                )
-            }
-        }
-    }
-
     private object FindRootsConstants {
         const val maxDepth = 1000
     }
@@ -102,21 +53,21 @@ data class HighPolynomial private constructor(
 
     init {
         require(coefficients.an != 0.0)
-        require(degree >= 0)
+        require(degree >= 4)
     }
 
     val degree: Int
         get() = coefficients.size - 1
 
-    val derivative: HighPolynomial?
-        get() = when {
-            degree == 0 -> null
-            else -> HighPolynomial.of(
-                coefficients = coefficients.elements.drop(1).mapIndexed { index, ai ->
-                    (index + 1) * ai
-                },
-            ) as HighPolynomial
-        }
+    override val derivative: Polynomial
+        get() = Polynomial.of(
+            coefficients = coefficients.elements.drop(1).mapIndexed { index, ai ->
+                (index + 1) * ai
+            },
+        )
+
+    override val coefficientsN: VectorNIrr
+        get() = coefficients
 
     override operator fun plus(
         constant: Double,
@@ -148,8 +99,8 @@ data class HighPolynomial private constructor(
 
     override fun plusHigh(
         highPolynomial: HighPolynomial,
-    ): Polynomial = HighPolynomial.of(
-        coefficients = coefficients + highPolynomial.coefficients,
+    ): Polynomial = Polynomial.of(
+        coefficients = coefficients + highPolynomial.coefficientsN,
     )
 
     override fun times(
@@ -162,32 +113,32 @@ data class HighPolynomial private constructor(
 
     override fun times(
         factor: Double,
-    ): Polynomial = HighPolynomial.of(
+    ): Polynomial = Polynomial.of(
         coefficients = factor * coefficients,
     )
 
     override fun timesLinear(
         linearPolynomial: LinearPolynomial,
-    ): Polynomial = HighPolynomial.of(
+    ): Polynomial = Polynomial.of(
         coefficients = coefficients.conv(linearPolynomial.coefficientsLinear),
     )
 
     override fun timesQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
-    ): Polynomial = HighPolynomial.of(
+    ): Polynomial = Polynomial.of(
         coefficients = coefficients.conv(quadraticPolynomial.coefficientsQuadratic),
     )
 
     override fun timesCubic(
         cubicPolynomial: CubicPolynomial,
-    ): Polynomial = HighPolynomial.of(
+    ): Polynomial = Polynomial.of(
         coefficients = coefficients.conv(cubicPolynomial.coefficientsCubic),
     )
 
     override fun timesHigh(
         highPolynomial: HighPolynomial,
-    ): Polynomial = HighPolynomial.of(
-        coefficients = coefficients.conv(highPolynomial.coefficients),
+    ): Polynomial = Polynomial.of(
+        coefficients = coefficients.conv(highPolynomial.coefficientsN),
     )
 
     override fun apply(
@@ -205,52 +156,23 @@ data class HighPolynomial private constructor(
         else -> true
     }
 
-    override fun findRoots(): Set<Double> {
-        val solver = LaguerreSolver()
-        val coefficients = coefficients.elements
 
-        val roots = solver.solveAllReal(
-            coefficients = coefficients,
-            initial = 0.5,
-        )
 
-        return roots.toSet()
-    }
+//    override fun findRoots(): Set<Double> {
+//        val solver = LaguerreSolver()
+//        val coefficients = coefficients.elements
+//
+//        val roots = solver.solveAllReal(
+//            coefficients = coefficients,
+//            initial = 0.5,
+//        )
+//
+//        return roots.toSet()
+//    }
 
-    /**
-     * Divides the polynomial by a linear polynomial of the form (x - x0).
-     *
-     * @return Pair of quotient and remainder.
-     */
-    fun divide(
-        x0: Double,
-    ): Pair<HighPolynomial, Double>? {
-        if (degree == 1) {
-            return null
-        }
 
-        val (highestDegreeCoefficient, lowerDegreeCoefficients) = coefficients.elements.reversed().uncons()!!
-
-        val intermediateCoefficients = lowerDegreeCoefficients.scan(
-            initial = highestDegreeCoefficient,
-        ) { higherDegreeCoefficient, coefficient ->
-            higherDegreeCoefficient * x0 + coefficient
-        }
-
-        val (quotientCoefficients, remainder) = intermediateCoefficients.untrail()!!
-
-        val quotient = HighPolynomial.of(
-            coefficients = quotientCoefficients.reversed(),
-        )
-
-        return Pair(
-            quotient,
-            remainder,
-        )
-    }
-
-    fun findAllRoots(
-        maxDepth: Int = 1000,
+    override fun findRoots(
+        maxDepth: Int,
         tolerance: Tolerance,
     ): List<Double> {
         val primaryRoot = findPrimaryRoot(
@@ -260,10 +182,12 @@ data class HighPolynomial private constructor(
 
         val (deflatedPolynomial, _) = this.divide(x0 = primaryRoot) ?: return listOf(primaryRoot)
 
-        return listOf(primaryRoot) + deflatedPolynomial.findAllRoots(
+        val lowerDegreeRoots = deflatedPolynomial.findRoots(
             maxDepth = maxDepth,
             tolerance = tolerance,
         )
+
+        return listOf(primaryRoot) + lowerDegreeRoots
     }
 
     fun findPrimaryRoot(
@@ -273,7 +197,7 @@ data class HighPolynomial private constructor(
         val n = degree.toDouble()
 
         val firstDerivative = derivative
-        val secondDerivative = firstDerivative?.derivative
+        val secondDerivative = firstDerivative.derivative
 
         tailrec fun improveRoot(
             approximatedRoot: Double,
@@ -289,8 +213,8 @@ data class HighPolynomial private constructor(
                 return approximatedRoot
             }
 
-            val p1 = firstDerivative?.apply(approximatedRoot) ?: 0.0
-            val p2 = secondDerivative?.apply(approximatedRoot) ?: 0.0
+            val p1 = firstDerivative.apply(approximatedRoot)
+            val p2 = secondDerivative.apply(approximatedRoot)
 
             val g = p1 / p0
             val g2 = g * g

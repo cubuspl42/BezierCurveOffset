@@ -11,6 +11,8 @@ data class ConstantPolynomial private constructor(
     val a: Double,
 ) : LinearPolynomial {
     companion object {
+        val zero = ConstantPolynomial(a = 0.0)
+
         fun of(
             a: Double,
         ): ConstantPolynomial = ConstantPolynomial(a = a)
@@ -76,7 +78,20 @@ data class ConstantPolynomial private constructor(
         highPolynomial: HighPolynomial,
     ): Polynomial = highPolynomial * a
 
-    override fun findRoots(): Set<Double> = emptySet()
+    override fun findRoots(
+        maxDepth: Int,
+        tolerance: Tolerance,
+    ): List<Double> = emptyList()
+
+    override val derivative: ConstantPolynomial
+        get() = ConstantPolynomial.zero
+
+    override fun divide(
+        x0: Double,
+    ): Pair<Polynomial, Double> = Pair(
+        ConstantPolynomial.zero,
+        a,
+    )
 
     override operator fun unaryMinus(): ConstantPolynomial = copy(
         a = -a,

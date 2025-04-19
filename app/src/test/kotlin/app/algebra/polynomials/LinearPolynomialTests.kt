@@ -52,9 +52,9 @@ class LinearPolynomialTests {
 
         assertEqualsWithAbsoluteTolerance(
             expected = QuadraticPolynomial.of(
-                c = -129.71,
-                b = 161.44,
-                a = -28.29,
+                a0 = -129.71,
+                a1 = 161.44,
+                a2 = -28.29,
             ),
             actual = product,
             absoluteTolerance = eps,

@@ -88,7 +88,7 @@ data class CubicBezierCurve private constructor(
         ): Set<Point> {
             val tValues = bezierCurve.basisFormula.solve(
                 lineFunction = lineSegment.toParametricLineFunction(),
-            )
+            ).toSet()
 
             return IntersectionDetails.build(
                 tValues0 = tValues,

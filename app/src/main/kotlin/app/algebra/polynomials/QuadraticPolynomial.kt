@@ -22,14 +22,14 @@ interface QuadraticPolynomial : CubicPolynomial {
         }
 
         fun of(
-            c: Double,
-            b: Double,
-            a: Double,
+            a0: Double,
+            a1: Double,
+            a2: Double,
         ): QuadraticPolynomial = of(
             coefficients = Vector3Irr(
-                a0 = c,
-                a1 = b,
-                a2 = a,
+                a0 = a0,
+                a1 = a1,
+                a2 = a2,
             ),
         )
     }
@@ -56,8 +56,6 @@ interface QuadraticPolynomial : CubicPolynomial {
 data class ProperQuadraticPolynomial internal constructor(
     val coefficients: Vector3Irr,
 ) : QuadraticPolynomial {
-
-
     override val coefficientsQuadratic: Vector3Irr
         get() = coefficients
 
@@ -124,9 +122,9 @@ data class ProperQuadraticPolynomial internal constructor(
     override fun times(
         factor: Double,
     ): QuadraticPolynomial = QuadraticPolynomial.of(
-        a = a * factor,
-        b = b * factor,
-        c = c * factor,
+        a2 = a * factor,
+        a1 = b * factor,
+        a0 = c * factor,
     )
 
     override fun timesLinear(
@@ -137,7 +135,7 @@ data class ProperQuadraticPolynomial internal constructor(
 
     override fun timesQuadratic(
         quadraticPolynomial: QuadraticPolynomial,
-    ): Polynomial = HighPolynomial.of(
+    ): Polynomial = Polynomial.of(
         coefficients = coefficients.conv(quadraticPolynomial.coefficientsQuadratic),
     )
 
@@ -153,7 +151,10 @@ data class ProperQuadraticPolynomial internal constructor(
         coefficients = -coefficients,
     )
 
-    override fun findRoots(): Set<Double> {
+    override fun findRoots(
+        maxDepth: Int,
+        tolerance: Tolerance,
+    ): List<Double> {
         val discriminant: Double = b * b - 4 * a * c
 
         fun buildRoot(
@@ -161,12 +162,18 @@ data class ProperQuadraticPolynomial internal constructor(
         ): Double = (-b + sign * sqrt(discriminant)) / (2 * a)
 
         return when {
-            discriminant >= 0 -> setOf(
+            discriminant >= 0 -> listOf(
                 buildRoot(sign = -1.0),
                 buildRoot(sign = 1.0),
             )
 
-            else -> emptySet()
+            else -> emptyList()
         }
     }
+
+    override val derivative: LinearPolynomial
+        get() = LinearPolynomial.of(
+            a1 = 2 * a,
+            a0 = b,
+        )
 }

@@ -3,7 +3,6 @@ package app.algebra.polynomials
 import app.algebra.NumericObject.Tolerance
 import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.assertEqualsWithTolerance
-import org.apache.commons.math3.complex.Complex
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -13,7 +12,7 @@ class HighPolynomialTests {
 
     @Test
     fun testTimes_constant() {
-        val pa = HighPolynomial.of(
+        val pa = Polynomial.of(
             -4.0, 3.0, -2.0, 1.0, 6.0, 12.2
         )
 
@@ -24,7 +23,7 @@ class HighPolynomialTests {
         val product = pa * pb
 
         assertEqualsWithAbsoluteTolerance(
-            expected = HighPolynomial.of(
+            expected = Polynomial.of(
                 -8.0,
                 6.0,
                 -4.0,
@@ -44,7 +43,7 @@ class HighPolynomialTests {
 
     @Test
     fun testTimes_quadratic() {
-        val pa = HighPolynomial.of(
+        val pa = Polynomial.of(
             -4.0,
             3.0,
             -2.0,
@@ -54,15 +53,15 @@ class HighPolynomialTests {
         )
 
         val pb = QuadraticPolynomial.of(
-            c = 4.0,
-            b = -1.0,
-            a = 2.0,
+            a0 = 4.0,
+            a1 = -1.0,
+            a2 = 2.0,
         )
 
         val product = pa * pb
 
         assertEqualsWithAbsoluteTolerance(
-            expected = HighPolynomial.of(
+            expected = Polynomial.of(
                 -16.0,
                 16.0,
                 -19.0,
@@ -84,7 +83,7 @@ class HighPolynomialTests {
 
     @Test
     fun testTimes_cubic() {
-        val pa = HighPolynomial.of(
+        val pa = Polynomial.of(
             -4.0,
             3.0,
             -2.0,
@@ -101,17 +100,19 @@ class HighPolynomialTests {
 
         val product = pa * pb
 
+        val expectedPolynomial = Polynomial.of(
+            12.0,
+            -25.0,
+            22.0,
+            -22.0,
+            -44.7,
+            70.6,
+            -16.9,
+            37.8,
+        )
+
         assertEqualsWithAbsoluteTolerance(
-            expected = HighPolynomial.of(
-                12.0,
-                -25.0,
-                22.0,
-                -22.0,
-                -44.7,
-                70.6,
-                -16.9,
-                37.8,
-            ),
+            expected = expectedPolynomial,
             actual = product,
             absoluteTolerance = eps,
         )
@@ -124,7 +125,7 @@ class HighPolynomialTests {
 
     @Test
     fun testTimes_high() {
-        val pa = HighPolynomial.of(
+        val pa = Polynomial.of(
             -4.0,
             3.0,
             -2.0,
@@ -133,7 +134,7 @@ class HighPolynomialTests {
             -2.0,
         )
 
-        val pb = HighPolynomial.of(
+        val pb = Polynomial.of(
             -4.0,
             23.0,
             -2.2,
@@ -144,7 +145,7 @@ class HighPolynomialTests {
         val product = pa * pb
 
         assertEqualsWithAbsoluteTolerance(
-            expected = HighPolynomial.of(
+            expected = Polynomial.of(
                 16.0,
                 -104.0,
                 85.8,
@@ -163,16 +164,16 @@ class HighPolynomialTests {
 
     @Test
     fun testDerivative() {
-        val highPolynomial = HighPolynomial.of(
+        val highPolynomial = Polynomial.of(
             1.0, 2.1, 3.4, 4.5, 5.7, 6.7
-        ) as HighPolynomial
+        )
 
         val derivative = assertNotNull(
             highPolynomial.derivative,
         )
 
         assertEqualsWithTolerance(
-            expected = HighPolynomial.of(
+            expected = Polynomial.of(
                 2.1,
                 6.8,
                 13.5,
@@ -186,12 +187,12 @@ class HighPolynomialTests {
 
     @Test
     fun testDivide() {
-        val highPolynomial = HighPolynomial.of(
+        val highPolynomial = Polynomial.of(
             -6.0,
             11.0,
             -6.0,
             1.0,
-        ) as HighPolynomial
+        )
 
         val (quotient, remainder) = assertNotNull(
             highPolynomial.divide(x0 = 1.0),
@@ -200,7 +201,7 @@ class HighPolynomialTests {
         val tolerance = Tolerance.Absolute(absoluteTolerance = eps)
 
         assertEqualsWithTolerance(
-            expected = HighPolynomial.of(
+            expected = Polynomial.of(
                 6.0,
                 -5.0,
                 1.0,
@@ -218,7 +219,7 @@ class HighPolynomialTests {
 
     @Test
     fun testFindRoots() {
-        val highPolynomial = HighPolynomial.of(
+        val highPolynomial = Polynomial.of(
             -4.05318211480636e+17,
             1.33720916235669e+19,
             -1.74033656459737e+20,
@@ -255,7 +256,7 @@ class HighPolynomialTests {
             tolerance = tolerance,
         )
 
-        val rootsMy = highPolynomial.findAllRoots(
+        val rootsMy = highPolynomial.findRoots(
             tolerance = tolerance,
         )
 
