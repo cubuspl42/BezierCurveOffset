@@ -6,7 +6,7 @@ import app.algebra.equalsWithNoTolerance
 import app.algebra.linear.vectors.vector4.Vector1x4
 import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.linear.vectors.vector4.Vector4x1
-import app.utils.indexOfMaxBy
+import app.utils.iterable.indexOfMaxBy
 import kotlin.math.absoluteValue
 
 sealed class Matrix4x4 : NumericObject {

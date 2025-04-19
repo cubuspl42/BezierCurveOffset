@@ -4,7 +4,7 @@ import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.geometry.curves.SegmentCurve
-import app.utils.withNext
+import app.utils.iterable.withNext
 
 data class PolyCurveSpline<
         out CurveT : SegmentCurve<CurveT>,

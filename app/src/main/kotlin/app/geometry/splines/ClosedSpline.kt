@@ -5,15 +5,15 @@ import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.asList
-import app.utils.elementWiseAs
+import app.utils.iterable.elementWiseAs
 import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.transformations.Transformation
-import app.utils.uncons
-import app.utils.untrail
-import app.utils.withNextCyclic
-import app.utils.withPrevious
-import app.utils.withPreviousCyclic
+import app.utils.iterable.uncons
+import app.utils.iterable.untrail
+import app.utils.iterable.withNextCyclic
+import app.utils.iterable.withPrevious
+import app.utils.iterable.withPreviousCyclic
 import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 

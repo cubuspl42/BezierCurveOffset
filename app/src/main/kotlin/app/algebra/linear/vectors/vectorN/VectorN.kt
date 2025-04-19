@@ -7,8 +7,8 @@ import app.algebra.linear.VectorOrientation
 import app.algebra.linear.vectors.vector2.Vector2
 import app.algebra.linear.vectors.vector3.Vector3
 import app.algebra.linear.vectors.vector4.Vector4
-import app.utils.splitAfter
-import app.utils.uncons
+import app.utils.iterable.splitAfter
+import app.utils.iterable.uncons
 
 /**
  * A vector of arbitrary size N.

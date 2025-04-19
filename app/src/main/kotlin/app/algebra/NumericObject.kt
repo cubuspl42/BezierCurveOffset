@@ -1,7 +1,7 @@
 package app.algebra
 
 import app.algebra.NumericObject.Tolerance
-import app.utils.equalsApproximately
+import app.utils.iterable.equalsApproximately
 import kotlin.math.abs
 import kotlin.math.max
 

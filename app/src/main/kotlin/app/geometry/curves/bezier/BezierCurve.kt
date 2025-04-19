@@ -13,8 +13,8 @@ import app.geometry.curves.SegmentCurve
 import app.geometry.curves.toSpline
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.mergeWith
-import app.utils.partitionSorted
 import app.utils.contains
+import app.utils.iterable.partitionSorted
 import app.utils.open
 
 /**

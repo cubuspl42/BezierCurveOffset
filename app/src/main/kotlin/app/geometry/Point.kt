@@ -2,7 +2,7 @@ package app.geometry
 
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
-import app.utils.equalsZeroApproximately
+import app.utils.iterable.equalsZeroApproximately
 import app.geometry.transformations.Transformation
 import app.geometry.transformations.Translation
 import java.awt.geom.Path2D

@@ -2,8 +2,8 @@ package app.geometry.splines
 
 import app.geometry.Ray
 import app.geometry.curves.SegmentCurve
-import app.utils.uncons
-import app.utils.untrail
+import app.utils.iterable.uncons
+import app.utils.iterable.untrail
 
 abstract class OpenSpline<
         out CurveT : SegmentCurve<CurveT>,
