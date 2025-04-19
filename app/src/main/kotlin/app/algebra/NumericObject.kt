@@ -2,8 +2,9 @@ package app.algebra
 
 import app.algebra.NumericObject.Tolerance
 import app.utils.equalsApproximately
+import app.utils.equalsWithTolerance
+import org.apache.commons.math3.complex.Complex
 import kotlin.math.abs
-import kotlin.math.max
 
 interface NumericObject {
     sealed class Tolerance {
@@ -11,8 +12,8 @@ interface NumericObject {
             val absoluteTolerance: Double,
         ) : Tolerance() {
             override fun equalsApproximately(
-                first: Double, second: Double
-            ): Boolean = abs(first - second) <= absoluteTolerance
+                value: Double, reference: Double
+            ): Boolean = abs(value - reference) <= absoluteTolerance
         }
 
         data class Relative(
@@ -23,13 +24,25 @@ interface NumericObject {
             }
 
             override fun equalsApproximately(
-                first: Double, second: Double
-            ): Boolean = abs(first - second) <= relativeTolerance * max(abs(first), abs(second))
+                value: Double,
+                reference: Double,
+            ): Boolean {
+                val absDiff = abs(value - reference)
+                val threshold = relativeTolerance * abs(reference)
+                return absDiff <= threshold
+            }
         }
 
+        fun equalsZeroApproximately(
+            value: Double,
+        ): Boolean = equalsApproximately(
+            value = value,
+            reference = 0.0,
+        )
+
         abstract fun equalsApproximately(
-            first: Double,
-            second: Double,
+            value: Double,
+            reference: Double,
         ): Boolean
     }
 
@@ -76,9 +89,28 @@ fun Double.equalsWithTolerance(
     tolerance: Tolerance,
 ): Boolean = tolerance.equalsApproximately(this, other)
 
+fun Double.equalsZeroWithTolerance(
+    tolerance: Tolerance,
+): Boolean = equalsWithTolerance(
+    other = 0.0,
+    tolerance = tolerance,
+)
+
 @JvmName("equalsWithToleranceListDouble")
 fun List<Double>.equalsWithTolerance(
     other: List<Double>,
+    tolerance: Tolerance,
+): Boolean {
+    if (this.size != other.size) return false
+
+    return zip(other).all { (a, b) ->
+        a.equalsWithTolerance(b, tolerance)
+    }
+}
+
+@JvmName("equalsWithToleranceListComplex")
+fun List<Complex>.equalsWithTolerance(
+    other: List<Complex>,
     tolerance: Tolerance,
 ): Boolean {
     if (this.size != other.size) return false

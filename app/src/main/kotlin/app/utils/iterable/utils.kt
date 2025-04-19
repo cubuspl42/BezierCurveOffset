@@ -162,7 +162,7 @@ fun <T> List<T>.indexOfFirstOrNull(
  * // finalCarry: 6
  * ```
  */
-fun <T, R, C> List<T>.mapCarrying(
+fun <T, R, C> Iterable<T>.mapCarrying(
     initialCarry: C,
     transform: (C, T) -> Pair<R, C>,
 ): Pair<List<R>, C> {

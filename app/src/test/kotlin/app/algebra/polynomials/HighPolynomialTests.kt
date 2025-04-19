@@ -3,8 +3,10 @@ package app.algebra.polynomials
 import app.algebra.NumericObject.Tolerance
 import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.assertEqualsWithTolerance
+import org.apache.commons.math3.complex.Complex
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class HighPolynomialTests {
     private val eps = 10e-5
@@ -160,6 +162,61 @@ class HighPolynomialTests {
     }
 
     @Test
+    fun testDerivative() {
+        val highPolynomial = HighPolynomial.of(
+            1.0, 2.1, 3.4, 4.5, 5.7, 6.7
+        ) as HighPolynomial
+
+        val derivative = assertNotNull(
+            highPolynomial.derivative,
+        )
+
+        assertEqualsWithTolerance(
+            expected = HighPolynomial.of(
+                2.1,
+                6.8,
+                13.5,
+                22.8,
+                33.5,
+            ),
+            actual = derivative,
+            tolerance = Tolerance.Absolute(absoluteTolerance = eps),
+        )
+    }
+
+    @Test
+    fun testDivide() {
+        val highPolynomial = HighPolynomial.of(
+            -6.0,
+            11.0,
+            -6.0,
+            1.0,
+        ) as HighPolynomial
+
+        val (quotient, remainder) = assertNotNull(
+            highPolynomial.divide(x0 = 1.0),
+        )
+
+        val tolerance = Tolerance.Absolute(absoluteTolerance = eps)
+
+        assertEqualsWithTolerance(
+            expected = HighPolynomial.of(
+                6.0,
+                -5.0,
+                1.0,
+            ),
+            actual = quotient,
+            tolerance = tolerance,
+        )
+
+        assertEqualsWithTolerance(
+            expected = 0.0,
+            actual = remainder,
+            tolerance = tolerance,
+        )
+    }
+
+    @Test
     fun testFindRoots() {
         val highPolynomial = HighPolynomial.of(
             -4.05318211480636e+17,
@@ -172,26 +229,40 @@ class HighPolynomialTests {
             1.60246744255751e+22,
             -8.09146929050218e+21,
             1.73006535868332e+21,
+        ) as HighPolynomial
+
+        val expectedRoots = listOf(
+            0.08321298331285831,
+            0.1435234395326374,
+            0.22787694791806082,
+            0.40251769663008713,
+            0.43011874465177913,
+            0.6822325289916767,
+            0.8142156752930875,
+            0.9147383049567882,
+            0.9785368635066114,
+        )
+
+        val tolerance = Tolerance.Absolute(
+            absoluteTolerance = 10e-11,
         )
 
         val roots = highPolynomial.findRoots()
 
         assertEqualsWithTolerance(
-            expected = setOf(
-                0.9785368635066114,
-                0.9147383049567882,
-                0.8142156752930875,
-                0.6822325289916767,
-                0.43011874465177913,
-                0.40251769663008713,
-                0.22787694791806082,
-                0.1435234395326374,
-                0.08321298331285831,
-            ).sorted(),
+            expected = expectedRoots,
             actual = roots.sorted(),
-            tolerance = Tolerance.Absolute(
-                absoluteTolerance = 10e-11,
-            ),
+            tolerance = tolerance,
+        )
+
+        val rootsMy = highPolynomial.findAllRoots(
+            tolerance = tolerance,
+        )
+
+        assertEqualsWithTolerance(
+            expected = expectedRoots,
+            actual = rootsMy.sorted(),
+            tolerance = tolerance,
         )
     }
 }

@@ -1,10 +1,22 @@
 package app.algebra
 
 import app.algebra.NumericObject.Tolerance
+import app.utils.equalsWithTolerance
+import org.apache.commons.math3.complex.Complex
 
 fun assertEqualsWithTolerance(
     expected: Double,
     actual: Double,
+    tolerance: Tolerance,
+) {
+    assert(expected.equalsWithTolerance(actual, tolerance = tolerance)) {
+        "Expected $expected, but got $actual (tolerance: $tolerance)"
+    }
+}
+
+fun assertEqualsWithTolerance(
+    expected: Complex,
+    actual: Complex,
     tolerance: Tolerance,
 ) {
     assert(expected.equalsWithTolerance(actual, tolerance = tolerance)) {

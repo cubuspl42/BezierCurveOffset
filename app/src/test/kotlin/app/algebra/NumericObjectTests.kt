@@ -1,6 +1,7 @@
 package app.algebra
 
 import app.algebra.NumericObject.Tolerance
+import kotlin.test.Ignore
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -10,7 +11,7 @@ class NumericObjectTests {
     private val smallValue = 10.12
     private val bigValue = 1.1876e10
 
-    private fun testtoleranceNearby(
+    private fun testAbsoluteToleranceNearby(
         baseValue: Double,
         tolerance: Tolerance.Absolute,
     ) {
@@ -20,300 +21,372 @@ class NumericObjectTests {
         // Smaller, but within tolerance
         assertTrue(
             tolerance.equalsApproximately(
-                first = baseValue,
-                second = baseValue - belowEps,
+                value = baseValue,
+                reference = baseValue - belowEps,
             ),
         )
 
         // Exactly the same
         assertTrue(
             tolerance.equalsApproximately(
-                first = baseValue,
-                second = baseValue,
+                value = baseValue,
+                reference = baseValue,
             ),
         )
 
         // Bigger, but within tolerance
         assertTrue(
             tolerance.equalsApproximately(
-                first = baseValue,
-                second = baseValue + belowEps,
+                value = baseValue,
+                reference = baseValue + belowEps,
             ),
         )
 
         // Smaller, not within tolerance
         assertFalse(
             tolerance.equalsApproximately(
-                first = baseValue,
-                second = baseValue - aboveEps,
+                value = baseValue,
+                reference = baseValue - aboveEps,
             ),
         )
 
         // Bigger, not within tolerance
         assertFalse(
             tolerance.equalsApproximately(
-                first = baseValue,
-                second = baseValue + aboveEps,
+                value = baseValue,
+                reference = baseValue + aboveEps,
             ),
         )
     }
 
     private fun testRelativeToleranceNearby(
-        baseValue: Double,
+        reference: Double,
         tolerance: Tolerance.Relative,
     ) {
         val r = tolerance.relativeTolerance
         assert(r > 0.0 && r < 0.2)
 
-        val d = r / (1.0 - r)
-        assert(d > 0.0 && d < 0.2)
+        val scaleDownWithin = 1.0 - (r * 0.99)
+        val scaleDownOutside = 1.0 - (r * 1.01)
+        val scaleUpWithin = 1.0 + (r * 0.99)
+        val scaleUpOutside = 1.0 + (r * 1.01)
 
-        val scaleWithin = 1.0 + d * 0.99
-        val scaleOutside = 1.0 + d * 1.01
-
-//        assert(scaleWithin < (1.0 + r) && scaleWithin > 1.0)
-//        assert(scaleOutside > (1.0 + r) && scaleOutside < 1.1)
+        assert(scaleDownWithin > 0.8 && scaleDownWithin < 1.0 && scaleDownOutside < scaleDownWithin)
+        assert(scaleUpWithin > 1.0 && scaleUpWithin < 1.2 && scaleUpOutside > scaleUpWithin)
 
         // Smaller, but within tolerance
-        val smallerValueWithin = baseValue / scaleWithin
-        assert(smallerValueWithin > 0.0 && smallerValueWithin < baseValue)
+        val smallerValueWithin = reference * scaleDownWithin
+        assert(smallerValueWithin < reference)
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = baseValue,
-                second = smallerValueWithin,
+                value = smallerValueWithin,
+                reference = reference,
             ),
         )
 
         // Exactly the same
         assertTrue(
             tolerance.equalsApproximately(
-                first = baseValue,
-                second = baseValue,
+                value = reference,
+                reference = reference,
             ),
         )
 
-        val biggerValueWithin = baseValue * scaleWithin
-        assert(biggerValueWithin > baseValue)
+        val biggerValueWithin = reference * scaleUpWithin
+        assert(biggerValueWithin > reference)
 
         // Bigger, but within tolerance
         assertTrue(
             tolerance.equalsApproximately(
-                first = baseValue,
-                second = biggerValueWithin,
+                value = biggerValueWithin,
+                reference = reference,
             ),
         )
 
-        val smallerValueOutside = baseValue / scaleOutside
-        assert(smallerValueWithin > 0.0 && smallerValueWithin < baseValue)
+        val smallerValueOutside = reference * scaleDownOutside
+        assert(smallerValueWithin > 0.0 && smallerValueWithin < reference)
 
         // Smaller, not within tolerance
         assertFalse(
             tolerance.equalsApproximately(
-                first = baseValue,
-                second = smallerValueOutside,
+                value = smallerValueOutside,
+                reference = reference,
             ),
         )
 
-        val biggerValueOutside = baseValue * scaleOutside
-        assert(biggerValueOutside > baseValue)
+        val biggerValueOutside = reference * scaleUpOutside
+        assert(biggerValueOutside > reference)
 
         // Bigger, not within tolerance
         assertFalse(
             tolerance.equalsApproximately(
-                first = baseValue,
-                second = biggerValueOutside,
+                value = biggerValueOutside,
+                reference = reference,
             ),
         )
     }
 
     @Test
-    fun testtolerance_tiny() {
+    fun testAbsoluteTolerance_zero() {
+        val tolerance = Tolerance.Absolute(
+            absoluteTolerance = 10e-4,
+        )
+
+        assertTrue(
+            tolerance.equalsApproximately(
+                value = 10e-4 - 10e-5,
+                reference = 0.0,
+            ),
+        )
+
+        assertTrue(
+            tolerance.equalsApproximately(
+                value = 0.0,
+                reference = 10e-4 - 10e-5,
+            ),
+        )
+
+        assertFalse(
+            tolerance.equalsApproximately(
+                value = 10e-4 + 10e-5,
+                reference = 0.0,
+            ),
+        )
+
+        assertFalse(
+            tolerance.equalsApproximately(
+                value = 0.0,
+                reference = 10e-4 + 10e-5,
+            ),
+        )
+    }
+
+    @Test
+    fun testAbsoluteTolerance_tiny() {
         val tolerance = Tolerance.Absolute(
             absoluteTolerance = 10e-8,
         )
 
         // Tiny value
 
-        testtoleranceNearby(
+        testAbsoluteToleranceNearby(
             baseValue = tinyValue,
             tolerance = tolerance,
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = smallValue,
+                value = tinyValue,
+                reference = smallValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = bigValue,
+                value = tinyValue,
+                reference = bigValue,
             ),
         )
 
         // Small value
 
-        testtoleranceNearby(
+        testAbsoluteToleranceNearby(
             baseValue = smallValue,
             tolerance = tolerance,
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = tinyValue,
+                value = smallValue,
+                reference = tinyValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = bigValue,
+                value = smallValue,
+                reference = bigValue,
             ),
         )
     }
 
     @Test
-    fun testtolerance_small() {
+    fun testAbsoluteTolerance_small() {
         val tolerance = Tolerance.Absolute(
             absoluteTolerance = 10e-2,
         )
 
         // Tiny value
 
-        testtoleranceNearby(
+        testAbsoluteToleranceNearby(
             baseValue = tinyValue,
             tolerance = tolerance,
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = smallValue,
+                value = tinyValue,
+                reference = smallValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = bigValue,
+                value = tinyValue,
+                reference = bigValue,
             ),
         )
 
         // Small value
 
-        testtoleranceNearby(
+        testAbsoluteToleranceNearby(
             baseValue = smallValue,
             tolerance = tolerance,
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = tinyValue,
+                value = smallValue,
+                reference = tinyValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = bigValue,
+                value = smallValue,
+                reference = bigValue,
             ),
         )
 
         // Big value
 
-        testtoleranceNearby(
+        testAbsoluteToleranceNearby(
             baseValue = bigValue,
             tolerance = tolerance,
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = tinyValue,
+                value = bigValue,
+                reference = tinyValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = smallValue,
+                value = bigValue,
+                reference = smallValue,
             ),
         )
     }
 
     @Test
-    fun testtolerance_big() {
+    fun testAbsoluteTolerance_big() {
         val tolerance = Tolerance.Absolute(
             absoluteTolerance = 100.0,
         )
 
         // Tiny value
 
-        testtoleranceNearby(
+        testAbsoluteToleranceNearby(
             baseValue = tinyValue,
             tolerance = tolerance,
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = smallValue,
+                value = tinyValue,
+                reference = smallValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = bigValue,
+                value = tinyValue,
+                reference = bigValue,
             ),
         )
 
         // Small value
 
-        testtoleranceNearby(
+        testAbsoluteToleranceNearby(
             baseValue = smallValue,
             tolerance = tolerance,
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = tinyValue,
+                value = smallValue,
+                reference = tinyValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = bigValue,
+                value = smallValue,
+                reference = bigValue,
             ),
         )
 
         // Big value
 
-        testtoleranceNearby(
+        testAbsoluteToleranceNearby(
             baseValue = bigValue,
             tolerance = tolerance,
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = tinyValue,
+                value = bigValue,
+                reference = tinyValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = smallValue,
+                value = bigValue,
+                reference = smallValue,
             ),
         )
+    }
+
+    @Test
+    @Ignore("Figure out zeros")
+    fun testRelativeTolerance_zero() {
+        val tolerance = Tolerance.Relative(
+            relativeTolerance = 10e-6,
+        )
+
+        assertTrue(
+            tolerance.equalsApproximately(
+                value = 0.0,
+                reference = 10e-20,
+            ),
+        )
+
+        assertFalse(
+            tolerance.equalsApproximately(
+                value = 0.0,
+                reference = 10e-16 + 10e-17
+            ),
+        )
+
+
+        assertTrue(
+            tolerance.equalsApproximately(
+                value = 10e-16 - 10e-17,
+                reference = 0.0,
+            ),
+        )
+
+        assertFalse(
+            tolerance.equalsApproximately(
+                value = 10e-16 + 10e-17,
+                reference = 0.0,
+            ),
+        )
+
     }
 
     @Test
@@ -325,42 +398,42 @@ class NumericObjectTests {
         // Tiny value
 
         testRelativeToleranceNearby(
-            baseValue = tinyValue,
+            reference = tinyValue,
             tolerance = tolerance,
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = smallValue,
+                value = tinyValue,
+                reference = smallValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = bigValue,
+                value = tinyValue,
+                reference = bigValue,
             ),
         )
 
         // Small value
 
         testRelativeToleranceNearby(
-            baseValue = smallValue,
+            reference = smallValue,
             tolerance = tolerance,
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = tinyValue,
+                value = smallValue,
+                reference = tinyValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = bigValue,
+                value = smallValue,
+                reference = bigValue,
             ),
         )
     }
@@ -374,42 +447,42 @@ class NumericObjectTests {
         // Small value
 
         testRelativeToleranceNearby(
-            baseValue = smallValue,
+            reference = smallValue,
             tolerance = tolerance,
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = tinyValue,
+                value = smallValue,
+                reference = tinyValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = bigValue,
+                value = smallValue,
+                reference = bigValue,
             ),
         )
 
         // Big value
 
         testRelativeToleranceNearby(
-            baseValue = bigValue,
+            reference = bigValue,
             tolerance = tolerance,
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = tinyValue,
+                value = bigValue,
+                reference = tinyValue,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = smallValue,
+                value = bigValue,
+                reference = smallValue,
             ),
         )
     }
@@ -428,36 +501,36 @@ class NumericObjectTests {
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = tinyValueUpOutside,
+                value = tinyValue,
+                reference = tinyValueUpOutside,
             ),
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = tinyValueUpWithin,
+                value = tinyValue,
+                reference = tinyValueUpWithin,
             ),
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = tinyValue1,
+                value = tinyValue,
+                reference = tinyValue1,
             ),
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = tinyValueDownWithin,
+                value = tinyValue,
+                reference = tinyValueDownWithin,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = tinyValue,
-                second = tinyValueDownOutside,
+                value = tinyValue,
+                reference = tinyValueDownOutside,
             ),
         )
 
@@ -469,36 +542,36 @@ class NumericObjectTests {
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = smallValueUpOutside,
+                value = smallValue,
+                reference = smallValueUpOutside,
             ),
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = smallValueUpWithin,
+                value = smallValue,
+                reference = smallValueUpWithin,
             ),
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = smallValue1,
+                value = smallValue,
+                reference = smallValue1,
             ),
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = smallValueDownWithin,
+                value = smallValue,
+                reference = smallValueDownWithin,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = smallValue,
-                second = smallValueDownOutside,
+                value = smallValue,
+                reference = smallValueDownOutside,
             ),
         )
 
@@ -510,36 +583,36 @@ class NumericObjectTests {
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = bigValueUpOutside,
+                value = bigValue,
+                reference = bigValueUpOutside,
             ),
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = bigValueUpWithin,
+                value = bigValue,
+                reference = bigValueUpWithin,
             ),
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = bigValue1,
+                value = bigValue,
+                reference = bigValue1,
             ),
         )
 
         assertTrue(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = bigValueDownWithin,
+                value = bigValue,
+                reference = bigValueDownWithin,
             ),
         )
 
         assertFalse(
             tolerance.equalsApproximately(
-                first = bigValue,
-                second = bigValueDownOutside,
+                value = bigValue,
+                reference = bigValueDownOutside,
             ),
         )
     }
