@@ -21,3 +21,11 @@ fun <T> List<T>.partitionAt(index: Int): Partitioned<T>? {
         nextElements = subList(index + 1, size),
     )
 }
+
+fun <T> List<T>.eachPartitioned(): List<Partitioned<T>> {
+    if (isEmpty()) return emptyList()
+
+    return List(size) { index ->
+        partitionAt(index = index)!!
+    }
+}
