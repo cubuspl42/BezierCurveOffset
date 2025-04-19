@@ -8,7 +8,7 @@ import app.geometry.RawVector
 data class ParametricPolynomial(
     val xFunction: Polynomial,
     val yFunction: Polynomial,
-) : RealFunction<RawVector>(), NumericObject {
+) : RealFunction<RawVector>, NumericObject {
     data class SolutionSet(
         val xSolutions: Set<Double>,
         val ySolutions: Set<Double>,

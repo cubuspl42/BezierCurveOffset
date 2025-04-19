@@ -3,7 +3,7 @@ package app.algebra.polynomials
 import app.algebra.NumericObject
 import app.algebra.bezier_binomials.RealFunction
 
-sealed class Polynomial : RealFunction<Double>(), NumericObject {
+sealed interface Polynomial : RealFunction<Double>, NumericObject {
     fun solveFor(
         y: Double,
     ): Set<Double> = (this - y).findRoots()

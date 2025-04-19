@@ -25,7 +25,7 @@ import kotlin.math.sqrt
 @Suppress("DataClassPrivateConstructor")
 data class HighPolynomial private constructor(
     val coefficients: VectorNIrr,
-) : Polynomial() {
+) : Polynomial {
     companion object {
         fun of(
             vararg coefficients: Double,

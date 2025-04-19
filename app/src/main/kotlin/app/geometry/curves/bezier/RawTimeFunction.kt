@@ -7,7 +7,7 @@ import app.algebra.bezier_binomials.RealFunction
  *
  * @param R - type of the result
  */
-abstract class RawTimeFunction<out R> : RealFunction<R>() {
+abstract class RawTimeFunction<out R> : RealFunction<R> {
     final override fun apply(x: Double): R = evaluate(t = x)
 
     abstract fun evaluate(t: Double): R

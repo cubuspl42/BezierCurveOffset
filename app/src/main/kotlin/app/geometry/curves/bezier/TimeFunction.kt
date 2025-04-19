@@ -9,7 +9,7 @@ import app.geometry.RawVector
  *
  * @param R - type of the result
  */
-abstract class TimeFunction<R> : RealFunction<R>() {
+abstract class TimeFunction<R> : RealFunction<R> {
     companion object {
         fun wrap(
             curveFunction: ParametricCurveFunction,

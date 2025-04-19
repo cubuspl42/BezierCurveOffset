@@ -15,7 +15,7 @@ import app.algebra.linear.vectors.vector2.unaryMinus
 @Suppress("DataClassPrivateConstructor")
 data class LinearPolynomial private constructor(
     val coefficients: Vector2Irr,
-) : Polynomial() {
+) : Polynomial {
     companion object {
         fun of(
             coefficients: Vector2Irr,

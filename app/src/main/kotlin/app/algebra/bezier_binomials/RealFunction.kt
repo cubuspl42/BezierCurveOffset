@@ -7,7 +7,7 @@ import app.geometry.moveTo
 import app.utils.linspace
 import java.awt.geom.Path2D
 
-abstract class RealFunction<out V> {
+interface RealFunction<out V> {
     data class SamplingStrategy(
         val x0: Double = 0.0,
         val x1: Double = 1.0,
@@ -23,7 +23,7 @@ abstract class RealFunction<out V> {
         val value: V,
     )
 
-    abstract fun apply(x: Double): V
+    fun apply(x: Double): V
 }
 
 fun <V : Any> RealFunction<V?>.sampleValues(

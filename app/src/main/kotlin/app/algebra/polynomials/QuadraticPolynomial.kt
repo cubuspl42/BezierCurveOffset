@@ -14,7 +14,7 @@ import kotlin.math.sqrt
 @Suppress("DataClassPrivateConstructor")
 data class QuadraticPolynomial private constructor(
     val coefficients: Vector3Irr,
-) : Polynomial() {
+) : Polynomial {
     companion object {
         fun of(
             coefficients: Vector3Irr,

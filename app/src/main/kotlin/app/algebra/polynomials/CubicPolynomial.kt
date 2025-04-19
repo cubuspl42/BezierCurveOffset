@@ -22,7 +22,7 @@ import kotlin.math.sqrt
 @Suppress("DataClassPrivateConstructor")
 data class CubicPolynomial private constructor(
     val coefficients: Vector4Irr,
-) : Polynomial() {
+) : Polynomial {
     companion object {
         fun of(
             coefficients: Vector4Irr,

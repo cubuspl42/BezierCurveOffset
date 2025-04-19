@@ -7,7 +7,7 @@ import app.algebra.equalsWithTolerance
 @Suppress("DataClassPrivateConstructor")
 data class ConstantPolynomial private constructor(
     val a: Double,
-) : Polynomial() {
+) : Polynomial {
     companion object {
         fun of(
             a: Double,
