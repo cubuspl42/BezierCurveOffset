@@ -1,6 +1,8 @@
 package app.geometry
 
+import app.algebra.NumericObject
 import app.algebra.euclidean.bezier_binomials.ParametricCurveFunction
+import app.algebra.implicit_polynomials.ImplicitPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 
 data class PointFunction(
@@ -10,6 +12,17 @@ data class PointFunction(
         val zero = PointFunction(
             c = RawVector.zero,
         )
+    }
+
+    override fun solvePoint(
+        p: RawVector, tolerance: NumericObject.Tolerance
+    ): Double? = when {
+        c.equalsWithTolerance(p, tolerance = tolerance) -> 0.0
+        else -> null
+    }
+
+    override fun implicitize(): ImplicitPolynomial {
+        TODO("Not yet implemented")
     }
 
     override fun findDerivative(): ParametricCurveFunction = zero

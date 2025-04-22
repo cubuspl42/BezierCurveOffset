@@ -1,7 +1,9 @@
 package app.algebra.euclidean.bezier_binomials
 
+import app.algebra.NumericObject
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.euclidean.ParametricLineFunction
+import app.algebra.implicit_polynomials.ImplicitPolynomial
 import app.geometry.RawVector
 import app.geometry.times
 
@@ -15,6 +17,17 @@ class QuadraticBezierBinomial(
         b = 2.0 * (weight1 - weight0),
         c = weight0,
     )
+
+    override fun solvePoint(
+        p: RawVector,
+        tolerance: NumericObject.Tolerance
+    ): Double? {
+        TODO("Not yet implemented")
+    }
+
+    override fun implicitize(): ImplicitPolynomial {
+        TODO("Not yet implemented")
+    }
 
     override fun findDerivative(): ParametricCurveFunction = ParametricLineFunction(
         s = weight0,

@@ -8,6 +8,13 @@ import kotlin.math.abs
 
 interface NumericObject {
     sealed class Tolerance {
+        data object Zero : Tolerance() {
+            override fun equalsApproximately(
+                value: Double,
+                reference: Double
+            ): Boolean = value == reference
+        }
+
         data class Absolute(
             val absoluteTolerance: Double,
         ) : Tolerance() {

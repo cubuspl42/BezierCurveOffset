@@ -2,10 +2,11 @@ package app.geometry.curves
 
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
+import app.algebra.euclidean.ParametricLineFunction
+import app.algebra.euclidean.bezier_binomials.ParametricCurveFunction
 import app.fillCircle
 import app.geometry.BoundingBox
 import app.geometry.Direction
-import app.algebra.euclidean.ParametricLineFunction
 import app.geometry.Point
 import app.geometry.RawVector
 import app.geometry.Ray
@@ -73,8 +74,8 @@ data class LineSegment(
             lineSegment0: LineSegment,
             lineSegment1: LineSegment,
         ): Point? {
-            val l0 = lineSegment0.toParametricLineFunction()
-            val l1 = lineSegment1.toParametricLineFunction()
+            val l0 = lineSegment0.basisFormula
+            val l1 = lineSegment1.basisFormula
 
             val t0 = l0.solveIntersection(l1) ?: return null
 
@@ -82,20 +83,16 @@ data class LineSegment(
 
             val potentialIntersectionPoint = l0.apply(t0)
 
-            val t1 = l1.solvePoint(potentialIntersectionPoint) ?: return null
+            val t1 = l1.solvePoint(
+                potentialIntersectionPoint,
+                tolerance = Tolerance.Zero,
+            ) ?: return null
 
             if (t1 !in segmentTRange) return null
 
             return potentialIntersectionPoint.asPoint
         }
     }
-
-    fun toGeneralLineFunction() = toParametricLineFunction().implicitize()
-
-    fun toParametricLineFunction(): ParametricLineFunction = ParametricLineFunction(
-        d = dv,
-        s = start.pv,
-    )
 
     private val dv: RawVector
         get() = end.pv - start.pv
@@ -162,6 +159,11 @@ data class LineSegment(
         offset = offset,
     )?.toSpline(
         edgeMetadata = OffsetEdgeMetadata.Precise,
+    )
+
+    override val basisFormula = ParametricLineFunction(
+        d = dv,
+        s = start.pv,
     )
 
     override fun findOffsetSplineRecursive(

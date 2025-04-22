@@ -1,5 +1,6 @@
 package app.algebra.euclidean
 
+import app.algebra.NumericObject
 import app.algebra.euclidean.bezier_binomials.ParametricCurveFunction
 import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
@@ -26,7 +27,7 @@ data class ParametricLineFunction(
         a0 = s,
     )
 
-    fun implicitize(): ImplicitLinearPolynomial = ImplicitLinearPolynomial(
+    override fun implicitize(): ImplicitLinearPolynomial = ImplicitLinearPolynomial(
         a1 = d.y,
         b1 = -d.x,
         c = d.cross(s),
@@ -49,8 +50,9 @@ data class ParametricLineFunction(
     /**
      * Solve the equation s + d * t = p for t
      */
-    fun solvePoint(
+    override fun solvePoint(
         p: RawVector,
+        tolerance: NumericObject.Tolerance,
     ): Double? = when {
         d.x != 0.0 -> (p.x - s.x) / d.x
         d.y != 0.0 -> (p.y - s.y) / d.y

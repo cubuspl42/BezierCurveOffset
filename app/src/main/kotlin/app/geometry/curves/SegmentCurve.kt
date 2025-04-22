@@ -2,13 +2,14 @@ package app.geometry.curves
 
 import app.SVGGElementUtils
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
+import app.algebra.euclidean.bezier_binomials.ParametricCurveFunction
 import app.algebra.polynomials.ParametricPolynomial
 import app.createPathElement
 import app.fill
 import app.geometry.BoundingBox
 import app.geometry.Point
 import app.geometry.Ray
-import app.geometry.transformations.Transformation
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.bezier.TimeFunction
 import app.geometry.curves.bezier.toDebugControlSvgPathGroupCubic
@@ -16,6 +17,7 @@ import app.geometry.curves.bezier.toSvgPathSegCubic
 import app.geometry.splines.MonoCurveSpline
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
+import app.geometry.transformations.Transformation
 import app.stroke
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGGElement
@@ -57,6 +59,34 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : QuasiSegmentCur
     )
 
     companion object {
+        fun findSegmentCurveIntersections(
+            segmentCurve0: SegmentCurve<*>,
+            segmentCurve1: SegmentCurve<*>,
+        ): Set<Point> {
+            val c0 = segmentCurve0.basisFormula
+            val c1 = segmentCurve1.basisFormula
+
+            val t0Values = c0.solveIntersection(c1).filter { it in segmentTRange }
+
+            val potentialIntersectionPoints = t0Values.map { t0 ->
+                c0.apply(t0)
+            }
+
+            val intersectionPoints = potentialIntersectionPoints.mapNotNull { potentialIntersectionPoint ->
+                val t1 = c1.solvePoint(
+                    potentialIntersectionPoint,
+                    tolerance = Tolerance.Zero,
+                ) ?: return@mapNotNull null
+
+                when {
+                    t1 in segmentTRange -> potentialIntersectionPoint.asPoint
+                    else -> null
+                }
+            }
+
+            return intersectionPoints.toSet()
+        }
+
         /**
          * Finds the unique intersection of two lines in 2D space.
          *
@@ -119,6 +149,8 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : QuasiSegmentCur
     protected fun ParametricPolynomial.RootSet.filterInSegmentRoots(): ParametricPolynomial.RootSet = this.filter {
         it in segmentTRange
     }
+
+    abstract val basisFormula: ParametricCurveFunction
 
     /**
      * Evaluates the curve at the given parameter t, which is guaranteed to be in the range [0, 1].

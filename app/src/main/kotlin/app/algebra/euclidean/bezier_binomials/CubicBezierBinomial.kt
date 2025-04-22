@@ -1,5 +1,6 @@
 package app.algebra.euclidean.bezier_binomials
 
+import app.algebra.NumericObject
 import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
 import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.algebra.linear.matrices.matrix4.Matrix4x4
@@ -79,7 +80,14 @@ data class CubicBezierBinomial(
         return intersectionPolynomial.findRoots().toSet()
     }
 
-    fun implicitize(): ImplicitCubicPolynomial {
+    override fun solvePoint(
+        p: RawVector,
+        tolerance: NumericObject.Tolerance
+    ): Double? {
+        TODO()
+    }
+
+    override fun implicitize(): ImplicitCubicPolynomial {
         val x0 = weight0.x
         val y0 = weight0.y
         val x1 = weight1.x

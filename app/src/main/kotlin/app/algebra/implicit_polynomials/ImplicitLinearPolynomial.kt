@@ -8,6 +8,12 @@ import app.algebra.polynomials.Polynomial
 import app.algebra.polynomials.times
 import app.geometry.RawVector
 
+sealed class ImplicitPolynomial : NumericObject {
+    abstract fun put(
+        parametricPolynomial: ParametricPolynomial,
+    ): Polynomial<*>
+}
+
 /**
  * A polynomial in the form a1 * x + b1 * y + c
  */
@@ -15,7 +21,7 @@ data class ImplicitLinearPolynomial(
     val a1: Double,
     val b1: Double,
     val c: Double,
-) : NumericObject {
+) : ImplicitPolynomial() {
     companion object {
         fun of(
             a1: Double,
@@ -56,7 +62,7 @@ data class ImplicitLinearPolynomial(
 
     operator fun times(
         s: Double,
-    ) : ImplicitLinearPolynomial = ImplicitLinearPolynomial(
+    ): ImplicitLinearPolynomial = ImplicitLinearPolynomial(
         a1 = a1 * s,
         b1 = b1 * s,
         c = c * s,
@@ -82,7 +88,7 @@ data class ImplicitLinearPolynomial(
         y: Polynomial<*>,
     ): Polynomial<*> = a1 * x + b1 * y + c
 
-    fun put(
+    override fun put(
         p: ParametricPolynomial,
     ): Polynomial<*> = put(
         x = p.xFunction,

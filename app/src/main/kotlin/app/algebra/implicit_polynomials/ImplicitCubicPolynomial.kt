@@ -33,7 +33,7 @@ data class ImplicitCubicPolynomial(
     val a1: Double,
     val b1: Double,
     val c: Double,
-) : NumericObject {
+) : ImplicitPolynomial() {
     companion object {
         fun of(
             a3: Double,
@@ -107,7 +107,7 @@ data class ImplicitCubicPolynomial(
         other: ImplicitCubicPolynomial,
     ): ImplicitCubicPolynomial = this + (-other)
 
-    fun put(
+    override fun put(
         parametricPolynomial: ParametricPolynomial,
     ): Polynomial<*> {
         val x = parametricPolynomial.xFunction

@@ -1,5 +1,7 @@
 package app.geometry
 
+import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
 import app.algebra.euclidean.ParametricLineFunction
 import app.fill
 import app.geometry.curves.LineSegment
@@ -54,7 +56,11 @@ class Ray(
 
         val potentialIntersectionPoint = l0.apply(t0)
 
-        val t1 = l1.solvePoint(potentialIntersectionPoint) ?: return null
+        val t1 = l1.solvePoint(
+            potentialIntersectionPoint,
+            tolerance = Tolerance.Zero
+        ) ?: return null
+
         if (t1 < 0.0) return null
 
         return potentialIntersectionPoint.asPoint

@@ -369,7 +369,7 @@ sealed class BezierCurve : SegmentCurve<CubicBezierCurve>() {
     protected fun findCriticalPoints(): ParametricPolynomial.RootSet =
         basisFormula.findCriticalPoints().filter { it in segmentTRange.open }
 
-    abstract val basisFormula: BezierBinomial
+    abstract override val basisFormula: BezierBinomial
 
     abstract fun splitAt(
         t: Double,

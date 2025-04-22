@@ -13,7 +13,7 @@ import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 
-class CubicBezierSegmentCurveTests {
+class CubicBezierCurveTests {
     private val eps = 10e-3
 
     @Test
@@ -391,7 +391,7 @@ class CubicBezierSegmentCurveTests {
     @Test
     fun testFindIntersection_lineSegment() {
         val extractedCurveSet = SvgCurveExtractionUtils.extractCurves(
-            clazz = CubicBezierSegmentCurveTests::class.java,
+            clazz = CubicBezierCurveTests::class.java,
             resourceName = "lineBezierIntersection1.svg",
         )
 

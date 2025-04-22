@@ -85,32 +85,18 @@ data class CubicBezierCurve private constructor(
         fun findIntersections(
             lineSegment: LineSegment,
             bezierCurve: CubicBezierCurve,
-        ): Set<Point> {
-            val c0 = bezierCurve.basisFormula
-            val l1 = lineSegment.toParametricLineFunction()
-
-            val t0Values = c0.solveIntersection(l1).filter { it in segmentTRange }
-
-            val potentialIntersectionPoints = t0Values.map { t0 ->
-                c0.apply(t0)
-            }
-
-            val intersectionPoints = potentialIntersectionPoints.mapNotNull { p ->
-                val t1 = l1.solvePoint(p) ?: return@mapNotNull null
-
-                when {
-                    t1 in segmentTRange -> p.asPoint
-                    else -> null
-                }
-            }
-
-            return intersectionPoints.toSet()
-        }
+        ): Set<Point> = SegmentCurve.findSegmentCurveIntersections(
+            segmentCurve0 = bezierCurve,
+            segmentCurve1 = lineSegment,
+        )
 
         fun findIntersections(
             bezierCurve0: CubicBezierCurve,
             bezierCurve1: CubicBezierCurve,
-        ): Set<Point> = TODO()
+        ): Set<Point> = SegmentCurve.findSegmentCurveIntersections(
+            segmentCurve0 = bezierCurve0,
+            segmentCurve1 = bezierCurve1,
+        )
     }
 
     override fun findBoundingBox(): BoundingBox {
