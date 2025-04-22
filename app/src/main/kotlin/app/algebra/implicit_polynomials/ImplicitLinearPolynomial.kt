@@ -8,12 +8,6 @@ import app.algebra.polynomials.Polynomial
 import app.algebra.polynomials.times
 import app.geometry.RawVector
 
-sealed class ImplicitPolynomial : NumericObject {
-    abstract fun put(
-        parametricPolynomial: ParametricPolynomial,
-    ): Polynomial<*>
-}
-
 /**
  * A polynomial in the form a1 * x + b1 * y + c
  */
@@ -95,7 +89,9 @@ data class ImplicitLinearPolynomial(
         y = p.yFunction,
     )
 
-    fun apply(p: RawVector): Double = a1 * p.x + b1 * p.y + c
+    override fun apply(
+        v: RawVector,
+    ): Double = a1 * v.x + b1 * v.y + c
 
     override fun equalsWithTolerance(
         other: NumericObject,

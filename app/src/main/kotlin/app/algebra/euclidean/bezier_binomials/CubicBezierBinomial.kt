@@ -6,7 +6,9 @@ import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.polynomials.ParametricPolynomial
-import app.algebra.euclidean.ParametricLineFunction
+import app.algebra.implicit_polynomials.RationalImplicitPolynomial
+import app.algebra.implicit_polynomials.times
+import app.algebra.linear.matrices.matrix3.Matrix3x3
 import app.geometry.RawVector
 import app.geometry.times
 
@@ -29,6 +31,72 @@ data class CubicBezierBinomial(
 
         val characteristicInvertedMatrix = characteristicMatrix.invert() ?: error("Matrix is not invertible")
     }
+
+    val x0: Double
+        get() = weight0.x
+
+    val y0: Double
+        get() = weight0.y
+
+    val x1: Double
+        get() = weight1.x
+
+    val y1: Double
+        get() = weight1.y
+
+    val x2: Double
+        get() = weight2.x
+
+    val y2: Double
+        get() = weight2.y
+
+    val x3: Double
+        get() = weight3.x
+
+    val y3: Double
+        get() = weight3.y
+
+    val l32: ImplicitLinearPolynomial
+        get() = ImplicitLinearPolynomial(
+            a1 = 3 * y3 - 3 * y2,
+            b1 = 3 * x2 - 3 * x3,
+            c = 3 * x3 * y2 - 3 * x2 * y3,
+        )
+
+    val l31: ImplicitLinearPolynomial
+        get() = ImplicitLinearPolynomial(
+            a1 = 3 * y3 - 3 * y1,
+            b1 = 3 * x1 - 3 * x3,
+            c = 3 * x3 * y1 - 3 * x1 * y3,
+        )
+
+    val l30: ImplicitLinearPolynomial
+        get() = ImplicitLinearPolynomial(
+            a1 = y3 - y0,
+            b1 = x0 - x3,
+            c = x3 * y0 - x0 * y3,
+        )
+
+    val l21: ImplicitLinearPolynomial
+        get() = ImplicitLinearPolynomial(
+            a1 = 9 * y2 - 9 * y1,
+            b1 = 9 * x1 - 9 * x2,
+            c = 9 * x2 * y1 - 9 * x1 * y2,
+        )
+
+    val l20: ImplicitLinearPolynomial
+        get() = ImplicitLinearPolynomial(
+            a1 = 3 * y2 - 3 * y0,
+            b1 = 3 * x0 - 3 * x2,
+            c = 3 * x2 * y0 - 3 * x0 * y2,
+        )
+
+    val l10: ImplicitLinearPolynomial
+        get() = ImplicitLinearPolynomial(
+            a1 = 3 * y1 - 3 * y0,
+            b1 = 3 * x0 - 3 * x1,
+            c = 3 * x1 * y0 - 3 * x0 * y1,
+        )
 
     override fun findDerivative(): QuadraticBezierBinomial = QuadraticBezierBinomial(
         3.0 * (weight1 - weight0),
@@ -53,57 +121,59 @@ data class CubicBezierBinomial(
     }
 
     override fun solvePoint(
-        p: RawVector,
-        tolerance: NumericObject.Tolerance
+        p: RawVector, tolerance: NumericObject.Tolerance
     ): Double? {
         TODO()
     }
 
+    fun invert(): RationalImplicitPolynomial? {
+        val d = 3.0 * Matrix3x3.rowMajor(
+            row0 = weight1.horizontal.toVec3(),
+            row1 = weight2.horizontal.toVec3(),
+            row2 = weight3.horizontal.toVec3(),
+        ).determinant
+
+        if (d == 0.0) {
+            return null
+        }
+
+        val n1 = Matrix3x3.rowMajor(
+            row0 = weight0.horizontal.toVec3(),
+            row1 = weight1.horizontal.toVec3(),
+            row2 = weight3.horizontal.toVec3(),
+        ).determinant
+
+        val n2 = Matrix3x3.rowMajor(
+            row0 = weight0.horizontal.toVec3(),
+            row1 = weight2.horizontal.toVec3(),
+            row2 = weight3.horizontal.toVec3(),
+        ).determinant
+
+        val c1 = n1 / d
+        val c2 = -(n2 / d)
+
+        val l10 = this.l10
+        val l20 = this.l20
+        val l21 = this.l21
+        val l30 = this.l30
+        val l31 = this.l31
+
+        val la = c1 * l31 + c2 * (l30 + l21) + l20
+        val lb = c1 * l30 + c2 * l20 + l10
+
+        return RationalImplicitPolynomial(
+            nominatorFunction = lb,
+            denominatorFunction = lb - la,
+        )
+    }
+
     override fun implicitize(): ImplicitCubicPolynomial {
-        val x0 = weight0.x
-        val y0 = weight0.y
-        val x1 = weight1.x
-        val y1 = weight1.y
-        val x2 = weight2.x
-        val y2 = weight2.y
-        val x3 = weight3.x
-        val y3 = weight3.y
-
-        val l32 = ImplicitLinearPolynomial(
-            a1 = 3 * y3 - 3 * y2,
-            b1 = 3 * x2 - 3 * x3,
-            c = 3 * x3 * y2 - 3 * x2 * y3,
-        )
-
-        val l31 = ImplicitLinearPolynomial(
-            a1 = 3 * y3 - 3 * y1,
-            b1 = 3 * x1 - 3 * x3,
-            c = 3 * x3 * y1 - 3 * x1 * y3,
-        )
-
-        val l30 = ImplicitLinearPolynomial(
-            a1 = y3 - y0,
-            b1 = x0 - x3,
-            c = x3 * y0 - x0 * y3,
-        )
-
-        val l21 = ImplicitLinearPolynomial(
-            a1 = 9 * y2 - 9 * y1,
-            b1 = 9 * x1 - 9 * x2,
-            c = 9 * x2 * y1 - 9 * x1 * y2,
-        )
-
-        val l20 = ImplicitLinearPolynomial(
-            a1 = 3 * y2 - 3 * y0,
-            b1 = 3 * x0 - 3 * x2,
-            c = 3 * x2 * y0 - 3 * x0 * y2,
-        )
-
-        val l10 = ImplicitLinearPolynomial(
-            a1 = 3 * y1 - 3 * y0,
-            b1 = 3 * x0 - 3 * x1,
-            c = 3 * x1 * y0 - 3 * x0 * y1,
-        )
+        val l32 = this.l32
+        val l31 = this.l31
+        val l30 = this.l30
+        val l21 = this.l21
+        val l20 = this.l20
+        val l10 = this.l10
 
         return calculateDeterminant(
             a = l32,

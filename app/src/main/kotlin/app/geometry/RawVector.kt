@@ -4,6 +4,7 @@ import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
 import app.algebra.linear.VectorSpace
+import app.algebra.linear.vectors.vector2.Vector1x2
 import app.algebra.linear.vectors.vector2.Vector2x1
 import kotlin.math.sqrt
 
@@ -123,6 +124,11 @@ data class RawVector(
         )
 
     val vertical: Vector2x1 = Vector2x1(
+        a0 = x,
+        a1 = y,
+    )
+
+    val horizontal: Vector1x2 = Vector1x2(
         a0 = x,
         a1 = y,
     )

@@ -6,6 +6,7 @@ import app.algebra.equalsWithTolerance
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.polynomials.Polynomial
 import app.algebra.polynomials.times
+import app.geometry.RawVector
 
 /**
  * A polynomial in the form a2 * x^2 + a1b1 * xy + b2 * y^2 + a1 * x + b1 * y + c
@@ -103,6 +104,13 @@ data class ImplicitQuadraticPolynomial(
     operator fun minus(
         other: ImplicitLinearPolynomial,
     ): ImplicitQuadraticPolynomial = this + (-other)
+
+    override fun apply(v: RawVector): Double {
+        val x = v.x
+        val y = v.y
+
+        return a2 * (x * x) + a1b1 * (x * y) + b2 * (y * y) + a1 * x + b1 * y + c
+    }
 
     override fun put(
         parametricPolynomial: ParametricPolynomial,

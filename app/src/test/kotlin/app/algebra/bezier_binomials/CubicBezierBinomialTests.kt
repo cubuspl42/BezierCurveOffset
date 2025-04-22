@@ -1,6 +1,7 @@
 package app.algebra.bezier_binomials
 
 import app.algebra.NumericObject
+import app.algebra.Ratio
 import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.assertEqualsWithRelativeTolerance
 import app.algebra.assertEqualsWithTolerance
@@ -10,12 +11,16 @@ import app.algebra.euclidean.bezier_binomials.sample
 import app.algebra.polynomials.HighPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
+import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
+import app.algebra.implicit_polynomials.RationalImplicitPolynomial
 import app.geometry.Point
 import app.geometry.RawVector
 import app.geometry.SvgCurveExtractionUtils
+import app.geometry.curves.bezier.CubicBezierCurve
 import java.awt.Color
 import kotlin.test.Test
 import kotlin.test.assertIs
+import kotlin.test.assertNotNull
 
 private const val eps = 10e-4
 
@@ -55,6 +60,52 @@ class CubicBezierBinomialTests {
                 absoluteTolerance = eps,
             )
         }
+    }
+
+    @Test
+    fun testInvert() {
+        val bezierCurveBasis = CubicBezierBinomial(
+            weight0 = RawVector(1.0, 0.0),
+            weight1 = RawVector(5.0, 0.0),
+            weight2 = RawVector(5.0, 2.0),
+            weight3 = RawVector(4.0, 3.0),
+        )
+
+        val invertedPolynomial = assertNotNull(
+            bezierCurveBasis.invert(),
+        )
+
+        val samples = bezierCurveBasis.sample(
+            strategy = RealFunction.SamplingStrategy(
+                sampleCount = 1000,
+            ),
+        )
+
+        val tolerance = NumericObject.Tolerance.Absolute(
+            absoluteTolerance = 10e-7,
+        )
+
+        samples.forEach {
+            val t = it.x
+            val p = it.value
+            val ratio = invertedPolynomial.apply(p)
+
+            if (ratio.equalsWithTolerance(Ratio.ZeroByZero, tolerance = tolerance)) {
+                return@forEach
+            }
+
+            assertEqualsWithTolerance(
+                expected = t,
+                actual = ratio.value,
+                tolerance = tolerance,
+            )
+        }
+
+        assertEqualsWithTolerance(
+            expected = Ratio.ZeroByZero,
+            actual = invertedPolynomial.apply(RawVector(1.0, 0.0)),
+            tolerance = tolerance,
+        )
     }
 
     @Test
