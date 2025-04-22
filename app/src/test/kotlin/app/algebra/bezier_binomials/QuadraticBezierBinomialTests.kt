@@ -1,6 +1,9 @@
 package app.algebra.bezier_binomials
 
 import app.algebra.assertEqualsWithAbsoluteTolerance
+import app.algebra.euclidean.bezier_binomials.QuadraticBezierBinomial
+import app.algebra.euclidean.bezier_binomials.RealFunction
+import app.algebra.euclidean.bezier_binomials.sample
 import app.algebra.polynomials.ParametricPolynomial
 import app.geometry.RawVector
 import kotlin.test.Test

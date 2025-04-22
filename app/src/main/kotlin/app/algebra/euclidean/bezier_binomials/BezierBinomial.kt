@@ -1,4 +1,4 @@
-package app.algebra.bezier_binomials
+package app.algebra.euclidean.bezier_binomials
 
 sealed class BezierBinomial : ParametricCurveFunction() {
     data class CriticalPointSet(

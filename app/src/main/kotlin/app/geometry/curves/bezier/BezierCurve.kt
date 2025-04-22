@@ -1,9 +1,9 @@
 package app.geometry.curves.bezier
 
-import app.algebra.bezier_binomials.BezierBinomial
-import app.algebra.bezier_binomials.RealFunction
-import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
-import app.algebra.bezier_binomials.sample
+import app.algebra.euclidean.bezier_binomials.BezierBinomial
+import app.algebra.euclidean.bezier_binomials.RealFunction
+import app.algebra.euclidean.bezier_binomials.RealFunction.SamplingStrategy
+import app.algebra.euclidean.bezier_binomials.sample
 import app.algebra.polynomials.ParametricPolynomial
 import app.geometry.Direction
 import app.geometry.Point

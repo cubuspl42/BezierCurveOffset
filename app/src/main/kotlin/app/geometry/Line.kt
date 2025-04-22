@@ -1,5 +1,7 @@
 package app.geometry
 
+import app.algebra.euclidean.ParametricLineFunction
+
 /**
  * A line in 2D Euclidean space
  */

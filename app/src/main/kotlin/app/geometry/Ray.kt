@@ -1,5 +1,6 @@
 package app.geometry
 
+import app.algebra.euclidean.ParametricLineFunction
 import app.fill
 import app.geometry.curves.LineSegment
 import app.geometry.curves.toSvgPath

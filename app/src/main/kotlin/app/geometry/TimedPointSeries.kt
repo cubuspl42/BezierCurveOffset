@@ -1,8 +1,8 @@
 package app.geometry
 
-import app.algebra.bezier_binomials.CubicBezierBinomial
-import app.algebra.bezier_binomials.RealFunction.SamplingStrategy
-import app.algebra.bezier_binomials.sample
+import app.algebra.euclidean.bezier_binomials.CubicBezierBinomial
+import app.algebra.euclidean.bezier_binomials.RealFunction.SamplingStrategy
+import app.algebra.euclidean.bezier_binomials.sample
 import app.algebra.linear.matrices.matrix4.MatrixNx4
 import app.algebra.linear.matrices.matrix4.RectangularMatrix4
 import app.algebra.linear.vectors.vector4.Vector4

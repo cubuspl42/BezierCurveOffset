@@ -1,7 +1,7 @@
-package app.algebra.bezier_binomials
+package app.algebra.euclidean.bezier_binomials
 
 import app.algebra.polynomials.ParametricPolynomial
-import app.geometry.ParametricLineFunction
+import app.algebra.euclidean.ParametricLineFunction
 import app.geometry.RawVector
 import app.geometry.times
 

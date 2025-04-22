@@ -1,8 +1,10 @@
-package app.geometry
+package app.algebra.euclidean
 
-import app.algebra.bezier_binomials.ParametricCurveFunction
+import app.algebra.euclidean.bezier_binomials.ParametricCurveFunction
 import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
+import app.geometry.PointFunction
+import app.geometry.RawVector
 
 /**
  * Represents a line in 2D space in parametric form: p = s + d * t
@@ -31,13 +33,16 @@ data class ParametricLineFunction(
     )
 
     /**
-     * Solve the equation s + d * t = s' + d' * t' for t
+     * Solve the intersection of two lines
+     *
+     * @return The intersection t-value for this curve
      */
     fun solveIntersection(
         other: ParametricLineFunction,
     ): Double? {
         val otherImplicit = other.implicitize()
-        val intersectionPolynomial = otherImplicit.put(toParametricPolynomial())
+        val thisParametric = this.toParametricPolynomial()
+        val intersectionPolynomial = otherImplicit.put(thisParametric)
         return intersectionPolynomial.findRoots().singleOrNull()
     }
 

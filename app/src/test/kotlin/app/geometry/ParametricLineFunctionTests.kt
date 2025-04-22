@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.algebra.assertEqualsWithAbsoluteTolerance
+import app.algebra.euclidean.ParametricLineFunction
 import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.polynomials.Polynomial

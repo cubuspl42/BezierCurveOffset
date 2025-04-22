@@ -1,6 +1,6 @@
 package app.geometry.curves.bezier
 
-import app.algebra.bezier_binomials.RealFunction
+import app.algebra.euclidean.bezier_binomials.RealFunction
 
 /**
  * Time function in range [-inf, +inf].

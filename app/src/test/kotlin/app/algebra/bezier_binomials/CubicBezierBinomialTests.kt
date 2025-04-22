@@ -4,6 +4,9 @@ import app.algebra.NumericObject
 import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.assertEqualsWithRelativeTolerance
 import app.algebra.assertEqualsWithTolerance
+import app.algebra.euclidean.bezier_binomials.CubicBezierBinomial
+import app.algebra.euclidean.bezier_binomials.RealFunction
+import app.algebra.euclidean.bezier_binomials.sample
 import app.algebra.polynomials.HighPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
@@ -86,8 +89,8 @@ class CubicBezierBinomialTests {
 
     @Test
     fun testSolveIntersections() {
-        val intersectionWaveTValues = loopCurve.basisFormula.solveIntersections(
-            waveCurve.basisFormula,
+        val intersectionWaveTValues = waveCurve.basisFormula.solveIntersections(
+            other = loopCurve.basisFormula,
         )
 
         assertEqualsWithTolerance(

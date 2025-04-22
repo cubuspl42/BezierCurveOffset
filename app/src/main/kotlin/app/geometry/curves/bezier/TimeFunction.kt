@@ -1,7 +1,7 @@
 package app.geometry.curves.bezier
 
-import app.algebra.bezier_binomials.ParametricCurveFunction
-import app.algebra.bezier_binomials.RealFunction
+import app.algebra.euclidean.bezier_binomials.ParametricCurveFunction
+import app.algebra.euclidean.bezier_binomials.RealFunction
 import app.geometry.RawVector
 
 /**

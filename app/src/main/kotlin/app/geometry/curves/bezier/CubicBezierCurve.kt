@@ -3,7 +3,7 @@ package app.geometry.curves.bezier
 import app.SVGGElementUtils
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
-import app.algebra.bezier_binomials.CubicBezierBinomial
+import app.algebra.euclidean.bezier_binomials.CubicBezierBinomial
 import app.fill
 import app.geometry.BoundingBox
 import app.geometry.Direction

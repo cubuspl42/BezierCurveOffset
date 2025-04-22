@@ -5,7 +5,7 @@ import app.algebra.NumericObject.Tolerance
 import app.fillCircle
 import app.geometry.BoundingBox
 import app.geometry.Direction
-import app.geometry.ParametricLineFunction
+import app.algebra.euclidean.ParametricLineFunction
 import app.geometry.Point
 import app.geometry.RawVector
 import app.geometry.Ray

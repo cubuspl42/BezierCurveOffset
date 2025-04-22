@@ -2,7 +2,7 @@ package app.algebra.polynomials
 
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
-import app.algebra.bezier_binomials.RealFunction
+import app.algebra.euclidean.bezier_binomials.RealFunction
 import app.algebra.equalsWithTolerance
 import app.algebra.equalsZeroWithTolerance
 import app.geometry.Constants

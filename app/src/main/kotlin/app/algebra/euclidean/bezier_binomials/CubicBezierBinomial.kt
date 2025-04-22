@@ -1,11 +1,11 @@
-package app.algebra.bezier_binomials
+package app.algebra.euclidean.bezier_binomials
 
 import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
 import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.polynomials.ParametricPolynomial
-import app.geometry.ParametricLineFunction
+import app.algebra.euclidean.ParametricLineFunction
 import app.geometry.RawVector
 import app.geometry.times
 
@@ -63,14 +63,14 @@ data class CubicBezierBinomial(
     /**
      * Solve the intersection of two cubic Bézier curves.
      *
-     * @return A set of intersection parameter values t for the [other] curve.
+     * @return A set of intersection parameter values t for this curve.
      */
     fun solveIntersections(
         other: CubicBezierBinomial,
     ): Set<Double> {
-        val thisImplicit = implicitize()
-        val otherParametric = other.toParametricPolynomial()
-        val intersectionPolynomial = thisImplicit.put(otherParametric)
+        val otherImplicit = other.implicitize()
+        val thisParametric = this.toParametricPolynomial()
+        val intersectionPolynomial = otherImplicit.put(thisParametric)
         return intersectionPolynomial.findRoots().toSet()
     }
 
