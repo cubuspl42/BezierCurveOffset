@@ -389,7 +389,44 @@ class CubicBezierCurveTests {
     }
 
     @Test
-    fun testFindIntersection_lineSegment() {
+    fun testFindIntersections_lineSegment() {
+        val extractedCurveSet = SvgCurveExtractionUtils.extractCurves(
+            clazz = CubicBezierCurveTests::class.java,
+            resourceName = "lineBezierIntersection1.svg",
+        )
+
+        val extractedBezier = extractedCurveSet.getPathByColor(
+            color = ExtractedPath.blue,
+        ) as SvgCurveExtractionUtils.ExtractedOpenSpline
+
+        val bezierCurve = extractedBezier.openSpline.subCurves.single() as CubicBezierCurve
+
+        val extractedLine = extractedCurveSet.getPathByColor(
+            color = ExtractedPath.red,
+        ) as SvgCurveExtractionUtils.ExtractedOpenSpline
+
+        val lineSegment = extractedLine.openSpline.subCurves.single() as LineSegment
+
+        val intersectionDetails = CubicBezierCurve.findIntersections(
+            lineSegment = lineSegment,
+            bezierCurve = bezierCurve,
+        )
+
+        val intersectionDetailsSorted = intersectionDetails.sortedBy { it.x }
+
+        assertEqualsWithTolerance(
+            expected = listOf(
+                Point.of(56.4104, 121.4349),
+                Point.of(125.0821, 138.2226),
+                Point.of(191.6589, 154.4981),
+            ),
+            actual = intersectionDetailsSorted,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testFindIntersections_bezierCurve() {
         val extractedCurveSet = SvgCurveExtractionUtils.extractCurves(
             clazz = CubicBezierCurveTests::class.java,
             resourceName = "lineBezierIntersection1.svg",

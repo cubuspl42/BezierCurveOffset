@@ -3,7 +3,6 @@ package app.geometry.curves
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
 import app.algebra.euclidean.ParametricLineFunction
-import app.algebra.euclidean.bezier_binomials.ParametricCurveFunction
 import app.fillCircle
 import app.geometry.BoundingBox
 import app.geometry.Direction

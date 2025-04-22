@@ -95,10 +95,10 @@ data class Polynomial<out D : Polynomial.Degree>(
             a0: Double,
             a1: Double,
             a2: Double,
-        ): CubicPolynomial {
+        ): QuadraticPolynomial {
             @Suppress("UNCHECKED_CAST") return of(
                 a0, a1, a2,
-            ) as CubicPolynomial
+            ) as QuadraticPolynomial
         }
 
         fun cubic(

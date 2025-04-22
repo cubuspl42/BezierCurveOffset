@@ -52,34 +52,6 @@ data class CubicBezierBinomial(
         return c1 + c2 + c3 + c4
     }
 
-    /**
-     * Solve the intersection of a cubic Bézier curve and a line.
-     *
-     * @return A set of intersection parameter values t for this curve.
-     */
-    fun solveIntersection(
-        lineFunction: ParametricLineFunction,
-    ): List<Double> {
-        val lineImplicit = lineFunction.implicitize()
-        val thisParametric = toParametricPolynomial()
-        val intersectionPolynomial = lineImplicit.put(thisParametric)
-        return intersectionPolynomial.findRoots()
-    }
-
-    /**
-     * Solve the intersection of two cubic Bézier curves.
-     *
-     * @return A set of intersection parameter values t for this curve.
-     */
-    fun solveIntersections(
-        other: CubicBezierBinomial,
-    ): Set<Double> {
-        val otherImplicit = other.implicitize()
-        val thisParametric = this.toParametricPolynomial()
-        val intersectionPolynomial = otherImplicit.put(thisParametric)
-        return intersectionPolynomial.findRoots().toSet()
-    }
-
     override fun solvePoint(
         p: RawVector,
         tolerance: NumericObject.Tolerance

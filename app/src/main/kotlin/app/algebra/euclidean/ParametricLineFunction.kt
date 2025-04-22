@@ -40,12 +40,7 @@ data class ParametricLineFunction(
      */
     fun solveIntersection(
         other: ParametricLineFunction,
-    ): Double? {
-        val otherImplicit = other.implicitize()
-        val thisParametric = this.toParametricPolynomial()
-        val intersectionPolynomial = otherImplicit.put(thisParametric)
-        return intersectionPolynomial.findRoots().singleOrNull()
-    }
+    ): Double? = solveIntersections(other).singleOrNull()
 
     /**
      * Solve the equation s + d * t = p for t

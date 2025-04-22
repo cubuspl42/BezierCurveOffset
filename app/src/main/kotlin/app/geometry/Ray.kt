@@ -1,6 +1,5 @@
 package app.geometry
 
-import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
 import app.algebra.euclidean.ParametricLineFunction
 import app.fill

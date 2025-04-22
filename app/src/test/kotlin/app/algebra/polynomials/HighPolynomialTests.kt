@@ -230,7 +230,7 @@ class HighPolynomialTests {
             1.60246744255751e+22,
             -8.09146929050218e+21,
             1.73006535868332e+21,
-        ) as HighPolynomial
+        )
 
         val expectedRoots = listOf(
             0.08321298331285831,

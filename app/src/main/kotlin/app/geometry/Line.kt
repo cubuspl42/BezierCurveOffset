@@ -19,14 +19,6 @@ class Line(
         )
     }
 
-    fun findIntersection(
-        other: Line,
-    ): Point? = toParametricLineFunction().solveIntersection(
-        other.toParametricLineFunction()
-    )?.let { t ->
-        evaluate(t = t)
-    }
-
     fun toParametricLineFunction() = ParametricLineFunction(
         s = representativePoint.pv,
         d = biDirection.dv,

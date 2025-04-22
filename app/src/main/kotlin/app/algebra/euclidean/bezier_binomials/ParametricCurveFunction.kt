@@ -15,12 +15,12 @@ abstract class ParametricCurveFunction : RealFunction<RawVector> {
      *
      * @return A set of intersection parameter values t for this curve.
      */
-    fun solveIntersection(
-        curveFunction: ParametricCurveFunction,
+    fun solveIntersections(
+        other: ParametricCurveFunction,
     ): List<Double> {
-        val lineImplicit = curveFunction.implicitize()
+        val otherImplicit = other.implicitize()
         val thisParametric = toParametricPolynomial()
-        val intersectionPolynomial = lineImplicit.put(thisParametric)
+        val intersectionPolynomial = otherImplicit.put(thisParametric)
         return intersectionPolynomial.findRoots()
     }
 
