@@ -3,8 +3,6 @@ package app.algebra.bezier_binomials
 import app.algebra.polynomials.ParametricPolynomial
 import app.geometry.ParametricLineFunction
 import app.geometry.RawVector
-import app.geometry.curves.LineSegment
-import app.geometry.times
 
 class QuadraticBezierBinomial(
     val weight0: RawVector,

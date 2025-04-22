@@ -1,4 +1,4 @@
-package app.geometry
+package app.algebra.implicit_polynomials
 
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
@@ -6,6 +6,7 @@ import app.algebra.equalsWithTolerance
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.polynomials.Polynomial
 import app.algebra.polynomials.times
+import app.geometry.RawVector
 
 /**
  * A bi-linear polynomial in the form...

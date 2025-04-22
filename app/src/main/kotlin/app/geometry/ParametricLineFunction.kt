@@ -1,6 +1,7 @@
 package app.geometry
 
 import app.algebra.bezier_binomials.ParametricCurveFunction
+import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 
 /**

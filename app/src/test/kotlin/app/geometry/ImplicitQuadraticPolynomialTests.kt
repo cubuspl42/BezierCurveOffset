@@ -1,6 +1,9 @@
 package app.geometry
 
 import app.algebra.assertEqualsWithAbsoluteTolerance
+import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
+import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
+import app.algebra.implicit_polynomials.ImplicitQuadraticPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.polynomials.Polynomial
 import kotlin.test.Test

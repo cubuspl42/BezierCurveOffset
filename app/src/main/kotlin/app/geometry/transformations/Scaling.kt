@@ -3,7 +3,6 @@ package app.geometry.transformations
 import app.algebra.linear.matrices.matrix3.Matrix3x3
 import app.algebra.linear.vectors.vector3.Vector1x3
 import app.geometry.Point
-import app.geometry.times
 
 data class Scaling(
     val factor: Double,

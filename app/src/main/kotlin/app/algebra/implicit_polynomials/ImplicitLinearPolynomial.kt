@@ -1,14 +1,12 @@
-package app.geometry
+package app.algebra.implicit_polynomials
 
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
 import app.algebra.equalsWithTolerance
-import app.algebra.polynomials.LinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.polynomials.Polynomial
-import app.algebra.polynomials.a0
-import app.algebra.polynomials.a1
 import app.algebra.polynomials.times
+import app.geometry.RawVector
 
 /**
  * A polynomial in the form a1 * x + b1 * y + c

@@ -1,4 +1,4 @@
-package app.geometry
+package app.algebra.implicit_polynomials
 
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance

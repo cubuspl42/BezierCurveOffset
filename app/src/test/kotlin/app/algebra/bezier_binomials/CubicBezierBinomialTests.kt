@@ -6,7 +6,7 @@ import app.algebra.assertEqualsWithRelativeTolerance
 import app.algebra.assertEqualsWithTolerance
 import app.algebra.polynomials.HighPolynomial
 import app.algebra.polynomials.ParametricPolynomial
-import app.geometry.ImplicitCubicPolynomial
+import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
 import app.geometry.Point
 import app.geometry.RawVector
 import app.geometry.SvgCurveExtractionUtils

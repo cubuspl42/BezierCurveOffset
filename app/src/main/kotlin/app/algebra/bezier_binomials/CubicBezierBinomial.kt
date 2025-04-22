@@ -3,11 +3,10 @@ package app.algebra.bezier_binomials
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.polynomials.ParametricPolynomial
-import app.geometry.ImplicitCubicPolynomial
-import app.geometry.ImplicitLinearPolynomial
+import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
+import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.geometry.ParametricLineFunction
 import app.geometry.RawVector
-import app.geometry.times
 
 data class CubicBezierBinomial(
     val weight0: RawVector,
