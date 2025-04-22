@@ -59,19 +59,34 @@ data class LineSegment(
             end = end,
         )
 
+        fun findIntersections(
+            lineSegment0: LineSegment,
+            lineSegment1: LineSegment,
+        ): Set<Point> = setOfNotNull(
+            findIntersection(
+                lineSegment0 = lineSegment0,
+                lineSegment1 = lineSegment1,
+            ),
+        )
+
         fun findIntersection(
             lineSegment0: LineSegment,
             lineSegment1: LineSegment,
-        ): Set<Point> {
-            val t = lineSegment0.toParametricLineFunction().solveIntersection(
-                other = lineSegment1.toParametricLineFunction(),
-            )
+        ): Point? {
+            val l0 = lineSegment0.toParametricLineFunction()
+            val l1 = lineSegment1.toParametricLineFunction()
 
-            return IntersectionDetails.build(
-                tValues0 = setOfNotNull(t),
-                curve0 = lineSegment0,
-                lineSegment1 = lineSegment1,
-            )
+            val t0 = l0.solveIntersection(l1) ?: return null
+
+            if (t0 !in segmentTRange) return null
+
+            val potentialIntersectionPoint = l0.apply(t0)
+
+            val t1 = l1.solvePoint(potentialIntersectionPoint) ?: return null
+
+            if (t1 !in segmentTRange) return null
+
+            return potentialIntersectionPoint.asPoint
         }
     }
 
@@ -203,13 +218,6 @@ data class LineSegment(
     override val simplified: SegmentCurve<*>
         get() = this
 
-
-    fun containsPoint(
-        point: Point,
-    ): Boolean {
-        val t = toParametricLineFunction().solvePoint(p = point.pv) ?: return false
-        return t in segmentTRange
-    }
 }
 
 private fun SegmentCurve<*>.toSvgPathSeg(

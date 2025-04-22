@@ -66,7 +66,7 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : QuasiSegmentCur
             segmentCurve0: SegmentCurve<*>,
             segmentCurve1: SegmentCurve<*>,
         ): Set<Point> = when {
-            segmentCurve0 is LineSegment && segmentCurve1 is LineSegment -> LineSegment.findIntersection(
+            segmentCurve0 is LineSegment && segmentCurve1 is LineSegment -> LineSegment.findIntersections(
                 lineSegment0 = segmentCurve0,
                 lineSegment1 = segmentCurve1,
             )

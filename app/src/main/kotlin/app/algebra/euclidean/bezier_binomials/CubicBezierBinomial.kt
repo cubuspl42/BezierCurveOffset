@@ -29,15 +29,6 @@ data class CubicBezierBinomial(
         val characteristicInvertedMatrix = characteristicMatrix.invert() ?: error("Matrix is not invertible")
     }
 
-    /**
-     * Solve B(t) = L(t') for t
-     */
-    fun solve(
-        lineFunction: ParametricLineFunction,
-    ): List<Double> = lineFunction.implicitize().put(
-        toParametricPolynomial(),
-    ).findRoots()
-
     override fun findDerivative(): QuadraticBezierBinomial = QuadraticBezierBinomial(
         3.0 * (weight1 - weight0),
         3.0 * (weight2 - weight1),
@@ -58,6 +49,20 @@ data class CubicBezierBinomial(
         val c3 = 3.0 * u * x * x * weight2
         val c4 = x * x * x * weight3
         return c1 + c2 + c3 + c4
+    }
+
+    /**
+     * Solve the intersection of a cubic Bézier curve and a line.
+     *
+     * @return A set of intersection parameter values t for this curve.
+     */
+    fun solveIntersection(
+        lineFunction: ParametricLineFunction,
+    ): List<Double> {
+        val lineImplicit = lineFunction.implicitize()
+        val thisParametric = toParametricPolynomial()
+        val intersectionPolynomial = lineImplicit.put(thisParametric)
+        return intersectionPolynomial.findRoots()
     }
 
     /**

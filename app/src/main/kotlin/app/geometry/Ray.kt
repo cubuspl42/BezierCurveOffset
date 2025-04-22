@@ -52,12 +52,12 @@ class Ray(
         val t0 = l0.solveIntersection(l1) ?: return null
         if (t0 < 0.0) return null
 
-        val point = l0.apply(t0)
+        val potentialIntersectionPoint = l0.apply(t0)
 
-        val t1 = l1.solvePoint(point) ?: return null
+        val t1 = l1.solvePoint(potentialIntersectionPoint) ?: return null
         if (t1 < 0.0) return null
 
-        return point.asPoint
+        return potentialIntersectionPoint.asPoint
     }
 
     fun toParametricLineFunction(): ParametricLineFunction = ParametricLineFunction(
