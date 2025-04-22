@@ -6,6 +6,8 @@ import app.algebra.equalsWithTolerance
 import app.algebra.polynomials.LinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.polynomials.Polynomial
+import app.algebra.polynomials.a0
+import app.algebra.polynomials.a1
 import app.algebra.polynomials.times
 
 /**
@@ -25,21 +27,6 @@ data class ImplicitLinearPolynomial(
             a1 = a1,
             b1 = b1,
             c = c,
-        )
-
-        /**
-         * @param py - the polynomial in the form a1 * y + a0
-         * @param px - the polynomial in the form a1' * x + a0'
-         *
-         * @return ay - bx
-         */
-        fun minus(
-            py: LinearPolynomial,
-            px: LinearPolynomial,
-        ): ImplicitLinearPolynomial = ImplicitLinearPolynomial.of(
-            a1 = -px.a1,
-            b1 = py.a1,
-            c = py.a0 - px.a0,
         )
     }
 
@@ -93,13 +80,13 @@ data class ImplicitLinearPolynomial(
     ): ImplicitCubicPolynomial = other * this
 
     fun put(
-        x: Polynomial,
-        y: Polynomial,
-    ): Polynomial = a1 * x + b1 * y + c
+        x: Polynomial<*>,
+        y: Polynomial<*>,
+    ): Polynomial<*> = a1 * x + b1 * y + c
 
     fun put(
         p: ParametricPolynomial,
-    ): Polynomial = put(
+    ): Polynomial<*> = put(
         x = p.xFunction,
         y = p.yFunction,
     )

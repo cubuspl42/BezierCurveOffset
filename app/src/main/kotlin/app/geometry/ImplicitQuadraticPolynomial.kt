@@ -106,7 +106,7 @@ data class ImplicitQuadraticPolynomial(
 
     fun put(
         parametricPolynomial: ParametricPolynomial,
-    ): Polynomial {
+    ): Polynomial<*> {
         val x = parametricPolynomial.xFunction
         val y = parametricPolynomial.yFunction
 

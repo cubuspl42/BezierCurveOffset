@@ -6,8 +6,8 @@ import app.algebra.bezier_binomials.RealFunction
 import app.geometry.RawVector
 
 data class ParametricPolynomial(
-    val xFunction: Polynomial,
-    val yFunction: Polynomial,
+    val xFunction: Polynomial<*>,
+    val yFunction: Polynomial<*>,
 ) : RealFunction<RawVector>, NumericObject {
     data class SolutionSet(
         val xSolutions: Set<Double>,
@@ -31,22 +31,22 @@ data class ParametricPolynomial(
 
     companion object {
         fun cubic(
-            a: RawVector,
-            b: RawVector,
-            c: RawVector,
-            d: RawVector,
+            a3: RawVector,
+            a2: RawVector,
+            a1: RawVector,
+            a0: RawVector,
         ): ParametricPolynomial = ParametricPolynomial(
-            xFunction = CubicPolynomial.of(
-                a = a.x,
-                b = b.x,
-                c = c.x,
-                d = d.x,
+            xFunction = Polynomial.cubic(
+                a3 = a3.x,
+                a2 = a2.x,
+                a1 = a1.x,
+                a0 = a0.x,
             ),
-            yFunction = CubicPolynomial.of(
-                a = a.y,
-                b = b.y,
-                c = c.y,
-                d = d.y,
+            yFunction = Polynomial.cubic(
+                a3 = a3.y,
+                a2 = a2.y,
+                a1 = a1.y,
+                a0 = a0.y,
             ),
         )
 
@@ -55,12 +55,12 @@ data class ParametricPolynomial(
             b: RawVector,
             c: RawVector,
         ): ParametricPolynomial = ParametricPolynomial(
-            xFunction = QuadraticPolynomial.of(
+            xFunction = Polynomial.quadratic(
                 a2 = a.x,
                 a1 = b.x,
                 a0 = c.x,
             ),
-            yFunction = QuadraticPolynomial.of(
+            yFunction = Polynomial.quadratic(
                 a2 = a.y,
                 a1 = b.y,
                 a0 = c.y,
@@ -71,11 +71,11 @@ data class ParametricPolynomial(
             a1: RawVector,
             a0: RawVector,
         ): ParametricPolynomial = ParametricPolynomial(
-            xFunction = LinearPolynomial.of(
+            xFunction = Polynomial.linear(
                 a1 = a1.x,
                 a0 = a0.x,
             ),
-            yFunction = LinearPolynomial.of(
+            yFunction = Polynomial.linear(
                 a1 = a1.y,
                 a0 = a0.y,
             ),
@@ -84,11 +84,11 @@ data class ParametricPolynomial(
         fun constant(
             a: RawVector,
         ): ParametricPolynomial = ParametricPolynomial(
-            xFunction = ConstantPolynomial.of(
-                a = a.x,
+            xFunction = Polynomial.constant(
+                a0 = a.x,
             ),
-            yFunction = ConstantPolynomial.of(
-                a = a.y,
+            yFunction = Polynomial.constant(
+                a0 = a.y,
             ),
         )
     }

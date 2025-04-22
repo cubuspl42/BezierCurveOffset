@@ -1,8 +1,8 @@
 package app.geometry
 
 import app.algebra.assertEqualsWithAbsoluteTolerance
-import app.algebra.polynomials.LinearPolynomial
 import app.algebra.polynomials.ParametricPolynomial
+import app.algebra.polynomials.Polynomial
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -62,11 +62,11 @@ class ParametricLineFunctionTests {
 
         assertEqualsWithAbsoluteTolerance(
             expected = ParametricPolynomial(
-                xFunction = LinearPolynomial.of(
+                xFunction = Polynomial.linear(
                     a1 = -0.45,
                     a0 = 50.0,
                 ),
-                yFunction = LinearPolynomial.of(
+                yFunction = Polynomial.linear(
                     a1 = 0.89,
                     a0 = 0.0,
                 ),

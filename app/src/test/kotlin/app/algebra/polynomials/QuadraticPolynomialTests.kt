@@ -9,26 +9,85 @@ class QuadraticPolynomialTests {
     private val eps = 10e-5
 
     @Test
+    fun testPlus_linear() {
+        val pa = Polynomial.quadratic(
+            a0 = 12.0,
+            a1 = 2.5,
+            a2 = 3.4,
+        )
+
+        val pb = Polynomial.linear(
+            a0 = 2.0,
+            a1 = 21.5,
+        )
+
+        val sum = pa + pb
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = Polynomial.quadratic(
+                a0 = 14.0,
+                a1 = 24.0,
+                a2 = 3.4,
+            ),
+            actual = sum,
+            absoluteTolerance = eps,
+        )
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = sum,
+            actual = pb + pa,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testPlus_quadratic() {
+        val pa = Polynomial.quadratic(
+            a0 = 12.0,
+            a1 = 2.5,
+            a2 = 3.4,
+        )
+
+        val pb = Polynomial.quadratic(
+            a0 = 2.0,
+            a1 = 21.5,
+            a2 = 13.4,
+        )
+
+        val sum = pa + pb
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = Polynomial.quadratic(
+                a0 = 14.0,
+                a1 = 24.0,
+                a2 = 16.8,
+            ),
+            actual = sum,
+            absoluteTolerance = eps,
+        )
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = sum,
+            actual = pb + pa,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
     fun testTimes_constant() {
-        val pa = QuadraticPolynomial.of(
+        val pa = Polynomial.quadratic(
             a0 = 2.0,
             a1 = -3.0,
             a2 = 1.0,
         )
-        val pb = ConstantPolynomial.of(
-            a = 2.0,
+        val pb = Polynomial.constant(
+            a0 = 2.0,
         )
 
         val product = pa * pb
 
-        /* Octave code:
-        pa = [2, -3, 1]
-        pb = [2]
-        product = conv(pa, pb)
-        */
-
         assertEqualsWithAbsoluteTolerance(
-            expected = QuadraticPolynomial.of(
+            expected = Polynomial.quadratic(
                 a0 = 4.0,
                 a1 = -6.0,
                 a2 = 2.0,
@@ -45,13 +104,13 @@ class QuadraticPolynomialTests {
 
     @Test
     fun testTimes_linear() {
-        val pa = QuadraticPolynomial.of(
+        val pa = Polynomial.quadratic(
             a0 = 2.0,
             a1 = -3.0,
             a2 = 1.0,
         )
 
-        val pb = LinearPolynomial.of(
+        val pb = Polynomial.linear(
             a0 = -1.0,
             a1 = 2.0,
         )
@@ -59,11 +118,11 @@ class QuadraticPolynomialTests {
         val product = pa * pb
 
         assertEqualsWithAbsoluteTolerance(
-            expected = CubicPolynomial.of(
-                d = -2.0,
-                c = 7.0,
-                b = -7.0,
-                a = 2.0,
+            expected = Polynomial.cubic(
+                a0 = -2.0,
+                a1 = 7.0,
+                a2 = -7.0,
+                a3 = 2.0,
             ),
             actual = product,
             absoluteTolerance = eps,
@@ -77,13 +136,13 @@ class QuadraticPolynomialTests {
 
     @Test
     fun testTimes_quadratic() {
-        val pa = QuadraticPolynomial.of(
+        val pa = Polynomial.quadratic(
             a0 = 2.0,
             a1 = -3.0,
             a2 = 1.0,
         )
 
-        val pb = QuadraticPolynomial.of(
+        val pb = Polynomial.quadratic(
             a0 = 4.0,
             a1 = -1.0,
             a2 = 2.0,
@@ -107,7 +166,7 @@ class QuadraticPolynomialTests {
 
     @Test
     fun testFindRoots_singleRoot() {
-        val pa = QuadraticPolynomial.of(
+        val pa = Polynomial.quadratic(
             a0 = 1.0,
             a1 = -2.0,
             a2 = 1.0,
@@ -124,7 +183,7 @@ class QuadraticPolynomialTests {
 
     @Test
     fun testFindRoots_twoRoots() {
-        val pa = QuadraticPolynomial.of(
+        val pa = Polynomial.quadratic(
             a0 = 2.0,
             a1 = -3.0,
             a2 = 1.0,
@@ -141,7 +200,7 @@ class QuadraticPolynomialTests {
 
     @Test
     fun testFindRoots_noRoots() {
-        val pa = QuadraticPolynomial.of(
+        val pa = Polynomial.quadratic(
             a0 = 1.0,
             a1 = 0.0,
             a2 = 1.0,

@@ -7,19 +7,66 @@ class ConstantPolynomialTests {
     private val eps = 10e-4
 
     @Test
-    fun testTimes_constant() {
-        val pa = ConstantPolynomial.of(
-            a = 3.0,
+    fun testPlus_scalar() {
+        val pa = Polynomial.constant(
+            a0 = 3.0,
         )
-        val pb = ConstantPolynomial.of(
-            a = 2.0,
+
+        val b = 2.0
+
+        val sum = pa + b
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = Polynomial.constant(
+                a0 = 5.0,
+            ),
+            actual = sum,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testPlus_constant() {
+        val pa = Polynomial.constant(
+            a0 = 3.0,
+        )
+
+        val pb = Polynomial.constant(
+            a0 = 2.0,
+        )
+
+        val sum = pa + pb
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = Polynomial.constant(
+                a0 = 5.0,
+            ),
+            actual = sum,
+            absoluteTolerance = eps,
+        )
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = sum,
+            actual = pb + pa,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testTimes_constant() {
+        val pa = Polynomial.constant(
+            a0 = 3.0,
+        )
+
+        val pb = Polynomial.constant(
+            a0 = 2.0,
         )
 
         val product = pa * pb
 
         assertEqualsWithAbsoluteTolerance(
-            expected = ConstantPolynomial.of(
-                a = 6.0,
+            expected = Polynomial.constant(
+                a0 = 6.0,
             ),
             actual = product,
             absoluteTolerance = eps,

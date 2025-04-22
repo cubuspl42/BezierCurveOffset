@@ -16,8 +16,8 @@ class HighPolynomialTests {
             -4.0, 3.0, -2.0, 1.0, 6.0, 12.2
         )
 
-        val pb = ConstantPolynomial.of(
-            a = 2.0,
+        val pb = Polynomial.constant(
+            a0 = 2.0,
         )
 
         val product = pa * pb
@@ -52,7 +52,7 @@ class HighPolynomialTests {
             -2.3,
         )
 
-        val pb = QuadraticPolynomial.of(
+        val pb = Polynomial.quadratic(
             a0 = 4.0,
             a1 = -1.0,
             a2 = 2.0,
@@ -91,11 +91,11 @@ class HighPolynomialTests {
             18.9,
         )
 
-        val pb = CubicPolynomial.of(
-            d = -3.0,
-            c = 4.0,
-            b = -1.0,
-            a = 2.0,
+        val pb = Polynomial.cubic(
+            a0 = -3.0,
+            a1 = 4.0,
+            a2 = -1.0,
+            a3 = 2.0,
         )
 
         val product = pa * pb

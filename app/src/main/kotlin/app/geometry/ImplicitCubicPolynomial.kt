@@ -108,7 +108,7 @@ data class ImplicitCubicPolynomial(
 
     fun put(
         parametricPolynomial: ParametricPolynomial,
-    ): Polynomial {
+    ): Polynomial<*> {
         val x = parametricPolynomial.xFunction
         val y = parametricPolynomial.yFunction
 

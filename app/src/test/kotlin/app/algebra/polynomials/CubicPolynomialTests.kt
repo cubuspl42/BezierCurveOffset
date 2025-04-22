@@ -2,8 +2,6 @@ package app.algebra.polynomials
 
 import app.algebra.assertEqualsWithTolerance
 import app.algebra.assertEqualsWithAbsoluteTolerance
-import app.algebra.linear.matrices.matrix3.Matrix3x3
-import app.algebra.linear.vectors.vector3.Vector1x3
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -11,25 +9,94 @@ class CubicPolynomialTests {
     private val eps = 10e-5
 
     @Test
-    fun testTimes_constant() {
-        val pa = CubicPolynomial.of(
-            d = -1.0,
-            c = 2.0,
-            b = -3.0,
-            a = 1.0,
+    fun testPlus_constant() {
+        val pa = Polynomial.cubic(
+            a0 = 12.0,
+            a1 = 2.5,
+            a2 = 3.4,
+            a3 = 5.7,
         )
-        val pb = ConstantPolynomial.of(
-            a = 2.0,
+
+        val pb = Polynomial.constant(
+            a0 = 3.5,
+        )
+
+        val sum = pa + pb
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = Polynomial.cubic(
+                a0 = 15.5,
+                a1 = 2.5,
+                a2 = 3.4,
+                a3 = 5.7,
+            ),
+            actual = sum,
+            absoluteTolerance = eps,
+        )
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = sum,
+            actual = pb + pa,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testPlus_cubic() {
+        val pa = Polynomial.cubic(
+            a0 = 12.0,
+            a1 = 2.5,
+            a2 = 3.4,
+            a3 = 5.7,
+        )
+
+        val pb = Polynomial.cubic(
+            a0 = 2.0,
+            a1 = 21.5,
+            a2 = 13.4,
+            a3 = 7.2,
+        )
+
+        val sum = pa + pb
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = Polynomial.cubic(
+                a0 = 14.0,
+                a1 = 24.0,
+                a2 = 16.8,
+                a3 = 12.9,
+            ),
+            actual = sum,
+            absoluteTolerance = eps,
+        )
+
+        assertEqualsWithAbsoluteTolerance(
+            expected = sum,
+            actual = pb + pa,
+            absoluteTolerance = eps,
+        )
+    }
+
+    @Test
+    fun testTimes_constant() {
+        val pa = Polynomial.cubic(
+            a0 = -1.0,
+            a1 = 2.0,
+            a2 = -3.0,
+            a3 = 1.0,
+        )
+        val pb = Polynomial.constant(
+            a0 = 2.0,
         )
 
         val product = pa * pb
 
         assertEqualsWithAbsoluteTolerance(
-            expected = CubicPolynomial.of(
-                d = -2.0,
-                c = 4.0,
-                b = -6.0,
-                a = 2.0,
+            expected = Polynomial.cubic(
+                a0 = -2.0,
+                a1 = 4.0,
+                a2 = -6.0,
+                a3 = 2.0,
             ),
             actual = product,
             absoluteTolerance = eps,
@@ -43,14 +110,14 @@ class CubicPolynomialTests {
 
     @Test
     fun testTimes_linear() {
-        val pa = CubicPolynomial.of(
-            d = -1.0,
-            c = 2.0,
-            b = -3.0,
-            a = 1.0,
+        val pa = Polynomial.cubic(
+            a0 = -1.0,
+            a1 = 2.0,
+            a2 = -3.0,
+            a3 = 1.0,
         )
 
-        val pb = LinearPolynomial.of(
+        val pb = Polynomial.linear(
             a0 = -1.0,
             a1 = 2.0,
         )
@@ -77,14 +144,14 @@ class CubicPolynomialTests {
 
     @Test
     fun testTimes_quadratic() {
-        val pa = CubicPolynomial.of(
-            d = -1.0,
-            c = 2.0,
-            b = -3.0,
-            a = 1.0,
+        val pa = Polynomial.cubic(
+            a0 = -1.0,
+            a1 = 2.0,
+            a2 = -3.0,
+            a3 = 1.0,
         )
 
-        val pb = QuadraticPolynomial.of(
+        val pb = Polynomial.quadratic(
             a0 = 2.0,
             a1 = -3.0,
             a2 = 1.0,
@@ -113,17 +180,17 @@ class CubicPolynomialTests {
 
     @Test
     fun testTimes_cubic() {
-        val pa = CubicPolynomial.of(
-            d = -1.0,
-            c = 2.0,
-            b = -3.0,
-            a = 1.0,
+        val pa = Polynomial.cubic(
+            a0 = -1.0,
+            a1 = 2.0,
+            a2 = -3.0,
+            a3 = 1.0,
         )
-        val pb = CubicPolynomial.of(
-            d = -3.0,
-            c = 4.0,
-            b = -1.0,
-            a = 2.0,
+        val pb = Polynomial.cubic(
+            a0 = -3.0,
+            a1 = 4.0,
+            a2 = -1.0,
+            a3 = 2.0,
         )
 
         val product = pa * pb
@@ -150,11 +217,11 @@ class CubicPolynomialTests {
 
     @Test
     fun testFindRoots_singleRoot() {
-        val polynomial = CubicPolynomial.of(
-            d = -1.0,
-            c = 3.0,
-            b = -3.0,
-            a = 1.0,
+        val polynomial = Polynomial.cubic(
+            a0 = -1.0,
+            a1 = 3.0,
+            a2 = -3.0,
+            a3 = 1.0,
         )
 
         val roots = polynomial.findRoots().toSet()
@@ -167,11 +234,11 @@ class CubicPolynomialTests {
 
     @Test
     fun testFindRoots_twoRoots() {
-        val polynomial = CubicPolynomial.of(
-            d = 2.0,
-            c = -3.0,
-            b = 0.0,
-            a = 1.0,
+        val polynomial = Polynomial.cubic(
+            a0 = 2.0,
+            a1 = -3.0,
+            a2 = 0.0,
+            a3 = 1.0,
         )
 
         val roots = polynomial.findRoots().sorted()
@@ -185,11 +252,11 @@ class CubicPolynomialTests {
 
     @Test
     fun testFindRoots_threeRoots() {
-        val polynomial = CubicPolynomial.of(
-            d = -6.0,
-            c = 11.0,
-            b = -6.0,
-            a = 1.0,
+        val polynomial = Polynomial.cubic(
+            a0 = -6.0,
+            a1 = 11.0,
+            a2 = -6.0,
+            a3 = 1.0,
         )
 
         val roots = polynomial.findRoots().sorted()
@@ -198,48 +265,6 @@ class CubicPolynomialTests {
             expected = listOf(1.0, 2.0, 3.0),
             actual = roots,
             absoluteTolerance = eps,
-        )
-    }
-
-    @Test
-    fun testResultant() {
-        val pa = CubicPolynomial.of(
-            d = 1.0,
-            c = 3.0,
-            b = -2.0,
-            a = 1.0,
-        )
-
-        val pb = CubicPolynomial.of(
-            d = 4.0,
-            c = -1.0,
-            b = 3.0,
-            a = 2.0,
-        )
-
-        val resultantMatrix = CubicPolynomial.resultantMatrix(
-            pa = pa,
-            pb = pb,
-        )
-
-        assertEqualsWithAbsoluteTolerance(
-            expected = Matrix3x3.rowMajor(
-                row0 = Vector1x3(7.0, -7.0, 2.0),
-                row1 = Vector1x3(-7.0, -5.0, -11.0),
-                row2 = Vector1x3(2.0, -11.0, 13.0),
-            ),
-            actual = resultantMatrix,
-            absoluteTolerance = eps,
-        )
-
-        val resultant = CubicPolynomial.resultant(
-            pa = pa,
-            pb = pb,
-        )
-
-        assertEquals(
-            expected = -1611.0,
-            actual = resultant,
         )
     }
 }
