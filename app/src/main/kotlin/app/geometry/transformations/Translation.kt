@@ -5,6 +5,7 @@ import app.algebra.linear.vectors.vector3.Vector1x3
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.RawVector
+import app.geometry.times
 
 @Suppress("DataClassPrivateConstructor")
 data class Translation private constructor(

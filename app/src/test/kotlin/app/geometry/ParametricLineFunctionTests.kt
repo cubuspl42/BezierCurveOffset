@@ -10,7 +10,7 @@ import kotlin.test.assertNotNull
 
 class ParametricLineFunctionTests {
     @Test
-    fun testSolve() {
+    fun testSolveIntersection() {
         val l0 = ParametricLineFunction(
             s = RawVector(50.0, 0.0),
             d = RawVector(-0.45, 0.89),
@@ -21,7 +21,7 @@ class ParametricLineFunctionTests {
             d = RawVector(0.45, 0.89),
         )
 
-        val t0 = assertNotNull(l0.solve(l1))
+        val t0 = assertNotNull(l0.solveIntersection(l1))
 
         val p0 = l0.apply(t0)
 
@@ -33,13 +33,13 @@ class ParametricLineFunctionTests {
     }
 
     @Test
-    fun testToGeneralLineFunction() {
+    fun testImplicitize() {
         val l0 = ParametricLineFunction(
             s = RawVector(50.0, 0.0),
             d = RawVector(-0.45, 0.89),
         )
 
-        val lg0 = l0.toGeneralLineFunction()
+        val lg0 = l0.implicitize()
 
         assertEqualsWithAbsoluteTolerance(
             expected = ImplicitLinearPolynomial(

@@ -19,7 +19,7 @@ class Line(
 
     fun findIntersection(
         other: Line,
-    ): Point? = toParametricLineFunction().solve(
+    ): Point? = toParametricLineFunction().solveIntersection(
         other.toParametricLineFunction()
     )?.let { t ->
         evaluate(t = t)

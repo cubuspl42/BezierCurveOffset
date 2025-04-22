@@ -1,6 +1,5 @@
 package app.geometry
 
-import app.algebra.equalsWithTolerance
 import app.fill
 import app.geometry.curves.LineSegment
 import app.geometry.curves.toSvgPath
@@ -49,12 +48,12 @@ class Ray(
         val l0 = toParametricLineFunction()
         val l1 = other.toParametricLineFunction()
 
-        val t0 = l0.solve(l1) ?: return null
+        val t0 = l0.solveIntersection(l1) ?: return null
         if (t0 < 0.0) return null
 
         val point = l0.apply(t0)
 
-        val t1 = l1.solve(point) ?: return null
+        val t1 = l1.solvePoint(point) ?: return null
         if (t1 < 0.0) return null
 
         return point.asPoint

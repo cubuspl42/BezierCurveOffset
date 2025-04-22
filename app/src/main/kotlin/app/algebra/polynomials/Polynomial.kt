@@ -164,18 +164,12 @@ data class Polynomial<out D : Polynomial.Degree>(
      * Deflates the polynomial by a linear polynomial of the form (x - x0).
      *
      * @param x0 - a root of this polynomial
-     *
-     *
      */
     fun deflate(
         x0: Double,
-        tolerance: Tolerance,
     ): Polynomial<*> {
-        val (quotient, remainder) = divide(x0 = x0)
-
-        if (remainder.equalsZeroWithTolerance(tolerance = tolerance)) {
-            throw IllegalArgumentException("x0 doesn't appear to be a root of this polynomial")
-        }
+        // The remainder is sometimes a non-zero number (is this fine?)
+        val (quotient, _) = divide(x0 = x0)
 
         return quotient
     }
@@ -393,7 +387,6 @@ fun Polynomial<*>.findRootsNumeric(
 
     val deflatedPolynomial = this.deflate(
         x0 = primaryRoot,
-        tolerance = tolerance,
     )
 
     val lowerDegreeRoots = deflatedPolynomial.findRoots(

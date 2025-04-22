@@ -1,12 +1,13 @@
 package app.algebra.bezier_binomials
 
+import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
+import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.algebra.linear.matrices.matrix4.Matrix4x4
 import app.algebra.linear.vectors.vector4.Vector4
 import app.algebra.polynomials.ParametricPolynomial
-import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
-import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.geometry.ParametricLineFunction
 import app.geometry.RawVector
+import app.geometry.times
 
 data class CubicBezierBinomial(
     val weight0: RawVector,
@@ -33,7 +34,7 @@ data class CubicBezierBinomial(
      */
     fun solve(
         lineFunction: ParametricLineFunction,
-    ): List<Double> = lineFunction.toGeneralLineFunction().put(
+    ): List<Double> = lineFunction.implicitize().put(
         toParametricPolynomial(),
     ).findRoots()
 

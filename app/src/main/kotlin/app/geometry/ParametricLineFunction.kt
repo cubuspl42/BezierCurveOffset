@@ -24,7 +24,7 @@ data class ParametricLineFunction(
         a0 = s,
     )
 
-    fun toGeneralLineFunction(): ImplicitLinearPolynomial = ImplicitLinearPolynomial(
+    fun implicitize(): ImplicitLinearPolynomial = ImplicitLinearPolynomial(
         a1 = d.y,
         b1 = -d.x,
         c = d.cross(s),
@@ -33,19 +33,18 @@ data class ParametricLineFunction(
     /**
      * Solve the equation s + d * t = s' + d' * t' for t
      */
-    fun solve(
+    fun solveIntersection(
         other: ParametricLineFunction,
     ): Double? {
-        val glf = other.toGeneralLineFunction()
-        val pp = toParametricPolynomial()
-        val finalP = glf.put(pp)
-        return finalP.findRoots().singleOrNull()
+        val otherImplicit = other.implicitize()
+        val intersectionPolynomial = otherImplicit.put(toParametricPolynomial())
+        return intersectionPolynomial.findRoots().singleOrNull()
     }
 
     /**
      * Solve the equation s + d * t = p for t
      */
-    fun solve(
+    fun solvePoint(
         p: RawVector,
     ): Double? = when {
         d.x != 0.0 -> (p.x - s.x) / d.x

@@ -4,8 +4,6 @@ import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
 import app.fillCircle
 import app.geometry.BoundingBox
-import app.geometry.Curve
-import app.geometry.Curve.IntersectionDetails
 import app.geometry.Direction
 import app.geometry.ParametricLineFunction
 import app.geometry.Point
@@ -65,7 +63,7 @@ data class LineSegment(
             lineSegment0: LineSegment,
             lineSegment1: LineSegment,
         ): Set<Point> {
-            val t = lineSegment0.toParametricLineFunction().solve(
+            val t = lineSegment0.toParametricLineFunction().solveIntersection(
                 other = lineSegment1.toParametricLineFunction(),
             )
 
@@ -77,7 +75,7 @@ data class LineSegment(
         }
     }
 
-    fun toGeneralLineFunction() = toParametricLineFunction().toGeneralLineFunction()
+    fun toGeneralLineFunction() = toParametricLineFunction().implicitize()
 
     fun toParametricLineFunction(): ParametricLineFunction = ParametricLineFunction(
         d = dv,
@@ -209,7 +207,7 @@ data class LineSegment(
     fun containsPoint(
         point: Point,
     ): Boolean {
-        val t = toParametricLineFunction().solve(p = point.pv) ?: return false
+        val t = toParametricLineFunction().solvePoint(p = point.pv) ?: return false
         return t in segmentTRange
     }
 }
