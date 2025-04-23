@@ -77,14 +77,14 @@ data class ImplicitLinearPolynomial(
         other: ImplicitQuadraticPolynomial,
     ): ImplicitCubicPolynomial = other * this
 
-    fun put(
+    fun substitute(
         x: Polynomial<*>,
         y: Polynomial<*>,
     ): Polynomial<*> = a1 * x + b1 * y + c
 
-    override fun put(
+    override fun substitute(
         p: ParametricPolynomial,
-    ): Polynomial<*> = put(
+    ): Polynomial<*> = substitute(
         x = p.xFunction,
         y = p.yFunction,
     )

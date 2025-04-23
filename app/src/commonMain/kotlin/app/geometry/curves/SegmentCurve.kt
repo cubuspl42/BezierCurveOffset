@@ -56,10 +56,11 @@ abstract class SegmentCurve<out CurveT : SegmentCurve<CurveT>> : QuasiSegmentCur
             val c0 = segmentCurve0.basisFormula
             val c1 = segmentCurve1.basisFormula
 
-            val t0Values = c0.solveIntersections(c1).filter { it in segmentTRange }
-
-            val potentialIntersectionPoints = t0Values.map { t0 ->
-                c0.apply(t0)
+            val potentialIntersectionPoints = c0.solveIntersections(c1).mapNotNull { t0 ->
+                when {
+                    t0 in segmentTRange -> c0.apply(t0)
+                    else -> null
+                }
             }
 
             val intersectionPoints = potentialIntersectionPoints.mapNotNull { potentialIntersectionPoint ->

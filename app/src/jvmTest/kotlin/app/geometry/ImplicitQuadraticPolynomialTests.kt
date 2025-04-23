@@ -73,7 +73,7 @@ class ImplicitQuadraticPolynomialTests {
             ),
         )
 
-        val finalP = lg0.put(pp)
+        val finalP = lg0.substitute(pp)
 
         assertEqualsWithAbsoluteTolerance(
             expected = Polynomial.linear(

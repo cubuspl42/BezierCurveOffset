@@ -107,7 +107,7 @@ data class ImplicitCubicPolynomial(
         other: ImplicitCubicPolynomial,
     ): ImplicitCubicPolynomial = this + (-other)
 
-    override fun put(
+    override fun substitute(
         parametricPolynomial: ParametricPolynomial,
     ): Polynomial<*> {
         val x = parametricPolynomial.xFunction

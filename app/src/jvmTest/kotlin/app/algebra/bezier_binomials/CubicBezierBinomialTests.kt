@@ -128,7 +128,7 @@ class CubicBezierBinomialTests {
             relativeTolerance = eps,
         )
 
-        val intersectionPolynomial = implicitCubicPolynomial.put(
+        val intersectionPolynomial = implicitCubicPolynomial.substitute(
             waveCurve.basisFormula.toParametricPolynomial(),
         )
 

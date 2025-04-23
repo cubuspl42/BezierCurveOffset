@@ -48,7 +48,7 @@ class ImplicitLinearPolynomialTests {
 
 
     @Test
-    fun testPut() {
+    fun testSubstitute() {
         val lg0 = ImplicitLinearPolynomial(
             a1 = 0.89,
             b1 = -0.45,
@@ -66,7 +66,7 @@ class ImplicitLinearPolynomialTests {
             ),
         )
 
-        val finalP = lg0.put(pp)
+        val finalP = lg0.substitute(pp)
 
         assertEqualsWithAbsoluteTolerance(
             expected = Polynomial.linear(

@@ -19,8 +19,8 @@ abstract class ParametricCurveFunction : RealFunction<RawVector> {
         other: ParametricCurveFunction,
     ): List<Double> {
         val otherImplicit = other.implicitize()
-        val thisParametric = toParametricPolynomial()
-        val intersectionPolynomial = otherImplicit.put(thisParametric)
+        val thisParametric = this.toParametricPolynomial()
+        val intersectionPolynomial = otherImplicit.substitute(thisParametric)
         return intersectionPolynomial.findRoots()
     }
 

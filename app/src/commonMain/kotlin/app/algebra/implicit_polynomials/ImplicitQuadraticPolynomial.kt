@@ -112,7 +112,7 @@ data class ImplicitQuadraticPolynomial(
         return a2 * (x * x) + a1b1 * (x * y) + b2 * (y * y) + a1 * x + b1 * y + c
     }
 
-    override fun put(
+    override fun substitute(
         parametricPolynomial: ParametricPolynomial,
     ): Polynomial<*> {
         val x = parametricPolynomial.xFunction
