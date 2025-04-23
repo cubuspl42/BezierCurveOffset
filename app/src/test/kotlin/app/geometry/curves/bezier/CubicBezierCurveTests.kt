@@ -1,12 +1,19 @@
 package app.geometry.curves.bezier
 
+import app.algebra.NumericObject
 import app.algebra.assertEqualsWithAbsoluteTolerance
 import app.algebra.assertEqualsWithTolerance
+import app.algebra.euclidean.bezier_binomials.RealFunction
+import app.algebra.euclidean.bezier_binomials.sample
 import app.geometry.Point
 import app.geometry.SvgCurveExtractionUtils
-import app.geometry.SvgCurveExtractionUtils.ExtractedPath
+import app.geometry.SvgCurveExtractionUtils.ExtractedCircle
+import app.geometry.SvgCurveExtractionUtils.ExtractedOpenSpline
+import app.geometry.SvgCurveExtractionUtils.ExtractedShape
 import app.geometry.curves.LineSegment
 import app.geometry.splines.globalDeviation
+import kotlin.io.path.Path
+import kotlin.io.path.reader
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
@@ -395,14 +402,14 @@ class CubicBezierCurveTests {
             resourceName = "lineBezierIntersection1.svg",
         )
 
-        val extractedBezier = extractedCurveSet.getPathByColor(
-            color = ExtractedPath.blue,
+        val extractedBezier = extractedCurveSet.getShapeByColor(
+            color = ExtractedShape.blue,
         ) as SvgCurveExtractionUtils.ExtractedOpenSpline
 
         val bezierCurve = extractedBezier.openSpline.subCurves.single() as CubicBezierCurve
 
-        val extractedLine = extractedCurveSet.getPathByColor(
-            color = ExtractedPath.red,
+        val extractedLine = extractedCurveSet.getShapeByColor(
+            color = ExtractedShape.red,
         ) as SvgCurveExtractionUtils.ExtractedOpenSpline
 
         val lineSegment = extractedLine.openSpline.subCurves.single() as LineSegment
@@ -432,14 +439,14 @@ class CubicBezierCurveTests {
             resourceName = "lineBezierIntersection1.svg",
         )
 
-        val extractedBezier = extractedCurveSet.getPathByColor(
-            color = ExtractedPath.blue,
+        val extractedBezier = extractedCurveSet.getShapeByColor(
+            color = ExtractedShape.blue,
         ) as SvgCurveExtractionUtils.ExtractedOpenSpline
 
         val bezierCurve = extractedBezier.openSpline.subCurves.single() as CubicBezierCurve
 
-        val extractedLine = extractedCurveSet.getPathByColor(
-            color = ExtractedPath.red,
+        val extractedLine = extractedCurveSet.getShapeByColor(
+            color = ExtractedShape.red,
         ) as SvgCurveExtractionUtils.ExtractedOpenSpline
 
         val lineSegment = extractedLine.openSpline.subCurves.single() as LineSegment
@@ -460,5 +467,47 @@ class CubicBezierCurveTests {
             actual = intersectionDetailsSorted,
             absoluteTolerance = eps,
         )
+    }
+
+    @Test
+    fun testSnapPoint() {
+        val curveSet = SvgCurveExtractionUtils.extractCurves(
+            clazz = CubicBezierCurveTests::class.java,
+            resourceName = "curveAndPoints.svg",
+        )
+
+        val bezierCurve = curveSet.extractedShapes.filterIsInstance<ExtractedOpenSpline>().single().singleBezierCurve()
+
+        val samples = bezierCurve.basisFormula.sample(
+            strategy = RealFunction.SamplingStrategy(
+                sampleCount = 20000,
+            ),
+        )
+
+        fun snapPointNaively(
+            point: Point,
+        ): Point = samples.map { it.value }.minBy { sample ->
+            sample.asPoint.distanceTo(point)
+        }.asPoint
+
+        val points = curveSet.extractedShapes.mapNotNull {
+            (it as? ExtractedCircle)?.center
+        }
+
+        // Just ensure that the point loading succeeded
+        assert(points.size > 8)
+
+        points.forEach { point ->
+            val snappedPoint = bezierCurve.snapPoint(point)
+            val expectedSnappedPoint = snapPointNaively(point)
+
+            assertEqualsWithTolerance(
+                expected = expectedSnappedPoint,
+                actual = snappedPoint,
+                tolerance = NumericObject.Tolerance.Absolute(
+                    absoluteTolerance = 10e-3,
+                ),
+            )
+        }
     }
 }

@@ -268,6 +268,33 @@ data class CubicBezierCurve private constructor(
     ): CubicBezierCurve = mapPointWise {
         it.transformVia(translation)
     }
+
+    fun snapPoint(
+        point: Point,
+    ): Point {
+        val invertedBasis = basisFormula.invert()
+
+        val invertedTValue = invertedBasis?.apply(point.pv)?.valueOrNull?.coerceIn(segmentTRange) ?: 0.5
+
+        val projectionPolynomial = basisFormula.findPointProjectionPolynomial(g = point.pv)
+
+        val roots = projectionPolynomial.findRoots(
+            guessedRoot = invertedTValue,
+        )
+
+        val rootPoints = roots.mapNotNull {
+            when {
+                it in segmentTRange -> basisFormula.apply(it).asPoint
+                else -> null
+            }
+        }
+
+        val closestPoint = (rootPoints + listOf(start, end)).minBy {
+            it.distanceTo(point)
+        }
+
+        return closestPoint
+    }
 }
 
 fun CubicBezierCurve.toDebugControlSvgPathGroupCubic(

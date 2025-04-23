@@ -234,6 +234,7 @@ data class Polynomial<out D : Polynomial.Degree>(
 
     fun findRoots(
         maxDepth: Int = 1000,
+        guessedRoot: Double = 0.5,
         tolerance: Tolerance = Tolerance.Absolute(absoluteTolerance = Constants.epsilon),
     ): List<Double> = match(
         constant = { emptyList() },
@@ -243,6 +244,7 @@ data class Polynomial<out D : Polynomial.Degree>(
         high = {
             it.findRootsNumeric(
                 maxDepth = maxDepth,
+                guessedRoot = guessedRoot,
                 tolerance = tolerance,
             )
         },
@@ -378,11 +380,13 @@ fun CubicPolynomial.findRootsCubic(): List<Double> {
 
 fun Polynomial<*>.findRootsNumeric(
     maxDepth: Int,
+    guessedRoot: Double,
     tolerance: Tolerance,
 ): List<Double> {
     val primaryRoot = findPrimaryRootNumeric(
         maxDepth = maxDepth,
         tolerance = tolerance,
+        guessedRoot = guessedRoot,
     ) ?: return emptyList()
 
     val deflatedPolynomial = this.deflate(
@@ -391,6 +395,7 @@ fun Polynomial<*>.findRootsNumeric(
 
     val lowerDegreeRoots = deflatedPolynomial.findRoots(
         maxDepth = maxDepth,
+        guessedRoot = guessedRoot,
         tolerance = tolerance,
     )
 
@@ -399,6 +404,7 @@ fun Polynomial<*>.findRootsNumeric(
 
 fun Polynomial<*>.findPrimaryRootNumeric(
     maxDepth: Int = 1000,
+    guessedRoot: Double,
     tolerance: Tolerance,
 ): Double? {
     val n = degree.n.toDouble()
@@ -450,7 +456,7 @@ fun Polynomial<*>.findPrimaryRootNumeric(
     }
 
     return improveRoot(
-        approximatedRoot = 0.5,
+        approximatedRoot = guessedRoot,
         depth = 0,
     )
 }

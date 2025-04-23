@@ -8,15 +8,12 @@ import app.algebra.assertEqualsWithTolerance
 import app.algebra.euclidean.bezier_binomials.CubicBezierBinomial
 import app.algebra.euclidean.bezier_binomials.RealFunction
 import app.algebra.euclidean.bezier_binomials.sample
+import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
 import app.algebra.polynomials.HighPolynomial
 import app.algebra.polynomials.ParametricPolynomial
-import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
-import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
-import app.algebra.implicit_polynomials.RationalImplicitPolynomial
 import app.geometry.Point
 import app.geometry.RawVector
 import app.geometry.SvgCurveExtractionUtils
-import app.geometry.curves.bezier.CubicBezierCurve
 import java.awt.Color
 import kotlin.test.Test
 import kotlin.test.assertIs

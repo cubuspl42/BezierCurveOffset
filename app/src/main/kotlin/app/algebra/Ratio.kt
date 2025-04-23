@@ -13,6 +13,12 @@ data class Ratio(
         )
     }
 
+    val valueOrNull: Double?
+        get() = when (denominator) {
+            0.0 -> null
+            else -> nominator / denominator
+        }
+
     val value: Double
         get() = nominator / denominator
 

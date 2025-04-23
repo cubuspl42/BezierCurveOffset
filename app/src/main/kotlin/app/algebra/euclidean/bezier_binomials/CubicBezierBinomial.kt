@@ -9,6 +9,7 @@ import app.algebra.polynomials.ParametricPolynomial
 import app.algebra.implicit_polynomials.RationalImplicitPolynomial
 import app.algebra.implicit_polynomials.times
 import app.algebra.linear.matrices.matrix3.Matrix3x3
+import app.algebra.polynomials.Polynomial
 import app.geometry.RawVector
 import app.geometry.times
 
@@ -103,6 +104,29 @@ data class CubicBezierBinomial(
         3.0 * (weight2 - weight1),
         3.0 * (weight3 - weight2),
     )
+
+    fun findPointProjectionPolynomial(
+        g: RawVector,
+    ): Polynomial<*> {
+        val p0 = weight0 - g
+        val p1 = weight1 - g
+        val p2 = weight2 - g
+        val p3 = weight3 - g
+
+        val a = p3 - 3.0 * p2 + 3.0 * p1 - p0
+        val b = 3.0 * p2 - 6.0 * p1 + 3.0 * p0
+        val c = 3.0 * (p1 - p0)
+        val d = p0
+
+        return Polynomial.of(
+            c.dot(d),
+            c.dot(c) + 2.0 * b.dot(d),
+            3.0 * b.dot(c) + 3.0 * a.dot(d),
+            4.0 * a.dot(c) + 2.0 * b.dot(b),
+            5.0 * a.dot(b),
+            3.0 * a.dot(a),
+        )
+    }
 
     override fun toParametricPolynomial() = ParametricPolynomial.cubic(
         a3 = -weight0 + 3.0 * weight1 - 3.0 * weight2 + weight3,

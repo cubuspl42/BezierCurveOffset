@@ -16,6 +16,7 @@ import app.geometry.curves.LineSegment
 import app.geometry.curves.SegmentCurve
 import app.geometry.curves.bezier.CubicBezierCurve
 import app.geometry.curves.toDebugSvgPathGroup
+import app.geometry.curves.toSpline
 import app.geometry.splines.ClosedSpline
 import app.geometry.splines.OpenSpline
 import app.geometry.splines.Spline
@@ -32,6 +33,7 @@ import app.utils.iterable.untrail
 import app.viewBox
 import app.width
 import org.apache.batik.anim.dom.SVGOMDocument
+import org.w3c.dom.svg.SVGCircleElement
 import org.w3c.dom.svg.SVGColor
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGPathElement
@@ -40,13 +42,32 @@ import java.awt.Color
 import java.io.Reader
 
 object SvgCurveExtractionUtils {
-    sealed class ExtractedPath {
+    sealed class ExtractedShape {
         companion object {
             val red = Color(0xCC0000)
             val blue = Color(0x0000FF)
         }
 
         abstract val color: Color
+    }
+
+    data class ExtractedCircle(
+        override val color: Color,
+        val center: Point,
+    ) : ExtractedShape()
+
+    sealed class ExtractedPath : ExtractedShape() {
+        companion object {
+            fun lineSegment(
+                color: Color,
+                lineSegment: LineSegment,
+            ): ExtractedPath = ExtractedOpenSpline(
+                color = color,
+                lineSegment.toSpline(
+                    edgeMetadata = null,
+                ),
+            )
+        }
     }
 
     data class ExtractedOpenSpline(
@@ -57,17 +78,17 @@ object SvgCurveExtractionUtils {
     }
 
     data class ExtractedCurveSet(
-        val extractedPaths: Set<ExtractedPath>,
+        val extractedShapes: Set<ExtractedShape>,
     ) {
-        fun getPathByColor(
+        fun getShapeByColor(
             color: Color,
-        ): ExtractedPath = extractedPaths.single {
+        ): ExtractedShape = extractedShapes.single {
             it.color == color
         }
 
         fun getOpenSplineByColor(
             color: Color,
-        ): ExtractedOpenSpline = getPathByColor(
+        ): ExtractedOpenSpline = getShapeByColor(
             color = color,
         ) as ExtractedOpenSpline
 
@@ -76,6 +97,50 @@ object SvgCurveExtractionUtils {
         ): CubicBezierCurve = getOpenSplineByColor(
             color = color,
         ).singleBezierCurve()
+
+        fun dump(): SVGDocument {
+            val extractedOpenSpline = extractedShapes.filterIsInstance<ExtractedOpenSpline>()
+
+            val boundingBox = BoundingBox.unionAll(
+                extractedOpenSpline.map { it.openSpline.findBoundingBox() },
+            )
+
+            val computedWidth = boundingBox.xMax
+            val computedHeight = boundingBox.yMax
+
+            return createSvgDocument().apply {
+                documentSvgElement.apply {
+                    viewBox = SvgViewBox(
+                        xMin = 0.0,
+                        yMin = 0.0,
+                        width = computedWidth,
+                        height = computedHeight,
+                    )
+                    this.width = "${computedWidth}px"
+                    this.height = "${computedHeight}px"
+                }
+
+                extractedOpenSpline.forEach {
+                    val spline = it.openSpline
+
+                    documentSvgElement.appendChild(
+                        spline.toDebugSvgPathGroup(document = this).apply {
+                            fill = "none"
+                            stroke = it.color.toHex()
+                        }
+                    )
+                }
+
+                documentSvgElement.appendChild(
+                    this.createRectElement().apply {
+                        this.width.baseVal.value = computedWidth.toFloat()
+                        this.height.baseVal.value = computedHeight.toFloat()
+                        fill = "none"
+                        stroke = "black"
+                    },
+                )
+            }
+        }
     }
 
     fun extractCurves(
@@ -113,12 +178,29 @@ object SvgCurveExtractionUtils {
             when (child) {
                 is SVGPathElement -> extractOpenSpline(pathElement = child)
 
+                is SVGCircleElement -> extractCircle(circleElement = child)
+
                 else -> throw UnsupportedOperationException("Unsupported child element: $child")
             }
         }
 
         return ExtractedCurveSet(
-            extractedPaths = extractedPaths.toSet(),
+            extractedShapes = extractedPaths.toSet(),
+        )
+    }
+
+    private fun extractCircle(
+        circleElement: SVGCircleElement,
+    ): ExtractedCircle {
+        val svgColor = circleElement.style.getPropertyCSSValue("fill") as? SVGColor
+        val color = svgColor?.rgbColor?.color ?: Color.BLACK
+
+        return ExtractedCircle(
+            color = color,
+            center = Point.of(
+                circleElement.cx.baseVal.value.toDouble(),
+                circleElement.cy.baseVal.value.toDouble(),
+            ),
         )
     }
 
@@ -321,4 +403,11 @@ object SvgCurveExtractionUtils {
             )
         }
     }
+}
+
+fun Color.toHex(): String {
+    val red = this.red
+    val green = this.green
+    val blue = this.blue
+    return String.format("#%02x%02x%02x", red, green, blue)
 }
