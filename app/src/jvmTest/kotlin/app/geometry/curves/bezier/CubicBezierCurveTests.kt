@@ -479,7 +479,7 @@ class CubicBezierCurveTests {
             Point.of(590.5174, 365.3515),
         )
 
-        val expectedIntersectionPointsSorted = expectedIntersectionPoints.sortedBy { it.x }
+        val expectedIntersectionPointsSorted = intersectionPoints.sortedBy { it.x }
 
         assertEqualsWithTolerance(
             expected = expectedIntersectionPointsSorted,
