@@ -1,39 +1,35 @@
 plugins {
-    // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
-    alias(libs.plugins.kotlin.jvm)
-
-    // Apply the application plugin to add support for building a CLI application
-    application
+    alias(libs.plugins.kotlin.multiplatform)
 }
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    // Use the Kotlin JUnit 5 integration.
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+kotlin {
+    jvm()
 
-    testImplementation(libs.junit.jupiter.engine)
-
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    implementation(libs.batik.anim)
-    implementation(libs.batik.svg.dom)
-    implementation(libs.batik.css)
-    implementation(libs.commons.math3)
-}
-
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+    js(IR) {
+        browser()
     }
-}
 
-application {
-    mainClass = "org.example.AppKt"
-}
+    sourceSets {
+        commonMain.dependencies {
+            // put your Multiplatform dependencies here
+        }
 
-tasks.named<Test>("test") {
-    useJUnitPlatform()
+        commonTest.dependencies {
+            implementation(kotlin("test"))
+        }
+
+        jvmMain.dependencies {
+            implementation(libs.batik.anim)
+            implementation(libs.batik.svg.dom)
+            implementation(libs.batik.css)
+            implementation(libs.commons.math3)
+        }
+
+        jvmTest.dependencies {
+        }
+    }
 }
