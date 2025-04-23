@@ -1,5 +1,11 @@
 plugins {
+    // Apply the org.jetbrains.kotlin.jvm Plugin to add support for Kotlin.
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.allopen)
+    alias(libs.plugins.kotlinx.benchmark)
+
+    // Apply the application plugin to add support for building a CLI application
+    application
 }
 
 repositories {
@@ -11,11 +17,12 @@ kotlin {
 
     js(IR) {
         browser()
+        nodejs()
     }
 
     sourceSets {
         commonMain.dependencies {
-            // put your Multiplatform dependencies here
+            implementation(libs.kotlinx.benchmark.runtime)
         }
 
         commonTest.dependencies {
@@ -32,4 +39,15 @@ kotlin {
         jvmTest.dependencies {
         }
     }
+}
+
+benchmark {
+    targets {
+        register("jvm")
+        register("js")
+    }
+}
+
+allOpen {
+    annotation("org.openjdk.jmh.annotations.State")
 }

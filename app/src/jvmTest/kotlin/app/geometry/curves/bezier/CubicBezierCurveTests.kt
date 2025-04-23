@@ -449,12 +449,12 @@ class CubicBezierCurveTests {
 
         val lineSegment = extractedLine.openSpline.subCurves.single() as LineSegment
 
-        val intersectionDetails = CubicBezierCurve.findIntersections(
+        val intersectionPoints = CubicBezierCurve.findIntersections(
             lineSegment = lineSegment,
             bezierCurve = bezierCurve,
         )
 
-        val intersectionDetailsSorted = intersectionDetails.sortedBy { it.x }
+        val intersectionDetailsSorted = intersectionPoints.sortedBy { it.x }
 
         assertEqualsWithTolerance(
             expected = listOf(

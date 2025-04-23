@@ -105,6 +105,9 @@ data class CubicBezierBinomial(
         3.0 * (weight3 - weight2),
     )
 
+    /**
+     * Find the polynomial B(t) . B'(t)
+     */
     fun findPointProjectionPolynomial(
         g: RawVector,
     ): Polynomial<*> {
