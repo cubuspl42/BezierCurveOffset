@@ -2,8 +2,10 @@ package app.geometry.curves.bezier
 
 import app.algebra.NumericObject
 import app.algebra.NumericObject.Tolerance
+import app.algebra.equalsZeroWithTolerance
 import app.algebra.euclidean.bezier_binomials.CubicBezierBinomial
 import app.geometry.BoundingBox
+import app.geometry.Constants
 import app.geometry.Direction
 import app.geometry.Point
 import app.geometry.Ray
@@ -318,8 +320,17 @@ data class CubicBezierCurve private constructor(
 
         val projectionPolynomial = basisFormula.findPointProjectionPolynomial(g = point.pv)
 
+        val tolerance = Tolerance.Absolute(absoluteTolerance = 10e-4)
+
         val roots = projectionPolynomial.findRoots(
             guessedRoot = invertedTValue,
+            areClose = { t0, t1 ->
+                val p0 = basisFormula.apply(t0).asPoint
+                val p1 = basisFormula.apply(t1).asPoint
+
+                val distance = p0.distanceTo(p1)
+                distance.equalsZeroWithTolerance(tolerance = tolerance)
+            }
         )
 
         val rootPoints = roots.mapNotNull {

@@ -14,8 +14,14 @@ import kotlin.math.cbrt
 import kotlin.math.cos
 import kotlin.math.max
 import kotlin.math.pow
+import kotlin.math.sign
 import kotlin.math.sin
 import kotlin.math.sqrt
+
+private fun areCloseNever(
+    x0: Double,
+    x1: Double
+): Boolean = false
 
 data class Polynomial<out D : Polynomial.Degree>(
     val coefficients: List<Double>,
@@ -233,9 +239,10 @@ data class Polynomial<out D : Polynomial.Degree>(
     }
 
     fun findRoots(
-        maxDepth: Int = 1000,
+        maxDepth: Int = 20,
         guessedRoot: Double = 0.5,
         tolerance: Tolerance = Tolerance.Absolute(absoluteTolerance = Constants.epsilon),
+        areClose: (x0: Double, x1: Double) -> Boolean = ::areCloseNever,
     ): List<Double> = match(
         constant = { emptyList() },
         linear = { it.findRootsLinear() },
@@ -246,6 +253,7 @@ data class Polynomial<out D : Polynomial.Degree>(
                 maxDepth = maxDepth,
                 guessedRoot = guessedRoot,
                 tolerance = tolerance,
+                areClose = areClose,
             )
         },
     )
@@ -382,11 +390,13 @@ fun Polynomial<*>.findRootsNumeric(
     maxDepth: Int,
     guessedRoot: Double,
     tolerance: Tolerance,
+    areClose: (x0: Double, x1: Double) -> Boolean,
 ): List<Double> {
     val primaryRoot = findPrimaryRootNumeric(
         maxDepth = maxDepth,
         tolerance = tolerance,
         guessedRoot = guessedRoot,
+        areClose = areClose,
     ) ?: return emptyList()
 
     val deflatedPolynomial = this.deflate(
@@ -397,15 +407,23 @@ fun Polynomial<*>.findRootsNumeric(
         maxDepth = maxDepth,
         guessedRoot = guessedRoot,
         tolerance = tolerance,
+        areClose = areClose,
     )
 
     return listOf(primaryRoot) + lowerDegreeRoots
 }
 
+/**
+ * @param tolerance - when p(x0) equals zero within the tolerance, x0 is
+ * considered a root
+ * @param areClose - when p(x0)) and p(x1) have different signs and x0 and x1
+ * "are close" then avg(x0, x1) is considered a root
+ */
 fun Polynomial<*>.findPrimaryRootNumeric(
-    maxDepth: Int = 1000,
+    maxDepth: Int,
     guessedRoot: Double,
     tolerance: Tolerance,
+    areClose: (x0: Double, x1: Double) -> Boolean,
 ): Double? {
     val n = degree.n.toDouble()
 
@@ -449,8 +467,18 @@ fun Polynomial<*>.findPrimaryRootNumeric(
 
         val a = n / gd
 
+        val improvedRoot = approximatedRoot - a
+
+        val improvedP0 = apply(improvedRoot)
+
+        val areSignsDifferent = p0.sign != improvedP0.sign
+
+        if (areSignsDifferent && areClose(approximatedRoot, improvedRoot)) {
+            return (approximatedRoot + improvedRoot) / 2.0
+        }
+
         return improveRoot(
-            approximatedRoot = approximatedRoot - a,
+            approximatedRoot = improvedRoot,
             depth = depth + 1,
         )
     }

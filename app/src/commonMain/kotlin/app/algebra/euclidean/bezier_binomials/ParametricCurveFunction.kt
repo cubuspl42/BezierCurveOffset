@@ -1,6 +1,8 @@
 package app.algebra.euclidean.bezier_binomials
 
 import app.algebra.NumericObject
+import app.algebra.NumericObject.Tolerance
+import app.algebra.equalsZeroWithTolerance
 import app.algebra.implicit_polynomials.ImplicitPolynomial
 import app.algebra.polynomials.ParametricPolynomial
 import app.geometry.RawVector
@@ -21,7 +23,19 @@ abstract class ParametricCurveFunction : RealFunction<RawVector> {
         val otherImplicit = other.implicitize()
         val thisParametric = this.toParametricPolynomial()
         val intersectionPolynomial = otherImplicit.substitute(thisParametric)
-        return intersectionPolynomial.findRoots()
+
+        val tolerance = Tolerance.Absolute(absoluteTolerance = 10e-4)
+
+        return intersectionPolynomial.findRoots(
+            areClose = { t0, t1 ->
+                val p0 = thisParametric.apply(t0).asPoint
+                val p1 = thisParametric.apply(t1).asPoint
+
+                val distance = p0.distanceTo(p1)
+
+                distance.equalsZeroWithTolerance(tolerance = tolerance)
+            },
+        )
     }
 
     abstract fun solvePoint(

@@ -72,6 +72,7 @@ class FindIntersectionsBenchmark {
     )
 
     // 444.939 ±(99.9%) 26.834 ops/s [Average] (initial implementation, no solving optimizations)
+    // 32337.297 ±(99.9%) 3182.988 ops/s [Average] (areClose, maxDepth = 20)
     @Benchmark
     fun benchmarkFindIntersections_bezierCurve(): Set<Point> = CubicBezierCurve.findIntersections(
         bezierCurve0 = bezierCurve0,

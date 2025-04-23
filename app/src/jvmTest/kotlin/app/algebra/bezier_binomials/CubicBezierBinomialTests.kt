@@ -155,7 +155,7 @@ class CubicBezierBinomialTests {
             ).sorted(),
             actual = intersectionWaveTValues.sorted(),
             tolerance = NumericObject.Tolerance.Absolute(
-                absoluteTolerance = 10e-11,
+                absoluteTolerance = 10e-5,
             ),
         )
 
@@ -175,7 +175,7 @@ class CubicBezierBinomialTests {
                 waveCurve.evaluate(t = t)
             }.sortedBy { it.x },
             tolerance = NumericObject.Tolerance.Absolute(
-                absoluteTolerance = 10e-8,
+                absoluteTolerance = 10e-4,
             ),
         )
     }
