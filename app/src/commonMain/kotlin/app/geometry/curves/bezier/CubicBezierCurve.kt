@@ -89,6 +89,54 @@ data class CubicBezierCurve private constructor(
             segmentCurve0 = bezierCurve0,
             segmentCurve1 = bezierCurve1,
         )
+
+        fun findIntersectionsBb(
+            bezierCurve0: CubicBezierCurve,
+            bezierCurve1: CubicBezierCurve,
+        ): Set<Point> {
+            val bb0 = bezierCurve0.findBoundingBox()
+            val bb1 = bezierCurve1.findBoundingBox()
+
+            if (!bb0.overlaps(bb1)) {
+                return emptySet()
+            }
+
+            val boundingBoxAreaThreshold = 0.1
+
+            if (bb0.area < boundingBoxAreaThreshold && bb1.area < boundingBoxAreaThreshold) {
+                return setOf(
+                    Point.midPoint(
+                        bb0.center,
+                        bb1.center,
+                    ),
+                )
+            }
+
+            val (bezierCurve0A, bezierCurve0B) = bezierCurve0.splitAt(t = 0.5)
+            val (bezierCurve1A, bezierCurve1B) = bezierCurve1.splitAt(t = 0.5)
+
+            val intersectionPoints0 = findIntersectionsBb(
+                bezierCurve0A,
+                bezierCurve1A,
+            )
+
+            val intersectionPoints1 = findIntersectionsBb(
+                bezierCurve0A,
+                bezierCurve1B,
+            )
+
+            val intersectionPoints2 = findIntersectionsBb(
+                bezierCurve0B,
+                bezierCurve1A,
+            )
+
+            val intersectionPoints3 = findIntersectionsBb(
+                bezierCurve0B,
+                bezierCurve1B,
+            )
+
+            return intersectionPoints0 + intersectionPoints1 + intersectionPoints2 + intersectionPoints3
+        }
     }
 
     override fun findBoundingBox(): BoundingBox {

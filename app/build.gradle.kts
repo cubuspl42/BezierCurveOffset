@@ -46,6 +46,15 @@ benchmark {
         register("jvm")
         register("js")
     }
+
+    configurations {
+        named("main") {
+            warmups = 2
+            iterations = 4
+            iterationTime = 1
+            iterationTimeUnit = "s"
+        }
+    }
 }
 
 allOpen {

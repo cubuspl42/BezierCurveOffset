@@ -16,6 +16,7 @@ import app.utils.iterable.mapCarrying
 import app.utils.iterable.uncons
 import app.utils.iterable.untrail
 import org.apache.batik.anim.dom.SVGOMDocument
+import org.w3c.dom.Element
 import org.w3c.dom.svg.SVGCircleElement
 import org.w3c.dom.svg.SVGColor
 import org.w3c.dom.svg.SVGDocument
@@ -32,12 +33,34 @@ object SvgCurveExtractionUtils {
         }
 
         abstract val color: Color
+
+        abstract fun dump(
+            document: SVGDocument
+        ): Element
+
+        abstract fun findBoundingBox(): BoundingBox
     }
 
-    data class ExtractedCircle(
+    data class ExtractedPoint(
         override val color: Color,
         val center: Point,
-    ) : ExtractedShape()
+    ) : ExtractedShape() {
+        override fun dump(
+            document: SVGDocument,
+        ): Element = document.createCircleElement().apply {
+            cx.baseVal.value = center.x.toFloat()
+            cy.baseVal.value = center.y.toFloat()
+
+            r.baseVal.value = 2.0f
+
+            fill = color.toHex()
+        }
+
+        override fun findBoundingBox(): BoundingBox = BoundingBox.of(
+            pointA = center,
+            pointB = center,
+        )
+    }
 
     sealed class ExtractedPath : ExtractedShape() {
         companion object {
@@ -58,6 +81,15 @@ object SvgCurveExtractionUtils {
         val openSpline: OpenSpline<*, *, *>,
     ) : ExtractedPath() {
         fun singleBezierCurve(): CubicBezierCurve = openSpline.subCurves.single() as CubicBezierCurve
+
+        override fun dump(
+            document: SVGDocument,
+        ): Element = openSpline.toDebugSvgPathGroup(
+            document = document,
+            color = color,
+        )
+
+        override fun findBoundingBox(): BoundingBox = openSpline.findBoundingBox()
     }
 
     data class ExtractedCurveSet(
@@ -82,10 +114,8 @@ object SvgCurveExtractionUtils {
         ).singleBezierCurve()
 
         fun dump(): SVGDocument {
-            val extractedOpenSpline = extractedShapes.filterIsInstance<ExtractedOpenSpline>()
-
             val boundingBox = BoundingBox.unionAll(
-                extractedOpenSpline.map { it.openSpline.findBoundingBox() },
+                extractedShapes.map { it.findBoundingBox() },
             )
 
             val computedWidth = boundingBox.xMax
@@ -103,14 +133,9 @@ object SvgCurveExtractionUtils {
                     this.height = "${computedHeight}px"
                 }
 
-                extractedOpenSpline.forEach {
-                    val spline = it.openSpline
-
+                extractedShapes.forEach {
                     documentSvgElement.appendChild(
-                        spline.toDebugSvgPathGroup(document = this).apply {
-                            fill = "none"
-                            stroke = it.color.toHex()
-                        }
+                        it.dump(document = this)
                     )
                 }
 
@@ -161,7 +186,7 @@ object SvgCurveExtractionUtils {
             when (child) {
                 is SVGPathElement -> extractOpenSpline(pathElement = child)
 
-                is SVGCircleElement -> extractCircle(circleElement = child)
+                is SVGCircleElement -> extractPoint(circleElement = child)
 
                 else -> throw UnsupportedOperationException("Unsupported child element: $child")
             }
@@ -172,13 +197,13 @@ object SvgCurveExtractionUtils {
         )
     }
 
-    private fun extractCircle(
+    private fun extractPoint(
         circleElement: SVGCircleElement,
-    ): ExtractedCircle {
+    ): ExtractedPoint {
         val svgColor = circleElement.style.getPropertyCSSValue("fill") as? SVGColor
         val color = svgColor?.rgbColor?.color ?: Color.BLACK
 
-        return ExtractedCircle(
+        return ExtractedPoint(
             color = color,
             center = Point.of(
                 circleElement.cx.baseVal.value.toDouble(),
@@ -283,6 +308,7 @@ object SvgCurveExtractionUtils {
 
     fun dumpSpline(
         spline: ClosedSpline<*, *, *>,
+        color: Color,
     ): SVGDocument {
         val boundingBox = spline.findBoundingBox()
 
@@ -302,7 +328,10 @@ object SvgCurveExtractionUtils {
             }
 
             documentSvgElement.appendChild(
-                spline.toDebugSvgPathGroup(document = this)
+                spline.toDebugSvgPathGroup(
+                    document = this,
+                    color = color,
+                ),
             )
 
             documentSvgElement.appendChild(
@@ -318,6 +347,7 @@ object SvgCurveExtractionUtils {
 
     fun dumpSplines(
         splines: List<ClosedSpline<*, *, *>>,
+        color: Color,
     ): SVGDocument {
         val boundingBox = BoundingBox.unionAll(
             splines.map { it.findBoundingBox() },
@@ -340,7 +370,10 @@ object SvgCurveExtractionUtils {
 
             splines.forEach { spline ->
                 documentSvgElement.appendChild(
-                    spline.toDebugSvgPathGroup(document = this)
+                    spline.toDebugSvgPathGroup(
+                        document = this,
+                        color = color,
+                    ),
                 )
             }
 
@@ -357,6 +390,7 @@ object SvgCurveExtractionUtils {
 
     fun dumpCurve(
         bezierCurve: CubicBezierCurve,
+        color: Color = Color.BLACK,
     ): SVGDocument {
         val boundingBox = bezierCurve.findBoundingBox()
 
@@ -373,7 +407,10 @@ object SvgCurveExtractionUtils {
             }
 
             documentSvgElement.appendChild(
-                bezierCurve.toDebugSvgPathGroup(document = this)
+                bezierCurve.toDebugSvgPathGroup(
+                    document = this,
+                    color = color,
+                ),
             )
 
             documentSvgElement.appendChild(

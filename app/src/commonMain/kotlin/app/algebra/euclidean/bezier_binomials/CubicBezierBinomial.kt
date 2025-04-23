@@ -1,6 +1,7 @@
 package app.algebra.euclidean.bezier_binomials
 
 import app.algebra.NumericObject
+import app.algebra.Ratio
 import app.algebra.implicit_polynomials.ImplicitCubicPolynomial
 import app.algebra.implicit_polynomials.ImplicitLinearPolynomial
 import app.algebra.linear.matrices.matrix4.Matrix4x4
@@ -148,9 +149,19 @@ data class CubicBezierBinomial(
     }
 
     override fun solvePoint(
-        p: RawVector, tolerance: NumericObject.Tolerance
+        p: RawVector,
+        tolerance: NumericObject.Tolerance,
     ): Double? {
-        TODO()
+        val invertedPolynomial = invert() ?: return null
+        val invertedRatio = invertedPolynomial.apply(p)
+
+        return when {
+            // A double root was found
+            // TODO: This means there are two solutions, while we couldn't find either
+            invertedRatio.equalsWithTolerance(Ratio.ZeroByZero, tolerance = tolerance) -> null
+
+            else -> invertedRatio.value
+        }
     }
 
     fun invert(): RationalImplicitPolynomial? {

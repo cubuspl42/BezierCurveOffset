@@ -7,16 +7,22 @@ import app.algebra.euclidean.bezier_binomials.RealFunction
 import app.algebra.euclidean.bezier_binomials.sample
 import app.geometry.Point
 import app.SvgCurveExtractionUtils
-import app.SvgCurveExtractionUtils.ExtractedCircle
+import app.SvgCurveExtractionUtils.ExtractedPoint
+import app.SvgCurveExtractionUtils.ExtractedCurveSet
 import app.SvgCurveExtractionUtils.ExtractedOpenSpline
 import app.SvgCurveExtractionUtils.ExtractedShape
+import app.algebra.bezier_binomials.CubicBezierBinomialTests
 import app.geometry.curves.LineSegment
 import app.geometry.splines.globalDeviation
+import app.writeToFile
+import java.awt.Color
+import kotlin.io.path.Path
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
+import kotlin.test.assertTrue
 
 class CubicBezierCurveTests {
     private val eps = 10e-3
@@ -433,38 +439,64 @@ class CubicBezierCurveTests {
     @Test
     fun testFindIntersections_bezierCurve() {
         val extractedCurveSet = SvgCurveExtractionUtils.extractCurves(
-            clazz = CubicBezierCurveTests::class.java,
-            resourceName = "lineBezierIntersection1.svg",
+            clazz = CubicBezierBinomialTests::class.java,
+            resourceName = "loopWaveIntersection.svg",
         )
 
-        val extractedBezier = extractedCurveSet.getShapeByColor(
-            color = ExtractedShape.blue,
-        ) as SvgCurveExtractionUtils.ExtractedOpenSpline
+        val loopColor = Color(0x3399CC)
+        val waveColor = Color(0xCCFF33)
 
-        val bezierCurve = extractedBezier.openSpline.subCurves.single() as CubicBezierCurve
+        val extractedLoopCurve = extractedCurveSet.getOpenSplineByColor(
+            color = loopColor,
+        )
 
-        val extractedLine = extractedCurveSet.getShapeByColor(
-            color = ExtractedShape.red,
-        ) as SvgCurveExtractionUtils.ExtractedOpenSpline
+        val extractedWaveCurve = extractedCurveSet.getOpenSplineByColor(
+            color = waveColor,
+        )
 
-        val lineSegment = extractedLine.openSpline.subCurves.single() as LineSegment
+        val loopCurve = extractedLoopCurve.singleBezierCurve()
+        val waveCurve = extractedWaveCurve.singleBezierCurve()
 
         val intersectionPoints = CubicBezierCurve.findIntersections(
-            lineSegment = lineSegment,
-            bezierCurve = bezierCurve,
+            bezierCurve0 = loopCurve,
+            bezierCurve1 = waveCurve,
         )
 
-        val intersectionDetailsSorted = intersectionPoints.sortedBy { it.x }
+        val intersectionPointsBb = CubicBezierCurve.findIntersectionsBb(
+            bezierCurve0 = loopCurve,
+            bezierCurve1 = waveCurve,
+        )
+
+        val expectedIntersectionPoints = setOf(
+            Point.of(429.0969, 236.4783),
+            Point.of(445.0469, 298.9157),
+            Point.of(462.8411, 345.5742),
+            Point.of(488.1264, 335.0128),
+            Point.of(491.2702, 324.9465),
+            Point.of(520.7055, 223.61),
+            Point.of(544.115, 226.7946),
+            Point.of(569.6938, 289.328),
+            Point.of(590.5174, 365.3515),
+        )
+
+        val expectedIntersectionPointsSorted = expectedIntersectionPoints.sortedBy { it.x }
 
         assertEqualsWithTolerance(
-            expected = listOf(
-                Point.of(56.4104, 121.4349),
-                Point.of(125.0821, 138.2226),
-                Point.of(191.6589, 154.4981),
-            ),
-            actual = intersectionDetailsSorted,
+            expected = expectedIntersectionPointsSorted,
+            actual = intersectionPoints.sortedBy { it.x },
             absoluteTolerance = eps,
         )
+
+        intersectionPointsBb.forEach { actualIntersectionPoint ->
+            assertTrue(
+                expectedIntersectionPoints.any { expectedIntersectionPoint ->
+                    actualIntersectionPoint.equalsWithTolerance(
+                        expectedIntersectionPoint,
+                        tolerance = NumericObject.Tolerance.Absolute(absoluteTolerance = 0.5),
+                    )
+                },
+            )
+        }
     }
 
     @Test
@@ -489,7 +521,7 @@ class CubicBezierCurveTests {
         }.asPoint
 
         val points = curveSet.extractedShapes.mapNotNull {
-            (it as? ExtractedCircle)?.center
+            (it as? ExtractedPoint)?.center
         }
 
         // Just ensure that the point loading succeeded

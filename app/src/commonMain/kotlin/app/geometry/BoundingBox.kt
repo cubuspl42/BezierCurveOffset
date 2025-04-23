@@ -64,6 +64,15 @@ data class BoundingBox(
         }
     }
 
+    val center: Point
+        get() = Point.of(
+            px = xMin + width / 2,
+            py = yMin + height / 2,
+        )
+
+    val area: Double
+        get() = width * height
+
     val bottomLeft: Point
         get() = topLeft.translateVia(Translation.of(width, height))
 
@@ -101,6 +110,14 @@ data class BoundingBox(
         pointA = transformation.transform(topLeft),
         pointB = transformation.transform(bottomLeft),
     )
+
+    fun overlaps(
+        other: BoundingBox,
+    ): Boolean {
+        val overlapsHorizontally = xMin <= other.xMax && xMax >= other.xMin
+        val overlapsVertically = yMin <= other.yMax && yMax >= other.yMin
+        return overlapsHorizontally && overlapsVertically
+    }
 
     init {
         require(width >= 0)

@@ -14,6 +14,7 @@ import app.geometry.splines.Spline
 import app.geometry.transformations.MixedTransformation
 import app.get
 import app.stroke
+import app.toHex
 import app.utils.iterable.elementWiseAs
 import app.utils.iterable.uncons
 import app.utils.iterable.untrail
@@ -27,6 +28,7 @@ import org.w3c.dom.svg.SVGPathElement
 import org.w3c.dom.svg.SVGPathSeg
 import org.w3c.dom.svg.SVGPathSegCurvetoCubicAbs
 import org.w3c.dom.svg.SVGPathSegLinetoAbs
+import java.awt.Color
 
 val svgDomImplementation: SVGDOMImplementation = SVGDOMImplementation.getDOMImplementation() as SVGDOMImplementation
 
@@ -42,18 +44,20 @@ fun BoundingBox.toSvgViewBox(): SvgViewBox = SvgViewBox(
 
 fun SegmentCurve<*>.toDebugSvgPathGroup(
     document: SVGDocument,
+    color: Color,
 ): SVGGElement = SVGGElementUtils.of(
     document = document,
     elements = listOfNotNull(
-        toSvgPath(document = document).apply {
-            fill = "none"
-            stroke = debugStrokeColor
-        },
+        toSvgPath(
+            document = document,
+            color = color,
+        ),
         toDebugControlSvgPathGroup(document = document),
     ),
 )
 
 fun SegmentCurve<*>.toSvgPath(
+    color: Color,
     document: SVGDocument,
 ): SVGPathElement = document.createPathElement().apply {
     val pathElement = this
@@ -70,6 +74,9 @@ fun SegmentCurve<*>.toSvgPath(
             toSvgPathSeg(pathElement = pathElement),
         )
     }
+
+    fill = "none"
+    stroke = color.toHex()
 }
 
 private fun SegmentCurve<*>.toDebugControlSvgPathGroup(
@@ -92,6 +99,7 @@ private val SegmentCurve<*>.debugStrokeColor: String
 
 fun Ray.toDebugPath(
     document: SVGDocument,
+    color: Color = Color.BLACK,
 ): SVGPathElement = LineSegment.of(
     start = startingPoint,
     end = startingPoint.translateInDirection(
@@ -100,6 +108,7 @@ fun Ray.toDebugPath(
     ),
 ).toSvgPath(
     document = document,
+    color = color,
 ).apply {
     fill = "none"
     stroke = "orange"
@@ -107,27 +116,18 @@ fun Ray.toDebugPath(
 
 fun CubicBezierCurve.toDebugControlSvgPathGroupCubic(
     document: SVGDocument,
+    color: Color = Color.BLACK,
 ): SVGGElement = SVGGElementUtils.of(
     document = document,
     elements = listOf(
         lineSegment0.toSvgPath(
             document = document,
-        ).apply {
-            fill = "none"
-            stroke = "darkGray"
-        },
-//        lineSegment1.toSvgPath(
-//            document = document,
-//        ).apply {
-//            fill = "none"
-//            stroke = "lightGray"
-//        },
+            color = Color.DARK_GRAY,
+        ),
         lineSegment2.toSvgPath(
             document = document,
-        ).apply {
-            fill = "none"
-            stroke = "darkGray"
-        },
+            color = Color.DARK_GRAY,
+        ),
     ),
 )
 
@@ -177,10 +177,14 @@ fun SVGPathElement.toClosedSpline(): ClosedSpline<*, *, *> {
 
 fun Spline<*, *, *>.toDebugSvgPathGroup(
     document: SVGDocument,
+    color: Color,
 ): SVGGElement = SVGGElementUtils.of(
     document = document,
     elements = subCurves.map { subCurve ->
-        subCurve.toDebugSvgPathGroup(document = document)
+        subCurve.toDebugSvgPathGroup(
+            document = document,
+            color = color,
+        )
     },
 )
 

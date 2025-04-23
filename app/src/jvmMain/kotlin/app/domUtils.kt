@@ -10,6 +10,7 @@ import org.w3c.dom.NodeList
 import org.w3c.dom.css.CSSPrimitiveValue
 import org.w3c.dom.css.CSSStyleDeclaration
 import org.w3c.dom.css.RGBColor
+import org.w3c.dom.svg.SVGCircleElement
 import org.w3c.dom.svg.SVGDocument
 import org.w3c.dom.svg.SVGElement
 import org.w3c.dom.svg.SVGGElement
@@ -143,6 +144,8 @@ fun SVGDocument.createPathElement(): SVGPathElement = createSvgElement("path") a
 fun SVGDocument.createGElement(): SVGGElement = createSvgElement("g") as SVGGElement
 
 fun SVGDocument.createRectElement(): SVGRectElement = createSvgElement("rect") as SVGRectElement
+
+fun SVGDocument.createCircleElement(): SVGCircleElement = createSvgElement("circle") as SVGCircleElement
 
 fun SVGPathSegList.asList(): List<SVGPathSeg> = object : AbstractList<SVGPathSeg>() {
     override val size: Int
