@@ -236,4 +236,122 @@ class UtilsTests {
             actual = finalCarry,
         )
     }
+
+    @Test
+    fun testConfront_empty() {
+        val list = emptyList<String>()
+
+        val result = list.confront(
+            confront = { prevValue, nextValue -> prevValue.length + nextValue.length },
+            transform = { prevConfrontation, value, nextConfrontation ->
+                "$prevConfrontation|$value|$nextConfrontation"
+            },
+            outerLeftConfrontation = -1,
+            outerRightConfrontation = -2,
+        )
+
+        assertEquals(
+            expected = emptyList(),
+            actual = result,
+        )
+    }
+
+    @Test
+    fun testConfront_single() {
+        val list = listOf("abc")
+
+        val result = list.confront(
+            confront = { prevValue, nextValue -> prevValue.length + nextValue.length },
+            transform = { prevConfrontation, value, nextConfrontation ->
+                "$prevConfrontation|$value|$nextConfrontation"
+            },
+            outerLeftConfrontation = -1,
+            outerRightConfrontation = -2,
+        )
+
+        assertEquals(
+            expected = listOf("-1|abc|-2"),
+            actual = result,
+        )
+    }
+
+    @Test
+    fun testConfront_two() {
+        val list = listOf("abc", "bcde")
+
+        val result = list.confront(
+            confront = { prevValue, nextValue -> prevValue.length + nextValue.length },
+            transform = { prevConfrontation, value, nextConfrontation ->
+                "$prevConfrontation|$value|$nextConfrontation"
+            },
+            outerLeftConfrontation = -1,
+            outerRightConfrontation = -2,
+        )
+
+        assertEquals(
+            expected = listOf("-1|abc|7", "7|bcde|-2"),
+            actual = result,
+        )
+    }
+
+    @Test
+    fun testConfront_simple() {
+        val list = listOf(
+            "abc",
+            "bcde",
+            "ef",
+            "ghijk",
+        )
+
+        val result = list.confront(
+            confront = { prevValue, nextValue ->
+                prevValue.length * nextValue.length
+            },
+            transform = { prevConfrontation, value, nextConfrontation ->
+
+                "$prevConfrontation|$value|$nextConfrontation"
+            },
+            outerLeftConfrontation = -1,
+            outerRightConfrontation = -2,
+        )
+
+        assertEquals(
+            expected = listOf(
+                "-1|abc|12",
+                "12|bcde|8",
+                "8|ef|10",
+                "10|ghijk|-2",
+            ),
+            actual = result,
+        )
+    }
+
+    @Test
+    fun testConfrontCyclic() {
+        val list = listOf(
+            "abc",
+            "bcde",
+            "ef",
+            "ghijk",
+        )
+
+        val result = list.confrontCyclic(
+            confront = { prevValue, nextValue ->
+                prevValue.length * nextValue.length
+            },
+            transform = { prevConfrontation, value, nextConfrontation ->
+                "$prevConfrontation|$value|$nextConfrontation"
+            },
+        )
+
+        assertEquals(
+            expected = listOf(
+                "15|abc|12",
+                "12|bcde|8",
+                "8|ef|10",
+                "10|ghijk|15",
+            ),
+            actual = result,
+        )
+    }
 }

@@ -177,3 +177,92 @@ fun <T, R, C> Iterable<T>.mapCarrying(
 
     return Pair(result, carry)
 }
+
+/**
+ * Transforms a list by confronting adjacent elements and applying a
+ * transformation that considers the adjacent confrontations and the current
+ * element.
+ *
+ * @param confront A function that computes a confrontation value between two
+ * adjacent elements.
+ * @param transform A function that takes the previous confrontation, the
+ * current element, and the next confrontation,and returns a transformed value.
+ * @param outerLeftConfrontation The confrontation value to use for the first
+ * element's left side.
+ * @param outerRightConfrontation The confrontation value to use for the last
+ * element's right side.
+ * @return A list of transformed values based on the confrontations and the
+ * transformation function.
+ *
+ * Example:
+ * ```
+ * val list = listOf("abc", "bcde", "ef", "ghijk")
+ * val result = list.confront(
+ *     confront = { prevValue, nextValue -> prevValue.length * nextValue.length },
+ *     transform = { prevConfrontation, value, nextConfrontation ->
+ *         "$prevConfrontation|$value|$nextConfrontation"
+ *     },
+ *     outerLeftConfrontation = -1,
+ *     outerRightConfrontation = -2,
+ * )
+ * // result: ["-1|abc|12", "12|bcde|8", "8|ef|10", "10|ghijk|-2"]
+ * ```
+ */
+fun <T, C, R> List<T>.confront(
+    confront: (prevValue: T, nextValue: T) -> C,
+    transform: (prevConfrontation: C, value: T, nextConfrontation: C) -> R,
+    outerLeftConfrontation: C,
+    outerRightConfrontation: C,
+): List<R> {
+    val (firstValue, trailingValues) = uncons() ?: return emptyList()
+
+    val (innerValues, lastValue) = trailingValues.untrail() ?: return listOf(
+        transform(
+            outerLeftConfrontation,
+            firstValue,
+            outerRightConfrontation,
+        ),
+    )
+
+    val confrontations = this.zipWithNext { prevValue, nextValue ->
+        confront(prevValue, nextValue)
+    }
+
+    return listOf(
+        transform(
+            outerLeftConfrontation,
+            firstValue,
+            confrontations.first(),
+        ),
+    ) + confrontations.zipWithNext().zip(innerValues) { (prevConfrontation, nextConfrontation), innerValue ->
+        transform(
+            prevConfrontation,
+            innerValue,
+            nextConfrontation,
+        )
+    } + listOf(
+        transform(
+            confrontations.last(),
+            lastValue,
+            outerRightConfrontation,
+        ),
+    )
+}
+
+fun <T, C, R> List<T>.confrontCyclic(
+    confront: (prevValue: T, nextValue: T) -> C,
+    transform: (prevConfrontation: C, value: T, nextConfrontation: C) -> R,
+): List<R> = when {
+    isEmpty() -> emptyList()
+
+    else -> {
+        val confrontation = confront(last(), first())
+
+        confront(
+            confront = confront,
+            transform = transform,
+            outerLeftConfrontation = confrontation,
+            outerRightConfrontation = confrontation,
+        )
+    }
+}
